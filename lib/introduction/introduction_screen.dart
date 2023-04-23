@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+
+import '../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({super.key});
@@ -34,23 +37,30 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 text: 'Last time you use google to log in.',
                 color: secondaryColor),
             SizedBox(height: MediaQuery.of(context).size.height - 650),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(5)),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Image(
-                    image: AssetImage("assets/google-logo.png"),
-                    width: 25,
-                    height: 25,
-                  ),
-                  DefaultText(
-                      text: 'Continue with Google', color: secondaryColor),
-                  SizedBox()
-                ],
+            GestureDetector(
+              onTap: () async {
+                BlocProvider.of<AuthenticationBloc>(context)
+                    .add(GoogleSignInRequested());
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(5)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Image(
+                      image: AssetImage("assets/google-logo.png"),
+                      width: 25,
+                      height: 25,
+                    ),
+                    DefaultText(
+                        text: 'Continue with Google', color: secondaryColor),
+                    SizedBox(),
+                  ],
+                ),
               ),
             ),
             defaultSpace,
@@ -90,6 +100,6 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
   }
 
   void goToLogin() {
-    router.goNamed('auth');
+    router.pushNamed('login');
   }
 }

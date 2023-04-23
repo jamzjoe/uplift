@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "152134110112",
+    "firebase_url": "https://uplift-2316e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "uplift-2316e",
+    "storage_bucket": "uplift-2316e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152134110112:android:709c7b6e87d5fd6942b2c5",
+        "android_client_info": {
+          "package_name": "com.godesq.uplift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152134110112-aiqej2vf095bh62m267f24gf5lkm640n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.godesq.uplift",
+            "certificate_hash": "b413185dec1883af95a1e4bc0dc37e6f6ee9152e"
+          }
+        },
+        {
+          "client_id": "152134110112-b9jb2nuuerhf0u8keagajd6hlkvqd4in.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH6E2nSn4TBNiKedH_P5qQm83fUrQxgx8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152134110112-b9jb2nuuerhf0u8keagajd6hlkvqd4in.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
