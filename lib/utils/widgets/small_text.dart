@@ -9,7 +9,7 @@ class SmallText extends StatelessWidget {
     return Text(
       text,
       style:
-          TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 12),
+          TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 14),
     );
   }
 }

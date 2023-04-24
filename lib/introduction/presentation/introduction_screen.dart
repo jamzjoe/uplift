@@ -5,7 +5,7 @@ import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 
-import '../authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import '../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({super.key});
@@ -23,7 +23,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-            image: DecorationImage(image: AssetImage('assets/background.png'))),
+            image: DecorationImage(
+                image: AssetImage('assets/background.png'), fit: BoxFit.cover)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

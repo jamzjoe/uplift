@@ -16,6 +16,7 @@ class AuthenticationBloc
   late final StreamSubscription<User?> streamSubscription;
   AuthenticationBloc(this.authRepository) : super(AuthenticationInitial()) {
     streamSubscription = authRepository.user.listen((user) {
+      log(user.toString());
       if (user != null) {
         add(SignIn(user));
       } else {

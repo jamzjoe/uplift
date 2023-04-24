@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,8 +33,13 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Uplift Development',
         theme: ThemeData(
+          appBarTheme: const AppBarTheme(surfaceTintColor: whiteColor),
+          floatingActionButtonTheme:
+              const FloatingActionButtonThemeData(backgroundColor: whiteColor),
+          bottomAppBarTheme:
+              const BottomAppBarTheme(surfaceTintColor: whiteColor),
+          colorSchemeSeed: Colors.lightBlue,
           useMaterial3: true,
-          primarySwatch: Colors.blue,
         ),
       ),
     );

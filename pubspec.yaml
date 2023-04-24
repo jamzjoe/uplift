@@ -43,6 +43,7 @@ dependencies:
   bloc: ^8.1.1
   equatable: ^2.0.5
   flutter_bloc: ^8.1.2
+  ionicons: ^0.2.2
 
 flutter_native_splash:
   android: true

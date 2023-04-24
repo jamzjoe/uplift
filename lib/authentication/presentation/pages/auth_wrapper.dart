@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:uplift/home.dart';
-import 'package:uplift/introduction/introduction_screen.dart';
+import 'package:uplift/home/presentation/page/home.dart';
+import 'package:uplift/introduction/presentation/introduction_screen.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});

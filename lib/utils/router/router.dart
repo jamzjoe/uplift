@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
-import 'package:uplift/home.dart';
+import 'package:uplift/home/presentation/page/home.dart';
+import 'package:uplift/notifications/presentaion/page/notification_screen.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
@@ -29,7 +30,16 @@ final GoRouter router = GoRouter(
           name: 'home',
           path: '/home',
           pageBuilder: (context, state) => MaterialPage(
-                  child: HomeScreen(
-                user: state.extra as User,
-              )))
+                child: HomeScreen(
+                  user: state.extra as User,
+                ),
+              ),
+          routes: [
+            GoRoute(
+              path: 'notification',
+              name: 'notification',
+              pageBuilder: (context, state) =>
+                  const MaterialPage(child: NotificationScreen()),
+            )
+          ])
     ]);
