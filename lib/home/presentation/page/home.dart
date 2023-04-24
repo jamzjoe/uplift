@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/event_screen.dart';
@@ -35,22 +36,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
-      body: DefaultTabController(
-        length: 4,
-        child: Column(
-          children: [
-            Expanded(
-                child: TabBarView(controller: _tabController, children: [
-              FeedScreen(user: user),
-              const FriendsScreen(),
-              const EventScreen(),
-              SettingsScreen(user: user)
-            ]))
-            // Expanded(
-            //     child: ListView.builder(
-            //   itemBuilder: (context, index) => const PostItem(),
-            // ))
-          ],
+      extendBody: true,
+      body: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+          if (state is UserIsOut) {
+            setState(() {
+              index = 0;
+            });
+          }
+        },
+        child: DefaultTabController(
+          length: 4,
+          child: Column(
+            children: [
+              Expanded(
+                  child: TabBarView(controller: _tabController, children: [
+                FeedScreen(user: user),
+                const FriendsScreen(),
+                const EventScreen(),
+                SettingsScreen(user: user)
+              ]))
+              // Expanded(
+              //     child: ListView.builder(
+              //   itemBuilder: (context, index) => const PostItem(),
+              // ))
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -63,7 +74,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             Ionicons.qr_code,
             color: primaryColor,
           ),
-          onPressed: () {}),
+          onPressed: () {
+            context.pushNamed('qr_reader');
+          }),
       bottomNavigationBar: TabBarMaterialWidget(
           index: index, onChangedTab: onChangedTab, controller: _tabController),
     );

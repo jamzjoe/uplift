@@ -26,28 +26,20 @@ class _FeedScreenState extends State<FeedScreen> {
           width: 80,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
+          IconButton(
+              onPressed: () {
                 showSearch(context: context, delegate: CustomSearchDelegate());
               },
-              child: const Icon(
+              icon: const Icon(
                 Icons.search,
                 size: 30,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 20, left: 10),
-            child: GestureDetector(
-              onTap: goToNotificationScreen,
-              child: const Icon(
+              )),
+          IconButton(
+              onPressed: goToNotificationScreen,
+              icon: const Icon(
                 Icons.notifications,
                 size: 30,
-              ),
-            ),
-          )
+              )),
         ],
       ),
       body: Column(
@@ -93,13 +85,20 @@ class CustomSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     // TODO: implement buildResults
     return ListView.builder(
-        itemBuilder: (context, index) => const Text('test'));
+        itemBuilder: (context, index) => const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: Text('This is query for result test search delegate.'),
+            ));
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     // TODO: implement buildSuggestions
     return ListView.builder(
-        itemBuilder: (context, index) => const Text('test'));
+        itemBuilder: (context, index) => const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child:
+                  Text('This is query for suggestions test search delegate.'),
+            ));
   }
 }
