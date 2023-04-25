@@ -148,7 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     decoration: BoxDecoration(
                                         color: whiteColor,
                                         borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: lightColor)),
+                                        border: Border.all(
+                                            color:
+                                                lightColor.withOpacity(0.2))),
                                     child: Row(
                                       children: const [
                                         Image(
@@ -173,7 +175,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   decoration: BoxDecoration(
                                       color: whiteColor,
                                       borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: lightColor)),
+                                      border: Border.all(
+                                          color: lightColor.withOpacity(0.2))),
                                   child: Row(
                                     children: const [
                                       Image(

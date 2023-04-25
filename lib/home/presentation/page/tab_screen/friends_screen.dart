@@ -43,9 +43,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     color: lightColor.withOpacity(0.2))
               ],
             ),
-            Divider(
-              color: primaryColor.withOpacity(0.2),
-            ),
+            defaultSpace,
+            const Divider(),
+            defaultSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -90,8 +90,10 @@ class FriendRequestItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    DefaultText(
-                        text: 'Alyssa Mae Keith', color: secondaryColor),
+                    HeaderText(
+                        text: 'Alyssa Mae Keith',
+                        color: secondaryColor,
+                        size: 16),
                     SmallText(text: '1w ', color: lightColor)
                   ],
                 ),

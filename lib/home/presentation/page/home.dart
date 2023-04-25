@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/settings_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
 
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -21,6 +21,8 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 int index = 0;
 TabController? _tabController;
@@ -36,9 +38,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
+      key: _scaffoldKey,
       extendBody: true,
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
+          log(state.toString());
           if (state is UserIsOut) {
             setState(() {
               index = 0;
@@ -46,16 +50,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }
         },
         child: DefaultTabController(
+          initialIndex: 1,
           length: 4,
           child: Column(
             children: [
               Expanded(
-                  child: TabBarView(controller: _tabController, children: [
-                FeedScreen(user: user),
-                const FriendsScreen(),
-                const EventScreen(),
-                SettingsScreen(user: user)
-              ]))
+                  child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _tabController,
+                      children: [
+                    FeedScreen(user: user),
+                    const FriendsScreen(),
+                    const EventScreen(),
+                    SettingsScreen(user: user)
+                  ]))
               // Expanded(
               //     child: ListView.builder(
               //   itemBuilder: (context, index) => const PostItem(),
@@ -69,13 +77,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           splashColor: primaryColor,
           elevation: 2,
           shape: const CircleBorder(
-              side: BorderSide(color: primaryColor), eccentricity: sqrt1_2),
+              side: BorderSide(color: primaryColor), eccentricity: .5),
           child: const Icon(
             Ionicons.qr_code,
             color: primaryColor,
           ),
           onPressed: () {
-            context.pushNamed('qr_reader');
+            context.pushNamed('qr_reader', extra: user);
           }),
       bottomNavigationBar: TabBarMaterialWidget(
           index: index, onChangedTab: onChangedTab, controller: _tabController),
@@ -89,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void onChangedTab(int value) {
     setState(() {
       index = value;
+      _tabController!.animateTo(value);
     });
   }
 }

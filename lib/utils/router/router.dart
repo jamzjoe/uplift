@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/home/presentation/page/home.dart';
+import 'package:uplift/home/presentation/page/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_reader_screen.dart';
 import 'package:uplift/notifications/presentaion/page/notification_screen.dart';
 
@@ -45,8 +47,26 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: 'qr_reader',
               name: 'qr_reader',
-              pageBuilder: (context, state) =>
-                  const MaterialPage(child: QRReaderScreen()),
+              pageBuilder: (context, state) => MaterialPage(
+                  child: QRReaderScreen(
+                user: state.extra as User,
+              )),
+            ),
+            GoRoute(
+              path: 'qr_generator',
+              name: 'qr_generator',
+              pageBuilder: (context, state) => MaterialPage(
+                  child: QRGeneratorScreen(
+                user: state.extra as User,
+              )),
+            ),
+            GoRoute(
+              path: 'post_field',
+              name: 'post_field',
+              pageBuilder: (context, state) => MaterialPage(
+                  child: PostFormScreen(
+                user: state.extra as User,
+              )),
             )
           ])
     ]);

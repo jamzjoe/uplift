@@ -33,7 +33,16 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Uplift Development',
         theme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(primaryColor))),
           appBarTheme: const AppBarTheme(surfaceTintColor: whiteColor),
+          bottomSheetTheme: const BottomSheetThemeData(
+              surfaceTintColor: whiteColor,
+              elevation: 2,
+              shape: RoundedRectangleBorder()),
+          dividerTheme:
+              DividerThemeData(color: secondaryColor.withOpacity(0.2)),
           floatingActionButtonTheme:
               const FloatingActionButtonThemeData(backgroundColor: whiteColor),
           bottomAppBarTheme:

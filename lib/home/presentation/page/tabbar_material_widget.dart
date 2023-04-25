@@ -30,7 +30,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
 
     return BottomAppBar(
       elevation: 5,
-      surfaceTintColor: const Color(0xfff6f6f6),
+      surfaceTintColor: whiteColor,
       padding: const EdgeInsets.symmetric(vertical: 5),
       shape: const CircularNotchedRectangle(),
       notchMargin: 5,
@@ -91,7 +91,12 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             isSelected ? selectedIcon : icon,
-            SmallText(text: label, color: lightColor),
+            const SizedBox(height: 5),
+            SmallText(
+                text: label,
+                color: isSelected
+                    ? primaryColor
+                    : secondaryColor.withOpacity(0.5)),
           ],
         ),
       ),

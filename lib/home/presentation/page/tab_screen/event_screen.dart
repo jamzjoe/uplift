@@ -27,38 +27,48 @@ class _EventScreenState extends State<EventScreen> {
           )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SmallText(text: "Today's March 24th", color: lightColor),
-            const HeaderText(text: 'Nearby event', color: secondaryColor),
-            defaultSpace,
-            SizedBox(
-              height: 150,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return const EventItem();
-                  }),
-            ),
-            const SizedBox(height: 30),
-            Column(
-              children: const [
-                HeaderText(text: 'Upcoming Event', color: secondaryColor)
-              ],
-            ),
-            const SizedBox(height: 5),
-            Expanded(child: ListView.builder(
-              itemBuilder: (context, index) {
-                return const UpcomingEventItem();
-              },
-            ))
-          ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 100),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SmallText(text: "Today's March 24th", color: lightColor),
+              const HeaderText(text: 'Nearby event', color: secondaryColor),
+              defaultSpace,
+              SizedBox(
+                height: 150,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 20,
+                    itemBuilder: (context, index) {
+                      return const EventItem();
+                    }),
+              ),
+              const SizedBox(height: 30),
+              Column(
+                children: const [
+                  HeaderText(text: 'Upcoming Event', color: secondaryColor)
+                ],
+              ),
+              const SizedBox(height: 5),
+              Column(
+                children: const [
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem(),
+                  UpcomingEventItem()
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -86,6 +96,7 @@ class UpcomingEventItem extends StatelessWidget {
                     image: AssetImage('assets/background.png'),
                     fit: BoxFit.cover)),
           ),
+          const SizedBox(width: 5),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5),

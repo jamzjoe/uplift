@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/post_item.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 
 import '../post_field.dart';
 
@@ -18,38 +22,44 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     final User user = widget.user;
-    return Scaffold(
-      backgroundColor: const Color(0xffF0F0F0),
-      appBar: AppBar(
-        title: const Image(
-          image: AssetImage('assets/uplift-logo.png'),
-          width: 80,
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {
+        if (state is UserIsIn) {}
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xffF0F0F0),
+        appBar: AppBar(
+          title: const Image(
+            image: AssetImage('assets/uplift-logo.png'),
+            width: 80,
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  showSearch(
+                      context: context, delegate: CustomSearchDelegate());
+                },
+                icon: const Icon(
+                  Icons.search,
+                  size: 30,
+                )),
+            IconButton(
+                onPressed: goToNotificationScreen,
+                icon: const Icon(
+                  Icons.notifications,
+                  size: 30,
+                )),
+          ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showSearch(context: context, delegate: CustomSearchDelegate());
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-              )),
-          IconButton(
-              onPressed: goToNotificationScreen,
-              icon: const Icon(
-                Icons.notifications,
-                size: 30,
-              )),
-        ],
-      ),
-      body: Column(
-        children: [
-          PostField(user: user),
-          Expanded(
-              child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  itemBuilder: (context, index) => const PostItem()))
-        ],
+        body: Column(
+          children: [
+            PostField(user: user),
+            Expanded(
+                child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    itemBuilder: (context, index) => const PostItem()))
+          ],
+        ),
       ),
     );
   }
@@ -83,22 +93,39 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
+    List<String> matchQuery = [];
+    for (var each in searchTerms) {
+      if (each.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(each);
+      }
+    }
     return ListView.builder(
-        itemBuilder: (context, index) => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: Text('This is query for result test search delegate.'),
+        itemCount: matchQuery.length,
+        itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: ListTile(
+                  dense: true,
+                  title: DefaultText(
+                      text: matchQuery[index], color: secondaryColor)),
             ));
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
+    List<String> matchQuery = [];
+    for (var each in searchTerms) {
+      if (each.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(each);
+      }
+    }
     return ListView.builder(
-        itemBuilder: (context, index) => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child:
-                  Text('This is query for suggestions test search delegate.'),
+        itemCount: matchQuery.length,
+        itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: ListTile(
+                  dense: true,
+                  title: DefaultText(
+                      text: matchQuery[index], color: secondaryColor)),
             ));
   }
 }

@@ -16,7 +16,8 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {},
       builder: (context, state) {
         log(state.toString());
         if (state is UserIsIn) {
@@ -24,7 +25,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         } else if (state is UserIsOut) {
           return const IntroductionScreen();
         } else {
-          return Container();
+          return const IntroductionScreen();
         }
       },
     );

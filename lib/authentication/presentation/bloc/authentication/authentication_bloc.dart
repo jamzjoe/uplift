@@ -25,14 +25,18 @@ class AuthenticationBloc
     });
 
     on<GoogleSignInRequested>((event, emit) async {
+      emit(Loading());
       try {
-        AuthServices.signInWithGoogle();
+        final User? user = await AuthServices.signInWithGoogle();
+        emit(UserIsIn(user!));
       } catch (e) {
+        log('Error');
         emit(UserIsOut());
       }
     });
 
     on<SignOutRequested>((event, emit) async {
+      emit(Loading());
       log('Sign out');
       AuthServices.signOut();
     });
