@@ -18,8 +18,7 @@ class ProfilePhoto extends StatelessWidget {
             fit: BoxFit.cover,
             width: 40,
             height: 40,
-            imageUrl: user.photoURL ??
-                'https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkCc5eD7wYws.jpg',
+            imageUrl: user.photoURL ?? 'null',
             progressIndicatorBuilder: (context, url, progress) =>
                 CircularProgressIndicator(value: progress.progress),
             errorWidget: (context, url, error) => const CircleAvatar(

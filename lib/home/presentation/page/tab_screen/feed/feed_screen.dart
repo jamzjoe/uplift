@@ -1,16 +1,18 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_field.dart';
-import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_list_item.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+
+import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'post_screen/presentation/page/post_field.dart';
+import 'post_screen/presentation/page/post_list_item.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.user});
@@ -75,6 +77,22 @@ class _FeedScreenState extends State<FeedScreen> {
                         SizedBox(width: 15),
                         SmallText(
                             text: 'Posting your prayer request...',
+                            color: secondaryColor)
+                      ],
+                    ),
+                  );
+                } else if (state is Posted) {
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                    color: whiteColor,
+                    child: Row(
+                      children: const [
+                        Icon(CupertinoIcons.check_mark_circled_solid,
+                            color: linkColor, size: 20),
+                        SizedBox(width: 15),
+                        SmallText(
+                            text: 'Prayer request posted.',
                             color: secondaryColor)
                       ],
                     ),

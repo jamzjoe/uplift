@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_item.dart';
+
+import 'post_item.dart';
 
 class PostListItem extends StatelessWidget {
   const PostListItem({

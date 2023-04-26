@@ -7,7 +7,6 @@ import 'package:uplift/authentication/presentation/bloc/authentication/authentic
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../constant/constant.dart';
 
@@ -117,8 +116,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: _passwordController,
                             ),
                             defaultSpace,
-                            const SmallText(
-                                text: 'Forgot Password?', color: linkColor),
                             const SizedBox(
                               height: 30,
                             ),
@@ -137,7 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: const Padding(
                                     padding: EdgeInsets.all(15.0),
                                     child: DefaultText(
-                                        text: 'Login', color: whiteColor),
+                                        text: 'Confirm', color: whiteColor),
                                   )),
                             ),
                             const SizedBox(

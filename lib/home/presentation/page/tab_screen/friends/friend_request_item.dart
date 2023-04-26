@@ -1,78 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed_screen.dart';
-import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
-
-class FriendsScreen extends StatefulWidget {
-  const FriendsScreen({super.key});
-
-  @override
-  State<FriendsScreen> createState() => _FriendsScreenState();
-}
-
-class _FriendsScreenState extends State<FriendsScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const HeaderText(text: 'Friends', color: secondaryColor),
-        actions: [
-          IconButton(
-            icon: const Icon(Ionicons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate());
-            },
-          )
-        ],
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CustomButton(
-                    widget: const DefaultText(
-                        text: 'Suggestions', color: secondaryColor),
-                    color: lightColor.withOpacity(0.2)),
-                const SizedBox(width: 15),
-                CustomButton(
-                    widget: const DefaultText(
-                        text: 'Your friends', color: secondaryColor),
-                    color: lightColor.withOpacity(0.2))
-              ],
-            ),
-            defaultSpace,
-            const Divider(),
-            defaultSpace,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: const [
-                    DefaultText(text: 'Friend request', color: secondaryColor),
-                    SizedBox(width: 5),
-                    HeaderText(text: '45', color: primaryColor, size: 18)
-                  ],
-                ),
-                const DefaultText(text: 'See all', color: linkColor)
-              ],
-            ),
-            Expanded(child: ListView.builder(
-              itemBuilder: (context, index) {
-                return const FriendRequestItem();
-              },
-            ))
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class FriendRequestItem extends StatelessWidget {
   const FriendRequestItem({

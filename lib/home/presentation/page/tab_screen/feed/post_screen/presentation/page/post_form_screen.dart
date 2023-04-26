@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -38,7 +38,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                   onTap: () {
                     if (_key.currentState!.validate()) {
                       BlocProvider.of<PostPrayerRequestBloc>(context)
-                          .add(PostPrayerRequest(user, controller.text));
+                          .add(PostPrayerRequestActivity(user, controller.text));
                       context.pop();
                     }
                   },

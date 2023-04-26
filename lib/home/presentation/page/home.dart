@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/event_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
 

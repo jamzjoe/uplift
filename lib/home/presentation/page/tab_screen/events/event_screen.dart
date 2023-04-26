@@ -4,8 +4,8 @@ import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-import '../../../../constant/constant.dart';
-import '../../../../utils/widgets/header_text.dart';
+import '../../../../../constant/constant.dart';
+import '../../../../../utils/widgets/header_text.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});

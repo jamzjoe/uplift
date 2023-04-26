@@ -11,13 +11,16 @@ part 'post_prayer_request_state.dart';
 class PostPrayerRequestBloc
     extends Bloc<PostPrayerRequestEvent, PostPrayerRequestState> {
   PostPrayerRequestBloc() : super(PostPrayerRequestInitial()) {
-    on<PostPrayerRequestEvent>((event, emit) {});
-
-    on<PostPrayerRequest>((event, emit) async {
-      PostPrayerRequestLoading();
+    on<PostPrayerRequestActivity>((event, emit) async {
+      emit(PostPrayerRequestLoading());
       try {
-        await PrayerPostService.postPrayerRequest(event.user, event.text);
-        emit(PostPrayerRequestSuccess());
+        await Future.delayed(const Duration(seconds: 3), () async {
+          await PrayerPostService.postPrayerRequest(event.user, event.text);
+        });
+        emit(Posted());
+        await Future.delayed(const Duration(seconds: 3), () async {
+          emit(PostPrayerRequestSuccess());
+        });
       } catch (e) {
         log('Error');
         emit(PostPrayerRequestError());
