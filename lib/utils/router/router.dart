@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
+import 'package:uplift/authentication/presentation/pages/register_screen.dart';
 import 'package:uplift/home/presentation/page/home.dart';
-import 'package:uplift/home/presentation/page/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_reader_screen.dart';
 import 'package:uplift/notifications/presentaion/page/notification_screen.dart';
@@ -27,6 +28,12 @@ final GoRouter router = GoRouter(
               path: 'login',
               pageBuilder: (context, state) =>
                   const MaterialPage(child: LoginScreen()),
+            ),
+            GoRoute(
+              name: "register",
+              path: 'register',
+              pageBuilder: (context, state) =>
+                  const MaterialPage(child: RegisterScreen()),
             )
           ]),
       GoRoute(

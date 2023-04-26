@@ -41,28 +41,27 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
           buildTabItem(
             label: 'Feed',
             index: 0,
-            icon: const Icon(Ionicons.grid_outline),
-            selectedIcon: const Icon(
-              Ionicons.grid,
-            ),
+            icon: const Icon(Ionicons.grid_outline, size: 28),
+            selectedIcon: const Icon(Ionicons.grid, size: 28),
           ),
           buildTabItem(
             label: 'Friends',
             index: 1,
-            icon: const Icon(CupertinoIcons.person_2_square_stack),
-            selectedIcon: const Icon(CupertinoIcons.person_2_square_stack_fill),
+            icon: const Icon(CupertinoIcons.person_2_square_stack, size: 28),
+            selectedIcon:
+                const Icon(CupertinoIcons.person_2_square_stack_fill, size: 28),
           ),
           placeholder,
           buildTabItem(
               label: 'Events',
               index: 2,
-              icon: const Icon(Ionicons.calendar_outline),
-              selectedIcon: const Icon(Ionicons.calendar)),
+              icon: const Icon(Ionicons.calendar_outline, size: 28),
+              selectedIcon: const Icon(Ionicons.calendar, size: 28)),
           buildTabItem(
             label: 'Settings',
             index: 3,
-            icon: const Icon(Ionicons.settings_outline),
-            selectedIcon: const Icon(Ionicons.settings),
+            icon: const Icon(Ionicons.settings_outline, size: 28),
+            selectedIcon: const Icon(Ionicons.settings, size: 28),
           ),
         ],
       ),
@@ -76,28 +75,30 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       required String label}) {
     final isSelected = index == widget.index;
 
-    return IconTheme(
-      data: IconThemeData(
-        color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
-      ),
-      child: GestureDetector(
-        onTap: () {
-          widget.onChangedTab(index);
-          widget.controller!.animateTo(index);
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            isSelected ? selectedIcon : icon,
-            const SizedBox(height: 5),
-            SmallText(
-                text: label,
-                color: isSelected
-                    ? primaryColor
-                    : secondaryColor.withOpacity(0.5)),
-          ],
+    return Expanded(
+      child: IconTheme(
+        data: IconThemeData(
+          color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            widget.onChangedTab(index);
+            widget.controller!.animateTo(index);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              isSelected ? selectedIcon : icon,
+              const SizedBox(height: 5),
+              SmallText(
+                  text: label,
+                  color: isSelected
+                      ? primaryColor
+                      : secondaryColor.withOpacity(0.5)),
+            ],
+          ),
         ),
       ),
     );

@@ -22,6 +22,24 @@ class SignIn extends AuthenticationEvent {
   List<Object?> get props => [user];
 }
 
+class SignInWithEmailAndPassword extends AuthenticationEvent {
+  final String email, password;
+
+  const SignInWithEmailAndPassword(this.email, this.password);
+
+  @override
+  List<Object?> get props => [email, password];
+}
+
+class RegisterWithEmailAndPassword extends AuthenticationEvent {
+  final String email, password;
+
+  const RegisterWithEmailAndPassword(this.email, this.password);
+
+  @override
+  List<Object?> get props => [email, password];
+}
+
 class SignOut extends AuthenticationEvent {
   @override
   List<Object?> get props => throw UnimplementedError();

@@ -28,7 +28,34 @@ class AuthenticationBloc
       emit(Loading());
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        emit(UserIsIn(user!));
+        AuthServices.addUser(user!);
+        emit(UserIsIn(user));
+      } catch (e) {
+        log('Error');
+        emit(UserIsOut());
+      }
+    });
+
+    on<SignInWithEmailAndPassword>((event, emit) async {
+      emit(Loading());
+      try {
+        final User? user = await AuthServices.signInWithEmailAndPassword(
+            event.email, event.password);
+        AuthServices.addUser(user!);
+        emit(UserIsIn(user));
+      } catch (e) {
+        log('Error');
+        emit(UserIsOut());
+      }
+    });
+
+    on<RegisterWithEmailAndPassword>((event, emit) async {
+      emit(Loading());
+      try {
+        final User? user = await AuthServices.registerWithEmailAndPassword(
+            event.email, event.password);
+        AuthServices.addUser(user!);
+        emit(UserIsIn(user));
       } catch (e) {
         log('Error');
         emit(UserIsOut());

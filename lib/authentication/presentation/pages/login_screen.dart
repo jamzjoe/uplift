@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:uplift/authentication/presentation/bloc/authentication/authentic
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../constant/constant.dart';
 
@@ -17,8 +19,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 final GoogleSignIn _googleSignIn = GoogleSignIn();
+final TextEditingController _emailController = TextEditingController();
+final TextEditingController _passwordController = TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _key = GlobalKey<FormState>(debugLabel: 'login');
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
@@ -92,16 +97,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Form(
+                        key: _key,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const CustomField(
-                              label: 'Username',
+                            CustomField(
+                              validator: (p0) => p0!.isEmpty
+                                  ? 'Email address is required'
+                                  : null,
+                              controller: _emailController,
+                              label: 'Email Address',
                             ),
                             defaultSpace,
-                            const CustomField(label: 'Password'),
+                            CustomField(
+                              validator: (p0) =>
+                                  p0!.length < 6 ? 'Password too short.' : null,
+                              label: 'Password',
+                              controller: _passwordController,
+                            ),
                             defaultSpace,
-                            const DefaultText(
+                            const SmallText(
                                 text: 'Forgot Password?', color: linkColor),
                             const SizedBox(
                               height: 30,
@@ -109,7 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    if (_key.currentState!.validate()) {
+                                      BlocProvider.of<AuthenticationBloc>(
+                                              context)
+                                          .add(SignInWithEmailAndPassword(
+                                              _emailController.text,
+                                              _passwordController.text));
+                                    }
+                                  },
                                   child: const Padding(
                                     padding: EdgeInsets.all(15.0),
                                     child: DefaultText(
@@ -199,13 +222,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
+                      defaultSpace,
                       RichText(
                           textAlign: TextAlign.center,
-                          text: const TextSpan(children: [
-                            TextSpan(
+                          text: TextSpan(children: [
+                            const TextSpan(
                                 text: "Don't have an account?",
                                 style: defaultTextStyle),
-                            TextSpan(text: ' Register', style: linkStyle)
+                            TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => context.pushNamed('register'),
+                                text: ' Register',
+                                style: linkStyle)
                           ]))
                     ],
                   ),

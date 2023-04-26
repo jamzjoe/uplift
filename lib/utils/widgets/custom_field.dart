@@ -6,8 +6,12 @@ class CustomField extends StatefulWidget {
   const CustomField({
     super.key,
     required this.label,
+    this.controller,
+    this.validator,
   });
   final String label;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   State<CustomField> createState() => _CustomFieldState();
@@ -17,6 +21,9 @@ class _CustomFieldState extends State<CustomField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: widget.controller,
+      validator: widget.validator,
       decoration: InputDecoration(
           label: DefaultText(text: widget.label, color: secondaryColor),
           border: OutlineInputBorder(

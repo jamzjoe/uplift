@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/post_item.dart';
+import 'package:uplift/home/presentation/page/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_field.dart';
+import 'package:uplift/home/presentation/page/post_screen/presentation/page/post_list_item.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
-
-import '../post_field.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.user});
@@ -19,45 +21,69 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  bool isPosting = false;
   @override
   Widget build(BuildContext context) {
     final User user = widget.user;
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listener: (context, state) {
-        if (state is UserIsIn) {}
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xffF0F0F0),
-        appBar: AppBar(
-          title: const Image(
-            image: AssetImage('assets/uplift-logo.png'),
-            width: 80,
-          ),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  showSearch(
-                      context: context, delegate: CustomSearchDelegate());
-                },
-                icon: const Icon(
-                  Icons.search,
-                  size: 30,
-                )),
-            IconButton(
-                onPressed: goToNotificationScreen,
-                icon: const Icon(
-                  Icons.notifications,
-                  size: 30,
-                )),
-          ],
+    return Scaffold(
+      backgroundColor: const Color(0xffF0F0F0),
+      appBar: AppBar(
+        title: const Image(
+          image: AssetImage('assets/uplift-logo.png'),
+          width: 80,
         ),
-        body: Column(
+        actions: [
+          IconButton(
+              onPressed: () {
+                showSearch(context: context, delegate: CustomSearchDelegate());
+              },
+              icon: const Icon(
+                Icons.search,
+                size: 30,
+              )),
+          IconButton(
+              onPressed: goToNotificationScreen,
+              icon: const Icon(
+                Icons.notifications,
+                size: 30,
+              )),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             PostField(user: user),
-            Expanded(
-                child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    itemBuilder: (context, index) => const PostItem()))
+            BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
+              builder: (context, state) {
+                log(state.toString());
+
+                if (state is PostPrayerRequestLoading) {
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                    color: whiteColor,
+                    child: Row(
+                      children: const [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: linkColor,
+                          ),
+                        ),
+                        SizedBox(width: 15),
+                        SmallText(
+                            text: 'Posting your prayer request...',
+                            color: secondaryColor)
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+            const PostListItem()
           ],
         ),
       ),

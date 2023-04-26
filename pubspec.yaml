@@ -45,6 +45,8 @@ dependencies:
   ionicons: ^0.2.2
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.0.0
+  cached_network_image: ^3.2.3
+  cloud_firestore: ^4.5.2
 
 flutter_native_splash:
   android: true

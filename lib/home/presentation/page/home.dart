@@ -31,7 +31,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
+    hideKeyBoard();
     super.initState();
+  }
+
+  void hideKeyBoard() {
+    Future.delayed(
+        const Duration(seconds: 1), () => FocusScope.of(context).unfocus());
   }
 
   @override
@@ -73,18 +79,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-          splashColor: primaryColor,
-          elevation: 2,
-          shape: const CircleBorder(
-              side: BorderSide(color: primaryColor), eccentricity: .5),
-          child: const Icon(
-            Ionicons.qr_code,
-            color: primaryColor,
-          ),
-          onPressed: () {
-            context.pushNamed('qr_reader', extra: user);
-          }),
+      floatingActionButton: Visibility(
+        visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
+        child: FloatingActionButton(
+            splashColor: primaryColor,
+            elevation: 2,
+            shape: const CircleBorder(
+                side: BorderSide(color: primaryColor), eccentricity: .5),
+            child: const Icon(
+              Ionicons.qr_code,
+              color: primaryColor,
+            ),
+            onPressed: () {
+              context.pushNamed('qr_reader', extra: user);
+            }),
+      ),
       bottomNavigationBar: TabBarMaterialWidget(
           index: index, onChangedTab: onChangedTab, controller: _tabController),
     );

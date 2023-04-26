@@ -7,6 +7,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class SettingsProfileHeader extends StatelessWidget {
@@ -26,17 +27,14 @@ class SettingsProfileHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: NetworkImage(user.photoURL!),
-              ),
+              ProfilePhoto(user: user),
               const SizedBox(width: 10),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeaderText(
-                    text: user.displayName!,
+                    text: user.displayName ?? 'Anonymous User',
                     color: secondaryColor,
                     size: 18,
                   ),

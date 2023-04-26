@@ -84,7 +84,6 @@ class UpcomingEventItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      height: 80,
       child: Row(
         children: [
           Container(
@@ -112,6 +111,7 @@ class UpcomingEventItem extends StatelessWidget {
                       SmallText(text: 'By James Cameron', color: lightColor),
                     ],
                   ),
+                  const SizedBox(height: 5),
                   const SmallText(
                       text: 'May 21, 09:00 pm  OnSite', color: lightColor)
                 ],

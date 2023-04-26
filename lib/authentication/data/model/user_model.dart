@@ -1,24 +1,40 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 class UserModel {
-  final String uid;
-  final String email;
-  final String? displayName;
-  final String? photoUrl;
+  String? displayName;
+  String? emailAddress;
+  bool? emailVerified;
+  String? userId;
+  String? photoUrl;
+  String? phoneNumber;
+  DateTime? createdAt;
 
-  UserModel({
-    required this.uid,
-    required this.email,
-    this.displayName,
-    this.photoUrl,
-  });
+  UserModel(
+      {this.displayName,
+      this.emailAddress,
+      this.emailVerified,
+      this.userId,
+      this.photoUrl,
+      this.phoneNumber,
+      this.createdAt});
 
-  factory UserModel.fromFirebaseUser(User firebaseUser) {
-    return UserModel(
-      uid: firebaseUser.uid,
-      email: firebaseUser.email!,
-      displayName: firebaseUser.displayName,
-      photoUrl: firebaseUser.photoURL,
-    );
+  UserModel.fromJson(Map<String, dynamic> json) {
+    displayName = json['display_name'];
+    emailAddress = json['email_address'];
+    emailVerified = json['email_verified'];
+    userId = json['user_id'];
+    photoUrl = json['photo_url'];
+    phoneNumber = json['phone_number'];
+    createdAt = json['created_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['display_name'] = displayName;
+    data['email_address'] = emailAddress;
+    data['email_verified'] = emailVerified;
+    data['user_id'] = userId;
+    data['photo_url'] = photoUrl;
+    data['phone_number'] = phoneNumber;
+    data['created_at'] = createdAt;
+    return data;
   }
 }

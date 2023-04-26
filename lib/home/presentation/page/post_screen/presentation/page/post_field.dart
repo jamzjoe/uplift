@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 
 class PostField extends StatelessWidget {
   const PostField({
@@ -18,14 +18,12 @@ class PostField extends StatelessWidget {
     return GestureDetector(
       onTap: () => enterPrayerField(context, user),
       child: Container(
-        margin: const EdgeInsets.only(top: 5, bottom: 0),
+        margin: const EdgeInsets.only(top: 5, bottom: 2.5),
         color: whiteColor,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Row(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL!),
-            ),
+            ProfilePhoto(user: user),
             const SizedBox(width: 5),
             Expanded(
                 child: Container(
@@ -34,9 +32,9 @@ class PostField extends StatelessWidget {
                   color: const Color(0xffF6F6F6),
                   border: Border.all(color: secondaryColor.withOpacity(0.2)),
                   borderRadius: BorderRadius.circular(60)),
-              child: const DefaultText(
-                  text: 'What would you like us to pray for?',
-                  color: secondaryColor),
+              child: const Text('What would you like us to pray for?',
+                  style:
+                      TextStyle(overflow: TextOverflow.ellipsis, fontSize: 16)),
             )),
             const SizedBox(width: 5),
             Icon(

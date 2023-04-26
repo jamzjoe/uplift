@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -19,7 +17,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {},
       builder: (context, state) {
-        log(state.toString());
         if (state is UserIsIn) {
           return HomeScreen(user: state.user);
         } else if (state is UserIsOut) {
