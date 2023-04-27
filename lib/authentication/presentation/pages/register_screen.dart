@@ -97,105 +97,137 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.all(30),
                   decoration: const BoxDecoration(color: whiteColor),
                   //Forms
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Form(
-                        key: _key,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            CustomField(
-                              validator: (p0) => p0!.isEmpty
-                                  ? 'Email address is required'
-                                  : null,
-                              controller: _emailController,
-                              label: 'Email Address',
-                            ),
-                            CustomField(
-                              isPassword: hidePassword,
-                              tapSuffix: () => setState(() {
-                                hidePassword = !hidePassword;
-                              }),
-                              suffixIcon: !hidePassword
-                                  ? CupertinoIcons.eye_slash
-                                  : CupertinoIcons.eye,
-                              validator: (p0) =>
-                                  p0!.length < 6 ? 'Password too short.' : null,
-                              label: 'Password',
-                              controller: _passwordController,
-                            ),
-                            defaultSpace,
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    if (_key.currentState!.validate()) {
-                                      BlocProvider.of<AuthenticationBloc>(
-                                              context)
-                                          .add(RegisterWithEmailAndPassword(
-                                              _emailController.text,
-                                              _passwordController.text,
-                                              ''));
-                                    }
-                                  },
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Visibility(
-                                        visible: isLoading,
-                                        child: const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: whiteColor,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Form(
+                          key: _key,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              CustomField(
+                                validator: (p0) => p0!.isEmpty
+                                    ? 'Email address is required'
+                                    : null,
+                                controller: _emailController,
+                                label: 'Email Address',
+                              ),
+                              CustomField(
+                                isPassword: hidePassword,
+                                tapSuffix: () => setState(() {
+                                  hidePassword = !hidePassword;
+                                }),
+                                suffixIcon: !hidePassword
+                                    ? CupertinoIcons.eye_slash
+                                    : CupertinoIcons.eye,
+                                validator: (p0) => p0!.length < 6
+                                    ? 'Password too short.'
+                                    : null,
+                                label: 'Password',
+                                controller: _passwordController,
+                              ),
+                              defaultSpace,
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      if (_key.currentState!.validate()) {
+                                        BlocProvider.of<AuthenticationBloc>(
+                                                context)
+                                            .add(RegisterWithEmailAndPassword(
+                                                _emailController.text,
+                                                _passwordController.text,
+                                                ''));
+                                      }
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Visibility(
+                                          visible: isLoading,
+                                          child: const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: whiteColor,
+                                            ),
                                           ),
                                         ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: DefaultText(
+                                              text: !isLoading
+                                                  ? 'Create Account'
+                                                  : 'Creating UpLift Account',
+                                              color: whiteColor),
+                                        ),
+                                      ],
+                                    )),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                children: [
+                                  line(),
+                                  const Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: DefaultText(
+                                        text: 'Or login with',
+                                        color: secondaryColor),
+                                  ),
+                                  line(),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      BlocProvider.of<AuthenticationBloc>(
+                                              context)
+                                          .add(const GoogleSignInRequested(''));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 25),
+                                      decoration: BoxDecoration(
+                                          color: whiteColor,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color:
+                                                  lightColor.withOpacity(0.2))),
+                                      child: Row(
+                                        children: const [
+                                          Image(
+                                            image: AssetImage(
+                                                "assets/google-logo.png"),
+                                            width: 25,
+                                            height: 30,
+                                          ),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          DefaultText(
+                                              text: 'Google',
+                                              color: secondaryColor),
+                                        ],
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(15.0),
-                                        child: DefaultText(
-                                            text: !isLoading
-                                                ? 'Create Account'
-                                                : 'Creating UpLift Account',
-                                            color: whiteColor),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              children: [
-                                line(),
-                                const Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: DefaultText(
-                                      text: 'Or login with',
-                                      color: secondaryColor),
-                                ),
-                                line(),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    BlocProvider.of<AuthenticationBloc>(context)
-                                        .add(const GoogleSignInRequested(''));
-                                  },
-                                  child: Container(
+                                    ),
+                                  ),
+                                  Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 25),
                                     decoration: BoxDecoration(
@@ -208,7 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       children: const [
                                         Image(
                                           image: AssetImage(
-                                              "assets/google-logo.png"),
+                                              "assets/facebook-logo.png"),
                                           width: 25,
                                           height: 30,
                                         ),
@@ -216,56 +248,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           width: 15,
                                         ),
                                         DefaultText(
-                                            text: 'Google',
+                                            text: 'Facebook',
                                             color: secondaryColor),
                                       ],
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 25),
-                                  decoration: BoxDecoration(
-                                      color: whiteColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                          color: lightColor.withOpacity(0.2))),
-                                  child: Row(
-                                    children: const [
-                                      Image(
-                                        image: AssetImage(
-                                            "assets/facebook-logo.png"),
-                                        width: 25,
-                                        height: 30,
-                                      ),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      DefaultText(
-                                          text: 'Facebook',
-                                          color: secondaryColor),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      defaultSpace,
-                      RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(children: [
-                            const TextSpan(
-                                text: "Already have an account?",
-                                style: defaultTextStyle),
-                            TextSpan(
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => context.pop(),
-                                text: ' Login',
-                                style: linkStyle)
-                          ]))
-                    ],
+                        defaultSpace,
+                        RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(children: [
+                              const TextSpan(
+                                  text: "Already have an account?",
+                                  style: defaultTextStyle),
+                              TextSpan(
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => context.pop(),
+                                  text: ' Login',
+                                  style: linkStyle)
+                            ]))
+                      ],
+                    ),
                   ),
                 ))
               ],

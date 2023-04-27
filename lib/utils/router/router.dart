@@ -27,11 +27,17 @@ final GoRouter router = GoRouter(
               const MaterialPage(child: AuthWrapper()),
           routes: [
             GoRoute(
-              name: "login",
-              path: 'login',
-              pageBuilder: (context, state) =>
-                  const MaterialPage(child: LoginScreen()),
-            ),
+                name: "login",
+                path: 'login',
+                pageBuilder: (context, state) =>
+                    const MaterialPage(child: LoginScreen()),
+                routes: const []),
+            GoRoute(
+                path: 'forgot-password',
+                name: 'forgot-password',
+                pageBuilder: (context, state) => MaterialPage(
+                    child: ForgrotPasswordScreen(
+                        userModel: state.extra as UserModel))),
             GoRoute(
               name: "register",
               path: 'register',
@@ -54,14 +60,6 @@ final GoRouter router = GoRouter(
                 pageBuilder: (context, state) {
                   final user = state.extra as UserModel;
                   return MaterialPage(child: EditProfileScreen(user: user));
-                }),
-            GoRoute(
-                path: 'forgot-password',
-                name: 'forgot-password',
-                pageBuilder: (context, state) {
-                  final user = state.extra as UserModel;
-                  return MaterialPage(
-                      child: ForgrotPasswordScreen(userModel: user));
                 }),
             GoRoute(
               path: 'notification',
