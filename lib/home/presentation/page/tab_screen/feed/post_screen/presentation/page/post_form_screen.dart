@@ -34,11 +34,11 @@ class _PostFormScreenState extends State<PostFormScreen> {
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: CustomButton(
+              child: CustomContainer(
                   onTap: () {
                     if (_key.currentState!.validate()) {
-                      BlocProvider.of<PostPrayerRequestBloc>(context)
-                          .add(PostPrayerRequestActivity(user, controller.text));
+                      BlocProvider.of<PostPrayerRequestBloc>(context).add(
+                          PostPrayerRequestActivity(user, controller.text));
                       context.pop();
                     }
                   },

@@ -9,16 +9,19 @@ class PostListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
-        PostItem(),
-        PostItem(),
-        PostItem(),
-        PostItem(),
-        PostItem(),
-        PostItem(),
-        PostItem(),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 125),
+      child: Column(
+        children: const [
+          PostItem(),
+          PostItem(),
+          PostItem(),
+          PostItem(),
+          PostItem(),
+          PostItem(),
+          PostItem(),
+        ],
+      ),
     );
   }
 }

@@ -109,7 +109,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                         defaultSpace,
                         GestureDetector(
                           onTap: () =>
-                              context.pushNamed('qr_generator', extra: user),
+                              context.pushNamed('qr_generator2', extra: user),
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(

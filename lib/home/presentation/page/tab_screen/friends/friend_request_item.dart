@@ -15,7 +15,10 @@ class FriendRequestItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          const CircleAvatar(radius: 25),
+          const CircleAvatar(
+            radius: 25,
+            backgroundImage: AssetImage('assets/default1.jpg'),
+          ),
           const SizedBox(width: 15),
           Flexible(
             child: Column(

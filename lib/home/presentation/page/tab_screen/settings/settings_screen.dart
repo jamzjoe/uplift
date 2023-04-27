@@ -2,8 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 
 import '../../../../../constant/constant.dart';
 import '../../../../../utils/widgets/header_text.dart';
@@ -107,9 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               icon: CupertinoIcons
                                   .arrow_right_arrow_left_square_fill),
                           SettingsItem(
-                              onTap: () =>
-                                  BlocProvider.of<AuthenticationBloc>(context)
-                                      .add(SignOutRequested()),
+                              onTap: signOutWarning,
                               label: 'Logout',
                               icon: CupertinoIcons.square_arrow_left_fill)
                         ]).toList(),
@@ -123,5 +124,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  void signOutWarning() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const DefaultText(
+                  text: 'Logout Confirmation', color: secondaryColor),
+              actions: [
+                CustomContainer(
+                    onTap: () => context.pop(),
+                    widget:
+                        const DefaultText(text: 'Cancel', color: Colors.red),
+                    color: Colors.transparent),
+                CustomContainer(
+                    onTap: () {
+                      BlocProvider.of<AuthenticationBloc>(context)
+                          .add(SignOutRequested());
+                      if (context.canPop()) {
+                        context.pop();
+                      }
+                    },
+                    widget:
+                        const DefaultText(text: 'Confirm', color: whiteColor),
+                    color: primaryColor),
+              ],
+            ));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,12 +24,24 @@ final TextEditingController _passwordController = TextEditingController();
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  bool isLoading = false;
+  bool hidePassword = true;
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is UserIsIn) {
           context.goNamed('auth_wrapper');
+          _emailController.clear();
+          _passwordController.clear();
+        } else if (state is Loading) {
+          setState(() {
+            isLoading = true;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
         }
       },
       child: Scaffold(
@@ -57,15 +70,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           color: whiteColor,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                            color: whiteColor.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(60)),
-                        child: const DefaultText(
-                            text: 'Sign In ', color: whiteColor),
-                      )
                     ],
                   ),
                 ),
@@ -108,8 +112,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: _emailController,
                               label: 'Email Address',
                             ),
-                            defaultSpace,
                             CustomField(
+                              isPassword: hidePassword,
+                              tapSuffix: () => setState(() {
+                                hidePassword = !hidePassword;
+                              }),
+                              suffixIcon: !hidePassword
+                                  ? CupertinoIcons.eye_slash
+                                  : CupertinoIcons.eye,
                               validator: (p0) =>
                                   p0!.length < 6 ? 'Password too short.' : null,
                               label: 'Password',
@@ -128,13 +138,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               context)
                                           .add(RegisterWithEmailAndPassword(
                                               _emailController.text,
-                                              _passwordController.text));
+                                              _passwordController.text,
+                                              ''));
                                     }
                                   },
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(15.0),
-                                    child: DefaultText(
-                                        text: 'Confirm', color: whiteColor),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Visibility(
+                                        visible: isLoading,
+                                        child: const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: whiteColor,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: DefaultText(
+                                            text: !isLoading
+                                                ? 'Create Account'
+                                                : 'Creating UpLift Account',
+                                            color: whiteColor),
+                                      ),
+                                    ],
                                   )),
                             ),
                             const SizedBox(
@@ -161,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 GestureDetector(
                                   onTap: () async {
                                     BlocProvider.of<AuthenticationBloc>(context)
-                                        .add(GoogleSignInRequested());
+                                        .add(const GoogleSignInRequested(''));
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(

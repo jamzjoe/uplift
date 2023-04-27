@@ -29,7 +29,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             children: [
               Row(
                 children: [
-                  CustomButton(
+                  CustomContainer(
                       onTap: () => setState(() {
                             isSelected = 'Friend Request';
                           }),
@@ -39,7 +39,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           ? primaryColor.withOpacity(0.2)
                           : lightColor.withOpacity(0.3)),
                   const SizedBox(width: 15),
-                  CustomButton(
+                  CustomContainer(
                       onTap: () => setState(() {
                             isSelected = 'Your Friends';
                           }),
@@ -47,7 +47,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           text: 'Your Friends', color: secondaryColor),
                       color: isSelected == 'Your Friends'
                           ? primaryColor.withOpacity(0.2)
-                          : lightColor.withOpacity(0.3))
+                          : lightColor.withOpacity(0.3)),
                 ],
               ),
               defaultSpace,

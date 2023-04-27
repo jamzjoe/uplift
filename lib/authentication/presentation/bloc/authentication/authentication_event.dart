@@ -5,8 +5,12 @@ abstract class AuthenticationEvent extends Equatable {
 }
 
 class GoogleSignInRequested extends AuthenticationEvent {
+  final String bio;
+
+  const GoogleSignInRequested(this.bio);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [bio];
 }
 
 class SignOutRequested extends AuthenticationEvent {
@@ -24,8 +28,9 @@ class SignIn extends AuthenticationEvent {
 
 class SignInWithEmailAndPassword extends AuthenticationEvent {
   final String email, password;
+  final String bio;
 
-  const SignInWithEmailAndPassword(this.email, this.password);
+  const SignInWithEmailAndPassword(this.email, this.password, this.bio);
 
   @override
   List<Object?> get props => [email, password];
@@ -33,8 +38,8 @@ class SignInWithEmailAndPassword extends AuthenticationEvent {
 
 class RegisterWithEmailAndPassword extends AuthenticationEvent {
   final String email, password;
-
-  const RegisterWithEmailAndPassword(this.email, this.password);
+  final String bio;
+  const RegisterWithEmailAndPassword(this.email, this.password, this.bio);
 
   @override
   List<Object?> get props => [email, password];

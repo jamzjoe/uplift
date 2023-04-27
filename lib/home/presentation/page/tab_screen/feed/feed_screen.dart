@@ -43,12 +43,16 @@ class _FeedScreenState extends State<FeedScreen> {
                 Icons.search,
                 size: 30,
               )),
-          IconButton(
-              onPressed: goToNotificationScreen,
-              icon: const Icon(
-                Icons.notifications,
-                size: 30,
-              )),
+          Badge.count(
+            count: 20,
+            alignment: AlignmentDirectional.bottomStart,
+            child: IconButton(
+                onPressed: goToNotificationScreen,
+                icon: const Icon(
+                  Icons.notifications,
+                  size: 30,
+                )),
+          ),
         ],
       ),
       body: SingleChildScrollView(

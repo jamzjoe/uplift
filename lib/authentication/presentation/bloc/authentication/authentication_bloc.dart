@@ -16,7 +16,6 @@ class AuthenticationBloc
   late final StreamSubscription<User?> streamSubscription;
   AuthenticationBloc(this.authRepository) : super(AuthenticationInitial()) {
     streamSubscription = authRepository.user.listen((user) {
-      log(user.toString());
       if (user != null) {
         add(SignIn(user));
       } else {
@@ -28,11 +27,11 @@ class AuthenticationBloc
       emit(Loading());
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        AuthServices.addUser(user!);
+        AuthServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
       } catch (e) {
         log('Error');
-        emit(UserIsOut());
+        emit(UserIsOut(e.toString()));
       }
     });
 
@@ -41,11 +40,14 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email, event.password);
-        AuthServices.addUser(user!);
+        AuthServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
-      } catch (e) {
-        log('Error');
-        emit(UserIsOut());
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          emit(const UserIsOut("No user found for that email."));
+        } else if (e.code == 'wrong-password') {
+          emit(const UserIsOut("Wrong password provided for that user."));
+        }
       }
     });
 
@@ -54,11 +56,14 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email, event.password);
-        AuthServices.addUser(user!);
+        AuthServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
-      } catch (e) {
-        log('Error');
-        emit(UserIsOut());
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          emit(const UserIsOut("The password provided is too weak."));
+        } else if (e.code == 'email-already-in-use') {
+          emit(const UserIsOut('The account already exists for that email.'));
+        }
       }
     });
 
@@ -69,6 +74,6 @@ class AuthenticationBloc
     });
 
     on<SignIn>((event, emit) => emit(UserIsIn(event.user)));
-    on<SignOut>((event, emit) => emit(UserIsOut()));
+    on<SignOut>((event, emit) => emit(const UserIsOut("")));
   }
 }

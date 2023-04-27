@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-class FriendsItem extends StatelessWidget {
-  const FriendsItem({
+class AddFriendItem extends StatelessWidget {
+  const AddFriendItem({
     super.key,
   });
 
@@ -21,7 +22,6 @@ class FriendsItem extends StatelessWidget {
           const SizedBox(width: 15),
           Flexible(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,7 +34,23 @@ class FriendsItem extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 5),
-                const SmallText(text: 'Friends since 2021', color: lightColor)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 7, horizontal: 15),
+                        decoration: BoxDecoration(
+                            color: linkColor,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: const Center(
+                          child: DefaultText(
+                              text: 'Add friend', color: whiteColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           )

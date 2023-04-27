@@ -18,6 +18,9 @@ class UserIsIn extends AuthenticationState {
 }
 
 class UserIsOut extends AuthenticationState {
+  final String message;
+
+  const UserIsOut(this.message);
   @override
   List<Object> get props => [];
 }

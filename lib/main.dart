@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Uplift Development',
         theme: ThemeData(
+          dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(primaryColor))),
@@ -51,6 +52,8 @@ class MyApp extends StatelessWidget {
           bottomAppBarTheme:
               const BottomAppBarTheme(surfaceTintColor: whiteColor),
           colorSchemeSeed: Colors.lightBlue,
+          popupMenuTheme:
+              const PopupMenuThemeData(surfaceTintColor: whiteColor),
           useMaterial3: true,
         ),
       ),

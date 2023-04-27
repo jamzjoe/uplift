@@ -64,7 +64,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
               defaultSpace,
               QrImage(
                   foregroundColor: secondaryColor,
-                  data: "www.godesq.com",
+                  data: user.uid,
                   version: QrVersions.auto,
                   size: 250),
               defaultSpace,

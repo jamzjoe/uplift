@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -23,7 +24,9 @@ class PostItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const CircleAvatar(),
+                  const CircleAvatar(
+                    backgroundImage: AssetImage('assets/default1.jpg'),
+                  ),
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +45,16 @@ class PostItem extends StatelessWidget {
                 children: [
                   PopupMenuButton(
                     icon: const Icon(Icons.more_horiz),
-                    itemBuilder: (context) => [],
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                          child: ListTile(
+                        onTap: () {},
+                        dense: true,
+                        leading: const Icon(CupertinoIcons.bookmark_fill),
+                        title: const DefaultText(
+                            text: 'Save Post', color: secondaryColor),
+                      ))
+                    ],
                   ),
                   IconButton(onPressed: () {}, icon: const Icon(Icons.close))
                 ],
@@ -65,6 +77,7 @@ class PostItem extends StatelessWidget {
                 children: const [
                   CircleAvatar(
                     radius: 10,
+                    backgroundImage: AssetImage('assets/default.png'),
                   ),
                   SizedBox(width: 5),
                   SmallText(text: 'Joe +12K', color: lightColor)

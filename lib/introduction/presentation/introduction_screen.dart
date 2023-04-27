@@ -56,7 +56,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               GestureDetector(
                 onTap: () async {
                   BlocProvider.of<AuthenticationBloc>(context)
-                      .add(GoogleSignInRequested());
+                      .add(const GoogleSignInRequested(''));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -72,6 +72,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                               height: 25,
                               width: 25,
                               child: CircularProgressIndicator(
+                                strokeWidth: 3,
                                 color: primaryColor,
                               ),
                             )
