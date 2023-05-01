@@ -11,7 +11,9 @@ class PostListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 125),
-      child: Column(
+      child: ListView(
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
         children: const [
           PostItem(),
           PostItem(),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,6 +32,8 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<PostPrayerRequestBloc>(
             create: (context) => PostPrayerRequestBloc()),
+        BlocProvider<GetPrayerRequestBloc>(
+            create: (context) => GetPrayerRequestBloc())
       ],
       child: MaterialApp.router(
         routerConfig: router,

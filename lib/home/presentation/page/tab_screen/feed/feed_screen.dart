@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,59 +53,54 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            PostField(user: user),
-            BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
-              builder: (context, state) {
-                log(state.toString());
-
-                if (state is PostPrayerRequestLoading) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    color: whiteColor,
-                    child: Row(
-                      children: const [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: linkColor,
-                          ),
+      body: ListView(
+        physics: const ClampingScrollPhysics(),
+        children: [
+          PostField(user: user),
+          BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
+            builder: (context, state) {
+              if (state is PostPrayerRequestLoading) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  color: whiteColor,
+                  child: Row(
+                    children: const [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: linkColor,
                         ),
-                        SizedBox(width: 15),
-                        SmallText(
-                            text: 'Posting your prayer request...',
-                            color: secondaryColor)
-                      ],
-                    ),
-                  );
-                } else if (state is Posted) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    color: whiteColor,
-                    child: Row(
-                      children: const [
-                        Icon(CupertinoIcons.check_mark_circled_solid,
-                            color: linkColor, size: 20),
-                        SizedBox(width: 15),
-                        SmallText(
-                            text: 'Prayer request posted.',
-                            color: secondaryColor)
-                      ],
-                    ),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-            const PostListItem()
-          ],
-        ),
+                      ),
+                      SizedBox(width: 15),
+                      SmallText(
+                          text: 'Posting your prayer request...',
+                          color: secondaryColor)
+                    ],
+                  ),
+                );
+              } else if (state is Posted) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                  color: whiteColor,
+                  child: Row(
+                    children: const [
+                      Icon(CupertinoIcons.check_mark_circled_solid,
+                          color: linkColor, size: 20),
+                      SizedBox(width: 15),
+                      SmallText(
+                          text: 'Prayer request posted.', color: secondaryColor)
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+          const PostListItem()
+        ],
       ),
     );
   }
