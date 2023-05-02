@@ -11,7 +11,7 @@ class PostShimmerLoading extends StatefulWidget {
 class _PostShimmerLoadingState extends State<PostShimmerLoading> {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: const [
         PostItemShimmerLoading(),
         PostItemShimmerLoading(),

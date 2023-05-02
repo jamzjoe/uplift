@@ -27,6 +27,8 @@ class AuthServices {
     return userCredential.user;
   }
 
+  
+
   static void addUser(User user, String bio) {
     final UserModel userModel = UserModel(
         displayName: user.displayName,

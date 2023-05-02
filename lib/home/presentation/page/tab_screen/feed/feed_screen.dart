@@ -10,7 +10,6 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 import 'post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
-import 'post_screen/presentation/page/post_field.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -27,181 +26,110 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
-<<<<<<< HEAD
       backgroundColor: const Color(0xffE9EBEE),
       extendBody: true,
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              backgroundColor: whiteColor,
-              title: const Image(
-                image: AssetImage('assets/uplift-logo.png'),
-                width: 80,
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      showSearch(
-                          context: context, delegate: CustomSearchDelegate());
-                    },
-                    icon: const Icon(
-                      Icons.search,
-                      size: 30,
-                    )),
-                Badge.count(
-                  count: 20,
-                  alignment: AlignmentDirectional.bottomStart,
-                  child: IconButton(
-                      onPressed: goToNotificationScreen,
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: whiteColor,
+                title: const Image(
+                  image: AssetImage('assets/uplift-logo.png'),
+                  width: 80,
+                ),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        showSearch(
+                            context: context, delegate: CustomSearchDelegate());
+                      },
                       icon: const Icon(
-                        Icons.notifications,
+                        Icons.search,
                         size: 30,
                       )),
-                ),
+                  Badge.count(
+                    count: 20,
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: IconButton(
+                        onPressed: goToNotificationScreen,
+                        icon: const Icon(
+                          Icons.notifications,
+                          size: 30,
+                        )),
+                  ),
+                ],
+              )
+            ];
+          },
+          body: RefreshIndicator(
+            onRefresh: () async =>
+                BlocProvider.of<GetPrayerRequestBloc>(context)
+                    .add(const GetPostRequestList()),
+            child: Column(
+              children: [
+                Expanded(child: PostListItem(user: user)),
               ],
-            )
-          ];
-        },
-        body: RefreshIndicator(
-          onRefresh: () async => BlocProvider.of<GetPrayerRequestBloc>(context)
-              .add(const GetPostRequestList()),
-          child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(bottom: 120),
-            children: [
-              PostField(user: user),
-              BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
-                builder: (context, state) {
-                  if (state is PostPrayerRequestLoading) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 5),
-                      color: whiteColor,
-                      child: Row(
-                        children: const [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: linkColor,
-                            ),
-                          ),
-                          SizedBox(width: 15),
-                          SmallText(
-                              text: 'Posting your prayer request...',
-                              color: secondaryColor)
-                        ],
-                      ),
-                    );
-                  } else if (state is Posted) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 5),
-                      color: whiteColor,
-                      child: Row(
-                        children: const [
-                          Icon(CupertinoIcons.check_mark_circled_solid,
-                              color: linkColor, size: 20),
-                          SizedBox(width: 15),
-                          SmallText(
-                              text: 'Prayer request posted.',
-                              color: secondaryColor)
-                        ],
-                      ),
-                    );
-                  }
-                  return const SizedBox();
-                },
-              ),
-              const Center(child: PostListItem()),
-            ],
+            ),
           ),
         ),
-=======
-      backgroundColor: const Color(0xffF0F0F0),
-      appBar: AppBar(
-        title: const Image(
-          image: AssetImage('assets/uplift-logo.png'),
-          width: 80,
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showSearch(context: context, delegate: CustomSearchDelegate());
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-              )),
-          Badge.count(
-            count: 20,
-            alignment: AlignmentDirectional.bottomStart,
-            child: IconButton(
-                onPressed: goToNotificationScreen,
-                icon: const Icon(
-                  Icons.notifications,
-                  size: 30,
-                )),
-          ),
-        ],
-      ),
-      body: ListView(
-        physics: const ClampingScrollPhysics(),
-        children: [
-          PostField(user: user),
-          BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
-            builder: (context, state) {
-              if (state is PostPrayerRequestLoading) {
-                return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                  color: whiteColor,
-                  child: Row(
-                    children: const [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: linkColor,
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                      SmallText(
-                          text: 'Posting your prayer request...',
-                          color: secondaryColor)
-                    ],
-                  ),
-                );
-              } else if (state is Posted) {
-                return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                  color: whiteColor,
-                  child: Row(
-                    children: const [
-                      Icon(CupertinoIcons.check_mark_circled_solid,
-                          color: linkColor, size: 20),
-                      SizedBox(width: 15),
-                      SmallText(
-                          text: 'Prayer request posted.', color: secondaryColor)
-                    ],
-                  ),
-                );
-              }
-              return const SizedBox();
-            },
-          ),
-          const PostListItem()
-        ],
->>>>>>> 1cdcbe3855cdbe11d7793c45b6d1c625b3866a4c
       ),
     );
   }
 
   void goToNotificationScreen() {
     context.pushNamed('notification');
+  }
+}
+
+class PostStatusWidget extends StatelessWidget {
+  const PostStatusWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
+      builder: (context, state) {
+        if (state is PostPrayerRequestLoading) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+            color: whiteColor,
+            child: Row(
+              children: const [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: linkColor,
+                  ),
+                ),
+                SizedBox(width: 15),
+                SmallText(
+                    text: 'Posting your prayer request...',
+                    color: secondaryColor)
+              ],
+            ),
+          );
+        } else if (state is Posted) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+            color: whiteColor,
+            child: Row(
+              children: const [
+                Icon(CupertinoIcons.check_mark_circled_solid,
+                    color: linkColor, size: 20),
+                SizedBox(width: 15),
+                SmallText(text: 'Prayer request posted.', color: secondaryColor)
+              ],
+            ),
+          );
+        }
+        return const SizedBox();
+      },
+    );
   }
 }
 

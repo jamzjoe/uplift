@@ -19,6 +19,7 @@ class PostField extends StatelessWidget {
       onTap: () => enterPrayerField(context, user),
       child: Container(
         color: whiteColor,
+        margin: const EdgeInsets.only(bottom: 5),
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Row(
           children: [

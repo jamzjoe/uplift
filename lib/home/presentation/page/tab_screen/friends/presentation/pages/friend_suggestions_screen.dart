@@ -6,11 +6,16 @@ import 'package:uplift/utils/widgets/default_text.dart';
 
 import 'friend_suggestion_list.dart';
 
-class FriendSuggestions extends StatelessWidget {
+class FriendSuggestions extends StatefulWidget {
   const FriendSuggestions({
     super.key,
   });
 
+  @override
+  State<FriendSuggestions> createState() => _FriendSuggestionsState();
+}
+
+class _FriendSuggestionsState extends State<FriendSuggestions> {
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -32,6 +37,7 @@ class FriendSuggestions extends StatelessWidget {
         BlocBuilder<FriendsSuggestionsBlocBloc, FriendsSuggestionsBlocState>(
           builder: (context, state) {
             if (state is FriendsSuggestionLoading) {
+              return const SizedBox();
             } else if (state is FriendsSuggestionLoadingSuccess) {
               return FriendSuggestionList(
                 users: state.users,
