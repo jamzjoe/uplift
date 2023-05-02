@@ -14,6 +14,7 @@ class PostListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
       builder: (context, state) {
         if (state is LoadingPrayerRequesListSuccess) {
@@ -53,6 +54,13 @@ class EndOfPostWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
+=======
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 125),
+      child: ListView(
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
+>>>>>>> 1cdcbe3855cdbe11d7793c45b6d1c625b3866a4c
         children: const [
           Image(
             image: AssetImage('assets/angel.png'),

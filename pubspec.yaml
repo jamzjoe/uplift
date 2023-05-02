@@ -47,7 +47,11 @@ dependencies:
   qr_flutter: ^4.0.0
   cached_network_image: ^3.2.3
   cloud_firestore: ^4.5.2
+<<<<<<< HEAD
   shimmer: ^2.0.0
+=======
+  firebase_database: ^10.1.1
+>>>>>>> 1cdcbe3855cdbe11d7793c45b6d1c625b3866a4c
 
 flutter_native_splash:
   android: true

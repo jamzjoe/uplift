@@ -12,6 +12,8 @@ class PostPrayerRequestActivity extends PostPrayerRequestEvent {
   final String text;
 
   const PostPrayerRequestActivity(this.user, this.text);
-   @override
+  @override
   List<Object> get props => [user, text];
 }
+
+

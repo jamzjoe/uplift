@@ -34,11 +34,15 @@ class MyApp extends StatelessWidget {
         BlocProvider<PostPrayerRequestBloc>(
             create: (context) => PostPrayerRequestBloc()),
         BlocProvider<GetPrayerRequestBloc>(
+<<<<<<< HEAD
             create: (context) =>
                 GetPrayerRequestBloc()..add(const GetPostRequestList())),
         BlocProvider<FriendsSuggestionsBlocBloc>(
             create: (context) =>
                 FriendsSuggestionsBlocBloc()..add(FetchUsersEvent()))
+=======
+            create: (context) => GetPrayerRequestBloc())
+>>>>>>> 1cdcbe3855cdbe11d7793c45b6d1c625b3866a4c
       ],
       child: MaterialApp.router(
         routerConfig: router,

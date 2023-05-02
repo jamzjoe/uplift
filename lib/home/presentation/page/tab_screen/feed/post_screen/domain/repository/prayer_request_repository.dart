@@ -4,11 +4,16 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 
 class PrayerRequestRepository {
   Future<List<PrayerRequestPostModel>> getPrayerRequestList() async {
+<<<<<<< HEAD
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance
         .collection('Prayers')
         .orderBy('date', descending: false)
         .get();
+=======
+    QuerySnapshot<Map<String, dynamic>> response =
+        await FirebaseFirestore.instance.collection('Prayers').get();
+>>>>>>> 1cdcbe3855cdbe11d7793c45b6d1c625b3866a4c
     List<PrayerRequestPostModel> data = response.docs
         .map((e) => PrayerRequestPostModel.fromJson(e.data()))
         .toList()
