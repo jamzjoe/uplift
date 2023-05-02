@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? displayName;
   String? emailAddress;
@@ -5,7 +7,7 @@ class UserModel {
   String? userId;
   String? photoUrl;
   String? phoneNumber;
-  DateTime? createdAt;
+  Timestamp? createdAt;
   String? bio;
 
   UserModel(

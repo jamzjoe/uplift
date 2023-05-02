@@ -8,11 +8,12 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
+import 'package:uplift/utils/widgets/keep_alive.dart';
 
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'tab_screen/friends/presentation/pages/friends_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.user});
@@ -26,6 +27,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 int index = 0;
 TabController? _tabController;
+PageController _pageController = PageController(initialPage: 0, keepPage: true);
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
@@ -44,40 +46,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
+      backgroundColor: const Color(0xff898F9C),
       key: _scaffoldKey,
       extendBody: true,
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-          log(state.toString());
-          if (state is UserIsOut) {
-            setState(() {
-              index = 0;
-            });
-          }
-        },
-        child: DefaultTabController(
-          initialIndex: 1,
-          length: 4,
-          child: Column(
+          listener: (context, state) {
+            log(state.toString());
+            if (state is UserIsOut) {
+              setState(() {
+                index = 0;
+              });
+            }
+          },
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (value) {
+              setState(() {
+                index = value;
+              });
+            },
             children: [
-              Expanded(
-                  child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: _tabController,
-                      children: [
-                    FeedScreen(user: user),
-                    const FriendsScreen(),
-                    const EventScreen(),
-                    SettingsScreen(user: user)
-                  ]))
-              // Expanded(
-              //     child: ListView.builder(
-              //   itemBuilder: (context, index) => const PostItem(),
-              // ))
+              KeepAlivePage(child: FeedScreen(user: user)),
+              const KeepAlivePage(child: FriendsScreen()),
+              const KeepAlivePage(child: EventScreen()),
+              KeepAlivePage(child: SettingsScreen(user: user))
             ],
-          ),
-        ),
-      ),
+          )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Visibility(
         visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
@@ -107,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       index = value;
       _tabController!.animateTo(value);
+      _pageController.animateToPage(value,
+          duration: const Duration(milliseconds: 300), curve: Curves.ease);
     });
   }
 }

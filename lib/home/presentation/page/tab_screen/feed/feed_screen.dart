@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +8,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
+import 'post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_field.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
@@ -28,85 +27,96 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
-      backgroundColor: const Color(0xffF0F0F0),
-      appBar: AppBar(
-        title: const Image(
-          image: AssetImage('assets/uplift-logo.png'),
-          width: 80,
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                showSearch(context: context, delegate: CustomSearchDelegate());
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-              )),
-          Badge.count(
-            count: 20,
-            alignment: AlignmentDirectional.bottomStart,
-            child: IconButton(
-                onPressed: goToNotificationScreen,
-                icon: const Icon(
-                  Icons.notifications,
-                  size: 30,
-                )),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            PostField(user: user),
-            BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
-              builder: (context, state) {
-                log(state.toString());
-
-                if (state is PostPrayerRequestLoading) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    color: whiteColor,
-                    child: Row(
-                      children: const [
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: linkColor,
+      backgroundColor: const Color(0xffE9EBEE),
+      extendBody: true,
+      body: NestedScrollView(
+        floatHeaderSlivers: true,
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              backgroundColor: whiteColor,
+              title: const Image(
+                image: AssetImage('assets/uplift-logo.png'),
+                width: 80,
+              ),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: context, delegate: CustomSearchDelegate());
+                    },
+                    icon: const Icon(
+                      Icons.search,
+                      size: 30,
+                    )),
+                Badge.count(
+                  count: 20,
+                  alignment: AlignmentDirectional.bottomStart,
+                  child: IconButton(
+                      onPressed: goToNotificationScreen,
+                      icon: const Icon(
+                        Icons.notifications,
+                        size: 30,
+                      )),
+                ),
+              ],
+            )
+          ];
+        },
+        body: RefreshIndicator(
+          onRefresh: () async => BlocProvider.of<GetPrayerRequestBloc>(context)
+              .add(const GetPostRequestList()),
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(bottom: 120),
+            children: [
+              PostField(user: user),
+              BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
+                builder: (context, state) {
+                  if (state is PostPrayerRequestLoading) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 5),
+                      color: whiteColor,
+                      child: Row(
+                        children: const [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: linkColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 15),
-                        SmallText(
-                            text: 'Posting your prayer request...',
-                            color: secondaryColor)
-                      ],
-                    ),
-                  );
-                } else if (state is Posted) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                    color: whiteColor,
-                    child: Row(
-                      children: const [
-                        Icon(CupertinoIcons.check_mark_circled_solid,
-                            color: linkColor, size: 20),
-                        SizedBox(width: 15),
-                        SmallText(
-                            text: 'Prayer request posted.',
-                            color: secondaryColor)
-                      ],
-                    ),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-            const PostListItem()
-          ],
+                          SizedBox(width: 15),
+                          SmallText(
+                              text: 'Posting your prayer request...',
+                              color: secondaryColor)
+                        ],
+                      ),
+                    );
+                  } else if (state is Posted) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 5),
+                      color: whiteColor,
+                      child: Row(
+                        children: const [
+                          Icon(CupertinoIcons.check_mark_circled_solid,
+                              color: linkColor, size: 20),
+                          SizedBox(width: 15),
+                          SmallText(
+                              text: 'Prayer request posted.',
+                              color: secondaryColor)
+                        ],
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+              const Center(child: PostListItem()),
+            ],
+          ),
         ),
       ),
     );

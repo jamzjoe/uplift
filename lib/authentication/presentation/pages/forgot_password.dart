@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
@@ -8,8 +7,7 @@ import 'package:uplift/utils/widgets/default_text.dart';
 import '../../../utils/widgets/small_text.dart';
 
 class ForgrotPasswordScreen extends StatefulWidget {
-  const ForgrotPasswordScreen({super.key, required this.userModel});
-  final UserModel userModel;
+  const ForgrotPasswordScreen({super.key});
 
   @override
   State<ForgrotPasswordScreen> createState() => _ForgrotPasswordScreenState();

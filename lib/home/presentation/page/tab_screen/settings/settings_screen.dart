@@ -37,91 +37,83 @@ class _SettingsScreenState extends State<SettingsScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 150),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SettingsProfileHeader(user: user),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                children: [
-                  SettingsSection(
-                    title: 'Account',
-                    widget: Container(
-                      decoration: BoxDecoration(
-                          color: whiteColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        children:
-                            ListTile.divideTiles(context: context, tiles: [
-                          const SettingsItem(
-                              label: 'Account',
-                              icon: CupertinoIcons.person_fill),
-                          const SettingsItem(
-                              label: 'Privacy', icon: CupertinoIcons.lock_fill),
-                          const SettingsItem(
-                              label: 'Security',
-                              icon: CupertinoIcons.shield_fill),
-                          const SettingsItem(
-                              label: 'Share Profile',
-                              icon:
-                                  CupertinoIcons.arrowshape_turn_up_right_fill)
-                        ]).toList(),
-                      ),
-                    ),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 100),
+        shrinkWrap: true,
+        children: [
+          SettingsProfileHeader(user: user),
+          ListView(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            children: [
+              SettingsSection(
+                title: 'Account',
+                widget: Container(
+                  decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    children: ListTile.divideTiles(context: context, tiles: [
+                      const SettingsItem(
+                          label: 'Account', icon: CupertinoIcons.person_fill),
+                      const SettingsItem(
+                          label: 'Privacy', icon: CupertinoIcons.lock_fill),
+                      const SettingsItem(
+                          label: 'Security', icon: CupertinoIcons.shield_fill),
+                      const SettingsItem(
+                          label: 'Share Profile',
+                          icon: CupertinoIcons.arrowshape_turn_up_right_fill)
+                    ]).toList(),
                   ),
-                  SettingsSection(
-                      title: 'Support & About',
-                      widget: Container(
-                        decoration: BoxDecoration(
-                            color: whiteColor,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Column(
-                          children:
-                              ListTile.divideTiles(context: context, tiles: [
-                            const SettingsItem(
-                                label: 'Donate and Support Us',
-                                icon: CupertinoIcons.heart_fill),
-                            const SettingsItem(
-                                label: 'Report a problem',
-                                icon: CupertinoIcons.flag_fill),
-                            const SettingsItem(
-                                label: 'Support',
-                                icon: CupertinoIcons.chat_bubble_fill),
-                            const SettingsItem(
-                                label: 'Terms and Policies',
-                                icon: CupertinoIcons.info_circle_fill),
-                          ]).toList(),
-                        ),
-                      )),
-                  SettingsSection(
-                    title: 'Login',
-                    widget: Container(
-                      decoration: BoxDecoration(
-                          color: whiteColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        children:
-                            ListTile.divideTiles(context: context, tiles: [
-                          const SettingsItem(
-                              label: 'Switch Account',
-                              icon: CupertinoIcons
-                                  .arrow_right_arrow_left_square_fill),
-                          SettingsItem(
-                              onTap: signOutWarning,
-                              label: 'Logout',
-                              icon: CupertinoIcons.square_arrow_left_fill)
-                        ]).toList(),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            )
-          ],
-        ),
+              SettingsSection(
+                  title: 'Support & About',
+                  widget: Container(
+                    decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      children: ListTile.divideTiles(context: context, tiles: [
+                        const SettingsItem(
+                            label: 'Donate and Support Us',
+                            icon: CupertinoIcons.heart_fill),
+                        const SettingsItem(
+                            label: 'Report a problem',
+                            icon: CupertinoIcons.flag_fill),
+                        const SettingsItem(
+                            label: 'Support',
+                            icon: CupertinoIcons.chat_bubble_fill),
+                        const SettingsItem(
+                            label: 'Terms and Policies',
+                            icon: CupertinoIcons.info_circle_fill),
+                      ]).toList(),
+                    ),
+                  )),
+              SettingsSection(
+                title: 'Login',
+                widget: Container(
+                  decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    children: ListTile.divideTiles(context: context, tiles: [
+                      const SettingsItem(
+                          label: 'Switch Account',
+                          icon: CupertinoIcons
+                              .arrow_right_arrow_left_square_fill),
+                      SettingsItem(
+                          onTap: signOutWarning,
+                          label: 'Logout',
+                          icon: CupertinoIcons.square_arrow_left_fill)
+                    ]).toList(),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

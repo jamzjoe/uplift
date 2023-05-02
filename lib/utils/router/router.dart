@@ -34,10 +34,9 @@ final GoRouter router = GoRouter(
                 routes: const []),
             GoRoute(
                 path: 'forgot-password',
-                name: 'forgot-password',
-                pageBuilder: (context, state) => MaterialPage(
-                    child: ForgrotPasswordScreen(
-                        userModel: state.extra as UserModel))),
+                name: 'forgotPassword',
+                pageBuilder: (context, state) =>
+                    const MaterialPage(child: ForgrotPasswordScreen())),
             GoRoute(
               name: "register",
               path: 'register',

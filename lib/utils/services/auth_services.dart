@@ -35,7 +35,7 @@ class AuthServices {
         userId: user.uid,
         photoUrl: user.photoURL,
         phoneNumber: user.phoneNumber,
-        createdAt: user.metadata.creationTime,
+        createdAt: Timestamp.now(),
         bio: bio);
     FirebaseFirestore.instance
         .collection('Users')

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -46,13 +48,12 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
             children: [
               Column(
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(user.photoURL!),
-                  ),
+                  ProfilePhoto(user: widget.user),
                   defaultSpace,
                   HeaderText(
-                      text: user.displayName!, color: secondaryColor, size: 18),
+                      text: user.displayName ?? 'Anonymous User',
+                      color: secondaryColor,
+                      size: 18),
                   SmallText(
                       text: user.emailVerified
                           ? 'User Verified'
@@ -70,7 +71,9 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
               defaultSpace,
               defaultSpace,
               ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.pushNamed('qr_reader');
+                  },
                   icon: const Icon(
                     CupertinoIcons.qrcode_viewfinder,
                     color: whiteColor,

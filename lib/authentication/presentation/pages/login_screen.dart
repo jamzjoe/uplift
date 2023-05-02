@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               defaultSpace,
                               GestureDetector(
                                 onTap: () =>
-                                    context.pushNamed('forgot-password'),
+                                    context.pushNamed('forgotPassword'),
                                 child: const DefaultText(
                                     text: 'Forgot password?', color: linkColor),
                               ),

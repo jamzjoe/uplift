@@ -18,7 +18,6 @@ class PostField extends StatelessWidget {
     return GestureDetector(
       onTap: () => enterPrayerField(context, user),
       child: Container(
-        margin: const EdgeInsets.only(top: 5, bottom: 2.5),
         color: whiteColor,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Row(

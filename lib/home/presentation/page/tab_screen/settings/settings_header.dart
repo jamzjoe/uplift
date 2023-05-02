@@ -53,7 +53,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                       SmallText(text: widget.user.email!, color: lightColor),
                       const SizedBox(width: 5),
                       GestureDetector(
-                          onTap: () => context.pushNamed('qr_generator',
+                          onTap: () => context.pushNamed('qr_generator2',
                               extra: widget.user),
                           child: const Icon(Ionicons.qr_code,
                               size: 15, color: lightColor))
