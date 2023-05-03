@@ -59,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             }
           },
           child: PageView(
+            pageSnapping: true,
+            allowImplicitScrolling: false,
             controller: _pageController,
             onPageChanged: (value) {
               setState(() {
@@ -102,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       index = value;
       _tabController!.animateTo(value);
       _pageController.animateToPage(value,
-          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+          duration: const Duration(microseconds: 1), curve: Curves.ease);
     });
   }
 }

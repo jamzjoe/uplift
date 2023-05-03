@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 class TabBarMaterialWidget extends StatefulWidget {
   final int index;
@@ -75,32 +74,12 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       required String label}) {
     final isSelected = index == widget.index;
 
-    return Expanded(
-      child: IconTheme(
-        data: IconThemeData(
-          color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
-        ),
-        child: GestureDetector(
-          onTap: () {
-            widget.onChangedTab(index);
-            widget.controller!.animateTo(index);
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              isSelected ? selectedIcon : icon,
-              const SizedBox(height: 5),
-              SmallText(
-                  text: label,
-                  color: isSelected
-                      ? primaryColor
-                      : secondaryColor.withOpacity(0.5)),
-            ],
-          ),
-        ),
-      ),
-    );
+    return IconButton(
+        color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
+        onPressed: () {
+          widget.onChangedTab(index);
+          widget.controller!.animateTo(index);
+        },
+        icon: isSelected ? selectedIcon : icon);
   }
 }
