@@ -9,6 +9,7 @@ class UserModel {
   String? phoneNumber;
   Timestamp? createdAt;
   String? bio;
+  String? deviceToken;
 
   UserModel(
       {this.displayName,
@@ -18,7 +19,8 @@ class UserModel {
       this.photoUrl,
       this.phoneNumber,
       this.createdAt,
-      this.bio});
+      this.bio,
+      this.deviceToken});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     displayName = json['display_name'];
@@ -29,6 +31,7 @@ class UserModel {
     phoneNumber = json['phone_number'];
     createdAt = json['created_at'];
     bio = json['bio'];
+    deviceToken = json['device_token'];
   }
 
   Map<String, dynamic> toJson() {
@@ -41,6 +44,7 @@ class UserModel {
     data['phone_number'] = phoneNumber;
     data['created_at'] = createdAt;
     data['bio'] = bio;
+    data['device_token'] = deviceToken;
     return data;
   }
 }

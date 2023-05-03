@@ -10,6 +10,8 @@ import 'package:uplift/utils/services/auth_services.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
+final AuthServices authServices = AuthServices();
+
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository authRepository;
@@ -27,7 +29,7 @@ class AuthenticationBloc
       emit(Loading());
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        AuthServices.addUser(user!, event.bio);
+        authServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
       } catch (e) {
         log('Error');
@@ -40,7 +42,7 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email, event.password);
-        AuthServices.addUser(user!, event.bio);
+        authServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -56,7 +58,7 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email, event.password);
-        AuthServices.addUser(user!, event.bio);
+        authServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {

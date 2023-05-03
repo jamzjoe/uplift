@@ -9,6 +9,7 @@ class PrayerRequestRepository {
         .instance
         .collection('Prayers')
         .orderBy('date', descending: false)
+        .limit(20)
         .get();
     List<PrayerRequestPostModel> data = response.docs
         .map((e) => PrayerRequestPostModel.fromJson(e.data()))

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 
 class AuthServices {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static Future<User?> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser =
         await GoogleSignIn(scopes: <String>["email"]).signIn();
@@ -27,9 +29,15 @@ class AuthServices {
     return userCredential.user;
   }
 
-  
+//   Future<void> sendPushNotification(String deviceToken, String title, String body) async {
+//   var message = {
+//     'notification': {'title': title, 'body': body},
+//     'to': deviceToken,
+//   };
+//   await _firebaseMessaging.sendMessage(data: message);
+// }
 
-  static void addUser(User user, String bio) {
+  Future addUser(User user, String bio) async {
     final UserModel userModel = UserModel(
         displayName: user.displayName,
         emailAddress: user.email,
@@ -39,6 +47,8 @@ class AuthServices {
         phoneNumber: user.phoneNumber,
         createdAt: Timestamp.now(),
         bio: bio);
+    final token = await FirebaseMessaging.instance.getToken();
+    userModel.deviceToken = token;
     FirebaseFirestore.instance
         .collection('Users')
         .doc(user.uid)

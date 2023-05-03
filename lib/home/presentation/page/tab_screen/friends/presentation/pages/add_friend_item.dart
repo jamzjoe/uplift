@@ -44,16 +44,19 @@ class AddFriendItem extends StatelessWidget {
                 const SizedBox(height: 5),
                 Row(
                   children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 7, horizontal: 15),
-                        decoration: BoxDecoration(
-                            color: linkColor,
-                            borderRadius: BorderRadius.circular(5)),
-                        child: const Center(
-                          child: DefaultText(
-                              text: 'Add friend', color: whiteColor),
+                    GestureDetector(
+                      onTap: (){} ,
+                      child: Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 7, horizontal: 15),
+                          decoration: BoxDecoration(
+                              color: linkColor,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: const Center(
+                            child: DefaultText(
+                                text: 'Add friend', color: whiteColor),
+                          ),
                         ),
                       ),
                     ),

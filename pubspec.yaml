@@ -48,6 +48,8 @@ dependencies:
   cached_network_image: ^3.2.3
   cloud_firestore: ^4.5.2
   shimmer: ^2.0.0
+  firebase_messaging: ^14.4.1
+  flutter_local_notifications: ^14.0.0+1
 
 flutter_native_splash:
   android: true

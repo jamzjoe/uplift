@@ -39,7 +39,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 100),
-        shrinkWrap: true,
         children: [
           SettingsProfileHeader(user: user),
           ListView(
