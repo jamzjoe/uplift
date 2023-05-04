@@ -55,10 +55,11 @@ class AddFriendItem extends StatelessWidget {
                   onTap: () async {
                     try {
                       final FriendShipModel friendShipModel = FriendShipModel(
-                          sender: currentUser.uid,
-                          receiver: user.userId,
-                          status: 'pending',
-                          timestamp: Timestamp.now());
+                        sender: currentUser.uid,
+                        receiver: user.userId,
+                        status: 'pending',
+                        timestamp: Timestamp.now(),
+                      );
                       log(friendShipModel.toJson().toString());
                       await FriendsRepository()
                           .addFriendshipRequest(friendShipModel);

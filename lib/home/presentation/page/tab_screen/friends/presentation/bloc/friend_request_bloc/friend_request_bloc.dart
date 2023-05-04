@@ -1,9 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 
 import '../../../data/model/friendship_model.dart';
@@ -22,7 +20,7 @@ class FriendRequestBloc extends Bloc<FriendRequestEvent, FriendRequestState> {
       try {
         final data = await friendsRepository.getFriendRequest(event.userID);
         emit(FriendRequestLoadingSuccess(data));
-      } on FirebaseFirestore catch (e) {
+      } catch (e) {
         log(e.toString());
         emit(FriendRequestLoadingError());
       }

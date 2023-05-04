@@ -6,10 +6,20 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/frie
 
 class FriendsRepository {
   Future<List<UserModel>> fetchUsers() async {
+    QuerySnapshot<Map<String, dynamic>> senderIDS = await FirebaseFirestore
+        .instance
+        .collection('Friendships')
+        .where('sender', isEqualTo: '7FUrYc5jolT2EKUvMhDHWjrjSs43')
+        .get();
+
+    final List<String> senderID =
+        senderIDS.docs.map((e) => e.data()['receiver'].toString()).toList();
+    log(senderID.toString());
+
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance
         .collection('Users')
-        .orderBy('created_at', descending: false)
+        .where('user_id', whereNotIn: senderID)
         .get();
     List<UserModel> data = response.docs
         .map((e) => UserModel.fromJson(e.data()))

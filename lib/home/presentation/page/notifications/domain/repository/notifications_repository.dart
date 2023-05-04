@@ -65,14 +65,17 @@ class NotificationRepository {
       // Generate a unique notification ID
       String notificationId = notificationsCollection.doc().id;
 
+      final NotificationModel notificationModel = NotificationModel(
+          notificationId: notificationId,
+          userId: userId,
+          title: title,
+          read: false,
+          message: message,
+          timestamp: Timestamp.now());
       // Create the notification document
-      await notificationsCollection.doc(notificationId).set({
-        'notificationId': notificationId,
-        'userId': userId,
-        'title': title,
-        'message': message,
-        'timestamp': FieldValue.serverTimestamp(), // Store the server timestamp
-      });
+      await notificationsCollection
+          .doc(notificationId)
+          .set(notificationModel.toJson());
       log('Notification added successfully');
     } catch (e) {
       log('Error adding notification: $e');

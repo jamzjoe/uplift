@@ -6,6 +6,7 @@ class NotificationModel {
   String? notificationId;
   Timestamp? timestamp;
   String? userId;
+  bool? read;
   String? type;
 
   NotificationModel(
@@ -14,7 +15,8 @@ class NotificationModel {
       this.notificationId,
       this.timestamp,
       this.userId,
-      this.type});
+      this.type,
+      this.read});
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
     message = json['message'];
@@ -23,6 +25,7 @@ class NotificationModel {
     timestamp = json['timestamp'];
     userId = json['userId'];
     type = json['type'];
+    read = json['read'];
   }
 
   Map<String, dynamic> toJson() {
@@ -33,6 +36,7 @@ class NotificationModel {
     data['timestamp'] = timestamp;
     data['userId'] = userId;
     data['type'] = type;
+    data['read'] = read;
     return data;
   }
 }
