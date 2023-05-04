@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       extendBody: true,
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
-            log(state.toString());
             if (state is UserIsOut) {
               setState(() {
                 index = 0;
@@ -69,7 +66,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             },
             children: [
               KeepAlivePage(child: FeedScreen(user: user)),
-              const KeepAlivePage(child: FriendsScreen()),
+              KeepAlivePage(
+                  child: FriendsScreen(
+                currentUser: user,
+              )),
               const KeepAlivePage(child: EventScreen()),
               KeepAlivePage(child: SettingsScreen(user: user))
             ],

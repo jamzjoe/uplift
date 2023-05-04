@@ -1,16 +1,17 @@
-import 'dart:developer';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/keep_alive.dart';
 
-import 'friend_request_list.dart';
+import 'friend_request/friend_request_list.dart';
 import 'friends_list.dart';
 
 class FriendsScreen extends StatefulWidget {
-  const FriendsScreen({super.key});
+  const FriendsScreen({super.key, required this.currentUser});
+  final User currentUser;
 
   @override
   State<FriendsScreen> createState() => _FriendsScreenState();
@@ -21,14 +22,12 @@ String isSelected = 'Friend Request';
 class _FriendsScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
-    log('Run');
     return Scaffold(
       appBar: AppBar(
         title: const HeaderText(text: 'Friends', color: secondaryColor),
       ),
       body: ListView(
-        padding:
-            const EdgeInsets.only(bottom: 120, right: 30, left: 30, top: 30),
+        padding: const EdgeInsets.all(30),
         children: [
           Row(
             children: [
@@ -50,15 +49,23 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       text: 'Your Friends', color: secondaryColor),
                   color: isSelected == 'Your Friends'
                       ? primaryColor.withOpacity(0.2)
-                      : lightColor.withOpacity(0.3)),
+                      : lightColor.withOpacity(0.3))
             ],
           ),
           defaultSpace,
           const Divider(),
           defaultSpace,
           isSelected == 'Friend Request'
-              ? const FriendRequestList()
-              : const FriendsList()
+              ? KeepAlivePage(
+                  child: FriendRequestList(
+                    currentUser: widget.currentUser,
+                  ),
+                )
+              : KeepAlivePage(
+                  child: FriendsList(
+                    currentUser: widget.currentUser,
+                  ),
+                )
         ],
       ),
     );

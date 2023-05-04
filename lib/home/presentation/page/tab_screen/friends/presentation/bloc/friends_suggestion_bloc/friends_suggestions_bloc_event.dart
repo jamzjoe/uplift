@@ -8,3 +8,11 @@ abstract class FriendsSuggestionsBlocEvent extends Equatable {
 }
 
 class FetchUsersEvent extends FriendsSuggestionsBlocEvent {}
+
+class AddFriendEvent extends FriendsSuggestionsBlocEvent {
+  final FriendShipModel friendShipModel;
+
+  const AddFriendEvent(this.friendShipModel);
+  @override
+  List<Object> get props => [friendShipModel];
+}

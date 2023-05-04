@@ -11,7 +11,7 @@ class GetPostRequestList extends GetPrayerRequestEvent {
   List<Object> get props => [];
 }
 
-class EmitLoading extends GetPrayerRequestEvent {
+class RefreshPostRequestList extends GetPrayerRequestEvent {
   @override
   List<Object?> get props => [];
 }

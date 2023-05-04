@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -22,56 +23,68 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
+  int badgeCount = 0;
   @override
   Widget build(BuildContext context) {
     final User user = widget.user;
     return Scaffold(
       backgroundColor: const Color(0xffE9EBEE),
       extendBody: true,
-      body: SafeArea(
-        maintainBottomViewPadding: true,
-        child: NestedScrollView(
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                backgroundColor: whiteColor,
-                title: const Image(
-                  image: AssetImage('assets/uplift-logo.png'),
-                  width: 80,
-                ),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        showSearch(
-                            context: context, delegate: CustomSearchDelegate());
-                      },
-                      icon: const Icon(
-                        Icons.search,
-                        size: 30,
-                      )),
-                  Badge.count(
-                    count: 20,
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: IconButton(
-                        onPressed: goToNotificationScreen,
+      body: BlocListener<NotificationBloc, NotificationState>(
+        listener: (context, state) {
+          if (state is NotificationLoadingSuccess) {
+            setState(() {
+              badgeCount = state.notifications.length;
+            });
+          }
+        },
+        child: SafeArea(
+          maintainBottomViewPadding: true,
+          child: NestedScrollView(
+            floatHeaderSlivers: true,
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                  backgroundColor: whiteColor,
+                  title: const Image(
+                    image: AssetImage('assets/uplift-logo.png'),
+                    width: 80,
+                  ),
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          showSearch(
+                              context: context,
+                              delegate: CustomSearchDelegate());
+                        },
                         icon: const Icon(
-                          Icons.notifications,
+                          Icons.search,
                           size: 30,
                         )),
-                  ),
+                    Badge.count(
+                      count: badgeCount,
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: IconButton(
+                          onPressed: () =>
+                              goToNotificationScreen(widget.user.uid),
+                          icon: const Icon(
+                            Icons.notifications,
+                            size: 30,
+                          )),
+                    ),
+                  ],
+                )
+              ];
+            },
+            body: RefreshIndicator(
+              onRefresh: () async =>
+                  BlocProvider.of<GetPrayerRequestBloc>(context)
+                      .add(RefreshPostRequestList()),
+              child: Column(
+                children: [
+                  Expanded(child: PostListItem(user: user)),
                 ],
-              )
-            ];
-          },
-          body: RefreshIndicator(
-            onRefresh: () async =>
-                BlocProvider.of<GetPrayerRequestBloc>(context)
-                    .add(const GetPostRequestList()),
-            child: Column(
-              children: [
-                Expanded(child: PostListItem(user: user)),
-              ],
+              ),
             ),
           ),
         ),
@@ -79,7 +92,7 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  void goToNotificationScreen() {
+  void goToNotificationScreen(String userID) {
     context.pushNamed('notification');
   }
 }

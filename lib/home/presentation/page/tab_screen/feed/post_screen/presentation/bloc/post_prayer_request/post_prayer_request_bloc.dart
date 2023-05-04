@@ -26,7 +26,6 @@ class PostPrayerRequestBloc
           emit(PostPrayerRequestSuccess());
         });
       } catch (e) {
-        log('Error');
         emit(PostPrayerRequestError());
       }
     });

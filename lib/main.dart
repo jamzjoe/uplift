@@ -3,16 +3,22 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -22,51 +28,20 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-//   NotificationSettings settings = await requestPermission();
+  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
+  requestPermission();
 
-//   final fmcToken = await FirebaseMessaging.instance.getToken();
-//   log(fmcToken.toString());
-//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    log('Got a message whilst in the foreground!');
+    log('Message data: ${message.data}');
 
-// // Firebase local notification plugin
-//   AndroidNotificationChannel channel = const AndroidNotificationChannel(
-//       'high_importance_channel', // id
-//       'High Importance Notifications', // title // description
-//       importance: Importance.high,
-//       playSound: true);
-
-//   await flutterLocalNotificationsPlugin
-//       .resolvePlatformSpecificImplementation<
-//           AndroidFlutterLocalNotificationsPlugin>()
-//       ?.createNotificationChannel(channel);
-
-// //Firebase messaging
-//   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-//     alert: true,
-//     badge: true,
-//     sound: true,
-//   );
-
-//   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//     log('Got a message whilst in the foreground!');
-//     log('Message data: ${message.data}');
-
-//     if (message.notification != null) {
-//       flutterLocalNotificationsPlugin.show(
-//         message.notification!.hashCode,
-//         message.notification!.title,
-//         message.notification!.body,
-//         const NotificationDetails(
-//             android: AndroidNotificationDetails(
-//               '1',
-//               'Uplift',
-//             ),
-//             iOS: DarwinNotificationDetails()),
-//       );
-//       log('Message also contained a notification: ${message.notification!.title!}');
-//     }
-//   });
+    if (message.notification != null) {
+      NotificationRepository.showNotification(
+          id: message.notification.hashCode,
+          title: message.notification!.title,
+          body: message.notification!.body);
+    }
+  });
 
   runApp(const MyApp());
 }
@@ -106,7 +81,10 @@ class MyApp extends StatelessWidget {
                 GetPrayerRequestBloc()..add(const GetPostRequestList())),
         BlocProvider<FriendsSuggestionsBlocBloc>(
             create: (context) =>
-                FriendsSuggestionsBlocBloc()..add(FetchUsersEvent()))
+                FriendsSuggestionsBlocBloc()..add(FetchUsersEvent())),
+        BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
+        BlocProvider<FriendRequestBloc>(
+            create: (context) => FriendRequestBloc())
       ],
       child: MaterialApp.router(
         routerConfig: router,

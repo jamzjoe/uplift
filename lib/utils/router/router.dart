@@ -8,10 +8,11 @@ import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
 import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.dart';
 import 'package:uplift/home/presentation/page/home.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_request/friend_request_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_reader_screen.dart';
-import 'package:uplift/home/presentation/page/notifications/presentaion/page/notification_screen.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
@@ -53,6 +54,12 @@ final GoRouter router = GoRouter(
                 ),
               ),
           routes: [
+            GoRoute(
+                path: 'friend_request',
+                name: 'friend_request',
+                pageBuilder: (context, state) {
+                  return const MaterialPage(child: FriendRequestScreen());
+                }),
             GoRoute(
                 path: 'edit-profile',
                 name: 'edit-profile',

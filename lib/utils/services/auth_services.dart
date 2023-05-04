@@ -37,6 +37,10 @@ class AuthServices {
 //   await _firebaseMessaging.sendMessage(data: message);
 // }
 
+  static Future<String> userID() async {
+    return FirebaseAuth.instance.currentUser!.uid;
+  }
+
   Future addUser(User user, String bio) async {
     final UserModel userModel = UserModel(
         displayName: user.displayName,

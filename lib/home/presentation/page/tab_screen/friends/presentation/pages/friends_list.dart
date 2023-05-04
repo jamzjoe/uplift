@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
@@ -11,7 +12,9 @@ import 'search_bar.dart';
 class FriendsList extends StatefulWidget {
   const FriendsList({
     super.key,
+    required this.currentUser,
   });
+  final User currentUser;
 
   @override
   State<FriendsList> createState() => _FriendsListState();
@@ -50,7 +53,9 @@ class _FriendsListState extends State<FriendsList> {
           const FriendsItem(),
           const FriendsItem(),
           defaultSpace,
-          const FriendSuggestions()
+          FriendSuggestions(
+            currentUser: widget.currentUser,
+          )
         ],
       ),
     );

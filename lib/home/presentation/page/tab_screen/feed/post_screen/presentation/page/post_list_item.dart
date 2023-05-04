@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +24,6 @@ class PostListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
       builder: (context, state) {
-        log(state.toString());
         if (state is LoadingPrayerRequesListSuccess) {
           if (state.prayerRequestPostModel.isEmpty) {
             return Center(

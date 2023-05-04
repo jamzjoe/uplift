@@ -34,13 +34,21 @@ class GetPrayerRequestBloc
           emit(LoadingPrayerRequesListSuccess(data));
         });
       } on FirebaseException catch (e) {
-        log(e.toString());
         emit(LoadingPrayerRequesListError());
       }
     });
 
-    on<EmitLoading>((event, emit) {
+    on<RefreshPostRequestList>((event, emit) async {
       emit(LoadingPrayerRequesList());
+      try {
+        final data = await prayerRequestRepository.getPrayerRequestList();
+
+        await Future.delayed(const Duration(seconds: 1), () async {
+          emit(LoadingPrayerRequesListSuccess(data));
+        });
+      } on FirebaseException catch (e) {
+        emit(LoadingPrayerRequesListError());
+      }
     });
   }
 }
