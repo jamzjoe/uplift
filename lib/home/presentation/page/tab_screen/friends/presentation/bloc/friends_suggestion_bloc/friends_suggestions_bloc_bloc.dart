@@ -12,8 +12,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/domain/reposito
 part 'friends_suggestions_bloc_event.dart';
 part 'friends_suggestions_bloc_state.dart';
 
-final FriendsRepository friendSuggestionRepository =
-    FriendsRepository();
+final FriendsRepository friendSuggestionRepository = FriendsRepository();
 
 late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
     streamSubscription;
@@ -22,7 +21,7 @@ class FriendsSuggestionsBlocBloc
     extends Bloc<FriendsSuggestionsBlocEvent, FriendsSuggestionsBlocState> {
   FriendsSuggestionsBlocBloc() : super(FriendsSuggestionsBlocInitial()) {
     streamSubscription = FirebaseFirestore.instance
-        .collection('Users')
+        .collection('Friendships')
         .snapshots()
         .listen((event) async {
       add(FetchUsersEvent());
@@ -31,7 +30,6 @@ class FriendsSuggestionsBlocBloc
     on<FriendsSuggestionsBlocEvent>((event, emit) {});
 
     on<FetchUsersEvent>((event, emit) async {
-      emit(FriendsSuggestionLoading());
       try {
         final data = await friendSuggestionRepository.fetchUsers();
         emit(FriendsSuggestionLoadingSuccess(data));

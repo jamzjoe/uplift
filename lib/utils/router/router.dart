@@ -11,6 +11,7 @@ import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_request/friend_request_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_reader_screen.dart';
 
@@ -59,6 +60,12 @@ final GoRouter router = GoRouter(
                 name: 'friend_request',
                 pageBuilder: (context, state) {
                   return const MaterialPage(child: FriendRequestScreen());
+                }),
+            GoRoute(
+                path: 'friends-list',
+                name: 'friends-list',
+                pageBuilder: (context, state) {
+                  return const MaterialPage(child: YourFriendsScreen());
                 }),
             GoRoute(
                 path: 'edit-profile',

@@ -15,10 +15,9 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const HeaderText(text: 'Friend Request', color: secondaryColor),
-
       ),
-      body: ListView.builder(itemBuilder:(context, index) {
-        
+      body: ListView.builder(itemBuilder: (context, index) {
+        return null;
       }),
     );
   }

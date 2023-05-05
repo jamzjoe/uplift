@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/introduction/presentation/introduction_screen.dart';
 
@@ -27,6 +28,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
               .add(FetchListOfNotification(state.user.uid, false));
           BlocProvider.of<FriendRequestBloc>(context)
               .add(FetchFriendRequestEvent(state.user.uid));
+          BlocProvider.of<ApprovedFriendsBloc>(context)
+              .add(const FetchApprovedFriendRequest());
         }
       },
       builder: (context, state) {

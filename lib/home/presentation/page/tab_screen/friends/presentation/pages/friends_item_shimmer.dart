@@ -7,7 +7,9 @@ import 'package:uplift/utils/widgets/default_text.dart';
 class FriendsShimmerItem extends StatelessWidget {
   const FriendsShimmerItem({
     super.key,
+    this.type,
   });
+  final String? type;
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +34,24 @@ class FriendsShimmerItem extends StatelessWidget {
                       color: lightColor.withOpacity(0.5),
                       width: MediaQuery.of(context).size.width - 150),
                   defaultSpace,
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
-                    decoration: BoxDecoration(
-                        color: lightColor.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: const Center(
-                      child:
-                          DefaultText(text: 'Sent request', color: whiteColor),
+                  Visibility(
+                    visible: type == 'text',
+                    child: CustomContainer(
+                        widget: const SizedBox(),
+                        color: lightColor.withOpacity(0.5)),
+                  ),
+                  Visibility(
+                    visible: type == 'button',
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                          color: lightColor.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: const Center(
+                        child: DefaultText(
+                            text: 'Sent request', color: whiteColor),
+                      ),
                     ),
                   )
                 ],

@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_item_shimmer.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -24,9 +28,6 @@ class FriendRequestItem extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const FriendsShimmerItem();
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
           }
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -59,15 +60,24 @@ class FriendRequestItem extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 7, horizontal: 15),
-                              decoration: BoxDecoration(
-                                  color: linkColor,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: const Center(
-                                child: DefaultText(
-                                    text: 'Confirm', color: whiteColor),
+                            child: GestureDetector(
+                              onTap: () async {
+                                FriendsRepository().acceptFriendshipRequest(
+                                    friendShip.sender!, friendShip.receiver!);
+                                BlocProvider.of<FriendRequestBloc>(context).add(
+                                    FetchFriendRequestEvent(
+                                        await AuthServices.userID()));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 7, horizontal: 15),
+                                decoration: BoxDecoration(
+                                    color: linkColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Center(
+                                  child: DefaultText(
+                                      text: 'Confirm', color: whiteColor),
+                                ),
                               ),
                             ),
                           ),

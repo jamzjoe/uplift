@@ -19,7 +19,11 @@ class FriendRequestHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            const DefaultText(text: 'Friend request', color: secondaryColor),
+            const HeaderText(
+              text: 'Friend request',
+              color: secondaryColor,
+              size: 18,
+            ),
             const SizedBox(width: 5),
             HeaderText(
                 text: friendRequestCount.toString(),
@@ -28,8 +32,8 @@ class FriendRequestHeader extends StatelessWidget {
           ],
         ),
         GestureDetector(
-          onTap: () => context.pushNamed('friend_request'),
-          child: const DefaultText(text: 'See all', color: linkColor))
+            onTap: () => context.pushNamed('friend_request'),
+            child: const DefaultText(text: 'See all', color: linkColor))
       ],
     );
   }

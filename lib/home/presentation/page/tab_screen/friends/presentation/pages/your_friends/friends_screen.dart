@@ -5,8 +5,7 @@ import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
-
-import 'friend_request/friend_request_list.dart';
+import '../friend_request/friend_request_list.dart';
 import 'friends_list.dart';
 
 class FriendsScreen extends StatefulWidget {

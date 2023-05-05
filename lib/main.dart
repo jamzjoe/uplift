@@ -11,6 +11,7 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/router/router.dart';
@@ -84,7 +85,10 @@ class MyApp extends StatelessWidget {
                 FriendsSuggestionsBlocBloc()..add(FetchUsersEvent())),
         BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
         BlocProvider<FriendRequestBloc>(
-            create: (context) => FriendRequestBloc())
+            create: (context) => FriendRequestBloc()),
+        BlocProvider<ApprovedFriendsBloc>(
+            create: (context) =>
+                ApprovedFriendsBloc()..add( FetchApprovedFriendRequest()))
       ],
       child: MaterialApp.router(
         routerConfig: router,

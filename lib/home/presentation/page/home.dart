@@ -6,12 +6,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
-
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
-import 'tab_screen/friends/presentation/pages/friends_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.user});

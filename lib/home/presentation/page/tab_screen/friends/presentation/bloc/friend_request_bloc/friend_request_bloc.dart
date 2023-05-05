@@ -16,7 +16,6 @@ class FriendRequestBloc extends Bloc<FriendRequestEvent, FriendRequestState> {
     on<FriendRequestEvent>((event, emit) {});
 
     on<FetchFriendRequestEvent>((event, emit) async {
-      emit(FriendRequestLoading());
       try {
         final data = await friendsRepository.getFriendRequest(event.userID);
         emit(FriendRequestLoadingSuccess(data));

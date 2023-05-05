@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +7,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_item_shimmer.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/header_text.dart';
 
 import 'friend_suggestion_list.dart';
 
@@ -28,10 +31,15 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               children: const [
-                DefaultText(text: 'Friend suggestions', color: secondaryColor),
+                HeaderText(
+                  text: 'Friend suggestions',
+                  color: secondaryColor,
+                  size: 18,
+                ),
               ],
             ),
             const DefaultText(text: 'See more', color: linkColor)
@@ -40,6 +48,7 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
         defaultSpace,
         BlocBuilder<FriendsSuggestionsBlocBloc, FriendsSuggestionsBlocState>(
           builder: (context, state) {
+            log(state.toString());
             if (state is FriendsSuggestionLoading) {
               return ListView.builder(
                 shrinkWrap: true,
