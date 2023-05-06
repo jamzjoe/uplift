@@ -34,7 +34,9 @@ class _FeedScreenState extends State<FeedScreen> {
         listener: (context, state) {
           if (state is NotificationLoadingSuccess) {
             setState(() {
-              badgeCount = state.notifications.length;
+              badgeCount = state.notifications
+                  .where((element) => element.read == true)
+                  .length;
             });
           }
         },

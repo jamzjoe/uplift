@@ -6,20 +6,27 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/frie
 import 'package:uplift/utils/services/auth_services.dart';
 
 class FriendsRepository {
-  Future<List<UserModel>> fetchUsers() async {
+  Future<List<UserModel>> fetchUsersSuggestions() async {
     List<UserModel> data = [];
+
+    //get all userID that you had send friend request - you are the sender
     QuerySnapshot<Map<String, dynamic>> senderIDS = await FirebaseFirestore
         .instance
         .collection('Friendships')
         .where('sender', isEqualTo: await AuthServices.userID())
+        .where('status', isEqualTo: 'pending')
         .get();
 
     List<String> receiverID =
         senderIDS.docs.map((e) => e.data()['receiver'].toString()).toList();
+    receiverID.add(await AuthServices.userID());
 
     if (senderIDS.docs.isEmpty) {
-      QuerySnapshot<Map<String, dynamic>> response =
-          await FirebaseFirestore.instance.collection('Users').get();
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .where('user_id', isNotEqualTo: await AuthServices.userID())
+          .get();
       data = response.docs
           .map((e) => UserModel.fromJson(e.data()))
           .toList()
