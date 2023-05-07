@@ -51,6 +51,7 @@ dependencies:
   firebase_messaging: ^14.4.1
   flutter_local_notifications: ^14.0.0+1
   http: ^0.13.6
+  lottie: ^2.3.2
 
 flutter_native_splash:
   android: true

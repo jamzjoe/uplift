@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
@@ -70,7 +71,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 currentUser: user,
               )),
               const KeepAlivePage(child: EventScreen()),
-              KeepAlivePage(child: SettingsScreen(user: user))
+              KeepAlivePage(
+                  child: SettingsScreen(
+                user: user,
+                userModel: UserModel(),
+              ))
             ],
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

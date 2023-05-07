@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
             create: (context) => FriendRequestBloc()),
         BlocProvider<ApprovedFriendsBloc>(
             create: (context) =>
-                ApprovedFriendsBloc()..add( FetchApprovedFriendRequest()))
+                ApprovedFriendsBloc()..add(const FetchApprovedFriendRequest2()))
       ],
       child: MaterialApp.router(
         routerConfig: router,
@@ -98,13 +98,15 @@ class MyApp extends StatelessWidget {
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(primaryColor))),
-          appBarTheme: const AppBarTheme(surfaceTintColor: whiteColor),
+          appBarTheme: const AppBarTheme(
+              surfaceTintColor: whiteColor, backgroundColor: whiteColor),
           bottomSheetTheme: const BottomSheetThemeData(
               surfaceTintColor: whiteColor,
               elevation: 2,
               shape: RoundedRectangleBorder()),
           dividerTheme:
               DividerThemeData(color: secondaryColor.withOpacity(0.2)),
+          scaffoldBackgroundColor: whiteColor,
           floatingActionButtonTheme:
               const FloatingActionButtonThemeData(backgroundColor: whiteColor),
           bottomAppBarTheme:

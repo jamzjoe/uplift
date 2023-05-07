@@ -23,7 +23,7 @@ class NotificationModel {
     title = json['title'];
     notificationId = json['notificationId'];
     timestamp = json['timestamp'];
-    userId = json['userId'];
+    userId = json['user_id'];
     type = json['type'];
     read = json['read'];
   }
@@ -34,7 +34,7 @@ class NotificationModel {
     data['title'] = title;
     data['notificationId'] = notificationId;
     data['timestamp'] = timestamp;
-    data['userId'] = userId;
+    data['user_id'] = userId;
     data['type'] = type;
     data['read'] = read;
     return data;

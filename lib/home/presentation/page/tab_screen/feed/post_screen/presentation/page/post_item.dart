@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/post_item_shimmer.dart';
@@ -37,6 +39,9 @@ class _PostItemState extends State<PostItem> {
             if (!snapshot.hasData) {
               return const PostItemShimmerLoading();
             }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const PostItemShimmerLoading();
+            }
             return Container(
               margin: const EdgeInsets.symmetric(vertical: 5),
               color: whiteColor,
@@ -48,31 +53,27 @@ class _PostItemState extends State<PostItem> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          snapshot.data!['photo_url'] == null
-                              ? const CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage('assets/default.png'),
-                                )
-                              : CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(snapshot.data!['photo_url']),
-                                ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              HeaderText(
-                                text: snapshot.data!['display_name'] ?? 'User',
-                                color: secondaryColor,
-                                size: 18,
-                              ),
-                              const SmallText(
-                                  text: 'Just now', color: lightColor)
-                            ],
-                          ),
-                        ],
+                      snapshot.data!['photo_url'] == null
+                          ? const CircleAvatar(
+                              backgroundImage: AssetImage('assets/default.png'),
+                            )
+                          : CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(snapshot.data!['photo_url']),
+                            ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HeaderText(
+                              text: snapshot.data!['display_name'] ?? 'User',
+                              color: secondaryColor,
+                              size: 18,
+                            ),
+                            const SmallText(text: 'Just now', color: lightColor)
+                          ],
+                        ),
                       ),
                       Row(
                         children: [
@@ -87,11 +88,18 @@ class _PostItemState extends State<PostItem> {
                                     const Icon(CupertinoIcons.bookmark_fill),
                                 title: const DefaultText(
                                     text: 'Save Post', color: secondaryColor),
+                              )),
+                              PopupMenuItem(
+                                  child: ListTile(
+                                onTap: () {},
+                                dense: true,
+                                leading:
+                                    const Icon(CupertinoIcons.delete_left_fill),
+                                title: const DefaultText(
+                                    text: 'Delete Post', color: secondaryColor),
                               ))
                             ],
                           ),
-                          IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.close))
                         ],
                       )
                     ],
@@ -123,7 +131,11 @@ class _PostItemState extends State<PostItem> {
                   Row(
                     children: [
                       TextButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            BlocProvider.of<GetPrayerRequestBloc>(context).add(
+                                AddReaction(snapshot.data!['user_id'],
+                                    widget.postModel.postID!));
+                          },
                           icon: const Image(
                             image: AssetImage('assets/pray.png'),
                             width: 30,

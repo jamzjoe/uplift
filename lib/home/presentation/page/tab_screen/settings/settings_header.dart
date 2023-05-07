@@ -15,17 +15,17 @@ class SettingsProfileHeader extends StatefulWidget {
   const SettingsProfileHeader({
     super.key,
     required this.user,
+    required this.userModel,
   });
 
   final User user;
+  final UserModel userModel;
 
   @override
   State<SettingsProfileHeader> createState() => _SettingsProfileHeaderState();
 }
 
 bool isEditable = false;
-
-final UserModel userModel = UserModel(emailAddress: 'joe');
 
 class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
   @override
@@ -86,8 +86,8 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomContainer(
-                  onTap: () =>
-                      context.pushNamed('edit-profile', extra: userModel),
+                  onTap: () => context.pushNamed('edit-profile',
+                      extra: widget.userModel),
                   widget: const SmallText(
                       text: 'Edit profile', color: secondaryColor),
                   color: secondaryColor.withOpacity(0.1)),

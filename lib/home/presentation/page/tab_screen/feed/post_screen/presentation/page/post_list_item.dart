@@ -114,7 +114,8 @@ class EndOfPostWidget extends StatelessWidget {
                   icon: const Icon(CupertinoIcons.pencil_circle_fill,
                       color: whiteColor),
                   label: const DefaultText(
-                      text: 'Write your prayer request', color: whiteColor));
+                      text: 'Write your first prayer request',
+                      color: whiteColor));
             },
           ),
         ),

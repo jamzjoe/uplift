@@ -1,15 +1,10 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
-import 'package:uplift/utils/widgets/header_text.dart';
-import '../search_bar.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/search_bar.dart';
+import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'friends_item.dart';
 
 class FriendsList extends StatefulWidget {
@@ -28,54 +23,32 @@ class _FriendsListState extends State<FriendsList> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 100),
-      child: BlocBuilder<ApprovedFriendsBloc, ApprovedFriendsState>(
-        builder: (context, state) {
-          log(state.toString());
-          if (state is ApprovedFriendsSuccess) {
-            log(state.approvedFriendsList.length.toString());
-
-            return ListView(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              children: [
-                SearchBar(
-                  controller: searchController,
-                  onFieldSubmitted: (p0) {},
-                  hint: 'Search your friend here...',
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const DefaultText(
-                            text: 'Your friends', color: secondaryColor),
-                        const SizedBox(width: 5),
-                        HeaderText(
-                            text: state.approvedFriendsList.length.toString(),
-                            color: primaryColor,
-                            size: 18)
-                      ],
-                    ),
-                    GestureDetector(
-                        onTap: () => context.pushNamed('friends-list'),
-                        child: const DefaultText(
-                            text: 'See all', color: linkColor))
-                  ],
-                ),
-                ...state.approvedFriendsList.map((e) => FriendsItem(
-                      user: widget.currentUser,
-                      friendShipModel: e,
-                    )),
-              ],
-            );
-          } else {
-            return const SizedBox();
+    return BlocBuilder<ApprovedFriendsBloc, ApprovedFriendsState>(
+      builder: (context, state) {
+        if (state is ApprovedFriendsSuccess2) {
+          if (state.approvedFriendList.isEmpty) {
+            return const Center(
+                child: NoDataMessage(text: 'No friends yet...'));
           }
-        },
-      ),
+          return ListView(
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 30),
+            children: [
+              SearchBar(
+                onFieldSubmitted: (query) {
+                  BlocProvider.of<ApprovedFriendsBloc>(context)
+                      .add(SearchApprovedFriend(query));
+                },
+                hint: 'Search your friend here...',
+              ),
+              ...state.approvedFriendList.map((e) => FriendsItem(user: e))
+            ],
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 
@@ -14,6 +15,7 @@ final PrayerRequestRepository prayerRequestRepository =
     PrayerRequestRepository();
 late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
     streamSubscription;
+final String userID = FirebaseAuth.instance.currentUser!.uid;
 
 class GetPrayerRequestBloc
     extends Bloc<GetPrayerRequestEvent, GetPrayerRequestState> {
@@ -33,7 +35,7 @@ class GetPrayerRequestBloc
         await Future.delayed(const Duration(seconds: 1), () async {
           emit(LoadingPrayerRequesListSuccess(data));
         });
-      } on FirebaseException catch (e) {
+      } on FirebaseException {
         emit(LoadingPrayerRequesListError());
       }
     });
@@ -46,8 +48,16 @@ class GetPrayerRequestBloc
         await Future.delayed(const Duration(seconds: 1), () async {
           emit(LoadingPrayerRequesListSuccess(data));
         });
-      } on FirebaseException catch (e) {
+      } on FirebaseException {
         emit(LoadingPrayerRequesListError());
+      }
+    });
+
+    on<AddReaction>((event, emit) async {
+      try {
+        await prayerRequestRepository.addReaction(event.postID, event.userID);
+      } catch (e) {
+        log(e.toString());
       }
     });
   }

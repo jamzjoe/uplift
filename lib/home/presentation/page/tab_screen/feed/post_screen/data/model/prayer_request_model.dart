@@ -5,6 +5,7 @@ class PrayerRequestPostModel {
   String? userId;
   Timestamp? date;
   Reactions? reactions;
+  String? postID;
 
   PrayerRequestPostModel({this.text, this.userId, this.date, this.reactions});
 
@@ -12,6 +13,7 @@ class PrayerRequestPostModel {
     text = json['text'];
     userId = json['user_id'];
     date = json['date'];
+    postID = json['post_id'];
     reactions = json['reactions'] != null
         ? Reactions.fromJson(json['reactions'])
         : null;
@@ -22,6 +24,7 @@ class PrayerRequestPostModel {
     data['text'] = text;
     data['user_id'] = userId;
     data['date'] = date;
+    data['post_id'] = postID;
     if (reactions != null) {
       data['reactions'] = reactions!.toJson();
     }

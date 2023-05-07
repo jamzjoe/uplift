@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -25,7 +27,6 @@ class AuthServices {
       String email, password) async {
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-
     return userCredential.user;
   }
 
@@ -41,7 +42,7 @@ class AuthServices {
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
-  Future addUser(User user, String bio) async {
+  static Future addUser(User user, String bio) async {
     final UserModel userModel = UserModel(
         displayName: user.displayName,
         emailAddress: user.email,
@@ -50,7 +51,24 @@ class AuthServices {
         photoUrl: user.photoURL,
         phoneNumber: user.phoneNumber,
         createdAt: Timestamp.now(),
-        bio: bio);
+        bio: bio,
+        searchKey: user.displayName!.toLowerCase());
+    final token = await FirebaseMessaging.instance.getToken();
+    userModel.deviceToken = token;
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user.uid)
+        .set(userModel.toJson())
+        .then((value) => print("User added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  static Future addUserFromEmailAndPassword(User user, String bio) async {
+    final UserModel userModel = UserModel(
+        emailAddress: user.email,
+        userId: user.uid,
+        createdAt: Timestamp.now(),
+        displayName: 'Uplift User #${user.uid}');
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;
     FirebaseFirestore.instance
@@ -71,5 +89,15 @@ class AuthServices {
   static signOut() {
     FirebaseAuth.instance.signOut();
     GoogleSignIn().disconnect();
+  }
+
+  String generateRandomId() {
+    final random = Random();
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const idLength = 10;
+    final idChars =
+        List.generate(idLength, (index) => chars[random.nextInt(chars.length)]);
+    final id = idChars.join();
+    return id;
   }
 }

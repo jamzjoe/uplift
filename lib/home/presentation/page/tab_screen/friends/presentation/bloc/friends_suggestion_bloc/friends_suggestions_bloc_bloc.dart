@@ -34,7 +34,6 @@ class FriendsSuggestionsBlocBloc
         final data = await friendSuggestionRepository.fetchUsersSuggestions();
         emit(FriendsSuggestionLoadingSuccess(data));
       } on FirebaseAuthException catch (e) {
-        log(e.toString());
         emit(FriendsSuggestionLoadingError());
       }
     });

@@ -10,3 +10,17 @@ class FetchApprovedFriendRequest extends ApprovedFriendsEvent {
   @override
   List<Object> get props => [];
 }
+
+class FetchApprovedFriendRequest2 extends ApprovedFriendsEvent {
+  const FetchApprovedFriendRequest2();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SearchApprovedFriend extends ApprovedFriendsEvent {
+  final String query;
+  const SearchApprovedFriend(this.query);
+  @override
+  List<Object> get props => [query];
+}

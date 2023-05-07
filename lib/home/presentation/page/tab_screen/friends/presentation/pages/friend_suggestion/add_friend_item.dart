@@ -23,7 +23,7 @@ class AddFriendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
@@ -43,10 +43,12 @@ class AddFriendItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    HeaderText(
-                        text: user.displayName ?? 'Anonymous User',
-                        color: secondaryColor,
-                        size: 16),
+                    Expanded(
+                      child: HeaderText(
+                          text: user.displayName ?? 'Anonymous User',
+                          color: secondaryColor,
+                          size: 16),
+                    ),
                     const SmallText(text: '1w ', color: lightColor)
                   ],
                 ),
@@ -60,10 +62,8 @@ class AddFriendItem extends StatelessWidget {
                         status: 'pending',
                         timestamp: Timestamp.now(),
                       );
-                      log(friendShipModel.toJson().toString());
                       await FriendsRepository()
                           .addFriendshipRequest(friendShipModel);
-                      log(user.deviceToken!);
                       await NotificationRepository.sendPushMessage(
                           user.deviceToken!,
                           '${currentUser.displayName} sent you a friend a request.',
@@ -85,8 +85,7 @@ class AddFriendItem extends StatelessWidget {
                         color: linkColor,
                         borderRadius: BorderRadius.circular(5)),
                     child: const Center(
-                      child:
-                          DefaultText(text: 'Sent request', color: whiteColor),
+                      child: DefaultText(text: 'Add friend', color: whiteColor),
                     ),
                   ),
                 )

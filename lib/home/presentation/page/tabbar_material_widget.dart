@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 
 class TabBarMaterialWidget extends StatefulWidget {
   final int index;
@@ -77,7 +75,36 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       required Icon selectedIcon,
       required String label}) {
     final isSelected = index == widget.index;
-
+    if (index == 1) {
+      return BlocBuilder<FriendRequestBloc, FriendRequestState>(
+        builder: (context, state) {
+          if (state is FriendRequestLoadingSuccess) {
+            int count = state.users.length;
+            return Badge.count(
+              isLabelVisible: count != 0,
+              count: count,
+              child: IconButton(
+                  color: isSelected
+                      ? primaryColor
+                      : secondaryColor.withOpacity(0.5),
+                  onPressed: () async {
+                    widget.onChangedTab(index);
+                    widget.controller!.animateTo(index);
+                  },
+                  icon: isSelected ? selectedIcon : icon),
+            );
+          }
+          return IconButton(
+              color:
+                  isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
+              onPressed: () async {
+                widget.onChangedTab(index);
+                widget.controller!.animateTo(index);
+              },
+              icon: isSelected ? selectedIcon : icon);
+        },
+      );
+    }
     return IconButton(
         color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
         onPressed: () async {

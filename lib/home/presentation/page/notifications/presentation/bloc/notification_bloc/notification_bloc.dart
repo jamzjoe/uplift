@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
@@ -14,6 +15,8 @@ final NotificationRepository notificationRepository = NotificationRepository();
 
 late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
     streamSubscription;
+
+final userID = FirebaseAuth.instance.currentUser!.uid;
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc() : super(NotificationInitial()) {
@@ -42,6 +45,16 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         final data =
             await notificationRepository.getUserNotifications(event.userID);
         emit(NotificationLoadingSuccess(data, false));
+      } catch (e) {
+        emit(NotificationLoadingError());
+      }
+    });
+
+    on<ClearNotification>((event, emit) async {
+      try {
+        for (var each in event.notificationList) {
+          notificationRepository.markAsRead(each.notificationId!);
+        }
       } catch (e) {
         emit(NotificationLoadingError());
       }

@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
-import '../friend_request/friend_request_list.dart';
-import 'friends_list.dart';
+import 'friend_request/friend_request_list.dart';
 
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key, required this.currentUser});
@@ -16,13 +16,15 @@ class FriendsScreen extends StatefulWidget {
   State<FriendsScreen> createState() => _FriendsScreenState();
 }
 
-String isSelected = 'Friend Request';
+String isSelected = 'Suggestions';
 
 class _FriendsScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: whiteColor,
       appBar: AppBar(
+        backgroundColor: whiteColor,
         title: const HeaderText(text: 'Friends', color: secondaryColor),
       ),
       body: ListView(
@@ -31,40 +33,28 @@ class _FriendsScreenState extends State<FriendsScreen> {
           Row(
             children: [
               CustomContainer(
-                  onTap: () => setState(() {
-                        isSelected = 'Friend Request';
-                      }),
+                  onTap: () => context.pushNamed('friend_suggest',
+                      extra: widget.currentUser),
                   widget: const DefaultText(
-                      text: 'Friend request', color: secondaryColor),
-                  color: isSelected == 'Friend Request'
-                      ? primaryColor.withOpacity(0.2)
-                      : lightColor.withOpacity(0.3)),
+                      text: 'Suggestions', color: secondaryColor),
+                  color: lightColor.withOpacity(0.3)),
               const SizedBox(width: 15),
               CustomContainer(
-                  onTap: () => setState(() {
-                        isSelected = 'Your Friends';
-                      }),
+                  onTap: () => context.pushNamed("friends-list",
+                      extra: widget.currentUser),
                   widget: const DefaultText(
                       text: 'Your Friends', color: secondaryColor),
-                  color: isSelected == 'Your Friends'
-                      ? primaryColor.withOpacity(0.2)
-                      : lightColor.withOpacity(0.3))
+                  color: lightColor.withOpacity(0.3))
             ],
           ),
           defaultSpace,
           const Divider(),
           defaultSpace,
-          isSelected == 'Friend Request'
-              ? KeepAlivePage(
-                  child: FriendRequestList(
-                    currentUser: widget.currentUser,
-                  ),
-                )
-              : KeepAlivePage(
-                  child: FriendsList(
-                    currentUser: widget.currentUser,
-                  ),
-                )
+          KeepAlivePage(
+            child: FriendRequestList(
+              currentUser: widget.currentUser,
+            ),
+          )
         ],
       ),
     );

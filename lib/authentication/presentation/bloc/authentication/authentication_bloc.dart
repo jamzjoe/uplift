@@ -29,7 +29,7 @@ class AuthenticationBloc
       emit(Loading());
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        authServices.addUser(user!, event.bio);
+        AuthServices.addUser(user!, event.bio);
         emit(UserIsIn(user));
       } catch (e) {
         log('Error');
@@ -42,7 +42,8 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email, event.password);
-        authServices.addUser(user!, event.bio);
+        log(user.toString());
+        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
         emit(UserIsIn(user));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -58,7 +59,8 @@ class AuthenticationBloc
       try {
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email, event.password);
-        authServices.addUser(user!, event.bio);
+        log(user.toString());
+        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
         emit(UserIsIn(user));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {

@@ -87,7 +87,7 @@ class NotificationRepository {
         .instance
         .collection('Notifications')
         .orderBy('timestamp', descending: false)
-        .where('userId', isEqualTo: userId)
+        .where('user_id', isEqualTo: userId)
         .get();
 
     List<NotificationModel> data = response.docs
@@ -96,5 +96,13 @@ class NotificationRepository {
         .reversed
         .toList();
     return data;
+  }
+
+  // Create a method to update the read status of this notification
+  Future<void> markAsRead(String notifID) async {
+    await FirebaseFirestore.instance
+        .collection("Notifications")
+        .doc(notifID)
+        .update({"read": true});
   }
 }

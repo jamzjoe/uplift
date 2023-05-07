@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_item_shimmer.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 
 import 'friend_suggestion_list.dart';
@@ -25,49 +24,35 @@ class FriendSuggestions extends StatefulWidget {
 class _FriendSuggestionsState extends State<FriendSuggestions> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: const [
-                HeaderText(
-                  text: 'Friend suggestions',
-                  color: secondaryColor,
-                  size: 18,
-                ),
-              ],
-            ),
-            const DefaultText(text: 'See more', color: linkColor)
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const HeaderText(
+          text: 'Friend suggestions',
+          color: secondaryColor,
+          size: 18,
         ),
-        defaultSpace,
-        BlocBuilder<FriendsSuggestionsBlocBloc, FriendsSuggestionsBlocState>(
-          builder: (context, state) {
-            log(state.toString());
-            if (state is FriendsSuggestionLoading) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return const FriendsShimmerItem();
-                },
-              );
-            } else if (state is FriendsSuggestionLoadingSuccess) {
-              return FriendSuggestionList(
-                users: state.users,
-                currentUser: widget.currentUser,
-              );
-            }
-            return const SizedBox();
-          },
-        )
-      ],
+      ),
+      body:
+          BlocBuilder<FriendsSuggestionsBlocBloc, FriendsSuggestionsBlocState>(
+        builder: (context, state) {
+          if (state is FriendsSuggestionLoading) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return const FriendsShimmerItem();
+              },
+            );
+          } else if (state is FriendsSuggestionLoadingSuccess) {
+            return FriendSuggestionList(
+              users: state.users,
+              currentUser: widget.currentUser,
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
   }
 }

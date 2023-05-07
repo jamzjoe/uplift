@@ -17,6 +17,7 @@ class FriendSuggestionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       children: [

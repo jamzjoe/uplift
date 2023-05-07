@@ -8,14 +8,14 @@ import 'package:uplift/utils/services/auth_services.dart';
 class PrayerRequestRepository {
   Future<List<PrayerRequestPostModel>> getPrayerRequestList() async {
     FriendsRepository friendsRepository = FriendsRepository();
-    final fetchingUserID = await friendsRepository.getApprovedFriendRequest();
-    List<String> listOfFriendsID =
-        fetchingUserID.map((e) => e.sender.toString()).toList();
-    listOfFriendsID.add(await AuthServices.userID());
+    final fetchingUserID = await friendsRepository.fetchApprovedFriendRequest();
+    List<String> friendsIDs =
+        fetchingUserID.map((e) => e.userId.toString()).toList();
+    friendsIDs.add(await AuthServices.userID());
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance
         .collection('Prayers')
-        .where('user_id', whereIn: listOfFriendsID)
+        .where('user_id', whereIn: friendsIDs)
         .orderBy('date', descending: false)
         .limit(20)
         .get();
@@ -35,20 +35,37 @@ class PrayerRequestRepository {
   }
 
   Future<bool> postPrayerRequest(User user, String text) async {
+    CollectionReference<Map<String, dynamic>> reference =
+        FirebaseFirestore.instance.collection('Prayers');
+    final postID = reference.doc().id;
     final prayerRequest = {
       "text": text,
       "user_id": user.uid,
       "date": DateTime.now(),
       "reactions": {
         "users": {user.uid: true}
-      }
+      },
+      "post_id": postID
     };
 
     try {
+      await reference.doc(postID).set(prayerRequest);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> addReaction(String postID, String userID) async {
+    try {
       await FirebaseFirestore.instance
           .collection('Prayers')
-          .doc()
-          .set(prayerRequest);
+          .doc(postID)
+          .update({
+        "reactions": {
+          "users": {userID: true}
+        }
+      });
       return true;
     } catch (e) {
       return false;

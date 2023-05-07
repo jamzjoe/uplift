@@ -21,6 +21,7 @@ class SearchBar extends StatelessWidget {
         padding: const EdgeInsets.all(5),
         widget: TextFormField(
           onFieldSubmitted: onFieldSubmitted,
+          onChanged: onFieldSubmitted,
           controller: controller,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.only(right: 30),

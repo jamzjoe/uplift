@@ -9,6 +9,7 @@ import 'package:uplift/home/presentation/page/notifications/presentation/bloc/no
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
+import '../../notifications/data/model/notification_model.dart';
 import 'post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
@@ -24,6 +25,7 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
   int badgeCount = 0;
+  List<NotificationModel> notifications = [];
   @override
   Widget build(BuildContext context) {
     final User user = widget.user;
@@ -37,6 +39,7 @@ class _FeedScreenState extends State<FeedScreen> {
               badgeCount = state.notifications
                   .where((element) => element.read == false)
                   .length;
+              notifications.addAll(state.notifications);
             });
           }
         },
@@ -64,11 +67,14 @@ class _FeedScreenState extends State<FeedScreen> {
                           size: 30,
                         )),
                     Badge.count(
+                      isLabelVisible: badgeCount != 0,
                       count: badgeCount,
                       alignment: AlignmentDirectional.bottomStart,
                       child: IconButton(
-                          onPressed: () =>
-                              goToNotificationScreen(widget.user.uid),
+                          onPressed: () {
+                            goToNotificationScreen(
+                                widget.user.uid, notifications);
+                          },
                           icon: const Icon(
                             Icons.notifications,
                             size: 30,
@@ -94,8 +100,9 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 
-  void goToNotificationScreen(String userID) {
-    context.pushNamed('notification');
+  void goToNotificationScreen(
+      String userID, List<NotificationModel> notifications) {
+    context.pushNamed('notification', extra: notifications);
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -15,8 +16,10 @@ import 'settings_item.dart';
 import 'settings_section.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key, required this.user});
+  const SettingsScreen(
+      {super.key, required this.user, required this.userModel});
   final User user;
+  final UserModel userModel;
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -40,7 +43,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 100),
         children: [
-          SettingsProfileHeader(user: user),
+          SettingsProfileHeader(
+            user: user,
+            userModel: widget.userModel,
+          ),
           ListView(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             shrinkWrap: true,

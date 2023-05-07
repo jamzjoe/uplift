@@ -30,7 +30,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
           BlocProvider.of<FriendRequestBloc>(context)
               .add(FetchFriendRequestEvent(state.user.uid));
           BlocProvider.of<ApprovedFriendsBloc>(context)
-              .add(const FetchApprovedFriendRequest());
+              .add(const FetchApprovedFriendRequest2());
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
               .add(FetchUsersEvent());
         }
