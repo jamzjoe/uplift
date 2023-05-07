@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_item_shimmer.dart';
@@ -29,17 +30,17 @@ class FriendRequestItem extends StatelessWidget {
           if (!snapshot.hasData) {
             return const FriendsShimmerItem();
           }
+          final data = snapshot.data!;
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Row(
               children: [
-                snapshot.data!['photo_url'] == null
+                data['photo_url'] == null
                     ? const CircleAvatar(
                         backgroundImage: AssetImage('assets/default.png'),
                       )
                     : CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(snapshot.data!['photo_url']),
+                        backgroundImage: NetworkImage(data['photo_url']),
                       ),
                 const SizedBox(width: 15),
                 Flexible(
@@ -49,7 +50,7 @@ class FriendRequestItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           HeaderText(
-                            text: snapshot.data!['display_name'] ?? 'User',
+                            text: data['display_name'] ?? 'User',
                             color: secondaryColor,
                             size: 18,
                           ),
@@ -67,6 +68,15 @@ class FriendRequestItem extends StatelessWidget {
                                 BlocProvider.of<FriendRequestBloc>(context).add(
                                     FetchFriendRequestEvent(
                                         await AuthServices.userID()));
+                                await NotificationRepository.sendPushMessage(
+                                    data['device_token'],
+                                    '${data['display_name']} accepted your friend request.',
+                                    'Confirmation');
+                                await NotificationRepository.addNotification(
+                                  await AuthServices.userID(),
+                                  'Confirmation',
+                                  '${data['display_name']} accepted your friend request.',
+                                );
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(

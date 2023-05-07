@@ -66,6 +66,7 @@ class _FriendsListState extends State<FriendsList> {
                   ],
                 ),
                 ...state.approvedFriendsList.map((e) => FriendsItem(
+                      user: widget.currentUser,
                       friendShipModel: e,
                     )),
               ],

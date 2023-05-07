@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
@@ -10,15 +11,19 @@ class FriendsItem extends StatelessWidget {
   const FriendsItem({
     super.key,
     required this.friendShipModel,
+    required this.user,
   });
   final FriendShipModel friendShipModel;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
     CollectionReference reference =
         FirebaseFirestore.instance.collection('Users');
     return FutureBuilder(
-        future: reference.doc(friendShipModel.sender!).get(),
+        future: user.uid == friendShipModel.receiver
+            ? reference.doc(friendShipModel.sender!).get()
+            : reference.doc(friendShipModel.receiver!).get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const FriendsShimmerItem(

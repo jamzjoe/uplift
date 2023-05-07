@@ -8,20 +8,33 @@ import 'package:uplift/utils/services/auth_services.dart';
 class FriendsRepository {
   Future<List<UserModel>> fetchUsersSuggestions() async {
     List<UserModel> data = [];
+    final userID = await AuthServices.userID();
+    List<String> status = ['approved', 'pending'];
 
-    //get all userID that you had send friend request - you are the sender
-    QuerySnapshot<Map<String, dynamic>> senderIDS = await FirebaseFirestore
-        .instance
-        .collection('Friendships')
-        .where('sender', isEqualTo: await AuthServices.userID())
-        .where('status', isEqualTo: 'pending')
-        .get();
+    //get all userID that you had send friend request - you are the sender and also the one that you received
+    QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', whereIn: status)
+            .where('receiver', isEqualTo: userID)
+            .get();
+    QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', whereIn: status)
+            .where('sender', isEqualTo: userID)
+            .get();
 
-    List<String> receiverID =
-        senderIDS.docs.map((e) => e.data()['receiver'].toString()).toList();
-    receiverID.add(await AuthServices.userID());
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
+        fetchingSenderID.docs + fetchingReceiverID.docs;
 
-    if (senderIDS.docs.isEmpty) {
+    List<String> userIDS =
+        allID.map((e) => e.data()['receiver'].toString()).toList();
+    userIDS.addAll(allID.map((e) => e.data()['sender'].toString()).toList());
+
+    log(userIDS.toString());
+
+    if (userIDS.isEmpty) {
       QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
           .instance
           .collection('Users')
@@ -36,7 +49,7 @@ class FriendsRepository {
       QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
           .instance
           .collection('Users')
-          .where('user_id', whereNotIn: receiverID)
+          .where('user_id', whereNotIn: userIDS)
           .get();
       data = response.docs
           .map((e) => UserModel.fromJson(e.data()))
@@ -83,16 +96,26 @@ class FriendsRepository {
   }
 
   Future<List<FriendShipModel>> getApprovedFriendRequest() async {
+    final userID = await AuthServices.userID();
+    List<FriendShipModel> data;
     try {
-      QuerySnapshot<Map<String, dynamic>> fetching = await FirebaseFirestore
-          .instance
-          .collection('Friendships')
-          .where('status', isEqualTo: 'approved')
-          .where('receiver', isEqualTo: await AuthServices.userID())
-          .limit(5)
-          .get();
+      QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
+          await FirebaseFirestore.instance
+              .collection('Friendships')
+              .where('status', isEqualTo: 'approved')
+              .where('receiver', isEqualTo: userID)
+              .get();
+      QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
+          await FirebaseFirestore.instance
+              .collection('Friendships')
+              .where('status', isEqualTo: 'approved')
+              .where('sender', isEqualTo: userID)
+              .get();
 
-      List<FriendShipModel> data = fetching.docs
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
+          fetchingSenderID.docs + fetchingReceiverID.docs;
+      log('All ID ${allID.map((e) => e.data().toString())}');
+      data = allID
           .map((e) => FriendShipModel.fromJson(e.data()))
           .toList()
           .reversed
