@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -67,16 +69,26 @@ class PrayerRequestRepository {
 
   Future<bool> addReaction(String postID, String userID) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('Prayers')
-          .doc(postID)
-          .update({
-        "reactions": {
-          "users": {userID: true}
-        }
-      });
+      final postRef =
+          FirebaseFirestore.instance.collection('Prayers').doc(postID);
+
+// Fetch the current value of the reactions field
+      final postSnapshot = await postRef.get();
+      final currentReactions = postSnapshot.data()?['reactions'];
+      log(currentReactions);
+// Update the reactions field
+      final updatedReactions = {
+        'users': [
+          ...currentReactions['users'], // Include existing user IDs
+          FieldValue.arrayUnion([
+            {userID: true}
+          ]), // Add new user ID
+        ]
+      };
+      postRef.update({'reactions': updatedReactions});
       return true;
     } catch (e) {
+      log(e.toString());
       return false;
     }
   }
