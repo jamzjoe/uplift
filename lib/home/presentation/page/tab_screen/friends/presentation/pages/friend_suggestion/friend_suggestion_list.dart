@@ -24,7 +24,9 @@ class FriendSuggestionList extends StatelessWidget {
         Visibility(
             visible: users.isEmpty,
             child: const Center(
-                child: NoDataMessage(text: 'No user found in UpLift'))),
+                child: Padding(
+                    padding: EdgeInsets.only(top: 200),
+                    child: NoDataMessage(text: 'No user found in UpLift')))),
         ...users.map((e) => AddFriendItem(
               user: e,
               currentUser: currentUser,

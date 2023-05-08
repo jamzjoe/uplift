@@ -4,16 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 
 class AuthServices {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-  static Future<UserJoinedModel> signInWithGoogle() async {
-    UserJoinedModel? userJoin;
-
+  static Future<User?> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser =
         await GoogleSignIn(scopes: <String>["email"]).signIn();
 
@@ -24,22 +19,15 @@ class AuthServices {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
     final UserCredential userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-    UserModel userModel =
-        await PrayerRequestRepository().getUserRecord(userCredential.user!.uid);
-    userJoin = UserJoinedModel(userModel, userCredential.user!);
 
-    return userJoin;
+    return userCredential.user;
   }
 
-  static Future<UserJoinedModel> signInWithEmailAndPassword(
+  static Future<User?> signInWithEmailAndPassword(
       String email, password) async {
-    UserJoinedModel? userJoin;
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-    UserModel userModel =
-        await PrayerRequestRepository().getUserRecord(userCredential.user!.uid);
-    userJoin = UserJoinedModel(userModel, userCredential.user!);
-    return userJoin;
+    return userCredential.user;
   }
 
 //   Future<void> sendPushNotification(String deviceToken, String title, String body) async {
@@ -91,15 +79,11 @@ class AuthServices {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
-  static Future<UserJoinedModel> registerWithEmailAndPassword(
+  static Future<User?> registerWithEmailAndPassword(
       String email, password) async {
-    UserJoinedModel? userJoin;
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    UserModel userModel =
-        await PrayerRequestRepository().getUserRecord(userCredential.user!.uid);
-    userJoin = UserJoinedModel(userModel, userCredential.user!);
-    return userJoin;
+    return userCredential.user;
   }
 
   static signOut() {

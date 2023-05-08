@@ -19,11 +19,11 @@ class SignOutRequested extends AuthenticationEvent {
 }
 
 class SignIn extends AuthenticationEvent {
-  final UserJoinedModel user;
+  final UserJoinedModel userJoinedModel;
 
-  const SignIn(this.user);
+  const SignIn(this.userJoinedModel);
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [userJoinedModel];
 }
 
 class SignInWithEmailAndPassword extends AuthenticationEvent {

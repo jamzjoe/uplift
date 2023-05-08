@@ -1,11 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -27,8 +25,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    final User user = widget.userJoinedModel.user;
-    final UserModel anotherInfo = widget.userJoinedModel.userModel;
     return Scaffold(
       backgroundColor: const Color(0xffF0F0F0),
       appBar: AppBar(
@@ -126,9 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     child: const DefaultText(
                                         text: 'Cancel', color: secondaryColor)),
                                 TextButton(
-                                    onPressed: () {
-                                      
-                                    },
+                                    onPressed: () {},
                                     child: const DefaultText(
                                         text: 'Delete', color: Colors.red)),
                               ]),

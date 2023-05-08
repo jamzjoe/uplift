@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
@@ -21,12 +20,10 @@ class AuthenticationBloc
   late final StreamSubscription<User?> streamSubscription;
   AuthenticationBloc(this.authRepository) : super(AuthenticationInitial()) {
     streamSubscription = authRepository.user.listen((user) async {
-      final UserJoinedModel userJoinedModel;
       if (user != null) {
-        UserModel userModel =
-            await PrayerRequestRepository().getUserRecord(user.uid);
-        userJoinedModel = UserJoinedModel(userModel, user);
-        add(SignIn(userJoinedModel));
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        add(SignIn(UserJoinedModel(userModel, user)));
       } else {
         add(SignOut());
       }
@@ -35,11 +32,14 @@ class AuthenticationBloc
     on<GoogleSignInRequested>((event, emit) async {
       emit(Loading());
       try {
-        final UserJoinedModel user = await AuthServices.signInWithGoogle();
-        AuthServices.addUser(user.user, event.bio);
-        emit(UserIsIn(user));
+        final User? user = await AuthServices.signInWithGoogle();
+        await AuthServices.addUser(user!, event.bio);
+
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        emit(UserIsIn(UserJoinedModel(userModel, user)));
       } catch (e) {
-        log('Error');
+        log(e.toString());
         emit(UserIsOut(e.toString()));
       }
     });
@@ -47,12 +47,13 @@ class AuthenticationBloc
     on<SignInWithEmailAndPassword>((event, emit) async {
       emit(Loading());
       try {
-        final UserJoinedModel user =
-            await AuthServices.signInWithEmailAndPassword(
-                event.email, event.password);
+        final User? user = await AuthServices.signInWithEmailAndPassword(
+            event.email, event.password);
         log(user.toString());
-        AuthServices.addUserFromEmailAndPassword(user.user, event.bio);
-        emit(UserIsIn(user));
+        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           emit(const UserIsOut("No user found for that email."));
@@ -65,12 +66,13 @@ class AuthenticationBloc
     on<RegisterWithEmailAndPassword>((event, emit) async {
       emit(Loading());
       try {
-        final UserJoinedModel user =
-            await AuthServices.registerWithEmailAndPassword(
-                event.email, event.password);
+        final User? user = await AuthServices.registerWithEmailAndPassword(
+            event.email, event.password);
         log(user.toString());
-        AuthServices.addUserFromEmailAndPassword(user.user, event.bio);
-        emit(UserIsIn(user));
+        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           emit(const UserIsOut("The password provided is too weak."));
@@ -86,7 +88,7 @@ class AuthenticationBloc
       AuthServices.signOut();
     });
 
-    on<SignIn>((event, emit) => emit(UserIsIn(event.user)));
+    on<SignIn>((event, emit) => emit(UserIsIn(event.userJoinedModel)));
     on<SignOut>((event, emit) => emit(const UserIsOut("")));
   }
 }

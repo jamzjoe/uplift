@@ -25,10 +25,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
         if (state is UserIsIn) {
           BlocProvider.of<GetPrayerRequestBloc>(context)
               .add(const GetPostRequestList());
-          BlocProvider.of<NotificationBloc>(context)
-              .add(FetchListOfNotification(state.user.user.uid, false));
+          BlocProvider.of<NotificationBloc>(context).add(
+              FetchListOfNotification(state.userJoinedModel.user.uid, false));
           BlocProvider.of<FriendRequestBloc>(context)
-              .add(FetchFriendRequestEvent(state.user.user.uid));
+              .add(FetchFriendRequestEvent(state.userJoinedModel.user.uid));
           BlocProvider.of<ApprovedFriendsBloc>(context)
               .add(const FetchApprovedFriendRequest2());
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
@@ -38,7 +38,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
       builder: (context, state) {
         if (state is UserIsIn) {
           return HomeScreen(
-            userJoinedModel: state.user,
+            userJoinedModel: state.userJoinedModel,
           );
         } else if (state is UserIsOut) {
           return const IntroductionScreen();

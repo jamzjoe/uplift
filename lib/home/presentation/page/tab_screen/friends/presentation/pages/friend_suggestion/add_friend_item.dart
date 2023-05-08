@@ -66,13 +66,13 @@ class AddFriendItem extends StatelessWidget {
                           .addFriendshipRequest(friendShipModel);
                       await NotificationRepository.sendPushMessage(
                           user.deviceToken!,
-                          '${currentUser.displayName} sent you a friend a request.',
+                          'sent you a friend a request.',
                           "Uplift Notification");
 
                       await NotificationRepository.addNotification(
                         user.userId!,
                         'Friend request',
-                        '${currentUser.displayName} sent you a friend a request.',
+                        'sent you a friend a request.',
                       );
                     } catch (e) {
                       log(e.toString());

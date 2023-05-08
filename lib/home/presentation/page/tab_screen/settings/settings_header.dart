@@ -27,7 +27,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
   @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.user;
-    final anotherInfo = widget.userJoinedModel.userModel;
+    final userModel = widget.userJoinedModel.userModel;
     return Container(
       padding: const EdgeInsets.all(20),
       color: whiteColor,
@@ -84,8 +84,8 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomContainer(
-                  onTap: () =>
-                      context.pushNamed('edit-profile', extra: anotherInfo),
+                  onTap: () => context.pushNamed('edit-profile',
+                      extra: widget.userJoinedModel),
                   widget: const SmallText(
                       text: 'Edit profile', color: secondaryColor),
                   color: secondaryColor.withOpacity(0.1)),
@@ -93,7 +93,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
           ),
           defaultSpace,
           Visibility(
-            visible: anotherInfo.bio!.isEmpty,
+            visible: userModel.bio!.isEmpty,
             child: !isEditable
                 ? TextButton.icon(
                     onPressed: () {
@@ -128,15 +128,15 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                   ),
           ),
           Visibility(
-            visible: anotherInfo.bio!.isNotEmpty,
+            visible: userModel.bio!.isNotEmpty,
             child: GestureDetector(
               onTap: () => log('Update bio'),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  DefaultText(text: anotherInfo.bio!, color: secondaryColor),
-                  const SmallText(text: 'Edit bio', color: linkColor)
+                children: const [
+                  DefaultText(text: 'Bio', color: secondaryColor),
+                  SmallText(text: 'Edit bio', color: linkColor)
                 ],
               ),
             ),

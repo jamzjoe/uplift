@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 
 part 'get_prayer_request_event.dart';
@@ -46,9 +45,7 @@ class GetPrayerRequestBloc
       try {
         final data = await prayerRequestRepository.getPrayerRequestList();
 
-        await Future.delayed(const Duration(seconds: 1), () async {
-          emit(LoadingPrayerRequesListSuccess(data));
-        });
+        emit(LoadingPrayerRequesListSuccess(data));
       } on FirebaseException {
         emit(LoadingPrayerRequesListError());
       }

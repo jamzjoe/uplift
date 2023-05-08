@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             await notificationRepository.getUserNotifications(event.userID);
         emit(NotificationLoadingSuccess(data, false));
       } catch (e) {
+        log(e.toString());
         emit(NotificationLoadingError());
       }
     });
@@ -54,8 +56,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<ClearNotification>((event, emit) async {
       try {
         for (var each in event.notificationList) {
-          NotificationRepository
-              .delete(each.notificationModel.notificationId!);
+          NotificationRepository.delete(each.notificationModel.notificationId!);
         }
       } catch (e) {
         emit(NotificationLoadingError());
@@ -65,8 +66,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<MarkAllAsRead>((event, emit) async {
       try {
         for (var each in event.notificationList) {
-          NotificationRepository
-              .markAsRead(each.notificationModel.notificationId!);
+          NotificationRepository.markAsRead(
+              each.notificationModel.notificationId!);
         }
       } catch (e) {
         emit(NotificationLoadingError());

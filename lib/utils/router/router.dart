@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
@@ -87,7 +86,8 @@ final GoRouter router = GoRouter(
                 path: 'edit-profile',
                 name: 'edit-profile',
                 pageBuilder: (context, state) => MaterialPage(
-                    child: EditProfileScreen(user: state.extra as UserModel))),
+                    child: EditProfileScreen(
+                        userJoinedModel: state.extra as UserJoinedModel))),
             GoRoute(
               path: 'notification',
               name: 'notification',

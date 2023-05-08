@@ -10,11 +10,11 @@ abstract class AuthenticationState extends Equatable {
 class AuthenticationInitial extends AuthenticationState {}
 
 class UserIsIn extends AuthenticationState {
-  final UserJoinedModel user;
+  final UserJoinedModel userJoinedModel;
 
-  const UserIsIn(this.user);
+  const UserIsIn(this.userJoinedModel);
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [userJoinedModel];
 }
 
 class UserIsOut extends AuthenticationState {

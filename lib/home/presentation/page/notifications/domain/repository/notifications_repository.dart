@@ -8,6 +8,7 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 
 class NotificationRepository {
   static final _notification = FlutterLocalNotificationsPlugin();
@@ -60,7 +61,7 @@ class NotificationRepository {
   }
 
   static Future<void> addNotification(
-      String userId, String title, String message) async {
+      String receiverID, String title, String message) async {
     CollectionReference notificationsCollection =
         FirebaseFirestore.instance.collection('Notifications');
 
@@ -70,7 +71,8 @@ class NotificationRepository {
 
       final NotificationModel notificationModel = NotificationModel(
           notificationId: notificationId,
-          userId: userId,
+          senderID: await AuthServices.userID(),
+          receiverID: receiverID,
           title: title,
           read: false,
           message: message,
@@ -92,7 +94,7 @@ class NotificationRepository {
         .instance
         .collection('Notifications')
         .orderBy('timestamp', descending: false)
-        .where('user_id', isEqualTo: userId)
+        .where('receiver_id', isEqualTo: userId)
         .get();
 
     List<NotificationModel> data = response.docs
@@ -103,7 +105,7 @@ class NotificationRepository {
 
     for (var each in data) {
       final UserModel user =
-          await PrayerRequestRepository().getUserRecord(each.userId!);
+          await PrayerRequestRepository().getUserRecord(each.senderID!);
       userNotif.add(UserNotifModel(user, each));
     }
 
