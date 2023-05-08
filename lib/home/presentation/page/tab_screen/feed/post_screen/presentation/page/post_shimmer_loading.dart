@@ -12,6 +12,8 @@ class _PostShimmerLoadingState extends State<PostShimmerLoading> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      physics: const ClampingScrollPhysics(),
+      shrinkWrap: true,
       children: const [
         PostItemShimmerLoading(),
         PostItemShimmerLoading(),

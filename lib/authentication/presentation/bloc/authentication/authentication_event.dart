@@ -19,7 +19,7 @@ class SignOutRequested extends AuthenticationEvent {
 }
 
 class SignIn extends AuthenticationEvent {
-  final User user;
+  final UserJoinedModel user;
 
   const SignIn(this.user);
   @override

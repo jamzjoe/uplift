@@ -15,7 +15,7 @@ class NotificationLoading extends NotificationState {
 }
 
 class NotificationLoadingSuccess extends NotificationState {
-  final List<NotificationModel> notifications;
+  final List<UserNotifModel> notifications;
   final bool newNotif;
 
   const NotificationLoadingSuccess(this.notifications, this.newNotif);

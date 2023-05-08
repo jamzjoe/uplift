@@ -5,18 +5,19 @@ class PrayerRequestPostModel {
   String? userId;
   Timestamp? date;
   Reactions? reactions;
-  String? postID;
+  String? postId;
 
-  PrayerRequestPostModel({this.text, this.userId, this.date, this.reactions});
+  PrayerRequestPostModel(
+      {this.text, this.userId, this.date, this.reactions, this.postId});
 
   PrayerRequestPostModel.fromJson(Map<String, dynamic> json) {
     text = json['text'];
     userId = json['user_id'];
     date = json['date'];
-    postID = json['post_id'];
     reactions = json['reactions'] != null
         ? Reactions.fromJson(json['reactions'])
         : null;
+    postId = json['post_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -24,44 +25,49 @@ class PrayerRequestPostModel {
     data['text'] = text;
     data['user_id'] = userId;
     data['date'] = date;
-    data['post_id'] = postID;
     if (reactions != null) {
       data['reactions'] = reactions!.toJson();
     }
+    data['post_id'] = postId;
     return data;
   }
 }
 
 class Reactions {
-  Users? users;
+  List<Users>? users;
 
   Reactions({this.users});
 
   Reactions.fromJson(Map<String, dynamic> json) {
-    users = json['users'] != null ? Users.fromJson(json['users']) : null;
+    if (json['users'] != null) {
+      users = <Users>[];
+      json['users'].forEach((v) {
+        users!.add(Users.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (users != null) {
-      data['users'] = users!.toJson();
+      data['users'] = users!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Users {
-  bool? user;
+  String? userUid;
 
-  Users({this.user});
+  Users({this.userUid});
 
   Users.fromJson(Map<String, dynamic> json) {
-    user = json['user'];
+    userUid = json['user.uid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['user'] = user;
+    data['user.uid'] = userUid;
     return data;
   }
 }

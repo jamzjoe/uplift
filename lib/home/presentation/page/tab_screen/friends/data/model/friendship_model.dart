@@ -5,14 +5,21 @@ class FriendShipModel {
   String? receiver;
   String? status;
   Timestamp? timestamp;
+  String? friendshipID;
 
-  FriendShipModel({this.sender, this.receiver, this.status, this.timestamp});
+  FriendShipModel(
+      {this.sender,
+      this.receiver,
+      this.status,
+      this.timestamp,
+      this.friendshipID});
 
   FriendShipModel.fromJson(Map<String, dynamic> json) {
     sender = json['sender'];
     receiver = json['receiver'];
     status = json['status'];
     timestamp = json['timestamp'];
+    friendshipID = json['friendship_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -21,6 +28,7 @@ class FriendShipModel {
     data['receiver'] = receiver;
     data['status'] = status;
     data['timestamp'] = timestamp;
+    data['friendship_id'] = friendshipID;
     return data;
   }
 }

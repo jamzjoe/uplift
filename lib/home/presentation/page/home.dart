@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
@@ -14,8 +14,8 @@ import 'package:uplift/utils/widgets/keep_alive.dart';
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.user});
-  final User user;
+  const HomeScreen({super.key, required this.userJoinedModel});
+  final UserJoinedModel userJoinedModel;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final User user = widget.user;
+    final User user = widget.userJoinedModel.user;
     return Scaffold(
       backgroundColor: const Color(0xff898F9C),
       key: _scaffoldKey,
@@ -73,8 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               const KeepAlivePage(child: EventScreen()),
               KeepAlivePage(
                   child: SettingsScreen(
-                user: user,
-                userModel: UserModel(),
+                userJoinedModel: widget.userJoinedModel,
               ))
             ],
           )),

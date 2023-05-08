@@ -1,18 +1,27 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class FriendsItem extends StatelessWidget {
   const FriendsItem({
     super.key,
-    required this.user,
+    required this.userFriendship,
   });
-  final UserModel user;
+  final UserFriendshipModel userFriendship;
 
   @override
   Widget build(BuildContext context) {
+    String friendShipID = userFriendship.friendshipID.friendshipId!;
+    UserModel user = userFriendship.userModel;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -27,23 +36,50 @@ class FriendsItem extends StatelessWidget {
           const SizedBox(width: 15),
           Flexible(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    HeaderText(
-                      text: user.displayName ?? 'User',
-                      color: secondaryColor,
-                      size: 18,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeaderText(
+                          text: user.displayName ?? 'User',
+                          color: secondaryColor,
+                          size: 18,
+                        ),
+                        const SizedBox(height: 5),
+                        SmallText(
+                            text:
+                                'Friends since ${user.createdAt!.toDate().year}',
+                            color: lightColor),
+                      ],
                     ),
-                    const SmallText(text: '1w ', color: lightColor)
+                    PopupMenuButton(
+                      icon: const Icon(CupertinoIcons.ellipsis),
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                              onTap: () => BlocProvider.of<ApprovedFriendsBloc>(context).add(UnfriendEvent(friendShipID)),
+                              child: Row(
+                                children: const [
+                                  Icon(
+                                    Icons.remove_circle,
+                                    color: secondaryColor,
+                                  ),
+                                  SizedBox(width: 5),
+                                  DefaultText(
+                                      text: 'Unfollow', color: secondaryColor),
+                                ],
+                              ))
+                        ];
+                      },
+                    )
                   ],
                 ),
-                const SizedBox(height: 5),
-                SmallText(
-                    text: 'Friends since ${user.createdAt!.toDate().year}',
-                    color: lightColor)
               ],
             ),
           )

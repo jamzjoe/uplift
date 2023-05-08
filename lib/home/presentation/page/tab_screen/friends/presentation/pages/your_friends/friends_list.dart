@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/search_bar.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'friends_item.dart';
 
@@ -27,27 +25,24 @@ class _FriendsListState extends State<FriendsList> {
       builder: (context, state) {
         if (state is ApprovedFriendsSuccess2) {
           if (state.approvedFriendList.isEmpty) {
-            return const Center(
+            return const Padding(
+                padding: EdgeInsets.only(top: 100),
                 child: NoDataMessage(text: 'No friends yet...'));
           }
           return ListView(
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 30),
             children: [
-              SearchBar(
-                onFieldSubmitted: (query) {
-                  BlocProvider.of<ApprovedFriendsBloc>(context)
-                      .add(SearchApprovedFriend(query));
-                },
-                hint: 'Search your friend here...',
-              ),
-              ...state.approvedFriendList.map((e) => FriendsItem(user: e))
+              ...state.approvedFriendList
+                  .map((e) => FriendsItem(userFriendship: e))
             ],
           );
-        } else {
-          return const SizedBox();
+        } else if (state is EmptySearchResult) {
+          return const Center(
+            child: NoDataMessage(text: 'No user found'),
+          );
         }
+        return const SizedBox();
       },
     );
   }

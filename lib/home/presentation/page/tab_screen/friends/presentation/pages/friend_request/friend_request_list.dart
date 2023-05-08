@@ -23,14 +23,7 @@ class _FriendRequestListState extends State<FriendRequestList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      padding: EdgeInsets.zero,
-      children: const [
-        FriendRequestListView(),
-      ],
-    );
+    return const FriendRequestListView();
   }
 }
 
@@ -45,13 +38,17 @@ class FriendRequestListView extends StatelessWidget {
       builder: (context, state) {
         if (state is FriendRequestLoadingSuccess) {
           if (state.users.isEmpty) {
-            return Column(
+            return ListView(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
               children: [
                 FriendRequestHeader(
                   friendRequestCount: state.users.length,
                 ),
-                const NoDataMessage(text: 'No friend request yet'),
-                const SizedBox()
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 80),
+                  child: NoDataMessage(text: 'No friend request yet'),
+                ),
               ],
             );
           }

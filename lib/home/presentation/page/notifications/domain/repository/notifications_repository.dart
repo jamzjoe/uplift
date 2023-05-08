@@ -4,7 +4,10 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 
 class NotificationRepository {
   static final _notification = FlutterLocalNotificationsPlugin();
@@ -82,7 +85,9 @@ class NotificationRepository {
     }
   }
 
-  Future<List<NotificationModel>> getUserNotifications(String userId) async {
+  Future<List<UserNotifModel>> getUserNotifications(String userId) async {
+    List<UserNotifModel> userNotif = [];
+
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance
         .collection('Notifications')
@@ -95,14 +100,29 @@ class NotificationRepository {
         .toList()
         .reversed
         .toList();
-    return data;
+
+    for (var each in data) {
+      final UserModel user =
+          await PrayerRequestRepository().getUserRecord(each.userId!);
+      userNotif.add(UserNotifModel(user, each));
+    }
+
+    return userNotif;
   }
 
   // Create a method to update the read status of this notification
-  Future<void> markAsRead(String notifID) async {
+  static Future<void> markAsRead(String notifID) async {
     await FirebaseFirestore.instance
         .collection("Notifications")
         .doc(notifID)
         .update({"read": true});
+  }
+
+  // Create a method to update the read status of this notification
+  static Future<void> delete(String notifID) async {
+    await FirebaseFirestore.instance
+        .collection("Notifications")
+        .doc(notifID)
+        .delete();
   }
 }

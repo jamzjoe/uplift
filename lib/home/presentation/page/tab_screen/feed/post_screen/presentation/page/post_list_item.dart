@@ -22,38 +22,45 @@ class PostListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
-      builder: (context, state) {
-        if (state is LoadingPrayerRequesListSuccess) {
-          if (state.prayerRequestPostModel.isEmpty) {
-            return Center(
-                child: EndOfPostWidget(
-              isEmpty: true,
-              user: user,
-            ));
-          }
-          return ListView(
-            padding: const EdgeInsets.only(bottom: 120),
-            physics: const ClampingScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              PostField(user: user),
-              const PostStatusWidget(),
-              ...state.prayerRequestPostModel.map((e) => PostItem(
-                    postModel: e,
-                  )),
-              defaultSpace,
-              EndOfPostWidget(
-                isEmpty: false,
-                user: user,
-              )
-            ],
-          );
-        } else if (state is LoadingPrayerRequesList) {
-          return const PostShimmerLoading();
-        }
-        return const PostShimmerLoading();
-      },
+    return ListView(
+      children: [
+        PostField(user: user),
+        BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
+          builder: (context, state) {
+            if (state is LoadingPrayerRequesListSuccess) {
+              if (state.prayerRequestPostModel.isEmpty) {
+                return Center(
+                    child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 250,
+                  child: EndOfPostWidget(
+                    isEmpty: true,
+                    user: user,
+                  ),
+                ));
+              }
+              return ListView(
+                padding: const EdgeInsets.only(bottom: 120),
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                children: [
+                  const PostStatusWidget(),
+                  ...state.prayerRequestPostModel.map((e) => PostItem(
+                        postModel: e,
+                      )),
+                  defaultSpace,
+                  EndOfPostWidget(
+                    isEmpty: false,
+                    user: user,
+                  )
+                ],
+              );
+            } else if (state is LoadingPrayerRequesList) {
+              return const PostShimmerLoading();
+            }
+            return const PostShimmerLoading();
+          },
+        ),
+      ],
     );
   }
 }

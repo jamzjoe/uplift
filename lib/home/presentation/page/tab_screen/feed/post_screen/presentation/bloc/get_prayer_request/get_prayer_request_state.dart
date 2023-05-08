@@ -15,7 +15,7 @@ class LoadingPrayerRequesList extends GetPrayerRequestState {
 }
 
 class LoadingPrayerRequesListSuccess extends GetPrayerRequestState {
-  final List<PrayerRequestPostModel> prayerRequestPostModel;
+  final List<PostModel> prayerRequestPostModel;
 
   const LoadingPrayerRequesListSuccess(this.prayerRequestPostModel);
   @override

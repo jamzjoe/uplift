@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             isLoading = false;
           });
-          customDialog(context, state, 'Authentication Error', [
+          customDialog(context, state.message, 'Authentication Error', [
             CustomContainer(
                 onTap: () => context.pop(),
                 widget: const DefaultText(text: 'CONFIRM', color: whiteColor),

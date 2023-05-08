@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-import '../../notifications/data/model/notification_model.dart';
 import 'post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
@@ -25,7 +25,7 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
   int badgeCount = 0;
-  List<NotificationModel> notifications = [];
+  List<UserNotifModel> notifications = [];
   @override
   Widget build(BuildContext context) {
     final User user = widget.user;
@@ -37,7 +37,7 @@ class _FeedScreenState extends State<FeedScreen> {
           if (state is NotificationLoadingSuccess) {
             setState(() {
               badgeCount = state.notifications
-                  .where((element) => element.read == false)
+                  .where((element) => element.notificationModel.read == false)
                   .length;
               notifications.addAll(state.notifications);
             });
@@ -88,11 +88,7 @@ class _FeedScreenState extends State<FeedScreen> {
               onRefresh: () async =>
                   BlocProvider.of<GetPrayerRequestBloc>(context)
                       .add(RefreshPostRequestList()),
-              child: Column(
-                children: [
-                  Expanded(child: PostListItem(user: user)),
-                ],
-              ),
+              child: PostListItem(user: user),
             ),
           ),
         ),
@@ -101,7 +97,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void goToNotificationScreen(
-      String userID, List<NotificationModel> notifications) {
+      String userID, List<UserNotifModel> notifications) {
     context.pushNamed('notification', extra: notifications);
   }
 }

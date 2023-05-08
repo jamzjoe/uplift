@@ -24,7 +24,7 @@ class ApprovedFriendsSuccess extends ApprovedFriendsState {
 }
 
 class ApprovedFriendsSuccess2 extends ApprovedFriendsState {
-  final List<UserModel> approvedFriendList;
+  final List<UserFriendshipModel> approvedFriendList;
 
   const ApprovedFriendsSuccess2(this.approvedFriendList);
   @override
@@ -32,6 +32,11 @@ class ApprovedFriendsSuccess2 extends ApprovedFriendsState {
 }
 
 class ApprovedFriendsError extends ApprovedFriendsState {
+  @override
+  List<Object> get props => [];
+}
+
+class EmptySearchResult extends ApprovedFriendsState {
   @override
   List<Object> get props => [];
 }

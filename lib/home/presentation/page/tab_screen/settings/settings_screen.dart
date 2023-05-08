@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/dialog.dart';
 
 import '../../../../../constant/constant.dart';
 import '../../../../../utils/widgets/header_text.dart';
@@ -16,10 +18,8 @@ import 'settings_item.dart';
 import 'settings_section.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen(
-      {super.key, required this.user, required this.userModel});
-  final User user;
-  final UserModel userModel;
+  const SettingsScreen({super.key, required this.userJoinedModel});
+  final UserJoinedModel userJoinedModel;
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
@@ -27,7 +27,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    final User user = widget.user;
+    final User user = widget.userJoinedModel.user;
+    final UserModel anotherInfo = widget.userJoinedModel.userModel;
     return Scaffold(
       backgroundColor: const Color(0xffF0F0F0),
       appBar: AppBar(
@@ -44,8 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.only(bottom: 100),
         children: [
           SettingsProfileHeader(
-            user: user,
-            userModel: widget.userModel,
+            userJoinedModel: widget.userJoinedModel,
           ),
           ListView(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -60,12 +60,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     children: ListTile.divideTiles(context: context, tiles: [
-                      const SettingsItem(
-                          label: 'Account', icon: CupertinoIcons.person_fill),
-                      const SettingsItem(
-                          label: 'Privacy', icon: CupertinoIcons.lock_fill),
-                      const SettingsItem(
-                          label: 'Security', icon: CupertinoIcons.shield_fill),
+                      SettingsItem(
+                          onTap: () => context.pushNamed('account'),
+                          label: 'Account',
+                          icon: CupertinoIcons.person_fill),
+                      SettingsItem(
+                          onTap: () => context.pushNamed('privacy'),
+                          label: 'Privacy',
+                          icon: CupertinoIcons.lock_fill),
+                      SettingsItem(
+                          onTap: () => context.pushNamed('security'),
+                          label: 'Security',
+                          icon: CupertinoIcons.shield_fill),
                       const SettingsItem(
                           label: 'Share Profile',
                           icon: CupertinoIcons.arrowshape_turn_up_right_fill)
@@ -81,16 +87,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       children: ListTile.divideTiles(context: context, tiles: [
-                        const SettingsItem(
+                        SettingsItem(
+                            onTap: () => context.pushNamed('donate'),
                             label: 'Donate and Support Us',
                             icon: CupertinoIcons.heart_fill),
-                        const SettingsItem(
+                        SettingsItem(
+                            onTap: () => context.pushNamed('report-problem'),
                             label: 'Report a problem',
                             icon: CupertinoIcons.flag_fill),
-                        const SettingsItem(
+                        SettingsItem(
+                            onTap: () => context.pushNamed('support'),
                             label: 'Support',
                             icon: CupertinoIcons.chat_bubble_fill),
-                        const SettingsItem(
+                        SettingsItem(
+                            onTap: () => context.pushNamed('term-policies'),
                             label: 'Terms and Policies',
                             icon: CupertinoIcons.info_circle_fill),
                       ]).toList(),
@@ -104,10 +114,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       borderRadius: BorderRadius.circular(10)),
                   child: Column(
                     children: ListTile.divideTiles(context: context, tiles: [
-                      const SettingsItem(
-                          label: 'Switch Account',
-                          icon: CupertinoIcons
-                              .arrow_right_arrow_left_square_fill),
+                      SettingsItem(
+                          onTap: () => customDialog(
+                                  context,
+                                  'This will delete your account.',
+                                  'Delete confirmation', [
+                                TextButton(
+                                    onPressed: () {
+                                      context.pop();
+                                    },
+                                    child: const DefaultText(
+                                        text: 'Cancel', color: secondaryColor)),
+                                TextButton(
+                                    onPressed: () {
+                                      
+                                    },
+                                    child: const DefaultText(
+                                        text: 'Delete', color: Colors.red)),
+                              ]),
+                          label: 'Delete Account',
+                          icon: CupertinoIcons.delete_left_fill),
                       SettingsItem(
                           onTap: signOutWarning,
                           label: 'Logout',

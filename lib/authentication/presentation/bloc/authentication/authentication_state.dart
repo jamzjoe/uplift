@@ -10,7 +10,7 @@ abstract class AuthenticationState extends Equatable {
 class AuthenticationInitial extends AuthenticationState {}
 
 class UserIsIn extends AuthenticationState {
-  final User user;
+  final UserJoinedModel user;
 
   const UserIsIn(this.user);
   @override

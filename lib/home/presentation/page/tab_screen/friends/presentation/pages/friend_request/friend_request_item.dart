@@ -53,12 +53,12 @@ class FriendRequestItem extends StatelessWidget {
                         onTap: () async {
                           await NotificationRepository.sendPushMessage(
                               user.displayName ?? 'Anonymous User',
-                              '${user.displayName ?? 'Anonymous User'} accepted your friend request.',
-                              'Confirmation');
+                              'accepted your friend request.',
+                              'Accepted request');
                           await NotificationRepository.addNotification(
-                            await AuthServices.userID(),
-                            'Confirmation',
-                            '${user.displayName ?? 'Anonymous User'} accepted your friend request.',
+                            user.userId!,
+                            'Accepted request',
+                            'accepted your friend request.',
                           );
                           if (context.mounted) {
                             BlocProvider.of<FriendRequestBloc>(context).add(

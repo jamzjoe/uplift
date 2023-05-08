@@ -24,3 +24,11 @@ class SearchApprovedFriend extends ApprovedFriendsEvent {
   @override
   List<Object> get props => [query];
 }
+
+class UnfriendEvent extends ApprovedFriendsEvent {
+  final String friendShipID;
+
+  const UnfriendEvent(this.friendShipID);
+  @override
+  List<Object> get props => [friendShipID];
+}

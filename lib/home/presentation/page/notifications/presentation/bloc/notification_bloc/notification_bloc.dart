@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
@@ -39,6 +39,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         emit(NotificationLoadingError());
       }
     });
+
     on<RefreshListOfNotification>((event, emit) async {
       emit(NotificationLoading());
       try {
@@ -53,7 +54,19 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<ClearNotification>((event, emit) async {
       try {
         for (var each in event.notificationList) {
-          notificationRepository.markAsRead(each.notificationId!);
+          NotificationRepository
+              .delete(each.notificationModel.notificationId!);
+        }
+      } catch (e) {
+        emit(NotificationLoadingError());
+      }
+    });
+
+    on<MarkAllAsRead>((event, emit) async {
+      try {
+        for (var each in event.notificationList) {
+          NotificationRepository
+              .markAsRead(each.notificationModel.notificationId!);
         }
       } catch (e) {
         emit(NotificationLoadingError());

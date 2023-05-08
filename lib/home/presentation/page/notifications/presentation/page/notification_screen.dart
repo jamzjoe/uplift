@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_shimmer.dart';
 import 'package:uplift/utils/services/auth_services.dart';
@@ -10,13 +11,12 @@ import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 
-import '../../data/model/notification_model.dart';
 import 'notification_item.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key, required this.notifications});
 
-  final List<NotificationModel> notifications;
+  final List<UserNotifModel> notifications;
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
@@ -44,13 +44,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       )),
                 ),
                 PopupMenuItem(
+                  onTap: () => deleteAll(widget.notifications),
                   child: TextButton.icon(
                       label: const DefaultText(
                           text: 'Delete all', color: secondaryColor),
-                      onPressed: () {
-                        BlocProvider.of<NotificationBloc>(context)
-                            .add(ClearNotification(widget.notifications));
-                      },
+                      onPressed: null,
                       icon: const Icon(
                         Icons.remove_circle,
                         color: primaryColor,
@@ -104,11 +102,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  void markAllAsRead(List<NotificationModel> notifications) async {
+  void markAllAsRead(List<UserNotifModel> notifications) async {
     log("Tap");
     Future.delayed(const Duration(seconds: 1), () async {
       BlocProvider.of<NotificationBloc>(context)
-          .add(ClearNotification(notifications));
+          .add(MarkAllAsRead(notifications));
+    });
+  }
+
+  void deleteAll(List<UserNotifModel> notifications) {
+    Future.delayed(const Duration(seconds: 1), () async {
+      BlocProvider.of<NotificationBloc>(context)
+          .add(ClearNotification(widget.notifications));
     });
   }
 }
