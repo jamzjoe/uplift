@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
@@ -201,8 +204,8 @@ class _PostItemState extends State<PostItem> {
                     }),
                 TextButton.icon(
                     onPressed: () async {
-                      Share.share(prayerRequest.text!);
-                      log(prayerRequest.date!.toDate().toString());
+                      // final image = await saveImage();
+                      saveAndShare();
                     },
                     icon: const Image(
                       image: AssetImage('assets/share.png'),
@@ -220,15 +223,28 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  Future<String> saveImage(Uint8List bytes) async {
+  Future<String> saveImage() async {
+    await [Permission.storage].request();
     try {
-      final result = await ImageGallerySaver.saveImage(bytes);
-      log(result['filepath'].toString());
-      return result['filepath'];
+      final Uint8List? imageBytes = await screenshotController.capture();
+      final result = await ImageGallerySaver.saveImage(imageBytes!,
+          name: 'screenshot${DateTime.now()}');
+      final filepath = result['filePath'] ?? '';
+      log(filepath);
+      return filepath;
     } catch (e) {
       log(e.toString());
       return e.toString();
     }
+  }
+
+  void saveAndShare() async {
+    final Uint8List? imageBytes = await screenshotController.capture();
+    final directory = await getApplicationDocumentsDirectory();
+    final image = File('${directory.path}/uplift.png');
+    image.writeAsBytes(imageBytes!);
+
+    await Share.shareFiles([image.path]);
   }
 }
 
