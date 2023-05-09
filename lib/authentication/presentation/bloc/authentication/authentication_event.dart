@@ -47,5 +47,13 @@ class RegisterWithEmailAndPassword extends AuthenticationEvent {
 
 class SignOut extends AuthenticationEvent {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
+}
+
+class UpdateBio extends AuthenticationEvent {
+  final String userID, bio;
+
+  const UpdateBio(this.userID, this.bio);
+  @override
+  List<Object?> get props => [userID, bio];
 }

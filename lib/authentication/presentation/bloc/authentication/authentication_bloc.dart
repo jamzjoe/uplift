@@ -90,5 +90,17 @@ class AuthenticationBloc
 
     on<SignIn>((event, emit) => emit(UserIsIn(event.userJoinedModel)));
     on<SignOut>((event, emit) => emit(const UserIsOut("")));
+
+    on<UpdateBio>((event, emit) async {
+      try {
+        final User? user = FirebaseAuth.instance.currentUser;
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        await AuthRepository.updateBio(event.bio, event.userID);
+        emit(UserIsIn(UserJoinedModel(userModel, user!)));
+      } catch (e) {
+        emit(UserIsOut(e.toString()));
+      }
+    });
   }
 }

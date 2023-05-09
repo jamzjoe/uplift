@@ -46,6 +46,7 @@ class PostListItem extends StatelessWidget {
                   const PostStatusWidget(),
                   ...state.prayerRequestPostModel.map((e) => PostItem(
                         postModel: e,
+                        user: user,
                       )),
                   defaultSpace,
                   EndOfPostWidget(

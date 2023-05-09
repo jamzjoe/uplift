@@ -77,7 +77,6 @@ class FriendsRepository {
           .collection('Friendships')
           .where('status', isEqualTo: 'pending')
           .where('receiver', isEqualTo: currentUserID)
-          .limit(5)
           .get();
 
       List<FriendShipModel> data = fetching.docs

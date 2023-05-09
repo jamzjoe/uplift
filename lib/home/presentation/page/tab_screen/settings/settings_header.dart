@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.dart';
 import 'package:uplift/utils/widgets/button.dart';
@@ -22,6 +24,7 @@ class SettingsProfileHeader extends StatefulWidget {
 }
 
 bool isEditable = false;
+final TextEditingController _bioController = TextEditingController();
 
 class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
   @override
@@ -105,9 +108,12 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                     label: const DefaultText(
                         text: 'Add bio', color: secondaryColor))
                 : TextFormField(
+                    controller: _bioController,
                     keyboardType: TextInputType.text,
                     autofocus: true,
                     onFieldSubmitted: (value) {
+                      BlocProvider.of<AuthenticationBloc>(context)
+                          .add(UpdateBio(user.uid, _bioController.text));
                       setState(() {
                         isEditable = !isEditable;
                       });
@@ -134,9 +140,9 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  DefaultText(text: 'Bio', color: secondaryColor),
-                  SmallText(text: 'Edit bio', color: linkColor)
+                children: [
+                  DefaultText(text: userModel.bio!, color: secondaryColor),
+                  const SmallText(text: 'Edit bio', color: linkColor),
                 ],
               ),
             ),

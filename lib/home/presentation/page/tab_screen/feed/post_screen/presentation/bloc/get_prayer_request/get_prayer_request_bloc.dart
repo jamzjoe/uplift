@@ -59,5 +59,13 @@ class GetPrayerRequestBloc
         log(e.toString());
       }
     });
+
+    on<DeletePost>((event, emit) async {
+      try {
+        await prayerRequestRepository.deletePost(event.postID, event.userID);
+      } catch (e) {
+        log(e.toString());
+      }
+    });
   }
 }

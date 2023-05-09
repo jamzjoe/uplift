@@ -68,28 +68,90 @@ class PrayerRequestRepository {
   }
 
   Future<bool> addReaction(String postID, String userID) async {
+    bool userExist = false;
     try {
-      final postRef =
-          FirebaseFirestore.instance.collection('Prayers').doc(postID);
+      DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .doc(postID)
+          .get();
 
-// Fetch the current value of the reactions field
-      final postSnapshot = await postRef.get();
-      final currentReactions = postSnapshot.data()?['reactions'];
-      log(currentReactions);
-// Update the reactions field
-      final updatedReactions = {
-        'users': [
-          ...currentReactions['users'], // Include existing user IDs
-          FieldValue.arrayUnion([
-            {userID: true}
-          ]), // Add new user ID
-        ]
-      };
-      postRef.update({'reactions': updatedReactions});
+      final List<dynamic> currentReactions =
+          response.data()!['reactions']['users'];
+
+      for (var reaction in currentReactions) {
+        if (reaction is Map && reaction.containsKey(userID)) {
+          log('User exist');
+          userExist = true;
+        }
+      }
+      if (!userExist) {
+        final updatedReactions = {
+          'users': [
+            ...currentReactions, // Include existing user IDs
+            {userID: true}, // Add new user ID
+          ]
+        };
+        await FirebaseFirestore.instance
+            .collection('Prayers')
+            .doc(postID)
+            .update({'reactions': updatedReactions});
+      }
+
+      log(currentReactions.toString());
+
       return true;
     } catch (e) {
       log(e.toString());
       return false;
     }
+  }
+
+  Future<bool> isReacted(String postID, String userID) async {
+    bool userExist = false;
+    try {
+      DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .doc(postID)
+          .get();
+
+      final List<dynamic> currentReactions =
+          response.data()!['reactions']['users'];
+
+      for (var reaction in currentReactions) {
+        if (reaction is Map && reaction.containsKey(userID)) {
+          log('User exist');
+          userExist = true;
+        }
+      }
+      if (!userExist) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> deletePost(String postID, String userID) async {
+    bool canDelete = false;
+    String currentUserID = await AuthServices.userID();
+
+    if (userID == currentUserID) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('Prayers')
+            .doc(postID)
+            .delete();
+        canDelete = true;
+      } catch (e) {
+        canDelete = false;
+      }
+    }
+
+    return canDelete;
   }
 }

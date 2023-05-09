@@ -1,11 +1,14 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/material.dart';
+import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 
-class SnackBar extends StatelessWidget {
-  const SnackBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+class CustomSnackBar {
+  static void show(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: DefaultText(text: message, color: whiteColor),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 }

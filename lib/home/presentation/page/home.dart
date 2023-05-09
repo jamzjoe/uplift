@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final User user = widget.userJoinedModel.user;
     return Scaffold(
-      backgroundColor: const Color(0xff898F9C),
       key: _scaffoldKey,
       extendBody: true,
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
