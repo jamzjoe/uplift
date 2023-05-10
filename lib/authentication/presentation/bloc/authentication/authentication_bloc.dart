@@ -106,8 +106,9 @@ class AuthenticationBloc
     });
 
     on<DeleteAccount>((event, emit) async {
+      final User user = FirebaseAuth.instance.currentUser!;
       try {
-        await event.user.delete();
+        await user.delete();
         await GoogleSignIn().disconnect();
         await AuthServices().deleteUser(event.user.uid);
         emit(const UserIsOut('Deleted'));

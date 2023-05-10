@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 class DefaultText extends StatelessWidget {
   const DefaultText(
-      {super.key, required this.text, required this.color, this.textAlign});
+      {super.key,
+      required this.text,
+      required this.color,
+      this.textAlign,
+      this.overflow});
   final String text;
   final Color color;
   final TextAlign? textAlign;
+  final TextOverflow? overflow;
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -15,7 +20,7 @@ class DefaultText extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.normal,
           fontSize: 16,
-          overflow: TextOverflow.ellipsis),
+          overflow: overflow ?? TextOverflow.ellipsis),
     );
   }
 }

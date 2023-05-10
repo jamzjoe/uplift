@@ -54,6 +54,7 @@ class ApprovedFriendsBloc
     on<UnfriendEvent>((event, emit) async {
       try {
         await friendsRepository.unfriend(event.friendShipID);
+        add(const FetchApprovedFriendRequest2());
       } catch (e) {
         emit(ApprovedFriendsError());
       }

@@ -32,7 +32,7 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
       physics: const ClampingScrollPhysics(),
       children: [
         SearchBar(
-          hint: 'Search user',
+          hint: 'Search uplift user...',
           controller: searchController,
           onFieldSubmitted: (query) {
             BlocProvider.of<FriendsSuggestionsBlocBloc>(context)

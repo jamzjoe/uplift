@@ -45,7 +45,6 @@ class FriendsSuggestionsBlocBloc
     });
 
     on<SearchFriendSuggestions>((event, emit) async {
-      emit(FriendsSuggestionLoading());
       try {
         final data =
             await friendSuggestionRepository.searchSuggestions(event.query);

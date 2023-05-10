@@ -14,6 +14,7 @@ import 'package:uplift/home/presentation/page/notifications/presentation/page/no
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_reader_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/account_screen.dart';
@@ -24,7 +25,6 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/support.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/switch_account.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
-import 'package:uplift/utils/widgets/profile.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {

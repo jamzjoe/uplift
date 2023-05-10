@@ -72,7 +72,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
               defaultSpace,
               ElevatedButton.icon(
                   onPressed: () {
-                    context.pushNamed('qr_reader');
+                    context.pop();
                   },
                   icon: const Icon(
                     CupertinoIcons.qrcode_viewfinder,

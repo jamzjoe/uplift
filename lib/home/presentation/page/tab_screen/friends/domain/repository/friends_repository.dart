@@ -507,6 +507,15 @@ class FriendsRepository {
         .catchError((error) => log("Failed to unfriend: $error"));
   }
 
+  Future ignore(String friendShipID) async {
+    FirebaseFirestore.instance
+        .collection('Friendships')
+        .doc(friendShipID)
+        .update({"status": "rejected"})
+        .then((value) => log("Unfriend Success"))
+        .catchError((error) => log("Failed to unfriend: $error"));
+  }
+
   String generateFriendshipId(String userId1, String userId2) {
     return '$userId1$userId2';
   }

@@ -149,7 +149,11 @@ class _PostItemState extends State<PostItem> {
               ],
             ),
             defaultSpace,
-            DefaultText(text: prayerRequest.text!, color: secondaryColor),
+            DefaultText(
+              text: prayerRequest.text!,
+              color: secondaryColor,
+              overflow: TextOverflow.clip,
+            ),
             defaultSpace,
 
             //Likes and Views Count

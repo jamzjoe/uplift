@@ -9,11 +9,11 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
-import 'package:uplift/utils/widgets/profile.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class QRReaderScreen extends StatefulWidget {
@@ -101,13 +101,38 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                                     ),
                                     onPressed: () async {
                                       context.loaderOverlay.show();
-                                      final UserModel userModel =
-                                          await AuthServices().getUserRecord(
-                                              result!.code.toString());
-                                      if (context.mounted) {
-                                        context.loaderOverlay.hide();
-                                        CustomDialog.showCustomDialog(context,
-                                            UserProfile(user: userModel));
+                                      final UserModel? userModel;
+                                      if (result!.code! !=
+                                          await AuthServices.userID()) {
+                                        try {
+                                          userModel = await AuthServices()
+                                              .getUserRecord(
+                                                  result!.code.toString());
+                                          if (context.mounted) {
+                                            context.loaderOverlay.hide();
+                                            CustomDialog.showCustomDialog(
+                                                context,
+                                                UserProfile(user: userModel));
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            context.loaderOverlay.hide();
+                                            CustomDialog.showErrorDialog(
+                                                context,
+                                                'User not found or please check your internet connection!',
+                                                "Request failed",
+                                                'Confirm');
+                                          }
+                                        }
+                                      } else {
+                                        if (context.mounted) {
+                                          context.loaderOverlay.hide();
+                                          CustomDialog.showErrorDialog(
+                                              context,
+                                              'You cannot add yourself!',
+                                              "Request failed",
+                                              'Confirm');
+                                        }
                                       }
                                     },
                                     label: const DefaultText(

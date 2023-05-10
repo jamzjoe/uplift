@@ -24,7 +24,7 @@ class ProfilePhoto extends StatelessWidget {
             height: size ?? 45,
             imageUrl: user.photoUrl ?? 'null',
             progressIndicatorBuilder: (context, url, progress) =>
-                CircularProgressIndicator(value: progress.progress),
+                const SizedBox(),
             errorWidget: (context, url, error) => Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(5)),

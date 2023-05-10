@@ -36,16 +36,30 @@ class UserProfile extends StatelessWidget {
         defaultSpace,
         GestureDetector(
           onTap: () async {
-            final addFriend = await FriendsRepository()
-                .addFriend(await AuthServices.userID(), user.userId);
-            if (addFriend) {
+            final currentUserID = await AuthServices.userID();
+
+            if (currentUserID == user.userId) {
               if (context.mounted) {
                 context.pop();
-                CustomDialog.showSuccessDialog(
+                CustomDialog.showErrorDialog(
                     context,
-                    'Friend request is successfully sent.',
-                    'Request Sent',
+                    'Cannot send friend request to yourself.',
+                    'Sent failed',
                     'Confirm');
+              }
+            } else {
+              final addFriend = await FriendsRepository()
+                  .addFriend(currentUserID, user.userId);
+              if (addFriend) {
+                if (context.mounted) {
+                  // FriendsRepository().addFriendshipRequest(user);
+                  context.pop();
+                  CustomDialog.showSuccessDialog(
+                      context,
+                      'Friend request is successfully sent.',
+                      'Request Sent',
+                      'Confirm');
+                }
               }
             }
           },

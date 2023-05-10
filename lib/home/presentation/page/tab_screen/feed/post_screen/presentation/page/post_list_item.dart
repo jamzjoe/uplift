@@ -38,7 +38,7 @@ class PostListItem extends StatelessWidget {
                   height: MediaQuery.of(context).size.height - 250,
                   child: EndOfPostWidget(
                     isEmpty: true,
-                    user: user,
+                    user: userJoinedModel,
                   ),
                 ));
               }
@@ -55,7 +55,7 @@ class PostListItem extends StatelessWidget {
                   defaultSpace,
                   EndOfPostWidget(
                     isEmpty: false,
-                    user: user,
+                    user: userJoinedModel,
                   )
                 ],
               );
@@ -79,7 +79,7 @@ class EndOfPostWidget extends StatelessWidget {
     required this.user,
   });
   final bool isEmpty;
-  final User user;
+  final UserJoinedModel user;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class EndOfPostWidget extends StatelessWidget {
         DefaultText(
             textAlign: TextAlign.center,
             text: isEmpty
-                ? "No Prayer Request yet from\nyour friends."
+                ? "No Prayer Intentions yet from\nyour friends."
                 : "Keep spreading joy and positivity\nwherever you go!",
             color: secondaryColor),
         defaultSpace,
@@ -137,7 +137,7 @@ class EndOfPostWidget extends StatelessWidget {
           visible: isEmpty,
           child: TextButton.icon(
               onPressed: () {
-                context.pushNamed('qr_reader', extra: user);
+                context.pushNamed('friends-list', extra: user.user);
               },
               icon: const Icon(CupertinoIcons.person_add_solid),
               label: const DefaultText(

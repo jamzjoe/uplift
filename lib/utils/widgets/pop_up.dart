@@ -262,7 +262,11 @@ class CustomDialog {
                 ),
                 defaultSpace,
                 HeaderText(text: title, color: secondaryColor),
-                SmallText(text: message, color: secondaryColor),
+                SmallText(
+                  text: message,
+                  color: secondaryColor,
+                  textAlign: TextAlign.center,
+                ),
                 defaultSpace,
                 defaultSpace,
                 Flexible(
