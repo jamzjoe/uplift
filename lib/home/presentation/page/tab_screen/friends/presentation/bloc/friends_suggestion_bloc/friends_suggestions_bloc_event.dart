@@ -16,3 +16,11 @@ class AddFriendEvent extends FriendsSuggestionsBlocEvent {
   @override
   List<Object> get props => [friendShipModel];
 }
+
+class SearchFriendSuggestions extends FriendsSuggestionsBlocEvent {
+  final String query;
+
+  const SearchFriendSuggestions(this.query);
+  @override
+  List<Object> get props => [query];
+}

@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -42,25 +42,38 @@ class AuthServices {
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
-  static Future addUser(User user, String bio) async {
+  static Future<void> addUser(User user, String bio) async {
     final UserModel userModel = UserModel(
-        displayName: user.displayName,
-        emailAddress: user.email,
-        emailVerified: user.emailVerified,
-        userId: user.uid,
-        photoUrl: user.photoURL,
-        phoneNumber: user.phoneNumber,
-        createdAt: Timestamp.now(),
-        bio: bio,
-        searchKey: user.displayName!.toLowerCase());
+      displayName: user.displayName,
+      emailAddress: user.email,
+      emailVerified: user.emailVerified,
+      userId: user.uid,
+      photoUrl: user.photoURL,
+      phoneNumber: user.phoneNumber,
+      createdAt: Timestamp.now(),
+      bio: bio,
+      searchKey: user.displayName!.toLowerCase(),
+    );
+
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;
-    FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        .set(userModel.toJson())
-        .then((value) => print("User added"))
-        .catchError((error) => print("Failed to add user: $error"));
+
+    final userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(user.uid);
+
+    try {
+      final userSnapshot = await userDoc.get();
+      if (userSnapshot.exists &&
+          userSnapshot.get('emailAddress') == user.email) {
+        await userDoc.update(userModel.toJson());
+        print('User updated');
+      } else {
+        await userDoc.set(userModel.toJson());
+        print('User added');
+      }
+    } catch (error) {
+      print('Failed to add or update user: $error');
+    }
   }
 
   static Future addUserFromEmailAndPassword(User user, String bio) async {
@@ -91,13 +104,19 @@ class AuthServices {
     GoogleSignIn().disconnect();
   }
 
-  String generateRandomId() {
-    final random = Random();
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    const idLength = 10;
-    final idChars =
-        List.generate(idLength, (index) => chars[random.nextInt(chars.length)]);
-    final id = idChars.join();
-    return id;
+  Future<UserModel> getUserRecord(String userID) async {
+    DocumentSnapshot<Map<String, dynamic>> users =
+        await FirebaseFirestore.instance.collection('Users').doc(userID).get();
+
+    return UserModel.fromJson(users.data()!);
+  }
+
+  Future<void> deleteUser(String userID) async {
+    try {
+      await FirebaseFirestore.instance.collection('Users').doc(userID).delete();
+      log('User deleted successfully!');
+    } catch (e) {
+      log('Error deleting user: $e');
+    }
   }
 }

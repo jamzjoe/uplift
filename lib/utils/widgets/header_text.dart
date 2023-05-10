@@ -14,7 +14,7 @@ class HeaderText extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.bold,
           fontSize: size ?? 20,
-          overflow: TextOverflow.clip),
+          overflow: TextOverflow.ellipsis),
     );
   }
 }

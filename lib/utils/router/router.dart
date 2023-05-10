@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
@@ -23,6 +24,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/support.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/switch_account.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
+import 'package:uplift/utils/widgets/profile.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
@@ -65,6 +67,15 @@ final GoRouter router = GoRouter(
               ),
           routes: [
             GoRoute(
+                path: 'profile',
+                name: 'profile',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: UserProfile(
+                    user: state.extra as UserModel,
+                  ));
+                }),
+            GoRoute(
                 path: 'friend_suggest',
                 name: 'friend_suggest',
                 pageBuilder: (context, state) {
@@ -101,7 +112,7 @@ final GoRouter router = GoRouter(
                 name: 'qr_reader',
                 pageBuilder: (context, state) => MaterialPage(
                         child: QRReaderScreen(
-                      user: state.extra as User,
+                      userJoinedModel: state.extra as UserJoinedModel,
                     )),
                 routes: [
                   GoRoute(
@@ -109,24 +120,16 @@ final GoRouter router = GoRouter(
                     name: 'qr_generator2',
                     pageBuilder: (context, state) => MaterialPage(
                         child: QRGeneratorScreen(
-                      user: state.extra as User,
+                      user: state.extra as UserModel,
                     )),
                   ),
                 ]),
-            GoRoute(
-              path: 'qr_generator',
-              name: 'qr_generator',
-              pageBuilder: (context, state) => MaterialPage(
-                  child: QRGeneratorScreen(
-                user: state.extra as User,
-              )),
-            ),
             GoRoute(
               path: 'post_field',
               name: 'post_field',
               pageBuilder: (context, state) => MaterialPage(
                   child: PostFormScreen(
-                user: state.extra as User,
+                user: state.extra as UserJoinedModel,
               )),
             ),
             GoRoute(

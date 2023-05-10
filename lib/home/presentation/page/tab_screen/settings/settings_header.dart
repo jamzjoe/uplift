@@ -38,7 +38,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
         children: [
           Row(
             children: [
-              ProfilePhoto(user: user),
+              ProfilePhoto(user: userModel),
               const SizedBox(width: 10),
               Column(
                 mainAxisSize: MainAxisSize.min,

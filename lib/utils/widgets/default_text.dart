@@ -11,8 +11,11 @@ class DefaultText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
-      style:
-          TextStyle(color: color, fontWeight: FontWeight.normal, fontSize: 16),
+      style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.normal,
+          fontSize: 16,
+          overflow: TextOverflow.ellipsis),
     );
   }
 }

@@ -3,33 +3,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
+import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
 
 class FriendRequestItem extends StatelessWidget {
   const FriendRequestItem({
     super.key,
     required this.user,
   });
-  final UserModel user;
+  final UserFriendshipModel user;
 
   @override
   Widget build(BuildContext context) {
+    final UserModel userModel = user.userModel;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          user.photoUrl == null
+          userModel.photoUrl == null
               ? const CircleAvatar(
                   backgroundImage: AssetImage('assets/default.png'),
                 )
-              : CircleAvatar(
-                  backgroundImage: NetworkImage(user.photoUrl!),
-                ),
+              : SafePhotoViewer(user: userModel),
           const SizedBox(width: 15),
           Flexible(
             child: Column(
@@ -37,12 +37,13 @@ class FriendRequestItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    HeaderText(
-                      text: user.displayName ?? 'User',
-                      color: secondaryColor,
-                      size: 18,
+                    Flexible(
+                      child: HeaderText(
+                        text: userModel.displayName ?? 'User',
+                        color: secondaryColor,
+                        size: 18,
+                      ),
                     ),
-                    const SmallText(text: '1w ', color: lightColor)
                   ],
                 ),
                 const SizedBox(height: 5),
@@ -52,13 +53,13 @@ class FriendRequestItem extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () async {
                           await NotificationRepository.sendPushMessage(
-                              user.displayName ?? 'Anonymous User',
-                              'accepted your friend request.',
+                              userModel.displayName ?? 'Anonymous User',
+                              '${userModel.displayName} accepted your friend request.',
                               'Accepted request');
                           await NotificationRepository.addNotification(
-                            user.userId!,
+                            userModel.userId!,
                             'Accepted request',
-                            'accepted your friend request.',
+                            ' accepted your friend request.',
                           );
                           if (context.mounted) {
                             BlocProvider.of<FriendRequestBloc>(context).add(
@@ -66,7 +67,7 @@ class FriendRequestItem extends StatelessWidget {
                                     await AuthServices.userID()));
                           }
                           FriendsRepository().acceptFriendshipRequest(
-                              user.userId!, await AuthServices.userID());
+                              userModel.userId!, await AuthServices.userID());
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -92,7 +93,7 @@ class FriendRequestItem extends StatelessWidget {
                         ),
                         child: const Center(
                           child: DefaultText(
-                              text: 'Delete', color: secondaryColor),
+                              text: 'Ignore', color: secondaryColor),
                         ),
                       ),
                     )

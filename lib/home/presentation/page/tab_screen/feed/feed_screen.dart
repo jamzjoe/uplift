@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
@@ -16,7 +17,7 @@ import 'post_screen/presentation/page/post_list_item.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key, required this.user});
-  final User user;
+  final UserJoinedModel user;
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -28,7 +29,8 @@ class _FeedScreenState extends State<FeedScreen> {
   List<UserNotifModel> notifications = [];
   @override
   Widget build(BuildContext context) {
-    final User user = widget.user;
+    final User user = widget.user.user;
+    final UserJoinedModel userJoinedModel = widget.user;
     return Scaffold(
       backgroundColor: const Color(0xffE9EBEE),
       extendBody: true,
@@ -72,8 +74,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       alignment: AlignmentDirectional.bottomStart,
                       child: IconButton(
                           onPressed: () {
-                            goToNotificationScreen(
-                                widget.user.uid, notifications);
+                            goToNotificationScreen(user.uid, notifications);
                           },
                           icon: const Icon(
                             Icons.notifications,
@@ -88,7 +89,7 @@ class _FeedScreenState extends State<FeedScreen> {
               onRefresh: () async =>
                   BlocProvider.of<GetPrayerRequestBloc>(context)
                       .add(RefreshPostRequestList()),
-              child: PostListItem(user: user),
+              child: PostListItem(userJoinedModel: userJoinedModel),
             ),
           ),
         ),

@@ -26,3 +26,8 @@ class LoadingPrayerRequesListError extends GetPrayerRequestState {
   @override
   List<Object> get props => [];
 }
+
+class NoInternetConnnection extends GetPrayerRequestState {
+  @override
+  List<Object?> get props => [];
+}

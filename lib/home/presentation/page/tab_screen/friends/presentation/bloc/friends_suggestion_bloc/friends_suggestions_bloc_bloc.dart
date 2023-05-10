@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,7 +32,7 @@ class FriendsSuggestionsBlocBloc
       try {
         final data = await friendSuggestionRepository.fetchUsersSuggestions();
         emit(FriendsSuggestionLoadingSuccess(data));
-      } on FirebaseAuthException catch (e) {
+      } on FirebaseAuthException {
         emit(FriendsSuggestionLoadingError());
       }
     });
@@ -43,6 +42,17 @@ class FriendsSuggestionsBlocBloc
         final response = await friendSuggestionRepository
             .addFriendshipRequest(event.friendShipModel);
       } catch (e) {}
+    });
+
+    on<SearchFriendSuggestions>((event, emit) async {
+      emit(FriendsSuggestionLoading());
+      try {
+        final data =
+            await friendSuggestionRepository.searchSuggestions(event.query);
+        emit(FriendsSuggestionLoadingSuccess(data));
+      } catch (e) {
+        emit(FriendsSuggestionLoadingError());
+      }
     });
   }
 }

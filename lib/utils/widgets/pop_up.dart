@@ -97,6 +97,98 @@ class CustomDialog {
     );
   }
 
+  static void showLogoutConfirmation(BuildContext context, String message,
+      String title, VoidCallback successFunction, String successButtonText) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            color: whiteColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Image(
+                  image: AssetImage('assets/error.png'),
+                  width: 60,
+                ),
+                defaultSpace,
+                HeaderText(text: title, color: secondaryColor),
+                SmallText(text: message, color: secondaryColor),
+                defaultSpace,
+                defaultSpace,
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 45,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: .5, color: secondaryColor),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(
+                                    Icons.close,
+                                    color: secondaryColor,
+                                    size: 18,
+                                  ),
+                                  SmallText(
+                                      text: 'Cancel', color: secondaryColor),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: successFunction,
+                            child: Container(
+                              height: 45,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.red,
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: const [
+                                    Icon(
+                                      Icons.exit_to_app,
+                                      color: whiteColor,
+                                      size: 18,
+                                    ),
+                                    SmallText(
+                                        text: 'Logout', color: whiteColor),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static void showSuccessDialog(BuildContext context, String message,
       String title, String successButtonText) {
     showDialog(
@@ -202,6 +294,17 @@ class CustomDialog {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  static void showCustomDialog(BuildContext context, Widget widget) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(color: whiteColor, child: widget),
         );
       },
     );

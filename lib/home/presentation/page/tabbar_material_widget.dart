@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class TabBarMaterialWidget extends StatefulWidget {
   final int index;
@@ -30,7 +31,8 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
     );
 
     return BottomAppBar(
-      elevation: 5,
+      color: whiteColor,
+      elevation: 10,
       surfaceTintColor: whiteColor,
       padding: const EdgeInsets.symmetric(vertical: 5),
       shape: const CircularNotchedRectangle(),
@@ -83,7 +85,33 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             return Badge.count(
               isLabelVisible: count != 0,
               count: count,
-              child: IconButton(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                      color: isSelected
+                          ? primaryColor
+                          : secondaryColor.withOpacity(0.5),
+                      onPressed: () async {
+                        widget.onChangedTab(index);
+                        widget.controller!.animateTo(index);
+                      },
+                      icon: isSelected ? selectedIcon : icon),
+                  SmallText(
+                      text: label,
+                      color: isSelected
+                          ? primaryColor
+                          : secondaryColor.withOpacity(0.5))
+                ],
+              ),
+            );
+          }
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
                   color: isSelected
                       ? primaryColor
                       : secondaryColor.withOpacity(0.5),
@@ -92,25 +120,31 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                     widget.controller!.animateTo(index);
                   },
                   icon: isSelected ? selectedIcon : icon),
-            );
-          }
-          return IconButton(
-              color:
-                  isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
-              onPressed: () async {
-                widget.onChangedTab(index);
-                widget.controller!.animateTo(index);
-              },
-              icon: isSelected ? selectedIcon : icon);
+              SmallText(
+                  text: label,
+                  color: isSelected
+                      ? primaryColor
+                      : secondaryColor.withOpacity(0.5))
+            ],
+          );
         },
       );
     }
-    return IconButton(
-        color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
-        onPressed: () async {
-          widget.onChangedTab(index);
-          widget.controller!.animateTo(index);
-        },
-        icon: isSelected ? selectedIcon : icon);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+            color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
+            onPressed: () async {
+              widget.onChangedTab(index);
+              widget.controller!.animateTo(index);
+            },
+            icon: isSelected ? selectedIcon : icon),
+        SmallText(
+            text: label,
+            color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5))
+      ],
+    );
   }
 }

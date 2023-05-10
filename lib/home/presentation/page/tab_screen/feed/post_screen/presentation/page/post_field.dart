@@ -2,28 +2,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 
 class PostField extends StatelessWidget {
   const PostField({
     super.key,
-    required this.user,
+    required this.userJoinModel,
   });
 
-  final User user;
+  final UserJoinedModel userJoinModel;
 
   @override
   Widget build(BuildContext context) {
+    final UserModel userModel = userJoinModel.userModel;
+    final User user = userJoinModel.user;
     return GestureDetector(
-      onTap: () => enterPrayerField(context, user),
+      onTap: () => enterPrayerField(context, userJoinModel),
       child: Container(
         color: whiteColor,
         margin: const EdgeInsets.only(bottom: 5),
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Row(
           children: [
-            ProfilePhoto(user: user),
+            ProfilePhoto(user: userModel),
             const SizedBox(width: 5),
             Expanded(
                 child: Container(
@@ -48,7 +52,7 @@ class PostField extends StatelessWidget {
     );
   }
 
-  void enterPrayerField(BuildContext context, User user) {
+  void enterPrayerField(BuildContext context, UserJoinedModel user) {
     context.pushNamed('post_field', extra: user);
   }
 }

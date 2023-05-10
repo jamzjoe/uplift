@@ -4,6 +4,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 
@@ -24,6 +25,12 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
         if (state is Loading) {
           setState(() {
             isLoading = true;
+          });
+        } else if (state is UserIsOut) {
+          CustomDialog.showErrorDialog(
+              context, state.message, 'Authentication Error', 'Confirm');
+          setState(() {
+            isLoading = false;
           });
         } else {
           setState(() {

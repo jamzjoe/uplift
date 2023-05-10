@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
@@ -16,15 +18,17 @@ import 'post_item.dart';
 class PostListItem extends StatelessWidget {
   const PostListItem({
     super.key,
-    required this.user,
+    required this.userJoinedModel,
   });
-  final User user;
+  final UserJoinedModel userJoinedModel;
 
   @override
   Widget build(BuildContext context) {
+    final UserModel userModel = userJoinedModel.userModel;
+    final User user = userJoinedModel.user;
     return ListView(
       children: [
-        PostField(user: user),
+        PostField(userJoinModel: userJoinedModel),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {
@@ -57,6 +61,8 @@ class PostListItem extends StatelessWidget {
               );
             } else if (state is LoadingPrayerRequesList) {
               return const PostShimmerLoading();
+            } else if (state is NoInternetConnnection) {
+              return const Text('No Internet Connection');
             }
             return const PostShimmerLoading();
           },
@@ -122,7 +128,7 @@ class EndOfPostWidget extends StatelessWidget {
                   icon: const Icon(CupertinoIcons.pencil_circle_fill,
                       color: whiteColor),
                   label: const DefaultText(
-                      text: 'Write your first prayer request',
+                      text: 'Write your first prayer intention',
                       color: whiteColor));
             },
           ),

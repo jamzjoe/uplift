@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
@@ -24,8 +26,6 @@ class AuthenticationBloc
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         add(SignIn(UserJoinedModel(userModel, user)));
-      } else {
-        add(SignOut());
       }
     });
 
@@ -38,9 +38,11 @@ class AuthenticationBloc
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         emit(UserIsIn(UserJoinedModel(userModel, user)));
-      } catch (e) {
-        log(e.toString());
-        emit(UserIsOut(e.toString()));
+      } on PlatformException catch (e) {
+        log(e.code);
+        if (e.code == 'network_error') {
+          emit(const UserIsOut('No internet connection'));
+        }
       }
     });
 
@@ -100,6 +102,19 @@ class AuthenticationBloc
         emit(UserIsIn(UserJoinedModel(userModel, user!)));
       } catch (e) {
         emit(UserIsOut(e.toString()));
+      }
+    });
+
+    on<DeleteAccount>((event, emit) async {
+      try {
+        await event.user.delete();
+        await GoogleSignIn().disconnect();
+        await AuthServices().deleteUser(event.user.uid);
+        emit(const UserIsOut('Deleted'));
+      } catch (e) {
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID());
+        emit(UserIsIn(UserJoinedModel(userModel, event.user)));
       }
     });
   }

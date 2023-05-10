@@ -51,11 +51,7 @@ class PrayerRequestRepository {
       "text": text,
       "user_id": user.uid,
       "date": DateTime.now(),
-      "reactions": {
-        "users": [
-          {user.uid: true}
-        ]
-      },
+      "reactions": {"users": []},
       "post_id": postID
     };
 
@@ -130,6 +126,49 @@ class PrayerRequestRepository {
       } else {
         return false;
       }
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> unReact(String postID, String userID) async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .doc(postID)
+          .get();
+
+      final List<dynamic> currentReactions =
+          response.data()!['reactions']['users'];
+
+      bool userExist = false;
+      int userIndex = -1;
+
+      for (var i = 0; i < currentReactions.length; i++) {
+        var reaction = currentReactions[i];
+        if (reaction is Map && reaction.containsKey(userID)) {
+          log('User exist');
+          userExist = true;
+          userIndex = i;
+          break;
+        }
+      }
+
+      if (userExist) {
+        final updatedReactions = {
+          'users': List<dynamic>.from(currentReactions)..removeAt(userIndex)
+        };
+        await FirebaseFirestore.instance
+            .collection('Prayers')
+            .doc(postID)
+            .update({'reactions': updatedReactions});
+      }
+
+      log(currentReactions.toString());
+
+      return true;
     } catch (e) {
       log(e.toString());
       return false;

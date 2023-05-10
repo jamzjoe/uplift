@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 
 import '../../../../../../../../constant/constant.dart';
@@ -32,8 +34,9 @@ class FriendRequestHeader extends StatelessWidget {
           ],
         ),
         GestureDetector(
-            onTap: () => context.pushNamed('friend_request'),
-            child: const DefaultText(text: 'See all', color: linkColor))
+            onTap: () async => BlocProvider.of<FriendRequestBloc>(context)
+                .add(FetchFriendRequestEvent(await AuthServices.userID())),
+            child: const DefaultText(text: 'Refresh', color: linkColor))
       ],
     );
   }

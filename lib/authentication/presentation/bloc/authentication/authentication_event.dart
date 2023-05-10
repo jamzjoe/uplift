@@ -57,3 +57,11 @@ class UpdateBio extends AuthenticationEvent {
   @override
   List<Object?> get props => [userID, bio];
 }
+
+class DeleteAccount extends AuthenticationEvent {
+  final User user;
+
+  const DeleteAccount(this.user);
+  @override
+  List<Object?> get props => [user];
+}

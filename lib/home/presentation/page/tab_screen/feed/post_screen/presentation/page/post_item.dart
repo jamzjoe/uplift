@@ -266,8 +266,13 @@ class PrayedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton.icon(
         onPressed: () {
-          prayerRequestRepository.addReaction(
-              prayerRequest.postId!, currentUser.uid);
+          if (label == 'Pray') {
+            prayerRequestRepository.addReaction(
+                prayerRequest.postId!, currentUser.uid);
+          } else {
+            prayerRequestRepository.unReact(
+                prayerRequest.postId!, currentUser.uid);
+          }
         },
         icon: Image(
           image: AssetImage(path),

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
@@ -13,7 +15,7 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostFormScreen extends StatefulWidget {
   const PostFormScreen({super.key, required this.user});
-  final User user;
+  final UserJoinedModel user;
 
   @override
   State<PostFormScreen> createState() => _PostFormScreenState();
@@ -25,7 +27,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
   Color buttonColor = secondaryColor.withOpacity(0.5);
   @override
   Widget build(BuildContext context) {
-    final User user = widget.user;
+    final User user = widget.user.user;
+    final UserModel userModel = widget.user.userModel;
     return Form(
       key: _key,
       child: Scaffold(
@@ -53,7 +56,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
             children: [
               Row(
                 children: [
-                  ProfilePhoto(user: user),
+                  ProfilePhoto(user: userModel),
                   const SizedBox(width: 15),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

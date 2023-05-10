@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +7,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class FriendsItem extends StatelessWidget {
@@ -30,9 +29,7 @@ class FriendsItem extends StatelessWidget {
               ? const CircleAvatar(
                   backgroundImage: AssetImage('assets/default.png'),
                 )
-              : CircleAvatar(
-                  backgroundImage: NetworkImage(user.photoUrl!),
-                ),
+              : SafePhotoViewer(user: user),
           const SizedBox(width: 15),
           Flexible(
             child: Column(
@@ -43,27 +40,31 @@ class FriendsItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        HeaderText(
-                          text: user.displayName ?? 'User',
-                          color: secondaryColor,
-                          size: 18,
-                        ),
-                        const SizedBox(height: 5),
-                        SmallText(
-                            text:
-                                'Friends since ${user.createdAt!.toDate().year}',
-                            color: lightColor),
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HeaderText(
+                            text: user.displayName ?? 'User',
+                            color: secondaryColor,
+                            size: 18,
+                          ),
+                          const SizedBox(height: 5),
+                          SmallText(
+                              text:
+                                  'Friends since ${user.createdAt!.toDate().year}',
+                              color: lightColor),
+                        ],
+                      ),
                     ),
                     PopupMenuButton(
                       icon: const Icon(CupertinoIcons.ellipsis),
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(
-                              onTap: () => BlocProvider.of<ApprovedFriendsBloc>(context).add(UnfriendEvent(friendShipID)),
+                              onTap: () =>
+                                  BlocProvider.of<ApprovedFriendsBloc>(context)
+                                      .add(UnfriendEvent(friendShipID)),
                               child: Row(
                                 children: const [
                                   Icon(

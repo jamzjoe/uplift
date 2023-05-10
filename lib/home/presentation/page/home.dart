@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final User user = widget.userJoinedModel.user;
+    final UserJoinedModel userJoinedModel = widget.userJoinedModel;
     return Scaffold(
       key: _scaffoldKey,
       extendBody: true,
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               });
             },
             children: [
-              KeepAlivePage(child: FeedScreen(user: user)),
+              KeepAlivePage(child: FeedScreen(user: userJoinedModel)),
               KeepAlivePage(
                   child: FriendsScreen(
                 currentUser: user,
@@ -80,16 +81,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       floatingActionButton: Visibility(
         visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
         child: FloatingActionButton(
+            backgroundColor: primaryColor,
             splashColor: primaryColor,
             elevation: 2,
             shape: const CircleBorder(
-                side: BorderSide(color: primaryColor), eccentricity: .5),
+                side: BorderSide(color: whiteColor), eccentricity: .5),
             child: const Icon(
               Ionicons.qr_code,
-              color: primaryColor,
+              color: whiteColor,
             ),
             onPressed: () {
-              context.pushNamed('qr_reader', extra: user);
+              context.pushNamed('qr_reader', extra: userJoinedModel);
             }),
       ),
       bottomNavigationBar: TabBarMaterialWidget(

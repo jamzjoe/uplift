@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,9 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:uplift/utils/widgets/button.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
-import 'package:uplift/utils/widgets/dialog.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../../../../constant/constant.dart';
 import '../../../../../utils/widgets/header_text.dart';
@@ -25,6 +24,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final User user = widget.userJoinedModel.user;
     return Scaffold(
       backgroundColor: const Color(0xffF0F0F0),
       appBar: AppBar(
@@ -111,25 +111,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Column(
                     children: ListTile.divideTiles(context: context, tiles: [
                       SettingsItem(
-                          onTap: () => customDialog(
+                          onTap: () => CustomDialog.showDeleteConfirmation(
                                   context,
-                                  'This will delete your account.',
-                                  'Delete confirmation', [
-                                TextButton(
-                                    onPressed: () {
-                                      context.pop();
-                                    },
-                                    child: const DefaultText(
-                                        text: 'Cancel', color: secondaryColor)),
-                                TextButton(
-                                    onPressed: () {},
-                                    child: const DefaultText(
-                                        text: 'Delete', color: Colors.red)),
-                              ]),
+                                  'Are you sure you want to delete your account?',
+                                  'Delete Confirmation', () {
+                                BlocProvider.of<AuthenticationBloc>(context)
+                                    .add(DeleteAccount(user));
+                                context.pop();
+                              }, 'Delete Account'),
                           label: 'Delete Account',
                           icon: CupertinoIcons.delete_left_fill),
                       SettingsItem(
-                          onTap: signOutWarning,
+                          onTap: () => CustomDialog.showLogoutConfirmation(
+                                  context,
+                                  'Are you sure you want to logout?',
+                                  'Logout Confirmation', () {
+                                BlocProvider.of<AuthenticationBloc>(context)
+                                    .add(SignOutRequested());
+                                if (context.canPop()) {
+                                  context.pop();
+                                }
+                              }, 'Logout'),
                           label: 'Logout',
                           icon: CupertinoIcons.square_arrow_left_fill)
                     ]).toList(),
@@ -141,32 +143,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
-  }
-
-  void signOutWarning() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const DefaultText(
-                  text: 'Logout Confirmation', color: secondaryColor),
-              actions: [
-                CustomContainer(
-                    onTap: () => context.pop(),
-                    widget:
-                        const DefaultText(text: 'Cancel', color: Colors.red),
-                    color: Colors.transparent),
-                CustomContainer(
-                    onTap: () {
-                      BlocProvider.of<AuthenticationBloc>(context)
-                          .add(SignOutRequested());
-                      if (context.canPop()) {
-                        context.pop();
-                      }
-                    },
-                    widget:
-                        const DefaultText(text: 'Confirm', color: whiteColor),
-                    color: primaryColor),
-              ],
-            ));
   }
 }

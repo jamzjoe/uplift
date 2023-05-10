@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uplift/constant/constant.dart';
 
 class MyBadge extends StatelessWidget {
   final double top;
@@ -19,6 +20,7 @@ class MyBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
         child,
@@ -26,7 +28,7 @@ class MyBadge extends StatelessWidget {
           right: right,
           top: top,
           child: Container(
-            padding: const EdgeInsets.all(2.0),
+            padding: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100.0),
               color: color,
@@ -39,6 +41,8 @@ class MyBadge extends StatelessWidget {
               value,
               textAlign: TextAlign.center,
               style: const TextStyle(
+                color: whiteColor,
+                fontWeight: FontWeight.normal,
                 fontSize: 10,
               ),
             ),

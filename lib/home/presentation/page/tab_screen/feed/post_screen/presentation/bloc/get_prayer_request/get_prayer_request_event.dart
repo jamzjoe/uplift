@@ -31,3 +31,11 @@ class DeletePost extends GetPrayerRequestEvent {
   @override
   List<Object?> get props => [userID, postID];
 }
+
+class CheckInternet extends GetPrayerRequestEvent {
+  final String type;
+
+  const CheckInternet(this.type);
+  @override
+  List<Object?> get props => [type];
+}

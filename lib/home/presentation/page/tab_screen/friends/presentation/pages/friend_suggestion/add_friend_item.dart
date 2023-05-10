@@ -10,6 +10,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/frie
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class AddFriendItem extends StatelessWidget {
@@ -32,10 +33,7 @@ class AddFriendItem extends StatelessWidget {
                   radius: 25,
                   backgroundImage: AssetImage('assets/default1.jpg'),
                 )
-              : CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(user.photoUrl!),
-                ),
+              : SafePhotoViewer(user: user),
           const SizedBox(width: 15),
           Flexible(
             child: Column(
@@ -43,7 +41,7 @@ class AddFriendItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
+                    Flexible(
                       child: HeaderText(
                           text: user.displayName ?? 'Anonymous User',
                           color: secondaryColor,
@@ -66,7 +64,7 @@ class AddFriendItem extends StatelessWidget {
                           .addFriendshipRequest(friendShipModel);
                       await NotificationRepository.sendPushMessage(
                           user.deviceToken!,
-                          'sent you a friend a request.',
+                          '${currentUser.displayName} sent you a friend a request.',
                           "Uplift Notification");
 
                       await NotificationRepository.addNotification(
@@ -85,7 +83,8 @@ class AddFriendItem extends StatelessWidget {
                         color: linkColor,
                         borderRadius: BorderRadius.circular(5)),
                     child: const Center(
-                      child: DefaultText(text: 'Add friend', color: whiteColor),
+                      child: DefaultText(
+                          text: 'Send friend request', color: whiteColor),
                     ),
                   ),
                 )

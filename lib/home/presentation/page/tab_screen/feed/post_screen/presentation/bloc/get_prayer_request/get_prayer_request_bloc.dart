@@ -32,10 +32,9 @@ class GetPrayerRequestBloc
       try {
         final data = await prayerRequestRepository.getPrayerRequestList();
 
-        await Future.delayed(const Duration(seconds: 1), () async {
-          emit(LoadingPrayerRequesListSuccess(data));
-        });
-      } on FirebaseException {
+        emit(LoadingPrayerRequesListSuccess(data));
+      } catch (e) {
+        log(e.toString());
         emit(LoadingPrayerRequesListError());
       }
     });
@@ -44,7 +43,6 @@ class GetPrayerRequestBloc
       emit(LoadingPrayerRequesList());
       try {
         final data = await prayerRequestRepository.getPrayerRequestList();
-
         emit(LoadingPrayerRequesListSuccess(data));
       } on FirebaseException {
         emit(LoadingPrayerRequesListError());
