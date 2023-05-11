@@ -58,6 +58,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         for (var each in event.notificationList) {
           NotificationRepository.delete(each.notificationModel.notificationId!);
         }
+        add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
         emit(NotificationLoadingError());
       }
@@ -69,6 +70,25 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           NotificationRepository.markAsRead(
               each.notificationModel.notificationId!);
         }
+        add(RefreshListOfNotification(event.userID, false));
+      } catch (e) {
+        emit(NotificationLoadingError());
+      }
+    });
+
+    on<MarkOneAsRead>((event, emit) async {
+      try {
+        NotificationRepository.markAsRead(event.notificationID);
+        add(RefreshListOfNotification(event.userID, false));
+      } catch (e) {
+        emit(NotificationLoadingError());
+      }
+    });
+
+    on<DeleteOneNotif>((event, emit) async {
+      try {
+        NotificationRepository.delete(event.notificationID);
+        add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
         emit(NotificationLoadingError());
       }

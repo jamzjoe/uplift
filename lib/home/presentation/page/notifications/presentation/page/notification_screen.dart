@@ -104,16 +104,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   void markAllAsRead(List<UserNotifModel> notifications) async {
     log("Tap");
-    Future.delayed(const Duration(seconds: 1), () async {
-      BlocProvider.of<NotificationBloc>(context)
-          .add(MarkAllAsRead(notifications));
-    });
+    BlocProvider.of<NotificationBloc>(context)
+        .add(MarkAllAsRead(notifications, await AuthServices.userID()));
   }
 
-  void deleteAll(List<UserNotifModel> notifications) {
-    Future.delayed(const Duration(seconds: 1), () async {
-      BlocProvider.of<NotificationBloc>(context)
-          .add(ClearNotification(widget.notifications));
-    });
+  void deleteAll(List<UserNotifModel> notifications) async {
+    BlocProvider.of<NotificationBloc>(context).add(
+        ClearNotification(widget.notifications, await AuthServices.userID()));
   }
 }

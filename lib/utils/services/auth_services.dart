@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/main.dart';
 
 class AuthServices {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -43,36 +44,27 @@ class AuthServices {
   }
 
   static Future<void> addUser(User user, String bio) async {
+    final token = await getFCMToken();
     final UserModel userModel = UserModel(
-      displayName: user.displayName,
-      emailAddress: user.email,
-      emailVerified: user.emailVerified,
-      userId: user.uid,
-      photoUrl: user.photoURL,
-      phoneNumber: user.phoneNumber,
-      createdAt: Timestamp.now(),
-      bio: bio,
-      searchKey: user.displayName!.toLowerCase(),
-    );
-
-    final token = await FirebaseMessaging.instance.getToken();
-    userModel.deviceToken = token;
+        displayName: user.displayName,
+        emailAddress: user.email,
+        emailVerified: user.emailVerified,
+        userId: user.uid,
+        photoUrl: user.photoURL,
+        phoneNumber: user.phoneNumber,
+        createdAt: Timestamp.now(),
+        bio: bio,
+        searchKey: user.displayName!.toLowerCase(),
+        deviceToken: token);
 
     final userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
     try {
-      final userSnapshot = await userDoc.get();
-      if (userSnapshot.exists &&
-          userSnapshot.get('emailAddress') == user.email) {
-        await userDoc.update(userModel.toJson());
-        print('User updated');
-      } else {
-        await userDoc.set(userModel.toJson());
-        print('User added');
-      }
+      await userDoc.set(userModel.toJson());
+      log('User added');
     } catch (error) {
-      print('Failed to add or update user: $error');
+      log('Failed to add or update user: $error');
     }
   }
 

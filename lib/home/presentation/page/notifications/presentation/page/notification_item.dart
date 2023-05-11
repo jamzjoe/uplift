@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
-import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 
 class NotificationItem extends StatelessWidget {
@@ -54,15 +55,19 @@ class NotificationItem extends StatelessWidget {
             tapDownDetails.globalPosition.dy, 0, 0),
         items: [
           PopupMenuItem(
-              onTap: () async => await NotificationRepository.delete(
-                  notification.notificationId!),
+              onTap: () async {
+                BlocProvider.of<NotificationBloc>(context)
+                    .add(DeleteOneNotif(userID, notification.notificationId!));
+              },
               child: const DefaultText(
                 text: 'Delete',
                 color: secondaryColor,
               )),
           PopupMenuItem(
-              onTap: () async => await NotificationRepository.markAsRead(
-                  notification.notificationId!),
+              onTap: () async {
+                BlocProvider.of<NotificationBloc>(context)
+                    .add(MarkOneAsRead(userID, notification.notificationId!));
+              },
               child: const DefaultText(
                 text: 'Mark as read',
                 color: secondaryColor,

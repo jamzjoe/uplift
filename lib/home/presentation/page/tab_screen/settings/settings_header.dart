@@ -7,7 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.dart';
 import 'package:uplift/utils/widgets/button.dart';
@@ -73,17 +73,18 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                FutureBuilder(
-                    future: PrayerRequestRepository().getPrayerRequestList(),
-                    builder: (context, _) {
-                      if (_.hasData) {
-                        int data = _.data!.length;
-                        return CountAndName(
-                            details: 'Prayer Intentions', count: data);
-                      }
+                BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
+                  builder: (context, state) {
+                    if (state is LoadingPrayerRequesListSuccess) {
+                      return CountAndName(
+                          details: 'Prayer Intentions',
+                          count: state.prayerRequestPostModel.length);
+                    } else {
                       return const CountAndName(
                           details: 'Prayer Intentions', count: 0);
-                    }),
+                    }
+                  },
+                ),
                 const VerticalDivider(),
                 FutureBuilder(
                     future: FriendsRepository()

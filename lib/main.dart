@@ -47,9 +47,22 @@ void main() async {
           title: message.notification!.title,
           body: message.notification!.body);
     }
+  }).onError((handleError) {
+    log(handleError);
   });
 
   runApp(const MyApp());
+}
+
+Future<String?> getFCMToken() async {
+  String? token;
+  try {
+    token = await FirebaseMessaging.instance.getToken();
+    log(token.toString());
+  } catch (e) {
+    log("Error getting FCM token: $e");
+  }
+  return token;
 }
 
 Future<NotificationSettings> requestPermission() async {

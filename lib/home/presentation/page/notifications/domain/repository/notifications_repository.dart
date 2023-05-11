@@ -52,7 +52,7 @@ class NotificationRepository {
           headers: <String, String>{
             'content-type': "application/json",
             'authorization':
-                "key=AAAAI2vmS6A:APA91bGrmFOsG-JOTDRU-sfjDUvrLnAM7t7okGLGp75tfRb2lx2K77D9nsPIKydPPWfHRKV27l3ixE8gLFdLnV3FLy4OUw3FSj-obdOAC8BMsCCgoNxiuKrn7pF8lXnu05Zh-M4x6Z7-"
+                "key=AAAAI2vmS6A:APA91bFSQvC1qa-V1Av1joilMCC6KaHYb7gfFKly6ZysUBJ5WopswRVVLQxx12ceJJ6qdpf8SdYkj7PwaBctV4Rxm1zF-0-2YBC1WG2ugQpHZCQbftp6DZaTTDt7qeGhJiML9T_j3JJe"
           },
           body: jsonEncode(data));
       log("Successfully send");
