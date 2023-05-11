@@ -27,6 +27,8 @@ class ApprovedFriendsBloc
       add(const FetchApprovedFriendRequest2());
     });
 
+ 
+
     on<FetchApprovedFriendRequest2>((event, emit) async {
       try {
         final data = await friendsRepository.fetchApprovedFriendRequest();

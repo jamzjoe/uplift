@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -19,7 +19,7 @@ class PostPrayerRequestBloc
       try {
         await Future.delayed(const Duration(seconds: 3), () async {
           await prayerRequestRepository.postPrayerRequest(
-              event.user, event.text);
+              event.user, event.text, event.image);
         });
         emit(Posted());
         await Future.delayed(const Duration(seconds: 3), () async {

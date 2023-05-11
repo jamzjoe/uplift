@@ -31,7 +31,7 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       children: [
-        SearchBar(
+        CustomSearchBar(
           hint: 'Search uplift user...',
           controller: searchController,
           onFieldSubmitted: (query) {

@@ -22,7 +22,7 @@ class FriendsItem extends StatelessWidget {
     String friendShipID = userFriendship.friendshipID.friendshipId!;
     UserModel user = userFriendship.userModel;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
         children: [
           user.photoUrl == null

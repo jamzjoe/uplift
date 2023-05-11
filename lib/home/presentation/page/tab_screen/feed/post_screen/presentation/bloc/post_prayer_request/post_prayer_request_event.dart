@@ -10,10 +10,9 @@ abstract class PostPrayerRequestEvent extends Equatable {
 class PostPrayerRequestActivity extends PostPrayerRequestEvent {
   final User user;
   final String text;
+  final File image;
 
-  const PostPrayerRequestActivity(this.user, this.text);
+  const PostPrayerRequestActivity(this.user, this.text, this.image);
   @override
   List<Object> get props => [user, text];
 }
-
-

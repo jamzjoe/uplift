@@ -27,7 +27,7 @@ class PostField extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Row(
           children: [
-            ProfilePhoto(user: userModel),
+            ProfilePhoto(user: userModel, radius: 60),
             const SizedBox(width: 5),
             Expanded(
                 child: Container(

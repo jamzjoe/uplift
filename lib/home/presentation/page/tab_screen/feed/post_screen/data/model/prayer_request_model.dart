@@ -6,6 +6,7 @@ class PrayerRequestPostModel {
   Timestamp? date;
   Reactions? reactions;
   String? postId;
+  String? imageUrl;
 
   PrayerRequestPostModel(
       {this.text, this.userId, this.date, this.reactions, this.postId});
@@ -18,6 +19,7 @@ class PrayerRequestPostModel {
         ? Reactions.fromJson(json['reactions'])
         : null;
     postId = json['post_id'];
+    imageUrl = json['image_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class PrayerRequestPostModel {
     data['text'] = text;
     data['user_id'] = userId;
     data['date'] = date;
+    data['image_url'] = imageUrl;
     if (reactions != null) {
       data['reactions'] = reactions!.toJson();
     }

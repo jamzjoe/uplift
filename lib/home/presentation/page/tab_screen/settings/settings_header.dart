@@ -7,6 +7,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -38,24 +40,25 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
         children: [
           Row(
             children: [
-              ProfilePhoto(user: userModel),
+              ProfilePhoto(user: userModel, radius: 60),
               const SizedBox(width: 10),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeaderText(
-                    text: user.displayName ?? 'Anonymous User',
+                    text: userModel.displayName ?? 'Anonymous User',
                     color: secondaryColor,
                     size: 18,
                   ),
                   Row(
                     children: [
-                      SmallText(text: user.email!, color: lightColor),
+                      SmallText(
+                          text: userModel.emailAddress!, color: lightColor),
                       const SizedBox(width: 5),
                       GestureDetector(
-                          onTap: () =>
-                              context.pushNamed('qr_generator2', extra: user),
+                          onTap: () => context.pushNamed('qr_generator2',
+                              extra: userModel),
                           child: const Icon(Ionicons.qr_code,
                               size: 15, color: lightColor))
                     ],
@@ -69,15 +72,39 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                CountAndName(
-                  count: 291,
-                  details: 'Prayer Request',
-                ),
-                VerticalDivider(),
-                CountAndName(details: 'Followers', count: 300),
-                VerticalDivider(),
-                CountAndName(details: 'Following', count: 809)
+              children: [
+                FutureBuilder(
+                    future: PrayerRequestRepository().getPrayerRequestList(),
+                    builder: (context, _) {
+                      if (_.hasData) {
+                        int data = _.data!.length;
+                        return CountAndName(
+                            details: 'Prayer Intentions', count: data);
+                      }
+                      return const CountAndName(
+                          details: 'Prayer Intentions', count: 0);
+                    }),
+                const VerticalDivider(),
+                FutureBuilder(
+                    future: FriendsRepository()
+                        .fetchApprovedFollowerFriendRequest(),
+                    builder: (context, _) {
+                      if (_.hasData) {
+                        int data = _.data!.length;
+                        return CountAndName(details: 'Followers', count: data);
+                      }
+                      return const CountAndName(details: 'Followers', count: 0);
+                    }),
+                const VerticalDivider(),
+                FutureBuilder(
+                    future: FriendsRepository().fetchApprovedFollowingRequest(),
+                    builder: (context, _) {
+                      if (_.hasData) {
+                        int data = _.data!.length;
+                        return CountAndName(details: 'Following', count: data);
+                      }
+                      return const CountAndName(details: 'Following', count: 0);
+                    }),
               ],
             ),
           ),

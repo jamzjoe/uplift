@@ -55,6 +55,7 @@ class NotificationRepository {
                 "key=AAAAI2vmS6A:APA91bGrmFOsG-JOTDRU-sfjDUvrLnAM7t7okGLGp75tfRb2lx2K77D9nsPIKydPPWfHRKV27l3ixE8gLFdLnV3FLy4OUw3FSj-obdOAC8BMsCCgoNxiuKrn7pF8lXnu05Zh-M4x6Z7-"
           },
           body: jsonEncode(data));
+      log("Successfully send");
     } catch (e) {
       log(e.toString());
     }

@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
@@ -43,17 +46,54 @@ class PrayerRequestRepository {
     return UserModel.fromJson(users.data()!);
   }
 
-  Future<bool> postPrayerRequest(User user, String text) async {
+  // Future<bool> postPrayerRequest(User user, String text) async {
+  //   CollectionReference<Map<String, dynamic>> reference =
+  //       FirebaseFirestore.instance.collection('Prayers');
+  //   final postID = reference.doc().id;
+  //   final prayerRequest = {
+  //     "text": text,
+  //     "user_id": user.uid,
+  //     "date": DateTime.now(),
+  //     "reactions": {"users": []},
+  //     "post_id": postID,
+  //   };
+
+  //   try {
+  //     await reference.doc(postID).set(prayerRequest);
+  //     return true;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
+
+  Future<bool> postPrayerRequest(
+      User user, String text, File? imageFile) async {
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
     final postID = reference.doc().id;
+
+    // Upload the image to Firebase Storage and get the download URL
+    String? imageUrl;
+    if (imageFile!.path.isNotEmpty) {
+      final storageReference =
+          FirebaseStorage.instance.ref().child('prayer_request_images/$postID');
+      final uploadTask = storageReference.putFile(imageFile);
+      final snapshot = await uploadTask.whenComplete(() => null);
+      imageUrl = await snapshot.ref.getDownloadURL();
+    }
+
+    // Create the prayerRequest object
     final prayerRequest = {
       "text": text,
       "user_id": user.uid,
       "date": DateTime.now(),
       "reactions": {"users": []},
-      "post_id": postID
+      "post_id": postID,
+      "image_url": ""
     };
+    if (imageUrl != null) {
+      prayerRequest["image_url"] = imageUrl;
+    }
 
     try {
       await reference.doc(postID).set(prayerRequest);
@@ -61,6 +101,21 @@ class PrayerRequestRepository {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<XFile?> imagePicker() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource
+          .gallery, // set source to ImageSource.camera for taking a new photo
+      imageQuality: 50, // set the image quality to 50%
+    );
+    return pickedFile;
+  }
+
+  Future<File> xFileToFile(XFile xFile) async {
+    final filePath = xFile.path;
+    return File(filePath);
   }
 
   Future<bool> addReaction(String postID, String userID) async {

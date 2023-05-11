@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 
-class SearchBar extends StatelessWidget {
-  const SearchBar({
+class CustomSearchBar extends StatelessWidget {
+  const CustomSearchBar({
     super.key,
     this.controller,
     this.onFieldSubmitted,

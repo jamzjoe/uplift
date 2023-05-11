@@ -108,26 +108,26 @@ class FriendsRepository {
     });
   }
 
-  Future<List<FriendShipModel>> getFriendRequest(String currentUserID) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> fetching = await FirebaseFirestore
-          .instance
-          .collection('Friendships')
-          .where('status', isEqualTo: 'pending')
-          .where('receiver', isEqualTo: currentUserID)
-          .get();
+  // Future<List<FriendShipModel>> getFriendRequest(String currentUserID) async {
+  //   try {
+  //     QuerySnapshot<Map<String, dynamic>> fetching = await FirebaseFirestore
+  //         .instance
+  //         .collection('Friendships')
+  //         .where('status', isEqualTo: 'pending')
+  //         .where('receiver', isEqualTo: currentUserID)
+  //         .get();
 
-      List<FriendShipModel> data = fetching.docs
-          .map((e) => FriendShipModel.fromJson(e.data()))
-          .toList()
-          .reversed
-          .toList();
+  //     List<FriendShipModel> data = fetching.docs
+  //         .map((e) => FriendShipModel.fromJson(e.data()))
+  //         .toList()
+  //         .reversed
+  //         .toList();
 
-      return data;
-    } catch (e) {
-      return Future.error(e.toString());
-    }
-  }
+  //     return data;
+  //   } catch (e) {
+  //     return Future.error(e.toString());
+  //   }
+  // }
 
   // Future<List<UserModel>> fetchFriendRequest() async {
   //   List<UserModel> data = [];
@@ -216,7 +216,7 @@ class FriendsRepository {
         }
       }
 
-      final result = users.reversed.toList();
+      final result = users.toList();
 
       for (var i = 0; i < result.length; i++) {
         data.add(UserFriendshipModel(
@@ -284,7 +284,131 @@ class FriendsRepository {
         }
       }
 
-      final result = users.reversed.toList();
+      final result = users.toList();
+
+      for (var i = 0; i < result.length; i++) {
+        data.add(UserFriendshipModel(
+            FriendshipID(friendshipId: friendshipID[i]), result[i]));
+      }
+    }
+
+    return data;
+  }
+
+  Future<List<UserFriendshipModel>> fetchApprovedFollowingRequest() async {
+    List<UserFriendshipModel> data = [];
+    final userID = await AuthServices.userID();
+    String status = 'approved';
+
+    //get all userID that you had send friend request - you are the sender and also the one that you received
+    QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', isEqualTo: status)
+            .where('sender', isEqualTo: userID)
+            .get();
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
+        fetchingSenderID.docs;
+
+    List<String> userIDS = [];
+    List<String> friendshipID = [];
+
+    for (var doc in allID) {
+      String receiver = doc.data()['receiver'];
+      String sender = doc.data()['sender'];
+      String friendID = doc.data()['friendship_id'];
+
+      if (receiver == userID) {
+        userIDS.add(sender);
+        friendshipID.add(friendID);
+      } else if (sender == userID) {
+        userIDS.add(receiver);
+        friendshipID.add(friendID);
+      }
+    }
+
+    if (userIDS.isEmpty) {
+      return [];
+    } else {
+      List<UserModel> users = [];
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .where('user_id', isNotEqualTo: userID)
+          .get();
+
+      for (var doc in response.docs) {
+        String docID = doc.data()['user_id'];
+
+        if (userIDS.contains(docID)) {
+          users.add(UserModel.fromJson(doc.data()));
+        }
+      }
+
+      final result = users.toList();
+
+      for (var i = 0; i < result.length; i++) {
+        data.add(UserFriendshipModel(
+            FriendshipID(friendshipId: friendshipID[i]), result[i]));
+      }
+    }
+
+    return data;
+  }
+
+  Future<List<UserFriendshipModel>> fetchApprovedFollowerFriendRequest() async {
+    List<UserFriendshipModel> data = [];
+    final userID = await AuthServices.userID();
+    String status = 'approved';
+
+    //get all userID that you had send friend request - you are the sender and also the one that you received
+    QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', isEqualTo: status)
+            .where('receiver', isEqualTo: userID)
+            .get();
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
+        fetchingReceiverID.docs;
+
+    List<String> userIDS = [];
+    List<String> friendshipID = [];
+
+    for (var doc in allID) {
+      String receiver = doc.data()['receiver'];
+      String sender = doc.data()['sender'];
+      String friendID = doc.data()['friendship_id'];
+
+      if (receiver == userID) {
+        userIDS.add(sender);
+        friendshipID.add(friendID);
+      } else if (sender == userID) {
+        userIDS.add(receiver);
+        friendshipID.add(friendID);
+      }
+    }
+
+    if (userIDS.isEmpty) {
+      return [];
+    } else {
+      List<UserModel> users = [];
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .where('user_id', isNotEqualTo: userID)
+          .get();
+
+      for (var doc in response.docs) {
+        String docID = doc.data()['user_id'];
+
+        if (userIDS.contains(docID)) {
+          users.add(UserModel.fromJson(doc.data()));
+        }
+      }
+
+      final result = users.toList();
 
       for (var i = 0; i < result.length; i++) {
         data.add(UserFriendshipModel(
@@ -353,7 +477,7 @@ class FriendsRepository {
         }
       }
 
-      final result = users.reversed.toList();
+      final result = users.toList();
 
       for (var i = 0; i < result.length; i++) {
         data.add(UserFriendshipModel(
@@ -502,7 +626,7 @@ class FriendsRepository {
     FirebaseFirestore.instance
         .collection('Friendships')
         .doc(friendShipID)
-        .delete()
+        .update({"status": "rejected"})
         .then((value) => log("Unfriend Success"))
         .catchError((error) => log("Failed to unfriend: $error"));
   }

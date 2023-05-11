@@ -53,7 +53,7 @@ class FriendRequestItem extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () async {
                           await NotificationRepository.sendPushMessage(
-                              userModel.displayName ?? 'Anonymous User',
+                              userModel.deviceToken!,
                               '${userModel.displayName} accepted your friend request.',
                               'Accepted request');
                           await NotificationRepository.addNotification(

@@ -39,6 +39,7 @@ class _CustomFieldState extends State<CustomField> {
             controller: widget.controller,
             validator: widget.validator,
             decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.always,
                 hintText: widget.hintText,
                 hintStyle: const TextStyle(fontWeight: FontWeight.w400),
                 suffixIcon: widget.suffixIcon != null

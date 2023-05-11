@@ -13,6 +13,7 @@ import 'package:uplift/home/presentation/page/notifications/data/model/user_noti
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/following_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
@@ -91,6 +92,15 @@ final GoRouter router = GoRouter(
                   return MaterialPage(
                       child: YourFriendsScreen(
                     user: state.extra as User,
+                  ));
+                }),
+            GoRoute(
+                path: 'follower-list',
+                name: 'follower-list',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: FollowingListScreen(
+                    currentUser: state.extra as User,
                   ));
                 }),
             GoRoute(

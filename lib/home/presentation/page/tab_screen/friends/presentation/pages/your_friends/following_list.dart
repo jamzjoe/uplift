@@ -5,18 +5,18 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'friends_item.dart';
 
-class FriendsList extends StatefulWidget {
-  const FriendsList({
+class FollowingListScreen extends StatefulWidget {
+  const FollowingListScreen({
     super.key,
     required this.currentUser,
   });
   final User currentUser;
 
   @override
-  State<FriendsList> createState() => _FriendsListState();
+  State<FollowingListScreen> createState() => _FollowingListScreenState();
 }
 
-class _FriendsListState extends State<FriendsList> {
+class _FollowingListScreenState extends State<FollowingListScreen> {
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -27,7 +27,7 @@ class _FriendsListState extends State<FriendsList> {
           if (state.approvedFriendList.isEmpty) {
             return const Padding(
                 padding: EdgeInsets.only(top: 100),
-                child: NoDataMessage(text: 'No friends yet...'));
+                child: NoDataMessage(text: 'No users found...'));
           }
           return ListView(
             shrinkWrap: true,
@@ -39,7 +39,7 @@ class _FriendsListState extends State<FriendsList> {
           );
         } else if (state is EmptySearchResult) {
           return const Center(
-            child: NoDataMessage(text: 'No user found'),
+            child: NoDataMessage(text: 'No users found'),
           );
         }
         return const SizedBox();

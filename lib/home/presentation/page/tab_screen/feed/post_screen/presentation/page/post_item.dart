@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
@@ -18,6 +20,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
+import 'package:uplift/utils/widgets/post_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import '../../../../../../../../constant/constant.dart';
 import '../../../../../../../../utils/widgets/default_text.dart';
@@ -154,6 +157,9 @@ class _PostItemState extends State<PostItem> {
               color: secondaryColor,
               overflow: TextOverflow.clip,
             ),
+            prayerRequest.imageUrl!.isEmpty
+                ? const SizedBox()
+                : PostPhotoViewer(path: prayerRequest.imageUrl!),
             defaultSpace,
 
             //Likes and Views Count
@@ -170,7 +176,7 @@ class _PostItemState extends State<PostItem> {
                     const SizedBox(width: 5),
                     SmallText(
                         text:
-                            "${prayerRequest.reactions!.users!.length} is praying for you.",
+                            "${prayerRequest.reactions!.users!.length} is praying for you",
                         color: lightColor)
                   ],
                 ),
@@ -269,7 +275,8 @@ class PrayedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-        onPressed: () {
+        onPressed: () async {
+          await AudioPlayer().play(AssetSource('react.mp3'));
           if (label == 'Pray') {
             prayerRequestRepository.addReaction(
                 prayerRequest.postId!, currentUser.uid);
