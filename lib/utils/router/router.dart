@@ -122,7 +122,7 @@ final GoRouter router = GoRouter(
                 name: 'qr_reader',
                 pageBuilder: (context, state) => MaterialPage(
                         child: QRReaderScreen(
-                      userJoinedModel: state.extra as UserJoinedModel,
+                      userJoinedModel: state.extra as UserModel,
                     )),
                 routes: [
                   GoRoute(

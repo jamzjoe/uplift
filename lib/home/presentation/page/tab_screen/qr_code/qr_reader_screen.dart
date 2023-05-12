@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
@@ -18,7 +16,7 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 class QRReaderScreen extends StatefulWidget {
   const QRReaderScreen({super.key, required this.userJoinedModel});
-  final UserJoinedModel userJoinedModel;
+  final UserModel userJoinedModel;
 
   @override
   State<QRReaderScreen> createState() => _QRReaderScreenState();
@@ -41,7 +39,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = widget.userJoinedModel.user;
+    final UserModel user = widget.userJoinedModel;
 
     return LoaderOverlay(
       overlayColor: secondaryColor,
@@ -73,7 +71,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                   QRView(
                     overlay: QrScannerOverlayShape(
                         borderColor: primaryColor,
-                        overlayColor: Colors.black.withOpacity(0.8)),
+                        overlayColor: Colors.black.withOpacity(0.9)),
                     key: qrKey,
                     onQRViewCreated: _onQRViewCreated,
                   ),
@@ -155,27 +153,19 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                           defaultSpace,
                           GestureDetector(
                             onTap: () async {
-                              context.pushNamed('qr_generator2',
-                                  extra: widget.userJoinedModel.userModel);
+                              context.pop();
                               context.loaderOverlay.hide();
                             },
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
+                            child: Column(
+                              children: const [
+                                Icon(
+                                  CupertinoIcons.qrcode_viewfinder,
+                                  size: 50,
                                   color: whiteColor,
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Column(
-                                children: const [
-                                  Icon(
-                                    CupertinoIcons.qrcode_viewfinder,
-                                    size: 50,
-                                    color: primaryColor,
-                                  ),
-                                  SmallText(
-                                      text: 'Generate QR Code',
-                                      color: secondaryColor)
-                                ],
-                              ),
+                                ),
+                                SmallText(
+                                    text: 'Generate QR Code', color: whiteColor)
+                              ],
                             ),
                           ),
                         ],

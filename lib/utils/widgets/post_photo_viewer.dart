@@ -12,7 +12,7 @@ class PostPhotoViewer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           child: CachedNetworkImage(
               fit: BoxFit.cover,
               width: double.infinity,

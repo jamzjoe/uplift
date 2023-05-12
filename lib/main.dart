@@ -112,28 +112,28 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Uplift Development',
         theme: ThemeData(
-          dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(primaryColor))),
-          appBarTheme: const AppBarTheme(
-              surfaceTintColor: whiteColor, backgroundColor: whiteColor),
-          bottomSheetTheme: const BottomSheetThemeData(
-              surfaceTintColor: whiteColor,
-              elevation: 2,
-              shape: RoundedRectangleBorder()),
-          dividerTheme:
-              DividerThemeData(color: secondaryColor.withOpacity(0.2)),
-          scaffoldBackgroundColor: whiteColor,
-          floatingActionButtonTheme:
-              const FloatingActionButtonThemeData(backgroundColor: whiteColor),
-          bottomAppBarTheme:
-              const BottomAppBarTheme(surfaceTintColor: whiteColor),
-          colorSchemeSeed: Colors.lightBlue,
-          popupMenuTheme:
-              const PopupMenuThemeData(surfaceTintColor: whiteColor),
-          useMaterial3: true,
-        ),
+            dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(primaryColor))),
+            appBarTheme: const AppBarTheme(
+                surfaceTintColor: whiteColor, backgroundColor: whiteColor),
+            bottomSheetTheme: const BottomSheetThemeData(
+                surfaceTintColor: whiteColor,
+                elevation: 2,
+                shape: RoundedRectangleBorder()),
+            dividerTheme:
+                DividerThemeData(color: secondaryColor.withOpacity(0.2)),
+            scaffoldBackgroundColor: whiteColor,
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                backgroundColor: whiteColor),
+            bottomAppBarTheme:
+                const BottomAppBarTheme(surfaceTintColor: whiteColor),
+            colorSchemeSeed: Colors.lightBlue,
+            dialogBackgroundColor: whiteColor,
+            popupMenuTheme:
+                const PopupMenuThemeData(surfaceTintColor: whiteColor),
+            useMaterial3: true),
       ),
     );
   }

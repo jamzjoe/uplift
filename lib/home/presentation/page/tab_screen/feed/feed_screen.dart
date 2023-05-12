@@ -62,6 +62,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         onPressed: () {
                           showSearch(
                               context: context,
+                              
                               delegate: CustomSearchDelegate());
                         },
                         icon: const Icon(

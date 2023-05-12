@@ -39,6 +39,37 @@ class PrayerRequestRepository {
     return listOfPost;
   }
 
+  Future<List<PostModel>> searchPrayerRequest(String query) async {
+    FriendsRepository friendsRepository = FriendsRepository();
+    final List<PostModel> listOfPost = [];
+    final fetchingUserID = await friendsRepository.fetchApprovedFriendRequest();
+    List<String> friendsIDs =
+        fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
+    friendsIDs.add(await AuthServices.userID());
+    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+        .instance
+        .collection('Prayers')
+        .where('user_id', whereIn: friendsIDs)
+        .orderBy('date', descending: false)
+        .get();
+    List<PrayerRequestPostModel> data = response.docs
+        .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+        .toList()
+        .reversed
+        .toList();
+
+    for (var each in data) {
+      final UserModel user =
+          await PrayerRequestRepository().getUserRecord(each.userId!);
+      listOfPost.add(PostModel(user, each));
+    }
+    return listOfPost
+        .where((element) => element.prayerRequestPostModel.text!
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+        .toList();
+  }
+
   Future<UserModel> getUserRecord(String userID) async {
     DocumentSnapshot<Map<String, dynamic>> users =
         await FirebaseFirestore.instance.collection('Users').doc(userID).get();

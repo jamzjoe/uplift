@@ -6,8 +6,8 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class QRGeneratorScreen extends StatefulWidget {
   const QRGeneratorScreen({super.key, required this.user});
@@ -22,67 +22,75 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
   Widget build(BuildContext context) {
     final UserModel user = widget.user;
     return Scaffold(
+      backgroundColor: primaryColor,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: whiteColor),
         backgroundColor: primaryColor,
-        title: const HeaderText(text: 'My QR Code', color: whiteColor),
         actions: [
-          Tooltip(
-            message: 'Show this QR to and scan to another UpLift user.',
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  CupertinoIcons.info_circle_fill,
-                  color: whiteColor,
-                )),
+          IconButton(
+            icon: const Icon(CupertinoIcons.qrcode_viewfinder),
+            onPressed: () {
+              context.pushNamed('qr_reader', extra: widget.user);
+            },
           )
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-        width: double.infinity,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Container(
+              clipBehavior: Clip.none,
+              padding: const EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                  color: whiteColor, borderRadius: BorderRadius.circular(20)),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
                 children: [
-                  ProfilePhoto(user: user),
-                  defaultSpace,
-                  HeaderText(
-                      text: user.displayName ?? 'Anonymous User',
-                      color: secondaryColor,
-                      size: 18),
-                  SmallText(
-                      text: user.emailVerified!
-                          ? 'User Verified'
-                          : 'Not Verified User',
-                      color: linkColor)
+                  Positioned(
+                      top: -80,
+                      child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(1000)),
+                          child:
+                              ProfilePhoto(user: user, radius: 100, size: 80))),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      defaultSpace,
+                      HeaderText(
+                          text: user.displayName ?? 'Anonymous User',
+                          color: secondaryColor,
+                          size: 18),
+                      defaultSpace,
+                      defaultSpace,
+                      QrImage(
+                          foregroundColor: secondaryColor,
+                          data: user.userId!,
+                          version: QrVersions.auto,
+                          size: 220),
+                      defaultSpace,
+                      const SmallText(
+                          text: 'Share QR code so others can follow you',
+                          color: secondaryColor),
+                      defaultSpace,
+                      Image.asset('assets/uplift-logo.png', width: 60),
+                    ],
+                  )
                 ],
               ),
-              defaultSpace,
-              defaultSpace,
-              QrImage(
-                  foregroundColor: secondaryColor,
-                  data: user.userId!,
-                  version: QrVersions.auto,
-                  size: 250),
-              defaultSpace,
-              defaultSpace,
-              ElevatedButton.icon(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: const Icon(
-                    CupertinoIcons.qrcode_viewfinder,
-                    color: whiteColor,
-                  ),
-                  label: const DefaultText(
-                      text: 'Scan QR Code', color: whiteColor)),
-            ],
+            ),
           ),
-        ),
+          defaultSpace,
+          TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.share, color: whiteColor),
+              label: const DefaultText(text: 'Share to', color: whiteColor)),
+        ],
       ),
     );
   }

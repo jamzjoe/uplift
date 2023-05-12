@@ -91,7 +91,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: whiteColor,
             ),
             onPressed: () {
-              context.pushNamed('qr_reader', extra: userJoinedModel);
+              context.pushNamed('qr_generator2',
+                  extra: userJoinedModel.userModel);
             }),
       ),
       bottomNavigationBar: TabBarMaterialWidget(

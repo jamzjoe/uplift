@@ -32,7 +32,7 @@ class CustomSearchBar extends StatelessWidget {
                 constraints: const BoxConstraints(),
                 onPressed: () {},
                 icon: const Icon(
-                  CupertinoIcons.search_circle_fill,
+                  CupertinoIcons.search,
                   color: lightColor,
                   size: 30,
                 )),
