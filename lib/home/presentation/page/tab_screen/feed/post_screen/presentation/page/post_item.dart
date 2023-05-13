@@ -156,7 +156,7 @@ class _PostItemState extends State<PostItem> {
               color: secondaryColor,
               overflow: TextOverflow.clip,
             ),
-            prayerRequest.imageUrl!.isEmpty
+            prayerRequest.imageUrl == null || prayerRequest.imageUrl!.isEmpty
                 ? const SizedBox()
                 : PostPhotoViewer(path: prayerRequest.imageUrl!),
             defaultSpace,
