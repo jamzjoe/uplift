@@ -31,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is UserIsIn) {
-          context.goNamed('auth_wrapper');
+          context.pop();
           _emailController.clear();
           _passwordController.clear();
         } else if (state is Loading) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
 import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
@@ -31,14 +30,14 @@ final GoRouter router = GoRouter(
     // redirect: (context, state) {
     //   return "/introduction_screen";
     // },
-    initialLocation: "/auth_wrapper",
+    initialLocation: "/home",
     debugLogDiagnostics: true,
     routes: [
       GoRoute(
-          path: '/auth_wrapper',
-          name: "auth_wrapper",
+          path: '/introduction_screen',
+          name: "introduction_screen",
           pageBuilder: (context, state) =>
-              const MaterialPage(child: AuthWrapper()),
+              const MaterialPage(child: HomeScreen()),
           routes: [
             GoRoute(
               name: "login",
@@ -66,10 +65,8 @@ final GoRouter router = GoRouter(
       GoRoute(
           name: 'home',
           path: '/home',
-          pageBuilder: (context, state) => MaterialPage(
-                child: HomeScreen(
-                  userJoinedModel: state.extra as UserJoinedModel,
-                ),
+          pageBuilder: (context, state) => const MaterialPage(
+                child: HomeScreen(),
               ),
           routes: [
             GoRoute(

@@ -20,16 +20,20 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository authRepository;
   late final StreamSubscription<User?> streamSubscription;
-  AuthenticationBloc(this.authRepository) : super(AuthenticationInitial()) {
+  AuthenticationBloc(this.authRepository) : super(Loading()) {
     streamSubscription = authRepository.user.listen((user) async {
       if (user != null) {
+        log('From Stream');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         add(SignIn(UserJoinedModel(userModel, user)));
+      } else {
+        add(SignOut());
       }
     });
 
     on<GoogleSignInRequested>((event, emit) async {
+      log('From event');
       try {
         final User? user = await AuthServices.signInWithGoogle();
         await AuthServices.addUser(user!, event.bio);
@@ -42,7 +46,6 @@ class AuthenticationBloc
         if (e.code == 'network_error') {
           emit(const UserIsOut('No internet connection'));
         }
-        emit(const UserIsOut('Error'));
       }
     });
 
@@ -91,7 +94,11 @@ class AuthenticationBloc
       AuthServices.signOut();
     });
 
-    on<SignIn>((event, emit) => emit(UserIsIn(event.userJoinedModel)));
+    on<SignIn>((event, emit) async {
+      log('From sign in');
+      emit(Loading());
+      emit(UserIsIn(event.userJoinedModel));
+    });
     on<SignOut>((event, emit) => emit(const UserIsOut("")));
 
     on<UpdateBio>((event, emit) async {
