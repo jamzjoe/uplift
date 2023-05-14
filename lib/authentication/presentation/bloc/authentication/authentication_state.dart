@@ -2,12 +2,12 @@ part of 'authentication_bloc.dart';
 
 abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
-
-  @override
-  List<Object> get props => [];
 }
 
-class AuthenticationInitial extends AuthenticationState {}
+class AuthenticationInitial extends AuthenticationState {
+  @override
+  List<Object?> get props => [];
+}
 
 class UserIsIn extends AuthenticationState {
   final UserJoinedModel userJoinedModel;
@@ -22,7 +22,10 @@ class UserIsOut extends AuthenticationState {
 
   const UserIsOut(this.message);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
-class Loading extends AuthenticationState {}
+class Loading extends AuthenticationState {
+  @override
+  List<Object?> get props => [];
+}

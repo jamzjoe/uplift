@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -36,12 +38,19 @@ class _AuthWrapperState extends State<AuthWrapper> {
         }
       },
       builder: (context, state) {
+        log(state.toString());
         if (state is UserIsIn) {
           return HomeScreen(
             userJoinedModel: state.userJoinedModel,
           );
         } else if (state is UserIsOut) {
           return const IntroductionScreen();
+        } else if (state is Loading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         } else {
           return const IntroductionScreen();
         }

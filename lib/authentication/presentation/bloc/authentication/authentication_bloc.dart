@@ -30,7 +30,6 @@ class AuthenticationBloc
     });
 
     on<GoogleSignInRequested>((event, emit) async {
-      emit(Loading());
       try {
         final User? user = await AuthServices.signInWithGoogle();
         await AuthServices.addUser(user!, event.bio);
@@ -43,6 +42,7 @@ class AuthenticationBloc
         if (e.code == 'network_error') {
           emit(const UserIsOut('No internet connection'));
         }
+        emit(const UserIsOut('Error'));
       }
     });
 
@@ -86,6 +86,7 @@ class AuthenticationBloc
 
     on<SignOutRequested>((event, emit) async {
       emit(Loading());
+      emit(const UserIsOut('Log out'));
       log('Sign out');
       AuthServices.signOut();
     });

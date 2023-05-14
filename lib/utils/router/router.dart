@@ -41,11 +41,16 @@ final GoRouter router = GoRouter(
               const MaterialPage(child: AuthWrapper()),
           routes: [
             GoRoute(
-                name: "login",
-                path: 'login',
-                pageBuilder: (context, state) =>
-                    const MaterialPage(child: LoginScreen()),
-                routes: const []),
+              name: "login",
+              path: 'login',
+              pageBuilder: (context, state) => CustomTransitionPage<void>(
+                key: state.pageKey,
+                child: const LoginScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
+              ),
+            ),
             GoRoute(
                 path: 'forgot-password',
                 name: 'forgotPassword',
