@@ -65,14 +65,14 @@ class NotificationRepository {
       String receiverID, String title, String message) async {
     CollectionReference notificationsCollection =
         FirebaseFirestore.instance.collection('Notifications');
-
+    final currentUserID = await AuthServices.userID();
     try {
       // Generate a unique notification ID
       String notificationId = notificationsCollection.doc().id;
 
       final NotificationModel notificationModel = NotificationModel(
           notificationId: notificationId,
-          senderID: await AuthServices.userID(),
+          senderID: currentUserID,
           receiverID: receiverID,
           title: title,
           read: false,

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +12,9 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
-class PostActions extends StatelessWidget {
+class PostActions extends StatefulWidget {
   const PostActions(
       {super.key,
       required this.prayerRequest,
@@ -23,96 +23,108 @@ class PostActions extends StatelessWidget {
   final PrayerRequestPostModel prayerRequest;
   final User currentUser;
   final ScreenshotController screenshotController;
+
+  @override
+  State<PostActions> createState() => _PostActionsState();
+}
+
+class _PostActionsState extends State<PostActions> {
+  bool isReacted = false;
+  @override
+  void initState() {
+    checkReaction(widget.prayerRequest, widget.currentUser);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            FutureBuilder(
-                future: PrayerRequestRepository()
-                    .isReacted(prayerRequest.postId!, currentUser.uid),
-                builder: (context, isReacted) {
-                  log(isReacted.toString());
-                  if (isReacted.connectionState == ConnectionState.waiting) {
-                    return LikeButton(
-                      likeCountPadding: EdgeInsets.zero,
-                      size: 50,
-                      likeCount: prayerRequest.reactions!.users!.length,
-                      likeBuilder: (isLiked) => PrayedButton(
-                        prayerRequest: prayerRequest,
-                        currentUser: currentUser,
-                        path: "assets/prayed.png",
-                        label: '',
-                      ),
-                    );
-                  }
-                  if (isReacted.hasData) {
-                    bool? isReact = isReacted.data ?? true;
-                    return LikeButton(
-                      isLiked: !isReact,
-                      likeCount: prayerRequest.reactions!.users!.length,
-                      onTap: (isLiked) {
-                        if (isLiked) {
-                          return PrayerRequestRepository()
-                              .unReact(prayerRequest.postId!, currentUser.uid);
-                        } else {
-                          return PrayerRequestRepository().addReaction(
-                              prayerRequest.postId!, currentUser.uid);
-                        }
-                      },
-                      likeCountAnimationType: LikeCountAnimationType.all,
-                      likeCountPadding: EdgeInsets.zero,
-                      likeBuilder: (isLiked) {
-                        return PrayedButton(
-                            prayerRequest: prayerRequest,
-                            currentUser: currentUser,
-                            path: isLiked
-                                ? "assets/prayed.png"
-                                : "assets/unprayed.png",
-                            label: 'Prayed');
-                      },
-                      size: 50,
-                    );
-                  } else {
-                    return PrayedButton(
-                      prayerRequest: prayerRequest,
-                      currentUser: currentUser,
-                      path: "assets/prayed.png",
-                      label: '',
-                    );
-                  }
-                }),
-            IconButton(
-                onPressed: () async {
-                  // final image = await saveImage();
-                  saveAndShare();
-                },
-                icon: const Icon(CupertinoIcons.arrowshape_turn_up_right,
-                    size: 22)),
-          ],
-        ),
-        IconButton(
-            onPressed: () async {
-              // final image = await saveImage();
-              saveAndShare();
-            },
-            icon: const Icon(
-              CupertinoIcons.bookmark,
-              size: 20,
-              color: secondaryColor,
-            ))
-      ],
+    final currentUser = widget.currentUser;
+    final postID = widget.prayerRequest.postId;
+    int length = widget.prayerRequest.reactions!.users!.length;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          LikeButton(
+              isLiked: !isReacted,
+              likeCountPadding: EdgeInsets.zero,
+              size: 50,
+              onTap: (isLiked) async {
+                if (!isLiked) {
+                  PrayerRequestRepository()
+                      .addReaction(postID!, currentUser.uid);
+                  setState(() {
+                    isReacted = !isReacted;
+                    length++;
+                  });
+                  return isLiked = true;
+                } else {
+                  PrayerRequestRepository().unReact(postID!, currentUser.uid);
+                  setState(() {
+                    isReacted = !isReacted;
+                    length--;
+                  });
+                  return isLiked = false;
+                }
+              },
+              likeCount: length,
+              likeBuilder: (isLiked) => PrayedButton(
+                    prayerRequest: widget.prayerRequest,
+                    currentUser: widget.currentUser,
+                    path:
+                        isReacted ? "assets/unprayed.png" : "assets/prayed.png",
+                    label: '',
+                  )),
+          const SizedBox(width: 10),
+          TextButton.icon(
+              label: const SmallText(text: 'Share', color: secondaryColor),
+              onPressed: () async {
+                // final image = await saveImage();
+                saveAndShare();
+              },
+              icon: const Icon(
+                CupertinoIcons.arrowshape_turn_up_right,
+                size: 22,
+                color: secondaryColor,
+              )),
+          const SizedBox(width: 10),
+          TextButton.icon(
+              label: const SmallText(text: 'Save', color: secondaryColor),
+              onPressed: () async {
+                // final image = await saveImage();
+                saveAndShare();
+              },
+              icon: const Icon(
+                CupertinoIcons.bookmark,
+                size: 22,
+                color: secondaryColor,
+              )),
+        ],
+      ),
     );
   }
 
   void saveAndShare() async {
-    final Uint8List? imageBytes = await screenshotController.capture();
+    final Uint8List? imageBytes = await widget.screenshotController.capture();
     final directory = await getApplicationDocumentsDirectory();
     final image = File('${directory.path}/uplift.png');
     image.writeAsBytes(imageBytes!);
 
     await Share.shareFiles([image.path]);
+  }
+
+  void checkReaction(
+      PrayerRequestPostModel prayerRequest, User currentUser) async {
+    Future.delayed(const Duration(microseconds: 1), () {
+      PrayerRequestRepository()
+          .isReacted(prayerRequest.postId!, currentUser.uid)
+          .then((value) {
+        setState(() {
+          isReacted = value;
+        });
+      });
+    });
   }
 }

@@ -9,27 +9,25 @@ class PostPhotoViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: ClipRRect(
-          child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 250,
-              imageUrl: path,
-              placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: secondaryColor.withOpacity(0.2),
-                  highlightColor: secondaryColor.withOpacity(0.1),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: primaryColor,
-                    ),
-                    height: 250,
-                    width: double.infinity,
-                  )),
-              errorWidget: (context, url, error) => const SizedBox())),
-    );
+    return ClipRRect(
+        clipBehavior: Clip.none,
+        child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: 400,
+            imageUrl: path,
+            placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: secondaryColor.withOpacity(0.2),
+                highlightColor: secondaryColor.withOpacity(0.1),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: primaryColor,
+                  ),
+                  height: 250,
+                  width: double.infinity,
+                )),
+            errorWidget: (context, url, error) => const SizedBox()));
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
-import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -55,9 +54,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 width: 100,
               ),
               defaultSpace,
-              const HeaderText(text: "Welcome Back!", color: secondaryColor),
               const DefaultText(
-                  text: 'Last time you use google to log in.',
+                  text: 'Spreading Light, One Prayer at a Time',
                   color: secondaryColor),
               SizedBox(height: MediaQuery.of(context).size.height - 650),
               GestureDetector(

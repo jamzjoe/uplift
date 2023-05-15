@@ -64,6 +64,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           if (state is NotificationLoadingSuccess) {}
         },
         builder: (context, state) {
+          log(state.toString());
           if (state is NotificationLoading) {
             return ListView.builder(
                 physics: const ClampingScrollPhysics(),
@@ -96,7 +97,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       )),
             );
           }
-          return const SizedBox();
+          return ListView.builder(
+              physics: const ClampingScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: 15,
+              itemBuilder: (context, index) {
+                return const NotificationShimmer();
+              });
         },
       ),
     );

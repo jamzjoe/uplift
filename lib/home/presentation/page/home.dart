@@ -20,6 +20,7 @@ import 'package:uplift/introduction/presentation/introduction_screen.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -121,9 +122,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         } else if (state is UserIsOut) {
           return const IntroductionScreen();
         } else if (state is Loading) {
-          return const Scaffold(
+          return Scaffold(
+            backgroundColor: whiteColor,
             body: Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Image(
+                    image: AssetImage('assets/uplift-logo.png'),
+                    width: 100,
+                  ),
+                  defaultSpace,
+                  SpinKitFadingCircle(
+                    color: primaryColor,
+                    size: 50,
+                  ),
+                ],
+              ),
             ),
           );
         } else {

@@ -47,65 +47,105 @@ class _PostItemState extends State<PostItem> {
 
   final ScreenshotController screenshotController = ScreenshotController();
 
+  int imageIndex = 0;
   @override
   Widget build(BuildContext context) {
     final user = widget.postModel.userModel;
     final currentUser = widget.user;
     final prayerRequest = widget.postModel.prayerRequestPostModel;
+    final length = prayerRequest.imageUrls!.length;
     return Screenshot(
       controller: screenshotController,
       child: Container(
         decoration: const BoxDecoration(
             color: whiteColor,
             border: Border(bottom: BorderSide(width: 0.5, color: lightColor))),
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //Profile, Name and Action Buttons
             PostHeader(user: user, prayerRequest: prayerRequest),
+            const SizedBox(height: 5),
             prayerRequest.imageUrls!.isEmpty
                 ? const SizedBox()
-                : CarouselSlider(
-                    items: [
-                      ...prayerRequest.imageUrls!
-                          .map((e) => PostPhotoViewer(path: e))
-                    ],
-                    options: CarouselOptions(
-                      height: 400,
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 0.8,
-                      initialPage: 0,
-                      enableInfiniteScroll: true,
-                      reverse: false,
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 5),
-                      autoPlayAnimationDuration:
-                          const Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      enlargeFactor: 0.2,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
+                : prayerRequest.imageUrls!.length == 1
+                    ? PostPhotoViewer(path: prayerRequest.imageUrls!.first)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              CarouselSlider(
+                                items: [
+                                  ...prayerRequest.imageUrls!
+                                      .map((e) => PostPhotoViewer(path: e))
+                                ],
+                                options: CarouselOptions(
+                                  height: 400,
+                                  pauseAutoPlayOnTouch: true,
+                                  aspectRatio: 16 / 9,
+                                  viewportFraction: 0.8,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      imageIndex = index;
+                                    });
+                                  },
+                                  initialPage: 0,
+                                  enableInfiniteScroll: true,
+                                  reverse: false,
+                                  autoPlay: false,
+                                  autoPlayInterval: const Duration(seconds: 8),
+                                  autoPlayAnimationDuration:
+                                      const Duration(milliseconds: 800),
+                                  autoPlayCurve: Curves.fastOutSlowIn,
+                                  enlargeCenterPage: true,
+                                  enlargeFactor: 0.13,
+                                  scrollDirection: Axis.horizontal,
+                                ),
+                              ),
+                              Positioned(
+                                right: 15,
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(60),
+                                    color: secondaryColor.withOpacity(0.7),
+                                  ),
+                                  child: SmallText(
+                                      text: '${imageIndex + 1}/$length',
+                                      color: whiteColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            children: List.generate(
+                                prayerRequest.imageUrls!.length,
+                                (index) => Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: CircleAvatar(
+                                        radius: 3,
+                                        backgroundColor: index == imageIndex
+                                            ? primaryColor
+                                            : lightColor,
+                                      ),
+                                    )).toList(),
+                          )
+                        ],
+                      ),
 
             //Likes and Views Count
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 5),
-                  PostText(prayerRequest: prayerRequest),
-                  defaultSpace,
-                  PostActions(
-                    prayerRequest: prayerRequest,
-                    currentUser: currentUser,
-                    screenshotController: screenshotController,
-                  ),
-                ],
-              ),
+            PostText(prayerRequest: prayerRequest),
+            PostActions(
+              prayerRequest: prayerRequest,
+              currentUser: currentUser,
+              screenshotController: screenshotController,
             ),
           ],
         ),
@@ -269,16 +309,6 @@ class PrayedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        // onPressed: () async {
-        //   await AudioPlayer().play(AssetSource('react.mp3'));
-        //   if (label == 'Pray') {
-        //     prayerRequestRepository.addReaction(
-        //         prayerRequest.postId!, currentUser.uid);
-        //   } else {
-        //     prayerRequestRepository.unReact(
-        //         prayerRequest.postId!, currentUser.uid);
-        //   }
-        // },
         onPressed: null,
         icon: Image(
           image: AssetImage(path),
