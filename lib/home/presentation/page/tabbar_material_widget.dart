@@ -38,35 +38,39 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       shape: const CircularNotchedRectangle(),
       notchMargin: 5,
       clipBehavior: Clip.antiAlias,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildTabItem(
-            label: 'Feed',
-            index: 0,
-            icon: const Icon(Ionicons.grid_outline, size: 28),
-            selectedIcon: const Icon(Ionicons.grid, size: 28),
-          ),
-          buildTabItem(
-            label: 'Friends',
-            index: 1,
-            icon: const Icon(CupertinoIcons.person_2_square_stack, size: 28),
-            selectedIcon:
-                const Icon(CupertinoIcons.person_2_square_stack_fill, size: 28),
-          ),
-          placeholder,
-          buildTabItem(
-              label: 'Events',
-              index: 2,
-              icon: const Icon(Ionicons.calendar_outline, size: 28),
-              selectedIcon: const Icon(Ionicons.calendar, size: 28)),
-          buildTabItem(
-            label: 'Settings',
-            index: 3,
-            icon: const Icon(Ionicons.settings_outline, size: 28),
-            selectedIcon: const Icon(Ionicons.settings, size: 28),
-          ),
-        ],
+      child: Container(
+        color: whiteColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            buildTabItem(
+              label: 'Feed',
+              index: 0,
+              icon: const Icon(Ionicons.grid_outline, size: 23),
+              selectedIcon: const Icon(Ionicons.grid, size: 23),
+            ),
+            buildTabItem(
+              label: 'Friends',
+              index: 1,
+              icon: const Icon(CupertinoIcons.person_2_square_stack, size: 23),
+              selectedIcon: const Icon(
+                  CupertinoIcons.person_2_square_stack_fill,
+                  size: 23),
+            ),
+            placeholder,
+            buildTabItem(
+                label: 'Events',
+                index: 2,
+                icon: const Icon(Ionicons.calendar_outline, size: 23),
+                selectedIcon: const Icon(Ionicons.calendar, size: 23)),
+            buildTabItem(
+              label: 'Settings',
+              index: 3,
+              icon: const Icon(Ionicons.settings_outline, size: 23),
+              selectedIcon: const Icon(Ionicons.settings, size: 23),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -91,7 +95,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                 children: [
                   IconButton(
                       color: isSelected
-                          ? primaryColor
+                          ? secondaryColor
                           : secondaryColor.withOpacity(0.5),
                       onPressed: () async {
                         widget.onChangedTab(index);
@@ -101,7 +105,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                   SmallText(
                       text: label,
                       color: isSelected
-                          ? primaryColor
+                          ? secondaryColor
                           : secondaryColor.withOpacity(0.5))
                 ],
               ),
@@ -113,7 +117,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             children: [
               IconButton(
                   color: isSelected
-                      ? primaryColor
+                      ? secondaryColor
                       : secondaryColor.withOpacity(0.5),
                   onPressed: () async {
                     widget.onChangedTab(index);
@@ -123,7 +127,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
               SmallText(
                   text: label,
                   color: isSelected
-                      ? primaryColor
+                      ? secondaryColor
                       : secondaryColor.withOpacity(0.5))
             ],
           );
@@ -135,7 +139,8 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-            color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5),
+            color:
+                isSelected ? secondaryColor : secondaryColor.withOpacity(0.5),
             onPressed: () async {
               widget.onChangedTab(index);
               widget.controller!.animateTo(index);
@@ -143,7 +148,8 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             icon: isSelected ? selectedIcon : icon),
         SmallText(
             text: label,
-            color: isSelected ? primaryColor : secondaryColor.withOpacity(0.5))
+            color:
+                isSelected ? secondaryColor : secondaryColor.withOpacity(0.5))
       ],
     );
   }

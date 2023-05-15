@@ -24,155 +24,159 @@ class PostFormScreen extends StatefulWidget {
   State<PostFormScreen> createState() => _PostFormScreenState();
 }
 
-File? file;
-
 class _PostFormScreenState extends State<PostFormScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
+
+  List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
   @override
   Widget build(BuildContext context) {
     final User user = widget.user.user;
     final UserModel userModel = widget.user.userModel;
-    return Form(
-      key: _key,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const HeaderText(text: 'Create post', color: secondaryColor),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: CustomContainer(
-                  onTap: () {
-                    if (_key.currentState!.validate()) {
-                      BlocProvider.of<PostPrayerRequestBloc>(context).add(
-                          PostPrayerRequestActivity(user, controller.text,
-                              file == null ? File('') : file!));
-                      setState(() {
-                        file = null;
-                      });
-                      context.pop();
-                    }
-                  },
-                  widget: const DefaultText(text: 'Post', color: whiteColor),
-                  color: buttonColor),
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  ProfilePhoto(user: userModel, radius: 60),
-                  const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HeaderText(
-                        text: user.displayName ?? 'Anonymous User',
-                        color: secondaryColor,
-                        size: 18,
-                      ),
-                      Row(
-                        children: const [
-                          SmallText(text: 'Post to', color: lightColor),
-                          SmallText(text: ' Public', color: primaryColor),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Expanded(
-                child: TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  onChanged: (value) {
-                    if (value.length > 5) {
-                      setState(() {
-                        buttonColor = primaryColor;
-                      });
-                    } else if (value.length < 5) {
-                      setState(() {
-                        buttonColor = secondaryColor.withOpacity(0.4);
-                      });
-                    }
-                  },
-                  validator: (value) => value!.length < 5 ? '' : null,
-                  controller: controller,
-                  decoration: const InputDecoration(
-                      hintStyle:
-                          TextStyle(fontWeight: FontWeight.w300, fontSize: 20),
-                      hintText: 'Write something you want to pray for...',
-                      border:
-                          UnderlineInputBorder(borderSide: BorderSide.none)),
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              file == null
-                  ? const SizedBox()
-                  : Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Image.file(
-                            file!,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                            top: -4,
-                            right: -4,
-                            child: IconButton(
-                              onPressed: () => setState(() {
-                                file = null;
-                              }),
-                              icon: const Icon(CupertinoIcons.delete_left_fill),
-                              color: Colors.grey,
-                            )),
-                      ],
-                    ),
-              const SizedBox(height: 50)
+
+    return BlocListener<PostPrayerRequestBloc, PostPrayerRequestState>(
+      listener: (context, state) {
+        if (state is PostPrayerRequestSuccess) {}
+      },
+      child: Form(
+        key: _key,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const HeaderText(text: 'Create post', color: secondaryColor),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: CustomContainer(
+                    onTap: () async {
+                      final List<File> files = file;
+                      if (_key.currentState!.validate()) {
+                        BlocProvider.of<PostPrayerRequestBloc>(context).add(
+                            PostPrayerRequestActivity(
+                                user, controller.text, files, ''));
+
+                        context.pop();
+                      }
+                    },
+                    widget: const DefaultText(text: 'Post', color: whiteColor),
+                    color: buttonColor),
+              )
             ],
           ),
-        ),
-        bottomSheet: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                  onPressed: () async {
-                    await PrayerRequestRepository()
-                        .imagePicker()
-                        .then((value) async {
-                      final picked =
-                          await PrayerRequestRepository().xFileToFile(value!);
-                      setState(() {
-                        file = picked;
+          body: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ProfilePhoto(user: userModel, radius: 60),
+                    const SizedBox(width: 15),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeaderText(
+                          text: user.displayName ?? 'Anonymous User',
+                          color: secondaryColor,
+                          size: 18,
+                        ),
+                        Row(
+                          children: const [
+                            SmallText(text: 'Post to', color: lightColor),
+                            SmallText(text: ' Public', color: primaryColor),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: (value) {
+                      if (value.length > 5) {
+                        setState(() {
+                          buttonColor = primaryColor;
+                        });
+                      } else if (value.length < 5) {
+                        setState(() {
+                          buttonColor = secondaryColor.withOpacity(0.4);
+                        });
+                      }
+                    },
+                    validator: (value) => value!.length < 5 ? '' : null,
+                    controller: controller,
+                    decoration: const InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 20),
+                        hintText: 'Write something you want to pray for...',
+                        border:
+                            UnderlineInputBorder(borderSide: BorderSide.none)),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                file.isEmpty
+                    ? const SizedBox()
+                    : Wrap(
+                        runSpacing: 10,
+                        direction: Axis.horizontal,
+                        spacing: 10,
+                        children: [
+                          ...file.map((e) => GestureDetector(
+                                onHorizontalDragUpdate: (details) {
+                                  setState(() {
+                                    file.remove(e);
+                                  });
+                                },
+                                child: Container(
+                                  width: file.length > 3 ? 60 : 100,
+                                  height: file.length > 3 ? 60 : 100,
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Image.file(
+                                    e,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ))
+                        ],
+                      ),
+                const SizedBox(height: 50)
+              ],
+            ),
+          ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      await PrayerRequestRepository()
+                          .imagePicker()
+                          .then((value) async {
+                        final picked =
+                            await PrayerRequestRepository().xFileToFile(value!);
+                        setState(() {
+                          file.add(picked);
+                        });
                       });
-                    });
-                  },
-                  icon: const Icon(
-                    CupertinoIcons.photo,
-                    color: linkColor,
-                  )),
-              IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    CupertinoIcons.ellipsis_circle_fill,
-                    color: secondaryColor,
-                  ))
-            ],
+                    },
+                    icon: const Icon(
+                      CupertinoIcons.photo,
+                      color: linkColor,
+                    )),
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      CupertinoIcons.ellipsis_circle_fill,
+                      color: secondaryColor,
+                    ))
+              ],
+            ),
           ),
         ),
       ),

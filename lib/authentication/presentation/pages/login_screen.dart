@@ -10,6 +10,7 @@ import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/dialog.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../constant/constant.dart';
 
@@ -136,11 +137,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 label: 'Password',
                                 controller: _passwordController,
                               ),
-                              defaultSpace,
                               GestureDetector(
                                 onTap: () =>
                                     context.pushNamed('forgotPassword'),
-                                child: const DefaultText(
+                                child: const SmallText(
                                     text: 'Forgot password?', color: linkColor),
                               ),
                               const SizedBox(

@@ -92,13 +92,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             label: 'Report a problem',
                             icon: CupertinoIcons.flag_fill),
                         SettingsItem(
-                            onTap: () => context.pushNamed('support'),
-                            label: 'Support',
-                            icon: CupertinoIcons.chat_bubble_fill),
-                        SettingsItem(
-                            onTap: () => context.pushNamed('term-policies'),
-                            label: 'Terms and Policies',
-                            icon: CupertinoIcons.info_circle_fill),
+                            onTap: () => context.pushNamed('about-us'),
+                            label: 'About Us',
+                            icon: CupertinoIcons.info_circle_fill)
                       ]).toList(),
                     ),
                   )),

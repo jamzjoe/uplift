@@ -77,40 +77,25 @@ class PrayerRequestRepository {
     return UserModel.fromJson(users.data()!);
   }
 
-  // Future<bool> postPrayerRequest(User user, String text) async {
-  //   CollectionReference<Map<String, dynamic>> reference =
-  //       FirebaseFirestore.instance.collection('Prayers');
-  //   final postID = reference.doc().id;
-  //   final prayerRequest = {
-  //     "text": text,
-  //     "user_id": user.uid,
-  //     "date": DateTime.now(),
-  //     "reactions": {"users": []},
-  //     "post_id": postID,
-  //   };
-
-  //   try {
-  //     await reference.doc(postID).set(prayerRequest);
-  //     return true;
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
-
   Future<bool> postPrayerRequest(
-      User user, String text, File? imageFile) async {
+      User user, String text, List<File> imageFiles, String name) async {
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
     final postID = reference.doc().id;
 
-    // Upload the image to Firebase Storage and get the download URL
-    String? imageUrl;
-    if (imageFile!.path.isNotEmpty) {
-      final storageReference =
-          FirebaseStorage.instance.ref().child('prayer_request_images/$postID');
+    // Create a list to store the image URLs
+    List<String> imageUrls = [];
+
+    // Upload each image to Firebase Storage and get the download URLs
+    for (int i = 0; i < imageFiles.length; i++) {
+      final imageFile = imageFiles[i];
+      final storageReference = FirebaseStorage.instance
+          .ref()
+          .child('prayer_request_images/$postID-$i');
       final uploadTask = storageReference.putFile(imageFile);
       final snapshot = await uploadTask.whenComplete(() => null);
-      imageUrl = await snapshot.ref.getDownloadURL();
+      final imageUrl = await snapshot.ref.getDownloadURL();
+      imageUrls.add(imageUrl);
     }
 
     // Create the prayerRequest object
@@ -120,11 +105,9 @@ class PrayerRequestRepository {
       "date": DateTime.now(),
       "reactions": {"users": []},
       "post_id": postID,
-      "image_url": ""
+      "image_url": imageUrls,
+      "custom_name": name
     };
-    if (imageUrl != null) {
-      prayerRequest["image_url"] = imageUrl;
-    }
 
     try {
       await reference.doc(postID).set(prayerRequest);
@@ -163,7 +146,6 @@ class PrayerRequestRepository {
 
       for (var reaction in currentReactions) {
         if (reaction is Map && reaction.containsKey(userID)) {
-          log('User exist');
           userExist = true;
         }
       }
@@ -179,8 +161,6 @@ class PrayerRequestRepository {
             .doc(postID)
             .update({'reactions': updatedReactions});
       }
-
-      log(currentReactions.toString());
 
       return true;
     } catch (e) {
@@ -203,7 +183,6 @@ class PrayerRequestRepository {
 
       for (var reaction in currentReactions) {
         if (reaction is Map && reaction.containsKey(userID)) {
-          log('User exist');
           userExist = true;
         }
       }
@@ -213,46 +192,25 @@ class PrayerRequestRepository {
         return false;
       }
     } catch (e) {
-      log(e.toString());
       return false;
     }
   }
 
   Future<bool> unReact(String postID, String userID) async {
     try {
-      DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Prayers')
-          .doc(postID)
-          .get();
+      final docRef =
+          FirebaseFirestore.instance.collection('Prayers').doc(postID);
+      final docSnapshot = await docRef.get();
 
-      final List<dynamic> currentReactions =
-          response.data()!['reactions']['users'];
+      final currentReactions =
+          List<Map<String, dynamic>>.from(docSnapshot.get('reactions.users'));
+      final userIndex = currentReactions
+          .indexWhere((reaction) => reaction.containsKey(userID));
 
-      bool userExist = false;
-      int userIndex = -1;
-
-      for (var i = 0; i < currentReactions.length; i++) {
-        var reaction = currentReactions[i];
-        if (reaction is Map && reaction.containsKey(userID)) {
-          log('User exist');
-          userExist = true;
-          userIndex = i;
-          break;
-        }
+      if (userIndex >= 0) {
+        currentReactions.removeAt(userIndex);
+        await docRef.update({'reactions.users': currentReactions});
       }
-
-      if (userExist) {
-        final updatedReactions = {
-          'users': List<dynamic>.from(currentReactions)..removeAt(userIndex)
-        };
-        await FirebaseFirestore.instance
-            .collection('Prayers')
-            .doc(postID)
-            .update({'reactions': updatedReactions});
-      }
-
-      log(currentReactions.toString());
 
       return true;
     } catch (e) {

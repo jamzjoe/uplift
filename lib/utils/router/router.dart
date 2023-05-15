@@ -22,7 +22,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/privacy_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/report_problem_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/security_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/support.dart';
+import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/about_us_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/switch_account.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
 
@@ -175,10 +175,10 @@ final GoRouter router = GoRouter(
                   const MaterialPage(child: ReportAProblemScreen()),
             ),
             GoRoute(
-              path: 'support',
-              name: 'support',
+              path: 'about-us',
+              name: 'about-us',
               pageBuilder: (context, state) =>
-                  const MaterialPage(child: SupportScreen()),
+                  const MaterialPage(child: AboutUsScreen()),
             ),
             GoRoute(
               path: 'term-policies',

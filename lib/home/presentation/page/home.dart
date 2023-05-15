@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             floatingActionButton: Visibility(
               visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
               child: FloatingActionButton(
-                  backgroundColor: primaryColor,
+                  backgroundColor: secondaryColor,
                   splashColor: primaryColor,
                   elevation: 2,
                   shape: const CircleBorder(

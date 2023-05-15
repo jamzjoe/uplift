@@ -44,7 +44,8 @@ class AuthenticationBloc
       } on PlatformException catch (e) {
         log(e.code);
         if (e.code == 'network_error') {
-          emit(const UserIsOut('No internet connection'));
+          emit(const UserIsOut(
+              'No internet connection', 'Authentication Error'));
         }
       }
     });
@@ -61,9 +62,11 @@ class AuthenticationBloc
         emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-          emit(const UserIsOut("No user found for that email."));
+          emit(const UserIsOut(
+              "No user found for that email.", 'Authentication Error'));
         } else if (e.code == 'wrong-password') {
-          emit(const UserIsOut("Wrong password provided for that user."));
+          emit(const UserIsOut("Wrong password provided for that user.",
+              'Authentication Error'));
         }
       }
     });
@@ -80,16 +83,19 @@ class AuthenticationBloc
         emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          emit(const UserIsOut("The password provided is too weak."));
+          emit(const UserIsOut(
+              "The password provided is too weak.", 'Authentication Error'));
         } else if (e.code == 'email-already-in-use') {
-          emit(const UserIsOut('The account already exists for that email.'));
+          emit(const UserIsOut('The account already exists for that email.',
+              'Authentication Error'));
         }
       }
     });
 
     on<SignOutRequested>((event, emit) async {
       emit(Loading());
-      emit(const UserIsOut('Log out'));
+      emit(const UserIsOut(
+          'You are redirected to login screen.', 'Logout Success'));
       log('Sign out');
       AuthServices.signOut();
     });
@@ -99,7 +105,8 @@ class AuthenticationBloc
       emit(Loading());
       emit(UserIsIn(event.userJoinedModel));
     });
-    on<SignOut>((event, emit) => emit(const UserIsOut("")));
+    on<SignOut>((event, emit) => emit(const UserIsOut(
+        'You are redirected to login screen.', 'Logout Success')));
 
     on<UpdateBio>((event, emit) async {
       try {
@@ -109,7 +116,7 @@ class AuthenticationBloc
         await AuthRepository.updateBio(event.bio, event.userID);
         emit(UserIsIn(UserJoinedModel(userModel, user!)));
       } catch (e) {
-        emit(UserIsOut(e.toString()));
+        emit(UserIsOut(e.toString(), ''));
       }
     });
 
@@ -119,7 +126,7 @@ class AuthenticationBloc
         await user.delete();
         await GoogleSignIn().disconnect();
         await AuthServices().deleteUser(event.user.uid);
-        emit(const UserIsOut('Deleted'));
+        emit(const UserIsOut('Deleted', ''));
       } catch (e) {
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());

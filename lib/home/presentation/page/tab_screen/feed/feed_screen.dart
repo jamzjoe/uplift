@@ -32,7 +32,7 @@ class _FeedScreenState extends State<FeedScreen> {
     final User user = widget.user.user;
     final UserJoinedModel userJoinedModel = widget.user;
     return Scaffold(
-      backgroundColor: const Color(0xffE9EBEE),
+      backgroundColor: whiteColor,
       extendBody: true,
       body: BlocListener<NotificationBloc, NotificationState>(
         listener: (context, state) {
@@ -62,7 +62,6 @@ class _FeedScreenState extends State<FeedScreen> {
                         onPressed: () {
                           showSearch(
                               context: context,
-                              
                               delegate: CustomSearchDelegate());
                         },
                         icon: const Icon(

@@ -8,6 +8,7 @@ import 'package:uplift/authentication/presentation/bloc/authentication/authentic
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../constant/constant.dart';
 
@@ -21,11 +22,13 @@ class RegisterScreen extends StatefulWidget {
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 final TextEditingController _emailController = TextEditingController();
 final TextEditingController _passwordController = TextEditingController();
+final TextEditingController _userNameController = TextEditingController();
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   bool isLoading = false;
   bool hidePassword = true;
+  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
@@ -103,8 +106,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Form(
                           key: _key,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              CustomField(
+                                validator: (p0) =>
+                                    p0!.isEmpty ? 'Username is required' : null,
+                                controller: _userNameController,
+                                label: 'Username',
+                              ),
                               CustomField(
                                 validator: (p0) => p0!.isEmpty
                                     ? 'Email address is required'
@@ -126,7 +135,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 label: 'Password',
                                 controller: _passwordController,
                               ),
-                              defaultSpace,
+                              Row(
+                                children: [
+                                  Checkbox(
+                                      value: isChecked,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isChecked = value!;
+                                        });
+                                      }),
+                                  const Flexible(
+                                    child: SmallText(
+                                        text:
+                                            'Agrees to the Terms and Condition and Privacy Policy',
+                                        color: secondaryColor),
+                                  )
+                                ],
+                              ),
                               const SizedBox(
                                 height: 30,
                               ),
