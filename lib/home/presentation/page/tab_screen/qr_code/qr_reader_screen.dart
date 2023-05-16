@@ -153,7 +153,8 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                           defaultSpace,
                           GestureDetector(
                             onTap: () async {
-                              context.pop();
+                              context.pushNamed('qr_generator2',
+                                  extra: widget.userJoinedModel);
                               context.loaderOverlay.hide();
                             },
                             child: Column(

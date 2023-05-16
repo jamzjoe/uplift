@@ -4,7 +4,7 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../../../constant/constant.dart';
 import '../../../../../utils/widgets/header_text.dart';
-import 'event_item.dart';
+import 'explore_item.dart';
 import 'event_list.dart';
 
 class EventScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _EventScreenState extends State<EventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const HeaderText(text: 'Events', color: secondaryColor),
+        title: const HeaderText(text: 'Explore', color: secondaryColor),
         actions: [
           IconButton(
             icon: const Icon(Ionicons.search),

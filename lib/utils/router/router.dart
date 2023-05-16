@@ -7,10 +7,11 @@ import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
 import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.dart';
+import 'package:uplift/home/presentation/page/friends_feed.dart';
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/following_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
@@ -118,6 +119,12 @@ final GoRouter router = GoRouter(
                   child: NotificationScreen(
                 notifications: state.extra as List<UserNotifModel>,
               )),
+            ),
+            GoRoute(
+              path: 'friend-screen',
+              name: 'friend-screen',
+              pageBuilder: (context, state) => MaterialPage(
+                  child: FriendsFeed(userModel: state.extra as UserModel)),
             ),
             GoRoute(
                 path: 'qr_reader',

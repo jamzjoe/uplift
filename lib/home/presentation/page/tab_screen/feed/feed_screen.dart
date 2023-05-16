@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
@@ -114,15 +115,16 @@ class PostStatusWidget extends StatelessWidget {
       builder: (context, state) {
         if (state is PostPrayerRequestLoading) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
             color: whiteColor,
             child: Row(
               children: const [
                 SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: linkColor,
+                  width: 25,
+                  height: 25,
+                  child: SpinKitFadingCircle(
+                    color: primaryColor,
+                    size: 25,
                   ),
                 ),
                 SizedBox(width: 15),
@@ -134,12 +136,12 @@ class PostStatusWidget extends StatelessWidget {
           );
         } else if (state is Posted) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
             color: whiteColor,
             child: Row(
               children: const [
-                Icon(CupertinoIcons.check_mark_circled_solid,
-                    color: linkColor, size: 20),
+                Icon(Ionicons.checkmark_done_circle,
+                    color: linkColor, size: 25),
                 SizedBox(width: 15),
                 SmallText(text: 'Prayer request posted.', color: secondaryColor)
               ],

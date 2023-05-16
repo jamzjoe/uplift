@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,8 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -30,6 +33,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
 
   List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
+  String postType = "unanonymous";
   @override
   Widget build(BuildContext context) {
     final User user = widget.user.user;
@@ -51,10 +55,21 @@ class _PostFormScreenState extends State<PostFormScreen> {
                     onTap: () async {
                       final List<File> files = file;
                       if (_key.currentState!.validate()) {
+                        List<UserFriendshipModel> friends = [];
+                        final bloc =
+                            BlocProvider.of<ApprovedFriendsBloc>(context);
+                        final state = bloc.state;
+                        log(state.toString());
+                        if (state is ApprovedFriendsSuccess2) {
+                          friends = state.approvedFriendList;
+                        }
                         BlocProvider.of<PostPrayerRequestBloc>(context).add(
                             PostPrayerRequestActivity(
-                                user, controller.text, files, ''));
-
+                                user,
+                                controller.text,
+                                files,
+                                postType == 'anonymous' ? 'Uplift User' : '',
+                                friends));
                         context.pop();
                       }
                     },
@@ -69,6 +84,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ProfilePhoto(user: userModel, radius: 60),
                     const SizedBox(width: 15),
@@ -77,17 +93,47 @@ class _PostFormScreenState extends State<PostFormScreen> {
                       children: [
                         HeaderText(
                           text: user.displayName ?? 'Anonymous User',
-                          color: secondaryColor,
+                          color: postType != "unanonymous"
+                              ? secondaryColor.withOpacity(0.5)
+                              : secondaryColor,
                           size: 18,
                         ),
-                        Row(
-                          children: const [
-                            SmallText(text: 'Post to', color: lightColor),
-                            SmallText(text: ' Public', color: primaryColor),
-                          ],
-                        ),
+                        const SizedBox(height: 5),
+                        GestureDetector(
+                          onTap: () {
+                            if (postType == "unanonymous") {
+                              setState(() {
+                                postType = "anonymous";
+                              });
+                            } else {
+                              setState(() {
+                                postType = "unanonymous";
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                                color: postType == "unanonymous"
+                                    ? secondaryColor.withOpacity(0.5)
+                                    : secondaryColor,
+                                borderRadius: BorderRadius.circular(60)),
+                            child: Row(
+                              children: const [
+                                Image(
+                                  image: AssetImage('assets/incognito.png'),
+                                  width: 20,
+                                ),
+                                SizedBox(width: 5),
+                                SmallText(
+                                    text: 'Post Anonymously', color: whiteColor)
+                              ],
+                            ),
+                          ),
+                        )
                       ],
-                    )
+                    ),
                   ],
                 ),
                 Expanded(

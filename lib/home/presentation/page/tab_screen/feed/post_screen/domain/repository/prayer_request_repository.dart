@@ -6,8 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
@@ -77,8 +79,9 @@ class PrayerRequestRepository {
     return UserModel.fromJson(users.data()!);
   }
 
-  Future<bool> postPrayerRequest(
-      User user, String text, List<File> imageFiles, String name) async {
+  Future<bool> postPrayerRequest(User user, String text, List<File> imageFiles,
+      String name, List<UserFriendshipModel> friends) async {
+    log(friends.toString());
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
     final postID = reference.doc().id;
@@ -111,6 +114,14 @@ class PrayerRequestRepository {
 
     try {
       await reference.doc(postID).set(prayerRequest);
+      for (var each in friends) {
+        log('Running notif');
+        NotificationRepository.sendPushMessage(
+          each.userModel.deviceToken!,
+          '${user.displayName} post a prayer intention.',
+          'Uplift Notification',
+        );
+      }
       return true;
     } catch (e) {
       return false;
@@ -132,7 +143,8 @@ class PrayerRequestRepository {
     return File(filePath);
   }
 
-  Future<bool> addReaction(String postID, String userID) async {
+  Future<bool> addReaction(String postID, String userID, UserModel userModel,
+      User currentUser) async {
     bool userExist = false;
     try {
       DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
@@ -161,6 +173,11 @@ class PrayerRequestRepository {
             .doc(postID)
             .update({'reactions': updatedReactions});
       }
+
+      NotificationRepository.sendPushMessage(
+          userModel.deviceToken!,
+          '${currentUser.displayName} prayed your prayer intentions.',
+          'Uplift notification');
 
       return true;
     } catch (e) {

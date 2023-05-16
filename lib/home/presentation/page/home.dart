@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/events/event_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/event_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
@@ -63,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               .add(const FetchApprovedFriendRequest2());
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
               .add(FetchUsersEvent());
+        } else {
+          setState(() {
+            index = 0;
+          });
         }
       },
       builder: (context, state) {
@@ -110,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: whiteColor,
                   ),
                   onPressed: () {
-                    context.pushNamed('qr_generator2',
+                    context.pushNamed('qr_reader',
                         extra: userJoinedModel.userModel);
                   }),
             ),

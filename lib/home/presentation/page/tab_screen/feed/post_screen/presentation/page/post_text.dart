@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/see_more_text.dart';
 
 import '../../data/model/prayer_request_model.dart';
 
-class PostText extends StatelessWidget {
+class PostText extends StatefulWidget {
   const PostText({
     super.key,
     required this.prayerRequest,
@@ -13,8 +13,13 @@ class PostText extends StatelessWidget {
   final PrayerRequestPostModel prayerRequest;
 
   @override
+  State<PostText> createState() => _PostTextState();
+}
+
+class _PostTextState extends State<PostText> {
+  @override
   Widget build(BuildContext context) {
-    final bool isEmpty = prayerRequest.imageUrls!.isEmpty;
+    final bool isEmpty = widget.prayerRequest.imageUrls!.isEmpty;
     const padding = EdgeInsets.symmetric(vertical: 60, horizontal: 20);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,23 +30,17 @@ class PostText extends StatelessWidget {
             ? Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: DefaultText(
-                  textAlign: TextAlign.start,
-                  text: prayerRequest.text!,
-                  color: secondaryColor,
-                  overflow: TextOverflow.clip,
-                ),
+                child: SeeMoreText(
+                    text: widget.prayerRequest.text!,
+                    maxLines: 2,
+                    color: secondaryColor),
               )
             : Container(
                 width: double.infinity,
                 padding: padding,
                 decoration: const BoxDecoration(color: secondaryColor),
-                child: DefaultText(
-                  textAlign: TextAlign.center,
-                  text: prayerRequest.text!,
-                  color: whiteColor,
-                  overflow: TextOverflow.clip,
-                ),
+                child:
+                    SeeMoreText(text: widget.prayerRequest.text!, maxLines: 3),
               ),
       ],
     );

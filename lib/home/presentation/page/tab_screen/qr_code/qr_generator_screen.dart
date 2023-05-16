@@ -30,7 +30,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
           IconButton(
             icon: const Icon(CupertinoIcons.qrcode_viewfinder),
             onPressed: () {
-              context.pushNamed('qr_reader', extra: widget.user);
+              context.pop();
             },
           )
         ],

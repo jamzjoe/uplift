@@ -23,7 +23,7 @@ class PrayerRequestPostModel {
     text = json['text'];
     userId = json['user_id'];
     date = json['date'];
-    name = json['name'];
+    name = json['custom_name'];
     reactions = json['reactions'] != null
         ? Reactions.fromJson(json['reactions'])
         : null;
@@ -37,7 +37,7 @@ class PrayerRequestPostModel {
     data['user_id'] = userId;
     data['date'] = date;
     data['image_url'] = imageUrls; // Updated field name
-    data['name'] = name;
+    data['custom_name'] = name;
     if (reactions != null) {
       data['reactions'] = reactions!.toJson();
     }

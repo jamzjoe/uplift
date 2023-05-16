@@ -17,6 +17,7 @@ class DefaultText extends StatelessWidget {
       text,
       textAlign: textAlign,
       style: TextStyle(
+          
           color: color,
           fontWeight: FontWeight.normal,
           fontSize: 16,

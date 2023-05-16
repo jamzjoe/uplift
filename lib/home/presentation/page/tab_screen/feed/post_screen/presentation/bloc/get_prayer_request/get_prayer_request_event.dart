@@ -18,8 +18,9 @@ class RefreshPostRequestList extends GetPrayerRequestEvent {
 
 class AddReaction extends GetPrayerRequestEvent {
   final String userID, postID;
-
-  const AddReaction(this.userID, this.postID);
+  final UserModel userModel;
+  final User currentUser;
+  const AddReaction(this.userID, this.postID, this.userModel, this.currentUser);
   @override
   List<Object?> get props => [userID, postID];
 }

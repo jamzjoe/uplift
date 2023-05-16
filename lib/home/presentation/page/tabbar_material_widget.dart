@@ -59,10 +59,11 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             ),
             placeholder,
             buildTabItem(
-                label: 'Events',
+                label: 'Explore',
                 index: 2,
-                icon: const Icon(Ionicons.calendar_outline, size: 23),
-                selectedIcon: const Icon(Ionicons.calendar, size: 23)),
+                icon: const Icon(CupertinoIcons.compass, size: 23),
+                selectedIcon:
+                    const Icon(CupertinoIcons.compass_fill, size: 23)),
             buildTabItem(
               label: 'Settings',
               index: 3,
