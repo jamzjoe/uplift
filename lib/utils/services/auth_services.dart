@@ -73,7 +73,7 @@ class AuthServices {
         emailAddress: user.email,
         userId: user.uid,
         createdAt: Timestamp.now(),
-        displayName: 'Uplift User #${user.uid}');
+        displayName: 'Uplift User');
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;
     FirebaseFirestore.instance

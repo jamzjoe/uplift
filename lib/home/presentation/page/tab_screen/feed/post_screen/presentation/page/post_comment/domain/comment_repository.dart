@@ -23,7 +23,7 @@ class CommentRepository {
 
   Future<List<UserCommentModel>> fetchComments(String postID) async {
     QuerySnapshot<Map<String, dynamic>> data =
-        await ref.where("postID", isEqualTo: postID).get();
+        await ref.where("post_id", isEqualTo: postID).get();
 
     List<UserCommentModel> userCommentModel = [];
     List<CommentModel> comments =

@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/domain/comment_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
+import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
@@ -30,6 +32,8 @@ class CommentView extends StatefulWidget {
 final _formKey = GlobalKey<FormState>();
 final TextEditingController commentController = TextEditingController();
 String comment = '';
+int commentCount = 0;
+ScrollController _scrollController = ScrollController();
 final User currentUser = FirebaseAuth.instance.currentUser!;
 
 class _CommentViewState extends State<CommentView> {
@@ -53,8 +57,8 @@ class _CommentViewState extends State<CommentView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(),
-                  const HeaderText(
-                    text: '693 Encourages',
+                  HeaderText(
+                    text: '$commentCount Encourages',
                     color: secondaryColor,
                     size: 18,
                   ),
@@ -68,48 +72,84 @@ class _CommentViewState extends State<CommentView> {
                 ],
               ),
               const SizedBox(height: 10),
-              BlocBuilder<EncourageBloc, EncourageState>(
+              BlocConsumer<EncourageBloc, EncourageState>(
+                listener: (context, state) {
+                  if (state is LoadingEncouragesSuccess) {
+                    setState(() {
+                      commentCount = state.encourages.length;
+                    });
+                  }
+                },
                 builder: (context, state) {
                   log(state.toString());
                   if (state is LoadingEncouragesSuccess) {
                     final data = state.encourages;
+                    if (data.isEmpty) {
+                      return const Expanded(
+                        child: Center(
+                          child: DefaultText(
+                              text: 'No encourages yet...',
+                              color: secondaryColor),
+                        ),
+                      );
+                    }
                     return Expanded(
                       child: ListView.builder(
+                        controller: _scrollController,
                         padding: const EdgeInsets.only(bottom: 50),
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            leading: const CircleAvatar(),
-                            title: const HeaderText(
-                                text: 'Joe Cristian Jamis',
-                                color: secondaryColor,
-                                size: 16),
+                            minVerticalPadding: 0,
+                            leading: ProfilePhoto(
+                              user: data[index].userModel,
+                              radius: 60,
+                            ),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                HeaderText(
+                                    text: data[index].userModel.displayName!,
+                                    color: secondaryColor,
+                                    size: 16),
+                                SmallText(
+                                    text: DateFeature().formatDateTime(
+                                        data[index]
+                                            .commentModel
+                                            .createdAt!
+                                            .toDate()),
+                                    color: lightColor)
+                              ],
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SmallText(
-                                    text:
-                                        "Wow that's nice.... jahfdjhfjksdgfsdng fchmgdhbnc ghcbhgnhv",
-                                    color: secondaryColor),
                                 SmallText(
-                                    text: DateFeature()
-                                        .formatDateTime(DateTime.now()),
-                                    color: lightColor)
+                                    text: data[index].commentModel.commentText!,
+                                    color: secondaryColor),
                               ],
                             ),
                           );
                         },
                       ),
                     );
+                  } else if (state is LoadingEncourages) {
+                    return const CommentShimmerLoading();
                   }
-                  return const SizedBox();
+                  return const Expanded(
+                    child: Center(
+                      child: DefaultText(
+                          text: 'Something went wrong...',
+                          color: secondaryColor),
+                    ),
+                  );
                 },
               ),
             ],
           ),
         ),
         bottomSheet: Container(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(10),
           width: double.infinity, // Occupies the full width of the screen
           color: Colors.white, // Customize the background color if needed
           child: Row(
@@ -146,10 +186,16 @@ class _CommentViewState extends State<CommentView> {
                         key: const Key('Show'),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
-                          CommentRepository().addComment(
-                              prayerRequestPostModel.postId!,
-                              currentUser.uid,
-                              commentController.text);
+                          BlocProvider.of<EncourageBloc>(context).add(
+                              AddEncourageEvent(prayerRequestPostModel.postId!,
+                                  currentUser.uid, commentController.text));
+                          // Scroll to the bottom after adding the new item
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                          );
+                          commentController.clear();
                         },
                         icon: Icon(CupertinoIcons.arrow_up_circle_fill,
                             size: 25,
@@ -160,5 +206,59 @@ class _CommentViewState extends State<CommentView> {
             ],
           ),
         ));
+  }
+}
+
+class CommentShimmerLoading extends StatelessWidget {
+  const CommentShimmerLoading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return const CommentShimmerItem();
+          }),
+    );
+  }
+}
+
+class CommentShimmerItem extends StatelessWidget {
+  const CommentShimmerItem({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: secondaryColor.withOpacity(0.2),
+      highlightColor: secondaryColor.withOpacity(0.1),
+      child: ListTile(
+        minVerticalPadding: 0,
+        leading: const CircleAvatar(radius: 25),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Expanded(
+              child: CustomContainer(widget: SizedBox(), color: secondaryColor),
+            ),
+            SizedBox(width: 5),
+            CustomContainer(widget: SizedBox(), color: secondaryColor),
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            CustomContainer(
+                width: double.infinity,
+                widget: SizedBox(),
+                color: secondaryColor),
+          ],
+        ),
+      ),
+    );
   }
 }

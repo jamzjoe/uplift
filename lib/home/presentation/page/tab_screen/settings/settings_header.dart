@@ -42,28 +42,30 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             children: [
               ProfilePhoto(user: userModel, radius: 60),
               const SizedBox(width: 10),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HeaderText(
-                    text: userModel.displayName ?? 'Anonymous User',
-                    color: secondaryColor,
-                    size: 18,
-                  ),
-                  Row(
-                    children: [
-                      SmallText(
-                          text: userModel.emailAddress!, color: lightColor),
-                      const SizedBox(width: 5),
-                      GestureDetector(
-                          onTap: () => context.pushNamed('qr_generator2',
-                              extra: userModel),
-                          child: const Icon(Ionicons.qr_code,
-                              size: 15, color: lightColor))
-                    ],
-                  ),
-                ],
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HeaderText(
+                      text: userModel.displayName ?? 'Anonymous User',
+                      color: secondaryColor,
+                      size: 18,
+                    ),
+                    Row(
+                      children: [
+                        SmallText(
+                            text: userModel.emailAddress!, color: lightColor),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                            onTap: () => context.pushNamed('qr_generator2',
+                                extra: userModel),
+                            child: const Icon(Ionicons.qr_code,
+                                size: 15, color: lightColor))
+                      ],
+                    ),
+                  ],
+                ),
               )
             ],
           ),
