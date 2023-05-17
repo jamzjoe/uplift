@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -10,7 +11,7 @@ import 'friend_request/friend_request_list.dart';
 
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key, required this.currentUser});
-  final User currentUser;
+  final UserModel currentUser;
 
   @override
   State<FriendsScreen> createState() => _FriendsScreenState();

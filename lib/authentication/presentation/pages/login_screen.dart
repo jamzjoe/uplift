@@ -283,8 +283,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: defaultTextStyle),
                               TextSpan(
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap =
-                                        () => context.pushNamed('register'),
+                                    ..onTap = () {
+                                      context.pushNamed('register');
+                                    },
                                   text: ' Register',
                                   style: linkStyle)
                             ]))

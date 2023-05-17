@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'friends_item.dart';
@@ -10,7 +11,7 @@ class FriendsList extends StatefulWidget {
     super.key,
     required this.currentUser,
   });
-  final User currentUser;
+  final UserModel currentUser;
 
   @override
   State<FriendsList> createState() => _FriendsListState();
@@ -29,14 +30,18 @@ class _FriendsListState extends State<FriendsList> {
                 padding: EdgeInsets.only(top: 100),
                 child: NoDataMessage(text: 'No friends yet...'));
           }
-          return ListView(
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            children: [
-              ...state.approvedFriendList
-                  .map((e) => FriendsItem(userFriendship: e))
-            ],
-          );
+          return ListView.separated(
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return FriendsItem(
+                    userFriendship: state.approvedFriendList[index]);
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                    thickness: .5, color: secondaryColor.withOpacity(0.2));
+              },
+              itemCount: state.approvedFriendList.length);
         } else if (state is EmptySearchResult) {
           return const Center(
             child: NoDataMessage(text: 'No user found'),

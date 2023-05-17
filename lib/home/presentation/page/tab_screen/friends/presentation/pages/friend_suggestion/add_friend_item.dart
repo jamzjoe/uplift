@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -18,9 +18,11 @@ class AddFriendItem extends StatelessWidget {
     super.key,
     required this.user,
     required this.currentUser,
+    this.controller,
   });
   final UserModel user;
-  final User currentUser;
+  final UserModel currentUser;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -42,52 +44,51 @@ class AddFriendItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child: HeaderText(
-                          text: user.displayName ?? 'Anonymous User',
-                          color: secondaryColor,
-                          size: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HeaderText(
+                              text: user.displayName ?? 'Anonymous User',
+                              color: secondaryColor,
+                              size: 16),
+                          SmallText(
+                              text:
+                                  'Active ${DateFeature().formatDateTime(user.createdAt!.toDate())}',
+                              color: secondaryColor),
+                        ],
+                      ),
                     ),
-                    const SmallText(text: '1w ', color: lightColor)
+                    GestureDetector(
+                      onTap: () async {
+                        final FriendShipModel friendShipModel = FriendShipModel(
+                          sender: currentUser.userId,
+                          receiver: user.userId,
+                          status: 'pending',
+                          timestamp: Timestamp.now(),
+                        );
+                        try {
+                          await FriendsRepository()
+                              .addFriendshipRequest(friendShipModel);
+                          await NotificationRepository.sendPushMessage(
+                              user.deviceToken!,
+                              '${currentUser.displayName} sent you a friend a request.',
+                              "Uplift Notification");
+
+                          await NotificationRepository.addNotification(
+                            user.userId!,
+                            'Friend request',
+                            'sent you a friend a request.',
+                          );
+                          controller!.clear();
+                        } catch (e) {
+                          log(e.toString());
+                        }
+                      },
+                      child: Icon(CupertinoIcons.add_circled_solid,
+                          color: secondaryColor.withOpacity(0.4), size: 30),
+                    )
                   ],
                 ),
-                const SizedBox(height: 5),
-                GestureDetector(
-                  onTap: () async {
-                    try {
-                      final FriendShipModel friendShipModel = FriendShipModel(
-                        sender: currentUser.uid,
-                        receiver: user.userId,
-                        status: 'pending',
-                        timestamp: Timestamp.now(),
-                      );
-                      await FriendsRepository()
-                          .addFriendshipRequest(friendShipModel);
-                      await NotificationRepository.sendPushMessage(
-                          user.deviceToken!,
-                          '${currentUser.displayName} sent you a friend a request.',
-                          "Uplift Notification");
-
-                      await NotificationRepository.addNotification(
-                        user.userId!,
-                        'Friend request',
-                        'sent you a friend a request.',
-                      );
-                    } catch (e) {
-                      log(e.toString());
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
-                    decoration: BoxDecoration(
-                        color: linkColor,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: const Center(
-                      child: DefaultText(
-                          text: 'Send friend request', color: whiteColor),
-                    ),
-                  ),
-                )
               ],
             ),
           )

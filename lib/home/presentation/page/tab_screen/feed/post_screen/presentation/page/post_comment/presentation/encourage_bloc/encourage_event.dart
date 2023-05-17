@@ -23,10 +23,13 @@ class RefreshEncourageEvent extends EncourageEvent {
 }
 
 class AddEncourageEvent extends EncourageEvent {
-  final String postID, userID, comment;
+  final String postID, comment;
+  final UserModel currentUser;
+  final UserModel postUserModel;
 
-  const AddEncourageEvent(this.postID, this.userID, this.comment);
+  const AddEncourageEvent(
+      this.postID, this.comment, this.postUserModel, this.currentUser);
 
   @override
-  List<Object?> get props => [postID, userID, comment];
+  List<Object?> get props => [postID, currentUser, comment, postUserModel];
 }

@@ -58,7 +58,8 @@ class FriendsItem extends StatelessWidget {
                       ),
                     ),
                     PopupMenuButton(
-                      icon: const Icon(CupertinoIcons.ellipsis),
+                      icon: Icon(CupertinoIcons.ellipsis,
+                          color: secondaryColor.withOpacity(0.5)),
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(

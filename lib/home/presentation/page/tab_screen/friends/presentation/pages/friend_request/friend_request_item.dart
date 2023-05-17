@@ -51,6 +51,25 @@ class FriendRequestItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
+                        onTap: () => FriendsRepository()
+                            .ignore(user.friendshipID.friendshipId!),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 7, horizontal: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: lightColor.withOpacity(0.2),
+                          ),
+                          child: const Center(
+                            child: DefaultText(
+                                text: 'Ignore', color: secondaryColor),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: GestureDetector(
                         onTap: () async {
                           await NotificationRepository.sendPushMessage(
                               userModel.deviceToken!,
@@ -82,25 +101,6 @@ class FriendRequestItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => FriendsRepository()
-                            .ignore(user.friendshipID.friendshipId!),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 7, horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: lightColor.withOpacity(0.2),
-                          ),
-                          child: const Center(
-                            child: DefaultText(
-                                text: 'Ignore', color: secondaryColor),
-                          ),
-                        ),
-                      ),
-                    )
                   ],
                 )
               ],

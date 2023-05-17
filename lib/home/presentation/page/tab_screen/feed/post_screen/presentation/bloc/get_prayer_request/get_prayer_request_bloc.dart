@@ -53,7 +53,8 @@ class GetPrayerRequestBloc
     on<AddReaction>((event, emit) async {
       log('Running');
       try {
-        await prayerRequestRepository.addReaction(event.postID, event.userID, event.userModel, event.currentUser);
+        await prayerRequestRepository.addReaction(
+            event.postID, event.userID, event.userModel, event.currentUser);
       } catch (e) {
         log(e.toString());
       }

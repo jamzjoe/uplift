@@ -36,8 +36,7 @@ class AuthenticationBloc
       log('From event');
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        await AuthServices.addUser(user!, event.bio);
-
+        await AuthServices.addUser(user!, event.bio, null);
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         emit(UserIsIn(UserJoinedModel(userModel, user)));
@@ -56,10 +55,10 @@ class AuthenticationBloc
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email, event.password);
         log(user.toString());
-        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
-        emit(UserIsIn(UserJoinedModel(userModel, user)));
+
+        emit(UserIsIn(UserJoinedModel(userModel, user!)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           emit(const UserIsOut(
@@ -77,7 +76,9 @@ class AuthenticationBloc
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email, event.password);
         log(user.toString());
-        AuthServices.addUserFromEmailAndPassword(user!, event.bio);
+        log(event.userName);
+        AuthServices.addUserFromEmailAndPassword(
+            user!, event.bio, event.userName);
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         emit(UserIsIn(UserJoinedModel(userModel, user)));

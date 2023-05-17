@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,12 +16,14 @@ import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class CommentView extends StatefulWidget {
-  final UserModel currentUser;
+  final UserModel postUser;
   final PrayerRequestPostModel prayerRequestPostModel;
+  final UserModel currentUser;
   const CommentView({
     super.key,
-    required this.currentUser,
+    required this.postUser,
     required this.prayerRequestPostModel,
+    required this.currentUser,
   });
 
   @override
@@ -34,12 +35,12 @@ final TextEditingController commentController = TextEditingController();
 String comment = '';
 int commentCount = 0;
 ScrollController _scrollController = ScrollController();
-final User currentUser = FirebaseAuth.instance.currentUser!;
 
 class _CommentViewState extends State<CommentView> {
   @override
   Widget build(BuildContext context) {
-    final user = widget.currentUser;
+    final postUser = widget.postUser;
+    final currentUser = widget.currentUser;
     final PrayerRequestPostModel prayerRequestPostModel =
         widget.prayerRequestPostModel;
     return Scaffold(
@@ -100,6 +101,7 @@ class _CommentViewState extends State<CommentView> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return ListTile(
+                            contentPadding: EdgeInsets.zero,
                             minVerticalPadding: 0,
                             leading: ProfilePhoto(
                               user: data[index].userModel,
@@ -155,7 +157,7 @@ class _CommentViewState extends State<CommentView> {
           child: Row(
             children: [
               ProfilePhoto(
-                user: user,
+                user: currentUser,
                 radius: 60,
                 size: 35,
               ),
@@ -164,6 +166,9 @@ class _CommentViewState extends State<CommentView> {
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
+                    onTap: () async {
+                      scrollToBottom();
+                    },
                     onChanged: (value) {
                       setState(() {
                         comment = value;
@@ -180,22 +185,21 @@ class _CommentViewState extends State<CommentView> {
                 duration: const Duration(seconds: 1),
                 child: comment.isEmpty
                     ? const SizedBox(
-                        key: Key('Hider'),
+                        key: Key('Hide'),
                       )
                     : IconButton(
                         key: const Key('Show'),
                         padding: EdgeInsets.zero,
                         onPressed: () async {
                           BlocProvider.of<EncourageBloc>(context).add(
-                              AddEncourageEvent(prayerRequestPostModel.postId!,
-                                  currentUser.uid, commentController.text));
+                              AddEncourageEvent(
+                                  prayerRequestPostModel.postId!,
+                                  commentController.text,
+                                  postUser,
+                                  currentUser));
                           // Scroll to the bottom after adding the new item
-                          _scrollController.animateTo(
-                            _scrollController.position.maxScrollExtent,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOut,
-                          );
                           commentController.clear();
+                          scrollToBottom();
                         },
                         icon: Icon(CupertinoIcons.arrow_up_circle_fill,
                             size: 25,
@@ -206,6 +210,14 @@ class _CommentViewState extends State<CommentView> {
             ],
           ),
         ));
+  }
+
+  Future<void> scrollToBottom() {
+    return _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 }
 

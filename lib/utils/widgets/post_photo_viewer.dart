@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
 
@@ -9,25 +10,29 @@ class PostPhotoViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-        clipBehavior: Clip.none,
-        child: CachedNetworkImage(
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 400,
-            imageUrl: path,
-            placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: secondaryColor.withOpacity(0.2),
-                highlightColor: secondaryColor.withOpacity(0.1),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: primaryColor,
-                  ),
-                  height: 250,
-                  width: double.infinity,
-                )),
-            errorWidget: (context, url, error) => const SizedBox()));
+    return GestureDetector(
+      onTap: () => context.pushNamed('photo_view', extra: path),
+      child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          clipBehavior: Clip.hardEdge,
+          child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 400,
+              imageUrl: path,
+              placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: secondaryColor.withOpacity(0.2),
+                  highlightColor: secondaryColor.withOpacity(0.1),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: primaryColor,
+                    ),
+                    height: 250,
+                    width: double.infinity,
+                  )),
+              errorWidget: (context, url, error) => const SizedBox())),
+    );
   }
 }

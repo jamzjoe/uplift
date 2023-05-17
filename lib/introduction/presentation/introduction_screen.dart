@@ -1,10 +1,10 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
-
 import '../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 
 class IntroductionScreen extends StatefulWidget {
@@ -21,20 +21,10 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
-        if (state is Loading) {
-          setState(() {
-            isLoading = true;
-          });
-        } else if (state is UserIsOut) {
+        log(state.toString());
+        if (state is UserIsOut) {
           CustomDialog.showErrorDialog(
               context, state.message, 'Authentication Error', 'Confirm');
-          setState(() {
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
         }
       },
       child: Scaffold(
@@ -71,24 +61,15 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      isLoading
-                          ? const SizedBox(
-                              height: 25,
-                              width: 25,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                color: primaryColor,
-                              ),
-                            )
-                          : const Image(
-                              image: AssetImage("assets/google-logo.png"),
-                              width: 25,
-                              height: 25,
-                            ),
-                      const DefaultText(
+                    children: const [
+                      Image(
+                        image: AssetImage("assets/google-logo.png"),
+                        width: 25,
+                        height: 25,
+                      ),
+                      DefaultText(
                           text: 'Continue with Google', color: secondaryColor),
-                      const SizedBox(),
+                      SizedBox(),
                     ],
                   ),
                 ),

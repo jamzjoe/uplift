@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/see_more_text.dart';
 
 import '../../data/model/prayer_request_model.dart';
@@ -19,6 +20,12 @@ class PostText extends StatefulWidget {
 class _PostTextState extends State<PostText> {
   @override
   Widget build(BuildContext context) {
+    String title = '';
+    if (widget.prayerRequest.title == null) {
+      title = '';
+    } else {
+      title = widget.prayerRequest.title!;
+    }
     final bool isEmpty = widget.prayerRequest.imageUrls!.isEmpty;
     const padding = EdgeInsets.symmetric(vertical: 60, horizontal: 20);
     return Column(
@@ -39,8 +46,12 @@ class _PostTextState extends State<PostText> {
                 width: double.infinity,
                 padding: padding,
                 decoration: const BoxDecoration(color: secondaryColor),
-                child:
+                child: Column(
+                  children: [
+                    DefaultText(text: title, color: whiteColor),
                     SeeMoreText(text: widget.prayerRequest.text!, maxLines: 3),
+                  ],
+                ),
               ),
       ],
     );

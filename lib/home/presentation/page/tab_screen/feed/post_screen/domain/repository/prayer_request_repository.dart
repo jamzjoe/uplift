@@ -36,6 +36,7 @@ class PrayerRequestRepository {
     for (var each in data) {
       final UserModel user =
           await PrayerRequestRepository().getUserRecord(each.userId!);
+
       listOfPost.add(PostModel(user, each));
     }
     return listOfPost;
@@ -63,6 +64,7 @@ class PrayerRequestRepository {
     for (var each in data) {
       final UserModel user =
           await PrayerRequestRepository().getUserRecord(each.userId!);
+
       listOfPost.add(PostModel(user, each));
     }
     return listOfPost
@@ -80,7 +82,7 @@ class PrayerRequestRepository {
   }
 
   Future<bool> postPrayerRequest(User user, String text, List<File> imageFiles,
-      String name, List<UserFriendshipModel> friends) async {
+      String name, List<UserFriendshipModel> friends, String title) async {
     log(friends.toString());
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
@@ -109,7 +111,8 @@ class PrayerRequestRepository {
       "reactions": {"users": []},
       "post_id": postID,
       "image_url": imageUrls,
-      "custom_name": name
+      "custom_name": name,
+      "title": title
     };
 
     try {
@@ -144,7 +147,7 @@ class PrayerRequestRepository {
   }
 
   Future<bool> addReaction(String postID, String userID, UserModel userModel,
-      User currentUser) async {
+      UserModel currentUser) async {
     bool userExist = false;
     try {
       DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore

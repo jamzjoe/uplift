@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 
+import '../../../../../../../../constant/constant.dart';
 import 'friend_request_header.dart';
 import 'friend_request_item.dart';
 
@@ -12,7 +13,7 @@ class FriendRequestList extends StatefulWidget {
     super.key,
     required this.currentUser,
   });
-  final User currentUser;
+  final UserModel currentUser;
 
   @override
   State<FriendRequestList> createState() => _FriendRequestListState();
@@ -59,14 +60,17 @@ class FriendRequestListView extends StatelessWidget {
               FriendRequestHeader(
                 friendRequestCount: state.users.length,
               ),
-              ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: state.users.length,
-                itemBuilder: (context, index) {
-                  return FriendRequestItem(user: state.users[index]);
-                },
-              ),
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return FriendRequestItem(user: state.users[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                        thickness: .5, color: secondaryColor.withOpacity(0.2));
+                  },
+                  itemCount: state.users.length),
             ],
           );
         }

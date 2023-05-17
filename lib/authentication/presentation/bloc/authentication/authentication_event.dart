@@ -39,7 +39,8 @@ class SignInWithEmailAndPassword extends AuthenticationEvent {
 class RegisterWithEmailAndPassword extends AuthenticationEvent {
   final String email, password;
   final String bio;
-  const RegisterWithEmailAndPassword(this.email, this.password, this.bio);
+  final String userName;
+  const RegisterWithEmailAndPassword(this.email, this.password, this.bio, this.userName);
 
   @override
   List<Object?> get props => [email, password];

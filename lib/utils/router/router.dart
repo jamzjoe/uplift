@@ -11,7 +11,9 @@ import 'package:uplift/home/presentation/page/friends_feed.dart';
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/following_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
@@ -26,6 +28,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/about_us_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/switch_account.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
+import 'package:uplift/utils/widgets/photo_view.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
@@ -85,7 +88,25 @@ final GoRouter router = GoRouter(
                 pageBuilder: (context, state) {
                   return MaterialPage(
                       child: FriendSuggestions(
-                    currentUser: state.extra as User,
+                    currentUser: state.extra as UserModel,
+                  ));
+                }),
+            GoRoute(
+                path: 'post_item_view',
+                name: 'post_item_view',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: PostItemView(
+                          postModel: state.queryParams['post_model'] as PostModel,
+                          userModel: state.queryParams['user_model'] as UserModel));
+                }),
+            GoRoute(
+                path: 'photo_view',
+                name: 'photo_view',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: PhotoViewScreen(
+                    url: state.extra as String,
                   ));
                 }),
             GoRoute(
@@ -94,7 +115,7 @@ final GoRouter router = GoRouter(
                 pageBuilder: (context, state) {
                   return MaterialPage(
                       child: YourFriendsScreen(
-                    user: state.extra as User,
+                    user: state.extra as UserModel,
                   ));
                 }),
             GoRoute(

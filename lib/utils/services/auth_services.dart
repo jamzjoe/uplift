@@ -31,19 +31,11 @@ class AuthServices {
     return userCredential.user;
   }
 
-//   Future<void> sendPushNotification(String deviceToken, String title, String body) async {
-//   var message = {
-//     'notification': {'title': title, 'body': body},
-//     'to': deviceToken,
-//   };
-//   await _firebaseMessaging.sendMessage(data: message);
-// }
-
   static Future<String> userID() async {
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
-  static Future<void> addUser(User user, String bio) async {
+  static Future<void> addUser(User user, String bio, String? userName) async {
     final token = await getFCMToken();
     final UserModel userModel = UserModel(
         displayName: user.displayName,
@@ -54,7 +46,9 @@ class AuthServices {
         phoneNumber: user.phoneNumber,
         createdAt: Timestamp.now(),
         bio: bio,
-        searchKey: user.displayName!.toLowerCase(),
+        searchKey: userName!.isEmpty
+            ? user.displayName!.toLowerCase()
+            : userName.toLowerCase(),
         deviceToken: token);
 
     final userDoc =
@@ -68,12 +62,15 @@ class AuthServices {
     }
   }
 
-  static Future addUserFromEmailAndPassword(User user, String bio) async {
+  static Future addUserFromEmailAndPassword(
+      User user, String bio, String? userName) async {
+    log(userName!);
     final UserModel userModel = UserModel(
         emailAddress: user.email,
         userId: user.uid,
         createdAt: Timestamp.now(),
-        displayName: 'Uplift User');
+        searchKey: userName.toLowerCase(),
+        displayName: userName ?? 'Uplift User');
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;
     FirebaseFirestore.instance

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +11,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
@@ -25,11 +26,13 @@ class PostActions extends StatefulWidget {
       required this.prayerRequest,
       required this.currentUser,
       required this.screenshotController,
-      required this.userModel});
+      required this.userModel,
+      required this.postModel});
   final PrayerRequestPostModel prayerRequest;
-  final User currentUser;
+  final UserModel currentUser;
   final ScreenshotController screenshotController;
   final UserModel userModel;
+  final PostModel postModel;
 
   @override
   State<PostActions> createState() => _PostActionsState();
@@ -42,6 +45,8 @@ class _PostActionsState extends State<PostActions> {
     checkReaction(widget.prayerRequest, widget.currentUser);
     super.initState();
   }
+
+  int encourageCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +64,15 @@ class _PostActionsState extends State<PostActions> {
             size: 50,
             onTap: (isLiked) async {
               if (!isLiked) {
-                PrayerRequestRepository().addReaction(
-                    postID!, currentUser.uid, widget.userModel, currentUser);
+                PrayerRequestRepository().addReaction(postID!,
+                    currentUser.userId!, widget.userModel, currentUser);
                 setState(() {
                   isReacted = !isReacted;
                   length++;
                 });
                 return isLiked = true;
               } else {
-                PrayerRequestRepository().unReact(postID!, currentUser.uid);
+                PrayerRequestRepository().unReact(postID!, currentUser.userId!);
                 setState(() {
                   isReacted = !isReacted;
                   length--;
@@ -77,22 +82,32 @@ class _PostActionsState extends State<PostActions> {
             },
             likeCount: length,
             likeBuilder: (isLiked) => PrayedButton(
-                  prayerRequest: widget.prayerRequest,
-                  currentUser: widget.currentUser,
                   path: isReacted ? "assets/unprayed.png" : "assets/prayed.png",
-                  label: '',
                 )),
         const SizedBox(width: 10),
         TextButton.icon(
             onPressed: () {
-              showComment(context, widget.userModel, widget.prayerRequest);
+              showComment(context, widget.userModel, widget.prayerRequest,
+                  widget.currentUser);
             },
             icon: const Icon(
               CupertinoIcons.chat_bubble,
               size: 22,
               color: secondaryColor,
             ),
-            label: const SmallText(text: 'Encourage', color: secondaryColor)),
+            label: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: FirebaseFirestore.instance
+                    .collection('Comments')
+                    .where('post_id', isEqualTo: postID)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SmallText(text: '0', color: secondaryColor);
+                  }
+                  return SmallText(
+                      text: '${snapshot.data!.size} Encourage',
+                      color: secondaryColor);
+                })),
         const SizedBox(width: 10),
         TextButton.icon(
             label: const SmallText(text: 'Share', color: secondaryColor),
@@ -106,24 +121,12 @@ class _PostActionsState extends State<PostActions> {
               size: 22,
               color: secondaryColor,
             )),
-        const SizedBox(width: 10),
-        TextButton.icon(
-            label: const SmallText(text: 'Save', color: secondaryColor),
-            onPressed: () async {
-              // final image = await saveImage();
-              saveAndShare();
-            },
-            icon: const Icon(
-              CupertinoIcons.bookmark,
-              size: 22,
-              color: secondaryColor,
-            )),
       ],
     );
   }
 
   Future<dynamic> showComment(BuildContext context, UserModel user,
-      PrayerRequestPostModel prayerRequestPostModel) {
+      PrayerRequestPostModel prayerRequestPostModel, UserModel currentUser) {
     BlocProvider.of<EncourageBloc>(context)
         .add(FetchEncourageEvent(widget.prayerRequest.postId!));
     return showModalBottomSheet(
@@ -136,7 +139,9 @@ class _PostActionsState extends State<PostActions> {
       ),
       builder: (BuildContext context) {
         return CommentView(
-            currentUser: user, prayerRequestPostModel: prayerRequestPostModel);
+            postUser: user,
+            prayerRequestPostModel: prayerRequestPostModel,
+            currentUser: currentUser);
       },
     );
   }
@@ -151,10 +156,10 @@ class _PostActionsState extends State<PostActions> {
   }
 
   void checkReaction(
-      PrayerRequestPostModel prayerRequest, User currentUser) async {
+      PrayerRequestPostModel prayerRequest, UserModel currentUser) async {
     Future.delayed(const Duration(microseconds: 1), () {
       PrayerRequestRepository()
-          .isReacted(prayerRequest.postId!, currentUser.uid)
+          .isReacted(prayerRequest.postId!, currentUser.userId!)
           .then((value) {
         setState(() {
           isReacted = value;

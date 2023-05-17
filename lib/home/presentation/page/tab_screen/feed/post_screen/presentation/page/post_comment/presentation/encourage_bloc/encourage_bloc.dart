@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/data/user_comment_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/domain/comment_repository.dart';
 
@@ -40,13 +42,16 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
       }
     });
 
-    on<AddEncourageEvent>((event, emitas) async {
+    on<AddEncourageEvent>((event, emit) async {
       try {
         await commentRepository.addComment(
-            event.postID, event.userID, event.comment);
+            event.postID, event.currentUser.userId!, event.comment);
+        NotificationRepository.sendPushMessage(
+            event.postUserModel.deviceToken!,
+            '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
+            'Uplift notification');
         add(RefreshEncourageEvent(event.postID));
       } catch (e) {
-        // ignore: invalid_use_of_visible_for_testing_member
         emit(const LoadingEncouragesError());
       }
     });

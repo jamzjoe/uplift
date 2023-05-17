@@ -8,22 +8,24 @@ class PrayerRequestPostModel {
   String? postId;
   List<String>? imageUrls; // Changed type to List<String>
   String? name;
+  String? title;
 
-  PrayerRequestPostModel({
-    this.text,
-    this.userId,
-    this.date,
-    this.reactions,
-    this.postId,
-    this.imageUrls, // Updated field name
-    this.name,
-  });
+  PrayerRequestPostModel(
+      {this.text,
+      this.userId,
+      this.date,
+      this.reactions,
+      this.postId,
+      this.imageUrls, // Updated field name
+      this.name,
+      this.title});
 
   PrayerRequestPostModel.fromJson(Map<String, dynamic> json) {
     text = json['text'];
     userId = json['user_id'];
     date = json['date'];
     name = json['custom_name'];
+    title = json['title'];
     reactions = json['reactions'] != null
         ? Reactions.fromJson(json['reactions'])
         : null;
@@ -38,6 +40,7 @@ class PrayerRequestPostModel {
     data['date'] = date;
     data['image_url'] = imageUrls; // Updated field name
     data['custom_name'] = name;
+    data['title'] = title;
     if (reactions != null) {
       data['reactions'] = reactions!.toJson();
     }
@@ -84,3 +87,5 @@ class Users {
     return data;
   }
 }
+
+

@@ -9,6 +9,7 @@ import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
+import 'package:uplift/utils/widgets/report_dialog.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostHeader extends StatelessWidget {
@@ -73,12 +74,21 @@ class PostHeader extends StatelessWidget {
                 ),
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                      onTap: () {},
-                      child: const ListTile(
+                      onTap: () async {
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  const ReportPrayerRequestDialog());
+                        });
+                      },
+                      child: ListTile(
                         dense: true,
-                        leading: Icon(CupertinoIcons.bookmark_fill),
-                        title: DefaultText(
-                            text: 'Save Post', color: secondaryColor),
+                        leading: Icon(
+                            CupertinoIcons.exclamationmark_bubble_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
+                            text: 'Report Post', color: secondaryColor),
                       )),
                   PopupMenuItem(
                       onTap: () async {
@@ -112,10 +122,11 @@ class PostHeader extends StatelessWidget {
                                   }
                                 }, 'Delete'));
                       },
-                      child: const ListTile(
+                      child: ListTile(
                         dense: true,
-                        leading: Icon(CupertinoIcons.delete_left_fill),
-                        title: DefaultText(
+                        leading: Icon(CupertinoIcons.delete_left_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
                             text: 'Delete Post', color: secondaryColor),
                       ))
                 ],
@@ -124,6 +135,14 @@ class PostHeader extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildReportChoice(String choice) {
+    return ListTile(
+      leading: Checkbox(value: true, onChanged: (value) {}),
+      title: Text(choice),
+      onTap: () {},
     );
   }
 }

@@ -30,7 +30,7 @@ class PostFormScreen extends StatefulWidget {
 class _PostFormScreenState extends State<PostFormScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
-
+  final TextEditingController _titleController = TextEditingController();
   List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
   String postType = "unanonymous";
@@ -69,7 +69,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
                                 controller.text,
                                 files,
                                 postType == 'anonymous' ? 'Uplift User' : '',
-                                friends));
+                                friends,
+                                _titleController.text));
                         context.pop();
                       }
                     },
@@ -136,6 +137,15 @@ class _PostFormScreenState extends State<PostFormScreen> {
                     ),
                   ],
                 ),
+                defaultSpace,
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                      prefixIcon:
+                          Icon(CupertinoIcons.textbox, color: secondaryColor),
+                      hintText: 'Add title'),
+                ),
+                defaultSpace,
                 Expanded(
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -23,7 +23,7 @@ class PostPrayerRequestBloc
         log(event.image.toString());
         await Future.delayed(const Duration(seconds: 3), () async {
           await prayerRequestRepository.postPrayerRequest(
-              event.user, event.text, event.image, event.name, event.approvedFriendsList);
+              event.user, event.text, event.image, event.name, event.approvedFriendsList, event.title);
         });
         emit(Posted());
         await Future.delayed(const Duration(seconds: 3), () async {

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_list.dart';
@@ -10,7 +11,7 @@ import '../search_bar.dart';
 
 class YourFriendsScreen extends StatefulWidget {
   const YourFriendsScreen({super.key, required this.user});
-  final User user;
+  final UserModel user;
 
   @override
   State<YourFriendsScreen> createState() => _YourFriendsScreenState();

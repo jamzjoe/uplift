@@ -8,6 +8,7 @@ import 'package:uplift/authentication/presentation/bloc/authentication/authentic
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../constant/constant.dart';
@@ -34,7 +35,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is UserIsIn) {
-          context.pop();
           _emailController.clear();
           _passwordController.clear();
         } else if (state is Loading) {
@@ -159,13 +159,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      if (_key.currentState!.validate()) {
-                                        BlocProvider.of<AuthenticationBloc>(
-                                                context)
-                                            .add(RegisterWithEmailAndPassword(
-                                                _emailController.text,
-                                                _passwordController.text,
-                                                ''));
+                                      if (isChecked == false) {
+                                        CustomDialog.showErrorDialog(
+                                            context,
+                                            'In order to create your account, you need to consent to the terms and conditions as well as the privacy policy.',
+                                            'Account Creation Agreement',
+                                            'Confirm');
+                                      } else {
+                                        if (_key.currentState!.validate()) {
+                                          BlocProvider.of<AuthenticationBloc>(
+                                                  context)
+                                              .add(RegisterWithEmailAndPassword(
+                                                  _emailController.text,
+                                                  _passwordController.text,
+                                                  '',
+                                                  _userNameController.text));
+                                        }
                                       }
                                     },
                                     child: Row(
