@@ -46,10 +46,12 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
       try {
         await commentRepository.addComment(
             event.postID, event.currentUser.userId!, event.comment);
-        NotificationRepository.sendPushMessage(
-            event.postUserModel.deviceToken!,
-            '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
-            'Uplift notification');
+        if (event.currentUser.userId != event.postUserModel.userId) {
+          NotificationRepository.sendPushMessage(
+              event.postUserModel.deviceToken!,
+              '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
+              'Uplift notification');
+        }
         add(RefreshEncourageEvent(event.postID));
       } catch (e) {
         emit(const LoadingEncouragesError());

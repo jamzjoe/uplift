@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class CommentView extends StatefulWidget {
   final UserModel postUser;
@@ -35,14 +37,37 @@ final TextEditingController commentController = TextEditingController();
 String comment = '';
 int commentCount = 0;
 ScrollController _scrollController = ScrollController();
+late StreamSubscription<bool> keyboardSubscription;
+
+var keyboardVisibilityController = KeyboardVisibilityController();
 
 class _CommentViewState extends State<CommentView> {
+  @override
+  void initState() {
+    // Query
+    log('Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+
+    // Subscribe
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      log('Keyboard visibility update. Is visible: $visible');
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    keyboardSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final postUser = widget.postUser;
     final currentUser = widget.currentUser;
     final PrayerRequestPostModel prayerRequestPostModel =
         widget.prayerRequestPostModel;
+
     return Scaffold(
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,
@@ -150,64 +175,71 @@ class _CommentViewState extends State<CommentView> {
             ],
           ),
         ),
-        bottomSheet: Container(
-          padding: const EdgeInsets.all(10),
-          width: double.infinity, // Occupies the full width of the screen
-          color: Colors.white, // Customize the background color if needed
-          child: Row(
-            children: [
-              ProfilePhoto(
-                user: currentUser,
-                radius: 60,
-                size: 35,
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    onTap: () async {
-                      scrollToBottom();
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        comment = value;
-                      });
-                    },
-                    autovalidateMode: AutovalidateMode.always,
-                    controller: commentController,
-                    decoration:
-                        const InputDecoration(hintText: 'Leave encourage...'),
+        bottomSheet: BackdropFilter(
+          filter: keyboardVisibilityController.isVisible
+              ? ColorFilter.mode(
+                  secondaryColor.withOpacity(0.2), BlendMode.darken)
+              : ColorFilter.mode(
+                  secondaryColor.withOpacity(0), BlendMode.darken),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            width: double.infinity, // Occupies the full width of the screen
+            color: Colors.white, // Customize the background color if needed
+            child: Row(
+              children: [
+                ProfilePhoto(
+                  user: currentUser,
+                  radius: 60,
+                  size: 35,
+                ),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      onTap: () async {
+                        scrollToBottom();
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          comment = value;
+                        });
+                      },
+                      autovalidateMode: AutovalidateMode.always,
+                      controller: commentController,
+                      decoration:
+                          const InputDecoration(hintText: 'Leave encourage...'),
+                    ),
                   ),
                 ),
-              ),
-              AnimatedSwitcher(
-                duration: const Duration(seconds: 1),
-                child: comment.isEmpty
-                    ? const SizedBox(
-                        key: Key('Hide'),
-                      )
-                    : IconButton(
-                        key: const Key('Show'),
-                        padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          BlocProvider.of<EncourageBloc>(context).add(
-                              AddEncourageEvent(
-                                  prayerRequestPostModel.postId!,
-                                  commentController.text,
-                                  postUser,
-                                  currentUser));
-                          // Scroll to the bottom after adding the new item
-                          commentController.clear();
-                          scrollToBottom();
-                        },
-                        icon: Icon(CupertinoIcons.arrow_up_circle_fill,
-                            size: 25,
-                            color: comment.isEmpty
-                                ? secondaryColor.withOpacity(0.5)
-                                : secondaryColor)),
-              )
-            ],
+                AnimatedSwitcher(
+                  duration: const Duration(seconds: 1),
+                  child: comment.isEmpty
+                      ? const SizedBox(
+                          key: Key('Hide'),
+                        )
+                      : IconButton(
+                          key: const Key('Show'),
+                          padding: EdgeInsets.zero,
+                          onPressed: () async {
+                            BlocProvider.of<EncourageBloc>(context).add(
+                                AddEncourageEvent(
+                                    prayerRequestPostModel.postId!,
+                                    commentController.text,
+                                    postUser,
+                                    currentUser));
+                            // Scroll to the bottom after adding the new item
+                            commentController.clear();
+                            scrollToBottom();
+                          },
+                          icon: Icon(CupertinoIcons.arrow_up_circle_fill,
+                              size: 25,
+                              color: comment.isEmpty
+                                  ? secondaryColor.withOpacity(0.5)
+                                  : secondaryColor)),
+                )
+              ],
+            ),
           ),
         ));
   }

@@ -28,7 +28,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         .snapshots()
         .listen((event) async {
       final userID = await AuthServices.userID();
-      add(FetchListOfNotification(userID.toString(), true));
+      add(FetchListOfNotification(userID.toString()));
     });
 
     on<FetchListOfNotification>((event, emit) async {
@@ -38,7 +38,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         emit(NotificationLoadingSuccess(data, false));
       } catch (e) {
         log(e.toString());
-        emit(NotificationLoadingError());
+        emit(NotificationLoadingError('Fetch error ${e.toString()}'));
       }
     });
 
@@ -49,7 +49,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             await notificationRepository.getUserNotifications(event.userID);
         emit(NotificationLoadingSuccess(data, false));
       } catch (e) {
-        emit(NotificationLoadingError());
+        emit(const NotificationLoadingError('Refresh error'));
       }
     });
 
@@ -60,7 +60,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         }
         add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
-        emit(NotificationLoadingError());
+        emit(const NotificationLoadingError('Clear error'));
       }
     });
 
@@ -72,7 +72,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         }
         add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
-        emit(NotificationLoadingError());
+        emit(NotificationLoadingError(e.toString()));
       }
     });
 
@@ -81,7 +81,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         NotificationRepository.markAsRead(event.notificationID);
         add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
-        emit(NotificationLoadingError());
+        emit(NotificationLoadingError(e.toString()));
       }
     });
 
@@ -90,7 +90,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         NotificationRepository.delete(event.notificationID);
         add(RefreshListOfNotification(event.userID, false));
       } catch (e) {
-        emit(NotificationLoadingError());
+        emit(NotificationLoadingError(e.toString()));
       }
     });
   }

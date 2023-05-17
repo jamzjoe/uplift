@@ -69,8 +69,12 @@ final GoRouter router = GoRouter(
       GoRoute(
           name: 'home',
           path: '/home',
-          pageBuilder: (context, state) => const MaterialPage(
-                child: HomeScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+                key: state.pageKey,
+                child: const HomeScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
               ),
           routes: [
             GoRoute(
@@ -97,8 +101,10 @@ final GoRouter router = GoRouter(
                 pageBuilder: (context, state) {
                   return MaterialPage(
                       child: PostItemView(
-                          postModel: state.queryParams['post_model'] as PostModel,
-                          userModel: state.queryParams['user_model'] as UserModel));
+                          postModel:
+                              state.queryParams['post_model'] as PostModel,
+                          userModel:
+                              state.queryParams['user_model'] as UserModel));
                 }),
             GoRoute(
                 path: 'photo_view',

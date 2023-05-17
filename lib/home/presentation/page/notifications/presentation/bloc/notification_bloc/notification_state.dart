@@ -25,6 +25,9 @@ class NotificationLoadingSuccess extends NotificationState {
 }
 
 class NotificationLoadingError extends NotificationState {
+  final String error;
+
+  const NotificationLoadingError(this.error);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [error];
 }

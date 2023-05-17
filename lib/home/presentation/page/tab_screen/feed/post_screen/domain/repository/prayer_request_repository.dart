@@ -177,11 +177,12 @@ class PrayerRequestRepository {
             .update({'reactions': updatedReactions});
       }
 
-      NotificationRepository.sendPushMessage(
-          userModel.deviceToken!,
-          '${currentUser.displayName} prayed your prayer intentions.',
-          'Uplift notification');
-
+      if (currentUser.userId != userModel.userId) {
+        NotificationRepository.sendPushMessage(
+            userModel.deviceToken!,
+            '${currentUser.displayName} prayed your prayer intentions.',
+            'Uplift notification');
+      }
       return true;
     } catch (e) {
       log(e.toString());

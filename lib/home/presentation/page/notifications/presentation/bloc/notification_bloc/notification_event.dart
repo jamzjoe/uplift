@@ -6,9 +6,8 @@ abstract class NotificationEvent extends Equatable {
 
 class FetchListOfNotification extends NotificationEvent {
   final String userID;
-  final bool newNotif;
 
-  const FetchListOfNotification(this.userID, this.newNotif);
+  const FetchListOfNotification(this.userID);
   @override
   List<Object> get props => [userID];
 }

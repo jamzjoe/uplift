@@ -24,14 +24,18 @@ class _FriendRequestListState extends State<FriendRequestList> {
 
   @override
   Widget build(BuildContext context) {
-    return const FriendRequestListView();
+    return FriendRequestListView(
+      currentUser: widget.currentUser,
+    );
   }
 }
 
 class FriendRequestListView extends StatelessWidget {
   const FriendRequestListView({
     super.key,
+    required this.currentUser,
   });
+  final UserModel currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,10 @@ class FriendRequestListView extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   itemBuilder: (context, index) {
-                    return FriendRequestItem(user: state.users[index]);
+                    return FriendRequestItem(
+                      user: state.users[index],
+                      currentUser: currentUser,
+                    );
                   },
                   separatorBuilder: (context, index) {
                     return Divider(

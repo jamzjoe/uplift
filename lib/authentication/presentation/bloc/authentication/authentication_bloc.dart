@@ -36,7 +36,7 @@ class AuthenticationBloc
       log('From event');
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        await AuthServices.addUser(user!, event.bio, null);
+        await AuthServices.addUser(user!, event.bio, "");
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         emit(UserIsIn(UserJoinedModel(userModel, user)));

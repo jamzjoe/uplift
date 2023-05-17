@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           BlocProvider.of<GetPrayerRequestBloc>(context)
               .add(const GetPostRequestList());
           BlocProvider.of<NotificationBloc>(context).add(
-              FetchListOfNotification(state.userJoinedModel.user.uid, false));
+              FetchListOfNotification(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendRequestBloc>(context)
               .add(FetchFriendRequestEvent(state.userJoinedModel.user.uid));
           BlocProvider.of<ApprovedFriendsBloc>(context)

@@ -15,8 +15,10 @@ class FriendRequestItem extends StatelessWidget {
   const FriendRequestItem({
     super.key,
     required this.user,
+    required this.currentUser,
   });
   final UserFriendshipModel user;
+  final UserModel currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,7 @@ class FriendRequestItem extends StatelessWidget {
                         onTap: () async {
                           await NotificationRepository.sendPushMessage(
                               userModel.deviceToken!,
-                              '${userModel.displayName} accepted your friend request.',
+                              '${currentUser.displayName} accepted your friend request.',
                               'Accepted request');
                           await NotificationRepository.addNotification(
                             userModel.userId!,

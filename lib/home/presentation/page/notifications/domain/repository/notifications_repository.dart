@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/notification_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
@@ -37,6 +36,7 @@ class NotificationRepository {
   }
 
   static sendPushMessage(String token, String body, String title) async {
+    log(token);
     final data = {
       "notification": {"body": body, "title": title},
       "priority": "high",
@@ -89,28 +89,25 @@ class NotificationRepository {
   }
 
   Future<List<UserNotifModel>> getUserNotifications(String userId) async {
-    List<UserNotifModel> userNotif = [];
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('Notifications')
+          .orderBy('timestamp', descending: false)
+          .where('receiver_id', isEqualTo: userId)
+          .get();
 
-    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-        .instance
-        .collection('Notifications')
-        .orderBy('timestamp', descending: false)
-        .where('receiver_id', isEqualTo: userId)
-        .get();
+      final notifications = querySnapshot.docs.map((doc) async {
+        final notification = NotificationModel.fromJson(doc.data());
+        final user = await PrayerRequestRepository()
+            .getUserRecord(notification.senderID!);
+        return UserNotifModel(user, notification);
+      });
 
-    List<NotificationModel> data = response.docs
-        .map((e) => NotificationModel.fromJson(e.data()))
-        .toList()
-        .reversed
-        .toList();
-
-    for (var each in data) {
-      final UserModel user =
-          await PrayerRequestRepository().getUserRecord(each.senderID!);
-      userNotif.add(UserNotifModel(user, each));
+      return await Future.wait(notifications.toList());
+    } on FirebaseException catch (e) {
+      log(e.toString());
+      return [];
     }
-
-    return userNotif;
   }
 
   // Create a method to update the read status of this notification
