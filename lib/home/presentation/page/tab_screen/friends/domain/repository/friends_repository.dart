@@ -226,11 +226,11 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(String userID) async {
-    List<UserFriendshipModel> data = [];
+  Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(
+      String userID) async {
     String status = 'approved';
 
-    //get all userID that you had send friend request - you are the sender and also the one that you received
+    // Get all userID that you had sent friend request to (as the sender) and received (as the receiver)
     QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
         await FirebaseFirestore.instance
             .collection('Friendships')
@@ -244,53 +244,50 @@ class FriendsRepository {
             .where('sender', isEqualTo: userID)
             .get();
 
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
-        fetchingSenderID.docs + fetchingReceiverID.docs;
-
     List<String> userIDS = [];
     List<String> friendshipID = [];
 
-    for (var doc in allID) {
-      String receiver = doc.data()['receiver'];
+    for (var doc in fetchingReceiverID.docs) {
       String sender = doc.data()['sender'];
       String friendID = doc.data()['friendship_id'];
 
-      if (receiver == userID) {
-        userIDS.add(sender);
-        friendshipID.add(friendID);
-      } else if (sender == userID) {
-        userIDS.add(receiver);
-        friendshipID.add(friendID);
-      }
+      userIDS.add(sender);
+      friendshipID.add(friendID);
+    }
+
+    for (var doc in fetchingSenderID.docs) {
+      String receiver = doc.data()['receiver'];
+      String friendID = doc.data()['friendship_id'];
+
+      userIDS.add(receiver);
+      friendshipID.add(friendID);
     }
 
     if (userIDS.isEmpty) {
       return [];
     } else {
-      List<UserModel> users = [];
       QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
           .instance
           .collection('Users')
           .where('user_id', isNotEqualTo: userID)
           .get();
 
-      for (var doc in response.docs) {
-        String docID = doc.data()['user_id'];
+      List<UserModel> users = response.docs
+          .map((doc) => UserModel.fromJson(doc.data()))
+          .where((user) => userIDS.contains(user.userId))
+          .toList();
 
-        if (userIDS.contains(docID)) {
-          users.add(UserModel.fromJson(doc.data()));
-        }
-      }
+      List<UserFriendshipModel> data =
+          friendshipID.asMap().entries.map((entry) {
+        int index = entry.key;
+        String friendID = entry.value;
+        UserModel user = users[index];
 
-      final result = users.toList();
+        return UserFriendshipModel(FriendshipID(friendshipId: friendID), user);
+      }).toList();
 
-      for (var i = 0; i < result.length; i++) {
-        data.add(UserFriendshipModel(
-            FriendshipID(friendshipId: friendshipID[i]), result[i]));
-      }
+      return data;
     }
-
-    return data;
   }
 
   Future<List<UserFriendshipModel>> fetchApprovedFollowingRequest() async {

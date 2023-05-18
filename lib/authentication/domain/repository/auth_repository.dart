@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -20,6 +19,15 @@ class AuthRepository {
         .catchError((error) => log('Error updating bio: $error'));
   }
 
+  static Future<void> updateName(String displayName, String userID) async {
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userID)
+        .update({'display_name': displayName})
+        .then((value) => log('Display name updated successfully!'))
+        .catchError((error) => log('Display name: $error'));
+  }
+
   static Future<void> updateContactNo(String phoneNumber, String userID) async {
     await FirebaseFirestore.instance
         .collection('Users')
@@ -29,30 +37,25 @@ class AuthRepository {
         .catchError((error) => log('Phone number updating error: $error'));
   }
 
-  static Future updateProfile(String displayName, emailAddress, contactNo,
-      File image, bio, provider) async {
-    final imageURL = await AuthRepository().uploadProfilePicture(image);
-
+  static Future updateProfile(
+      String displayName, emailAddress, contactNo, bio, userID) async {
     try {
       final user = FirebaseAuth.instance.currentUser!;
-      displayName.isNotEmpty ? user.updateDisplayName(displayName) : null;
-      emailAddress.isNotEmpty ? user.updateEmail(emailAddress) : null;
-      contactNo.isNotEmpty
-          ? AuthRepository.updateContactNo(contactNo, user.uid)
+      displayName.isNotEmpty ? await user.updateDisplayName(displayName) : null;
+      displayName.isNotEmpty
+          ? await AuthRepository.updateName(displayName, userID)
           : null;
-      imageURL.isNotEmpty ? user.updatePhotoURL(imageURL) : null;
-      bio.isNotEmpty ? AuthRepository.updateBio(bio, user.uid) : null;
-      if (provider == 'google_sign_in') {
-        await AuthServices.addUser(user, bio, "", 'google_sign_in');
-      } else {
-        await AuthServices.addUserFromEmailAndPassword(user, bio, displayName);
-      }
+      // emailAddress.isNotEmpty ? user.updateEmail(emailAddress) : null;
+      contactNo.isNotEmpty
+          ? await AuthRepository.updateContactNo(contactNo, user.uid)
+          : null;
+      bio.isNotEmpty ? await AuthRepository.updateBio(bio, user.uid) : null;
     } catch (e) {
       log(e.toString());
     }
   }
 
-  Future<String> uploadProfilePicture(File imageFile) async {
+  Future<String> uploadProfilePicture(File imageFile, String userID) async {
     // Generate a unique filename for the image
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -66,7 +69,12 @@ class AuthRepository {
 
     // Get the download URL of the uploaded image
     final String imageUrl = await storageSnapshot.ref.getDownloadURL();
-
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userID)
+        .update({'photo_url': imageUrl})
+        .then((value) => log('Profile photo uploaded successfully!'))
+        .catchError((error) => log('Error updating: $error'));
     // Return the image URL
     return imageUrl;
   }

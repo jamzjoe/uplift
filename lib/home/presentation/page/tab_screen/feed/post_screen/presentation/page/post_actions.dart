@@ -27,12 +27,14 @@ class PostActions extends StatefulWidget {
       required this.currentUser,
       required this.screenshotController,
       required this.userModel,
-      required this.postModel});
+      required this.postModel,
+      required this.isFullView});
   final PrayerRequestPostModel prayerRequest;
   final UserModel currentUser;
   final ScreenshotController screenshotController;
   final UserModel userModel;
   final PostModel postModel;
+  final bool isFullView;
 
   @override
   State<PostActions> createState() => _PostActionsState();
@@ -87,8 +89,12 @@ class _PostActionsState extends State<PostActions> {
         const SizedBox(width: 10),
         TextButton.icon(
             onPressed: () {
-              showComment(context, widget.userModel, widget.prayerRequest,
-                  widget.currentUser);
+              if (widget.isFullView == true) {
+                return;
+              } else {
+                showComment(context, widget.userModel, widget.prayerRequest,
+                    widget.currentUser);
+              }
             },
             icon: const Icon(
               CupertinoIcons.chat_bubble,
@@ -130,18 +136,21 @@ class _PostActionsState extends State<PostActions> {
     BlocProvider.of<EncourageBloc>(context)
         .add(FetchEncourageEvent(widget.prayerRequest.postId!));
     return showModalBottomSheet(
-      context: context,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
         ),
       ),
+      context: context,
       builder: (BuildContext context) {
         return CommentView(
-            postUser: user,
-            prayerRequestPostModel: prayerRequestPostModel,
-            currentUser: currentUser);
+          currentUser: currentUser,
+          prayerRequestPostModel: prayerRequestPostModel,
+          postOwner: user,
+          postModel: widget.postModel,
+        );
       },
     );
   }

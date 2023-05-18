@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
@@ -28,7 +28,6 @@ class AuthenticationBloc
         log('From Stream');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
-        log(user.displayName!);
         add(SignIn(UserJoinedModel(userModel, user)));
       } else {
         add(SignOut());
@@ -40,7 +39,7 @@ class AuthenticationBloc
         final User? user = await AuthServices.signInWithGoogle();
 
         await AuthServices.addUser(
-            user!, "userModel.bio!", "", 'google_sign_in');
+            user!, "", user.displayName, 'google_sign_in');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
 
@@ -112,7 +111,6 @@ class AuthenticationBloc
     });
 
     on<SignIn>((event, emit) async {
-      log('Update success');
       emit(UserIsIn(event.userJoinedModel));
     });
     on<SignOut>((event, emit) => emit(const UserIsOut(
@@ -150,9 +148,8 @@ class AuthenticationBloc
             event.displayName,
             event.emailAddress,
             event.contactNo,
-            event.image,
             event.bio,
-            event.provider);
+            event.userID);
       } catch (e) {
         log(e.toString());
         emit(const UserIsOut('Update failed', 'Error'));

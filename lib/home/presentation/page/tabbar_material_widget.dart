@@ -50,20 +50,14 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
               icon: const Icon(Ionicons.grid_outline, size: 23),
               selectedIcon: const Icon(Ionicons.grid, size: 23),
             ),
-            GestureDetector(
-              onTap: () async {
-                BlocProvider.of<FriendRequestBloc>(context)
-                    .add(FetchFriendRequestEvent(await AuthServices.userID()));
-              },
-              child: buildTabItem(
-                label: 'Friends',
-                index: 1,
-                icon:
-                    const Icon(CupertinoIcons.person_2_square_stack, size: 23),
-                selectedIcon: const Icon(
-                    CupertinoIcons.person_2_square_stack_fill,
-                    size: 23),
-              ),
+            buildTabItem(
+              label: 'Friends',
+              index: 1,
+              icon:
+                  const Icon(CupertinoIcons.person_2_square_stack, size: 23),
+              selectedIcon: const Icon(
+                  CupertinoIcons.person_2_square_stack_fill,
+                  size: 23),
             ),
             placeholder,
             buildTabItem(

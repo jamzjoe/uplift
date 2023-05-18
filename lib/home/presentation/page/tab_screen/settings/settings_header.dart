@@ -28,13 +28,14 @@ final TextEditingController _bioController = TextEditingController();
 class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
   @override
   void initState() {
-    _bioController.text = widget.userJoinedModel.userModel.bio!;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.user;
+
+    _bioController.text = widget.userJoinedModel.userModel.bio ?? '';
     final userModel = widget.userJoinedModel.userModel;
     return Container(
       padding: const EdgeInsets.all(20),
@@ -133,17 +134,6 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             keyboardType: TextInputType.text,
             autofocus: false,
             onFieldSubmitted: (value) {
-              UserJoinedModel? userJoinedModel = widget.userJoinedModel;
-              userJoinedModel.userModel.bio = _bioController.text;
-              BlocProvider.of<AuthenticationBloc>(context)
-                  .add(SignIn(userJoinedModel));
-              BlocProvider.of<AuthenticationBloc>(context)
-                  .add(UpdateBio(user.uid, _bioController.text));
-              setState(() {
-                isEditable = !isEditable;
-              });
-            },
-            onTapOutside: (value) {
               UserJoinedModel? userJoinedModel = widget.userJoinedModel;
               userJoinedModel.userModel.bio = _bioController.text;
               BlocProvider.of<AuthenticationBloc>(context)

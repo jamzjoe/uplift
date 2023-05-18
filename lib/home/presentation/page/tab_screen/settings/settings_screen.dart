@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +24,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is UserIsIn) {
-          log(state.userJoinedModel.user.displayName!);
           final userJoinedModel = state.userJoinedModel;
           return Scaffold(
             backgroundColor: const Color(0xffF0F0F0),

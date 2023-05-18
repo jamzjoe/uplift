@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
@@ -25,6 +26,7 @@ final TextEditingController contactController = TextEditingController();
 final TextEditingController bioController = TextEditingController();
 final TextEditingController emailAddressController = TextEditingController();
 File? file;
+String? imageURL;
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
@@ -111,23 +113,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         height: 65,
         child: Center(
           child: CustomContainer(
-              onTap: () {
-                UserJoinedModel? userJoinedModel = widget.userJoinedModel;
+              onTap: () async {
+                UserJoinedModel userJoinedModel = widget.userJoinedModel;
+                if (file != null) {
+                  imageURL = await AuthRepository()
+                      .uploadProfilePicture(file!, user.userId!)
+                      .then((value) {
+                    userJoinedModel.userModel.photoUrl = value;
+                  }).whenComplete(() {
+                    setState(() {
+                      file = null;
+                    });
+                  });
+                }
+
                 userJoinedModel.userModel.displayName = nameController.text;
+                userJoinedModel.userModel.bio = bioController.text;
                 userJoinedModel.userModel.emailAddress =
                     emailAddressController.text;
                 userJoinedModel.userModel.phoneNumber = contactController.text;
 
-                BlocProvider.of<AuthenticationBloc>(context).add(UpdateProfile(
-                    nameController.text.trim(),
-                    emailAddressController.text.trim(),
-                    contactController.text.trim(),
-                    file!,
-                    bioController.text.trim(),
-                    user.provider!));
+                if (context.mounted) {
+                  BlocProvider.of<AuthenticationBloc>(context).add(
+                      UpdateProfile(
+                          displayName: nameController.text,
+                          emailAddress: emailAddressController.text,
+                          contactNo: contactController.text,
+                          bio: bioController.text,
+                          userID: user.userId!));
 
-                BlocProvider.of<AuthenticationBloc>(context)
-                    .add(SignIn(userJoinedModel));
+                  BlocProvider.of<AuthenticationBloc>(context)
+                      .add(SignIn(userJoinedModel));
+                }
               },
               widget: const Center(
                   child:

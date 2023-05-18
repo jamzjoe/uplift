@@ -11,6 +11,7 @@ import 'package:uplift/home/presentation/page/tab_screen/explore/explore_screen.
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
@@ -56,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               .add(const GetPostRequestList());
           BlocProvider.of<NotificationBloc>(context).add(
               FetchListOfNotification(state.userJoinedModel.userModel.userId!));
-
+          BlocProvider.of<FriendRequestBloc>(context).add(
+              FetchFriendRequestEvent(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<ApprovedFriendsBloc>(context)
               .add(FetchApprovedFriendRequest(state.userJoinedModel.user.uid));
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)

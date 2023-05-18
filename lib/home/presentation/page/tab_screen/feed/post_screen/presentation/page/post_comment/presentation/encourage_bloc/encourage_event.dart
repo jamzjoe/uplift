@@ -26,9 +26,12 @@ class AddEncourageEvent extends EncourageEvent {
   final String postID, comment;
   final UserModel currentUser;
   final UserModel postUserModel;
+  final TextEditingController controller;
+  final BuildContext context;
+  final ScrollController scrollController;
 
-  const AddEncourageEvent(
-      this.postID, this.comment, this.postUserModel, this.currentUser);
+  const AddEncourageEvent(this.postID, this.comment, this.postUserModel,
+      this.currentUser, this.controller, this.context, this.scrollController);
 
   @override
   List<Object?> get props => [postID, currentUser, comment, postUserModel];

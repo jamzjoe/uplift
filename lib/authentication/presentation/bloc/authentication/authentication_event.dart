@@ -69,11 +69,15 @@ class DeleteAccount extends AuthenticationEvent {
 }
 
 class UpdateProfile extends AuthenticationEvent {
-  final File image;
-  final String displayName, emailAddress, contactNo, bio, provider;
+  final String displayName, emailAddress, contactNo, bio, userID;
 
-  const UpdateProfile(this.displayName, this.emailAddress, this.contactNo,
-      this.image, this.bio, this.provider);
+  const UpdateProfile(
+      {required this.displayName,
+      required this.emailAddress,
+      required this.contactNo,
+      required this.bio,
+      required this.userID});
   @override
-  List<Object?> get props => [displayName, emailAddress, contactNo, image, bio];
+  List<Object?> get props =>
+      [displayName, emailAddress, contactNo, bio, userID];
 }

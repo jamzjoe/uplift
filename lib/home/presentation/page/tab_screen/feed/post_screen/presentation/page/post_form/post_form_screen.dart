@@ -20,8 +20,9 @@ import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostFormScreen extends StatefulWidget {
-  const PostFormScreen({super.key, required this.user});
+  const PostFormScreen({super.key, required this.user, this.isPickImage});
   final UserJoinedModel user;
+  final bool? isPickImage;
 
   @override
   State<PostFormScreen> createState() => _PostFormScreenState();
@@ -34,6 +35,15 @@ class _PostFormScreenState extends State<PostFormScreen> {
   List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
   String postType = "unanonymous";
+
+  @override
+  void initState() {
+    if (widget.isPickImage ?? false) {
+      pickImage();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final User user = widget.user.user;
@@ -210,17 +220,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                    onPressed: () async {
-                      await PrayerRequestRepository()
-                          .imagePicker()
-                          .then((value) async {
-                        final picked =
-                            await PrayerRequestRepository().xFileToFile(value!);
-                        setState(() {
-                          file.add(picked);
-                        });
-                      });
-                    },
+                    onPressed: pickImage,
                     icon: const Icon(
                       CupertinoIcons.photo,
                       color: linkColor,
@@ -237,5 +237,14 @@ class _PostFormScreenState extends State<PostFormScreen> {
         ),
       ),
     );
+  }
+
+  void pickImage() async {
+    await PrayerRequestRepository().imagePicker().then((value) async {
+      final picked = await PrayerRequestRepository().xFileToFile(value!);
+      setState(() {
+        file.add(picked);
+      });
+    });
   }
 }

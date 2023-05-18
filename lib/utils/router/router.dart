@@ -171,13 +171,17 @@ final GoRouter router = GoRouter(
                   ),
                 ]),
             GoRoute(
-              path: 'post_field',
-              name: 'post_field',
-              pageBuilder: (context, state) => MaterialPage(
-                  child: PostFormScreen(
-                user: state.extra as UserJoinedModel,
-              )),
-            ),
+                path: 'post_field',
+                name: 'post_field',
+                pageBuilder: (context, state) => CustomTransitionPage<void>(
+                      key: state.pageKey,
+                      child: PostFormScreen(
+                        user: state.extra as UserJoinedModel,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) =>
+                              FadeTransition(opacity: animation, child: child),
+                    )),
             GoRoute(
               path: 'account',
               name: 'account',
