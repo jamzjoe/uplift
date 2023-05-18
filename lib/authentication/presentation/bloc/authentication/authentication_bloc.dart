@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -19,6 +20,7 @@ final AuthServices authServices = AuthServices();
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository authRepository;
+
   late final StreamSubscription<User?> streamSubscription;
   AuthenticationBloc(this.authRepository) : super(Loading()) {
     streamSubscription = authRepository.user.listen((user) async {
@@ -26,6 +28,7 @@ class AuthenticationBloc
         log('From Stream');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
+        log(user.displayName!);
         add(SignIn(UserJoinedModel(userModel, user)));
       } else {
         add(SignOut());
@@ -33,12 +36,14 @@ class AuthenticationBloc
     });
 
     on<GoogleSignInRequested>((event, emit) async {
-      log('From event');
       try {
         final User? user = await AuthServices.signInWithGoogle();
-        await AuthServices.addUser(user!, event.bio, "");
+
+        await AuthServices.addUser(
+            user!, "userModel.bio!", "", 'google_sign_in');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
+
         emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on PlatformException catch (e) {
         log(e.code);
@@ -51,14 +56,19 @@ class AuthenticationBloc
 
     on<SignInWithEmailAndPassword>((event, emit) async {
       emit(Loading());
+      log('login_with_email');
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email, event.password);
         log(user.toString());
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
-
-        emit(UserIsIn(UserJoinedModel(userModel, user!)));
+        await AuthServices.addUserFromEmailAndPassword(
+          user!,
+          userModel.bio!,
+          userModel.displayName,
+        );
+        emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           emit(const UserIsOut(
@@ -102,8 +112,7 @@ class AuthenticationBloc
     });
 
     on<SignIn>((event, emit) async {
-      log('From sign in');
-      emit(Loading());
+      log('Update success');
       emit(UserIsIn(event.userJoinedModel));
     });
     on<SignOut>((event, emit) => emit(const UserIsOut(
@@ -111,11 +120,11 @@ class AuthenticationBloc
 
     on<UpdateBio>((event, emit) async {
       try {
-        final User? user = FirebaseAuth.instance.currentUser;
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
         await AuthRepository.updateBio(event.bio, event.userID);
-        emit(UserIsIn(UserJoinedModel(userModel, user!)));
+        final FirebaseAuth auth = FirebaseAuth.instance;
+        await auth.currentUser!.reload();
+        final user = auth.currentUser!;
+        log(user.displayName!);
       } catch (e) {
         emit(UserIsOut(e.toString(), ''));
       }
@@ -132,6 +141,21 @@ class AuthenticationBloc
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
         emit(UserIsIn(UserJoinedModel(userModel, event.user)));
+      }
+    });
+
+    on<UpdateProfile>((event, emit) async {
+      try {
+        await AuthRepository.updateProfile(
+            event.displayName,
+            event.emailAddress,
+            event.contactNo,
+            event.image,
+            event.bio,
+            event.provider);
+      } catch (e) {
+        log(e.toString());
+        emit(const UserIsOut('Update failed', 'Error'));
       }
     });
   }

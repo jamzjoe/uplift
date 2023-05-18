@@ -35,28 +35,42 @@ class AuthServices {
     return FirebaseAuth.instance.currentUser!.uid;
   }
 
-  static Future<void> addUser(User user, String bio, String? userName) async {
+  static Future<void> addUser(
+      User user, String bio, String? userName, String? provider) async {
     final token = await getFCMToken();
     final UserModel userModel = UserModel(
-        displayName: user.displayName,
-        emailAddress: user.email,
-        emailVerified: user.emailVerified,
-        userId: user.uid,
-        photoUrl: user.photoURL,
-        phoneNumber: user.phoneNumber,
-        createdAt: Timestamp.now(),
-        bio: bio,
-        searchKey: userName!.isEmpty
-            ? user.displayName!.toLowerCase()
-            : userName.toLowerCase(),
-        deviceToken: token);
+      displayName: user.displayName,
+      emailAddress: user.email,
+      emailVerified: user.emailVerified,
+      userId: user.uid,
+      photoUrl: user.photoURL,
+      phoneNumber: user.phoneNumber,
+      createdAt: Timestamp.now(),
+      bio: bio,
+      provider: provider!,
+      searchKey: userName!.isEmpty
+          ? user.displayName!.toLowerCase()
+          : userName.toLowerCase(),
+      deviceToken: token,
+    );
 
     final userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
     try {
-      await userDoc.set(userModel.toJson());
-      log('User added');
+      final userSnapshot = await userDoc.get();
+
+      if (userSnapshot.exists) {
+        final existingBio = userSnapshot.data()?['bio'];
+
+        if (existingBio != null) {
+          log('User bio already exists. Skipping update.');
+          return; // Exit the function if bio exists
+        }
+      }
+
+      await userDoc.set(userModel.toJson(), SetOptions(merge: true));
+      log('User added or updated');
     } catch (error) {
       log('Failed to add or update user: $error');
     }
@@ -70,6 +84,7 @@ class AuthServices {
         userId: user.uid,
         createdAt: Timestamp.now(),
         searchKey: userName.toLowerCase(),
+        provider: 'email_and_password',
         displayName: userName ?? 'Uplift User');
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;

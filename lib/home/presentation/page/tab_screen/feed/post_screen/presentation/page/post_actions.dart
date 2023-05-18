@@ -55,7 +55,7 @@ class _PostActionsState extends State<PostActions> {
     int length = widget.prayerRequest.reactions!.users!.length;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         LikeButton(

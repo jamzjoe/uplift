@@ -77,50 +77,32 @@ class _CommentViewState extends State<CommentView> {
           decoration: const BoxDecoration(
               // Add your desired decoration properties
               ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(),
-                  HeaderText(
-                    text: '$commentCount Encourages',
-                    color: secondaryColor,
-                    size: 18,
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.close,
-                      color: secondaryColor,
+          child: BlocBuilder<EncourageBloc, EncourageState>(
+            builder: (context, state) {
+              log(state.toString());
+              if (state is LoadingEncouragesSuccess) {
+                final data = state.encourages;
+                if (data.isEmpty) {
+                  return const Expanded(
+                    child: Center(
+                      child: DefaultText(
+                          text: 'No encourages yet...', color: secondaryColor),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              BlocConsumer<EncourageBloc, EncourageState>(
-                listener: (context, state) {
-                  if (state is LoadingEncouragesSuccess) {
-                    setState(() {
-                      commentCount = state.encourages.length;
-                    });
-                  }
-                },
-                builder: (context, state) {
-                  log(state.toString());
-                  if (state is LoadingEncouragesSuccess) {
-                    final data = state.encourages;
-                    if (data.isEmpty) {
-                      return const Expanded(
-                        child: Center(
-                          child: DefaultText(
-                              text: 'No encourages yet...',
-                              color: secondaryColor),
+                  );
+                }
+                return Expanded(
+                  child: ListView(
+                    children: [
+                      Center(
+                        child: HeaderText(
+                          text: '${data.length} Encourages',
+                          color: secondaryColor,
+                          size: 18,
                         ),
-                      );
-                    }
-                    return Expanded(
-                      child: ListView.builder(
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
                         controller: _scrollController,
                         padding: const EdgeInsets.only(bottom: 50),
                         itemCount: data.length,
@@ -159,20 +141,19 @@ class _CommentViewState extends State<CommentView> {
                           );
                         },
                       ),
-                    );
-                  } else if (state is LoadingEncourages) {
-                    return const CommentShimmerLoading();
-                  }
-                  return const Expanded(
-                    child: Center(
-                      child: DefaultText(
-                          text: 'Something went wrong...',
-                          color: secondaryColor),
-                    ),
-                  );
-                },
-              ),
-            ],
+                    ],
+                  ),
+                );
+              } else if (state is LoadingEncourages) {
+                return const CommentShimmerLoading();
+              }
+              return const Expanded(
+                child: Center(
+                  child: DefaultText(
+                      text: 'Something went wrong...', color: secondaryColor),
+                ),
+              );
+            },
           ),
         ),
         bottomSheet: BackdropFilter(

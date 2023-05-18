@@ -148,8 +148,8 @@ final GoRouter router = GoRouter(
               )),
             ),
             GoRoute(
-              path: 'friend-screen',
-              name: 'friend-screen',
+              path: 'friend-feed',
+              name: 'friend-feed',
               pageBuilder: (context, state) => MaterialPage(
                   child: FriendsFeed(userModel: state.extra as UserModel)),
             ),

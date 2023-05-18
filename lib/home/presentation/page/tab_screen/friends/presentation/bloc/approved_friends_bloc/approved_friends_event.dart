@@ -5,14 +5,8 @@ abstract class ApprovedFriendsEvent extends Equatable {
 }
 
 class FetchApprovedFriendRequest extends ApprovedFriendsEvent {
-  const FetchApprovedFriendRequest();
-
-  @override
-  List<Object> get props => [];
-}
-
-class FetchApprovedFriendRequest2 extends ApprovedFriendsEvent {
-  const FetchApprovedFriendRequest2();
+  final String userID;
+  const FetchApprovedFriendRequest(this.userID);
 
   @override
   List<Object> get props => [];

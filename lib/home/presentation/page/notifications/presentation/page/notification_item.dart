@@ -5,6 +5,7 @@ import 'package:uplift/home/presentation/page/notifications/data/model/notificat
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 
 class NotificationItem extends StatelessWidget {
   const NotificationItem({
@@ -22,28 +23,27 @@ class NotificationItem extends StatelessWidget {
       onTapDown: (TapDownDetails tapDownDetails) {
         _showMenu(tapDownDetails, context, notification);
       },
-      child: ListTile(
-          tileColor: notification.read == true
-              ? Colors.white
-              : primaryColor.withOpacity(0.1),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-          leading: CircleAvatar(
-            radius: 25,
-            backgroundImage: NetworkImage(user.photoUrl!),
-          ),
-          subtitle: RichText(
-              text: TextSpan(children: [
-            TextSpan(
-                text: user.displayName,
-                style: const TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15)),
-            TextSpan(
-                text: ' ${notification.message}',
-                style: const TextStyle(color: secondaryColor, fontSize: 15)),
-          ]))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+        child: Row(children: [
+          ProfilePhoto(user: user, radius: 1000, size: 50),
+          const SizedBox(width: 10),
+          Flexible(
+            child: RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                  text: user.displayName,
+                  style: const TextStyle(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15)),
+              TextSpan(
+                  text: ' ${notification.message}',
+                  style: const TextStyle(color: secondaryColor, fontSize: 15)),
+            ])),
+          )
+        ]),
+      ),
     );
   }
 

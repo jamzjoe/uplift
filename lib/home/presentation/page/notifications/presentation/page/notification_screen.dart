@@ -88,7 +88,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       .add(RefreshListOfNotification(userID, false));
                 }
               },
-              child: ListView.builder(
+              child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      thickness: 0.5,
+                      color: secondaryColor.withOpacity(0.2),
+                    );
+                  },
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: state.notifications.length,

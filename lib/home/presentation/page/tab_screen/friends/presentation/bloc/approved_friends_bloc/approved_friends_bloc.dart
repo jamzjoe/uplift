@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 
 import '../../../domain/repository/friends_repository.dart';
 
@@ -24,14 +25,13 @@ class ApprovedFriendsBloc
         .collection('Friendships')
         .snapshots()
         .listen((event) async {
-      add(const FetchApprovedFriendRequest2());
+      final userID = await AuthServices.userID();
+      add(FetchApprovedFriendRequest(userID));
     });
 
- 
-
-    on<FetchApprovedFriendRequest2>((event, emit) async {
+    on<FetchApprovedFriendRequest>((event, emit) async {
       try {
-        final data = await friendsRepository.fetchApprovedFriendRequest();
+        final data = await friendsRepository.fetchApprovedFriendRequest(event.userID);
         emit(ApprovedFriendsSuccess2(data));
       } catch (e) {
         log(e.toString());
@@ -54,9 +54,10 @@ class ApprovedFriendsBloc
     });
 
     on<UnfriendEvent>((event, emit) async {
+      final userID = await AuthServices.userID();
       try {
         await friendsRepository.unfriend(event.friendShipID);
-        add(const FetchApprovedFriendRequest2());
+        add(FetchApprovedFriendRequest(userID));
       } catch (e) {
         emit(ApprovedFriendsError());
       }

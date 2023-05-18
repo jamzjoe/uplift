@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +9,6 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.dart';
 import 'package:uplift/utils/widgets/button.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -29,6 +26,12 @@ bool isEditable = false;
 final TextEditingController _bioController = TextEditingController();
 
 class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
+  @override
+  void initState() {
+    _bioController.text = widget.userJoinedModel.userModel.bio!;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.user;
@@ -48,7 +51,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     HeaderText(
-                      text: userModel.displayName ?? 'Anonymous User',
+                      text: userModel.displayName!,
                       color: secondaryColor,
                       size: 18,
                     ),
@@ -125,58 +128,40 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             ],
           ),
           defaultSpace,
-          Visibility(
-            visible: userModel.bio!.isEmpty,
-            child: !isEditable
-                ? TextButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        isEditable = !isEditable;
-                      });
-                    },
-                    icon: const Icon(Ionicons.add),
-                    label: const DefaultText(
-                        text: 'Add bio', color: secondaryColor))
-                : TextFormField(
-                    controller: _bioController,
-                    keyboardType: TextInputType.text,
-                    autofocus: true,
-                    onFieldSubmitted: (value) {
-                      BlocProvider.of<AuthenticationBloc>(context)
-                          .add(UpdateBio(user.uid, _bioController.text));
-                      setState(() {
-                        isEditable = !isEditable;
-                      });
-                    },
-                    onTapOutside: (value) {
-                      setState(() {
-                        isEditable = !isEditable;
-                      });
-                    },
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    maxLength: 40,
-                    decoration: const InputDecoration(
-                        hintText: 'Write your bio here...',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 100),
-                        border:
-                            UnderlineInputBorder(borderSide: BorderSide.none)),
-                  ),
+          TextFormField(
+            controller: _bioController,
+            keyboardType: TextInputType.text,
+            autofocus: false,
+            onFieldSubmitted: (value) {
+              UserJoinedModel? userJoinedModel = widget.userJoinedModel;
+              userJoinedModel.userModel.bio = _bioController.text;
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(SignIn(userJoinedModel));
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(UpdateBio(user.uid, _bioController.text));
+              setState(() {
+                isEditable = !isEditable;
+              });
+            },
+            onTapOutside: (value) {
+              UserJoinedModel? userJoinedModel = widget.userJoinedModel;
+              userJoinedModel.userModel.bio = _bioController.text;
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(SignIn(userJoinedModel));
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(UpdateBio(user.uid, _bioController.text));
+              setState(() {
+                isEditable = !isEditable;
+              });
+            },
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            maxLength: 40,
+            decoration: const InputDecoration(
+                hintText: 'Write your bio here...',
+                contentPadding: EdgeInsets.symmetric(horizontal: 100),
+                border: UnderlineInputBorder(borderSide: BorderSide.none)),
           ),
-          Visibility(
-            visible: userModel.bio!.isNotEmpty,
-            child: GestureDetector(
-              onTap: () => log('Update bio'),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  DefaultText(text: userModel.bio!, color: secondaryColor),
-                  const SmallText(text: 'Edit bio', color: linkColor),
-                ],
-              ),
-            ),
-          )
         ],
       ),
     );

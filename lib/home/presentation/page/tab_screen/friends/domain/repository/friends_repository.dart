@@ -165,9 +165,8 @@ class FriendsRepository {
   //   return data;
   // }
 
-  Future<List<UserFriendshipModel>> fetchFriendRequest() async {
+  Future<List<UserFriendshipModel>> fetchFriendRequest(String userID) async {
     List<UserFriendshipModel> data = [];
-    final userID = await AuthServices.userID();
     String status = 'pending';
 
     //get all userID that you had send friend request - you are the sender and also the one that you received
@@ -227,9 +226,8 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserFriendshipModel>> fetchApprovedFriendRequest() async {
+  Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(String userID) async {
     List<UserFriendshipModel> data = [];
-    final userID = await AuthServices.userID();
     String status = 'approved';
 
     //get all userID that you had send friend request - you are the sender and also the one that you received

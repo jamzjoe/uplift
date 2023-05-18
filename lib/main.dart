@@ -106,8 +106,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<FriendRequestBloc>(
             create: (context) => FriendRequestBloc()),
         BlocProvider<ApprovedFriendsBloc>(
-            create: (context) => ApprovedFriendsBloc()
-              ..add(const FetchApprovedFriendRequest2())),
+            create: (context) => ApprovedFriendsBloc()),
         BlocProvider<EncourageBloc>(create: (context) => EncourageBloc())
       ],
       child: MaterialApp.router(

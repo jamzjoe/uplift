@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/report_dialog.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -35,9 +38,9 @@ class PostHeader extends StatelessWidget {
                   radius: 18,
                   backgroundImage: AssetImage('assets/default.png'),
                 )
-              : CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage(user.photoUrl!),
+              : ProfilePhoto(
+                  user: user,
+                  radius: 360,
                 ),
           const SizedBox(width: 10),
           Expanded(
@@ -47,7 +50,9 @@ class PostHeader extends StatelessWidget {
               children: [
                 HeaderText(
                   onTap: () async {
-                    context.pushNamed('friend-screen');
+                    context.pushNamed('friend-feed', extra: user);
+                    BlocProvider.of<ApprovedFriendsBloc>(context)
+                        .add(FetchApprovedFriendRequest(user.userId!));
                   },
                   text: prayerRequest.name!.isEmpty
                       ? user.displayName!

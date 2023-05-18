@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -15,33 +20,77 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-TextEditingController? nameController;
-TextEditingController? contactController;
-TextEditingController? bioController;
+final TextEditingController nameController = TextEditingController();
+final TextEditingController contactController = TextEditingController();
+final TextEditingController bioController = TextEditingController();
+final TextEditingController emailAddressController = TextEditingController();
+File? file;
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
+  void initState() {
+    final user = widget.userJoinedModel.userModel;
+    nameController.text = user.displayName!;
+    contactController.text = user.phoneNumber!;
+    bioController.text = (user.bio ?? '');
+    emailAddressController.text = user.emailAddress!;
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.userModel;
-    nameController = TextEditingController(text: user.displayName ?? '');
-    contactController = TextEditingController(text: user.phoneNumber ?? '');
-    bioController = TextEditingController(text: user.bio ?? '');
     return Scaffold(
       appBar: AppBar(
         title: const HeaderText(text: 'Edit profile', color: secondaryColor),
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 100),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
           child: Column(
             children: [
-              ProfilePhoto(user: user, size: 80, radius: 60),
+              AnimatedSwitcher(
+                duration: const Duration(seconds: 3),
+                child: file != null
+                    ? GestureDetector(
+                        onTap: () {
+                          pickProfilePhoto().imagePicker().then((value) async {
+                            final picked = await PrayerRequestRepository()
+                                .xFileToFile(value!);
+                            setState(() {
+                              file = picked;
+                            });
+                          });
+                        },
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage: FileImage(file!),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          pickProfilePhoto().imagePicker().then((value) async {
+                            final picked = await PrayerRequestRepository()
+                                .xFileToFile(value!);
+                            setState(() {
+                              file = picked;
+                            });
+                          });
+                        },
+                        child: ProfilePhoto(user: user, size: 80, radius: 60)),
+              ),
               defaultSpace,
               CustomField(
                 hintText: 'Enter your display name',
                 label: 'Display name',
                 controller: nameController,
               ),
+              CustomField(
+                  controller: emailAddressController,
+                  label: 'Email address',
+                  hintText: 'Add email address'),
               CustomField(
                 hintText: '+63900-000-0000',
                 label: 'Contact no.',
@@ -53,18 +102,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: bioController,
               ),
               defaultSpace,
-              const CustomContainer(
-                  widget: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Center(
-                        child: DefaultText(
-                            text: 'Confirm Changes', color: whiteColor)),
-                  ),
-                  color: primaryColor)
             ],
           ),
         ),
       ),
+      bottomSheet: Container(
+        padding: const EdgeInsets.all(10),
+        height: 65,
+        child: Center(
+          child: CustomContainer(
+              onTap: () {
+                UserJoinedModel? userJoinedModel = widget.userJoinedModel;
+                userJoinedModel.userModel.displayName = nameController.text;
+                userJoinedModel.userModel.emailAddress =
+                    emailAddressController.text;
+                userJoinedModel.userModel.phoneNumber = contactController.text;
+
+                BlocProvider.of<AuthenticationBloc>(context).add(UpdateProfile(
+                    nameController.text.trim(),
+                    emailAddressController.text.trim(),
+                    contactController.text.trim(),
+                    file!,
+                    bioController.text.trim(),
+                    user.provider!));
+
+                BlocProvider.of<AuthenticationBloc>(context)
+                    .add(SignIn(userJoinedModel));
+              },
+              widget: const Center(
+                  child:
+                      DefaultText(text: 'Confirm Changes', color: whiteColor)),
+              color: primaryColor),
+        ),
+      ),
     );
   }
+
+  PrayerRequestRepository pickProfilePhoto() => PrayerRequestRepository();
 }

@@ -17,7 +17,10 @@ class PrayerRequestRepository {
   Future<List<PostModel>> getPrayerRequestList() async {
     FriendsRepository friendsRepository = FriendsRepository();
     final List<PostModel> listOfPost = [];
-    final fetchingUserID = await friendsRepository.fetchApprovedFriendRequest();
+
+    final userID = await AuthServices.userID();
+    final fetchingUserID =
+        await friendsRepository.fetchApprovedFriendRequest(userID);
     List<String> friendsIDs =
         fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
     friendsIDs.add(await AuthServices.userID());
@@ -45,7 +48,9 @@ class PrayerRequestRepository {
   Future<List<PostModel>> searchPrayerRequest(String query) async {
     FriendsRepository friendsRepository = FriendsRepository();
     final List<PostModel> listOfPost = [];
-    final fetchingUserID = await friendsRepository.fetchApprovedFriendRequest();
+    final userID = await AuthServices.userID();
+    final fetchingUserID =
+        await friendsRepository.fetchApprovedFriendRequest(userID);
     List<String> friendsIDs =
         fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
     friendsIDs.add(await AuthServices.userID());

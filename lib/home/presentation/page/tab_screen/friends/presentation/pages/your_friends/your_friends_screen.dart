@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -26,7 +25,7 @@ class _YourFriendsScreenState extends State<YourFriendsScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async => BlocProvider.of<ApprovedFriendsBloc>(context)
-            .add(const FetchApprovedFriendRequest()),
+            .add(FetchApprovedFriendRequest(widget.user.userId!)),
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
           children: [

@@ -40,7 +40,8 @@ class RegisterWithEmailAndPassword extends AuthenticationEvent {
   final String email, password;
   final String bio;
   final String userName;
-  const RegisterWithEmailAndPassword(this.email, this.password, this.bio, this.userName);
+  const RegisterWithEmailAndPassword(
+      this.email, this.password, this.bio, this.userName);
 
   @override
   List<Object?> get props => [email, password];
@@ -65,4 +66,14 @@ class DeleteAccount extends AuthenticationEvent {
   const DeleteAccount(this.user);
   @override
   List<Object?> get props => [user];
+}
+
+class UpdateProfile extends AuthenticationEvent {
+  final File image;
+  final String displayName, emailAddress, contactNo, bio, provider;
+
+  const UpdateProfile(this.displayName, this.emailAddress, this.contactNo,
+      this.image, this.bio, this.provider);
+  @override
+  List<Object?> get props => [displayName, emailAddress, contactNo, image, bio];
 }

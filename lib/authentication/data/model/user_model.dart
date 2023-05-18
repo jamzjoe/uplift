@@ -11,6 +11,7 @@ class UserModel {
   String? bio;
   String? searchKey;
   String? deviceToken;
+  String? provider;
 
   UserModel(
       {this.displayName,
@@ -22,7 +23,8 @@ class UserModel {
       this.createdAt,
       this.bio,
       this.searchKey,
-      this.deviceToken});
+      this.deviceToken,
+      this.provider});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     displayName = json['display_name'] ?? 'Anonymous User';
@@ -35,6 +37,7 @@ class UserModel {
     bio = json['bio'] ?? '';
     deviceToken = json['device_token'] ?? '';
     searchKey = json['search_key'] ?? '';
+    provider = json['provider'];
   }
 
   Map<String, dynamic> toJson() {
@@ -44,11 +47,12 @@ class UserModel {
     data['email_verified'] = emailVerified ?? false;
     data['user_id'] = userId ?? 'user_id';
     data['photo_url'] = photoUrl ?? 'photo_url';
-    data['phone_number'] = phoneNumber ?? '+630000000000';
+    data['phone_number'] = phoneNumber ?? '+63';
     data['created_at'] = createdAt ?? Timestamp.now();
     data['bio'] = bio ?? '';
     data['device_token'] = deviceToken ?? '';
     data['search_key'] = searchKey ?? '';
+    data['provider'] = provider;
     return data;
   }
 }
