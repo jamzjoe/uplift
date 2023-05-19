@@ -92,7 +92,10 @@ class _PostItemState extends State<PostItem> {
                 prayerRequest.imageUrls!.isEmpty
                     ? const SizedBox()
                     : prayerRequest.imageUrls!.length == 1
-                        ? PostPhotoViewer(path: prayerRequest.imageUrls!.first)
+                        ? PostPhotoViewer(
+                            path: prayerRequest.imageUrls!.first,
+                            radius: 0,
+                          )
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,

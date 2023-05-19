@@ -70,14 +70,16 @@ class DeleteAccount extends AuthenticationEvent {
 
 class UpdateProfile extends AuthenticationEvent {
   final String displayName, emailAddress, contactNo, bio, userID;
+  final BuildContext context;
 
   const UpdateProfile(
       {required this.displayName,
       required this.emailAddress,
       required this.contactNo,
       required this.bio,
-      required this.userID});
+      required this.userID,
+      required this.context});
   @override
   List<Object?> get props =>
-      [displayName, emailAddress, contactNo, bio, userID];
+      [displayName, emailAddress, contactNo, bio, userID, context];
 }

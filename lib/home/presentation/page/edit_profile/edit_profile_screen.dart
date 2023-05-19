@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -33,7 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     final user = widget.userJoinedModel.userModel;
     nameController.text = user.displayName!;
-    contactController.text = user.phoneNumber!;
+    contactController.text = user.phoneNumber ?? '';
     bioController.text = (user.bio ?? '');
     emailAddressController.text = user.emailAddress!;
 
@@ -43,113 +44,122 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.userModel;
-    return Scaffold(
-      appBar: AppBar(
-        title: const HeaderText(text: 'Edit profile', color: secondaryColor),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 100),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          child: Column(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(seconds: 3),
-                child: file != null
-                    ? GestureDetector(
-                        onTap: () {
-                          pickProfilePhoto().imagePicker().then((value) async {
-                            final picked = await PrayerRequestRepository()
-                                .xFileToFile(value!);
-                            setState(() {
-                              file = picked;
+    return LoaderOverlay(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const HeaderText(text: 'Edit profile', color: secondaryColor),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+            child: Column(
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(seconds: 3),
+                  child: file != null
+                      ? GestureDetector(
+                          onTap: () {
+                            pickProfilePhoto()
+                                .imagePicker()
+                                .then((value) async {
+                              final picked = await PrayerRequestRepository()
+                                  .xFileToFile(value!);
+                              setState(() {
+                                file = picked;
+                              });
                             });
-                          });
-                        },
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundImage: FileImage(file!),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          pickProfilePhoto().imagePicker().then((value) async {
-                            final picked = await PrayerRequestRepository()
-                                .xFileToFile(value!);
-                            setState(() {
-                              file = picked;
+                          },
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundImage: FileImage(file!),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            pickProfilePhoto()
+                                .imagePicker()
+                                .then((value) async {
+                              final picked = await PrayerRequestRepository()
+                                  .xFileToFile(value!);
+                              setState(() {
+                                file = picked;
+                              });
                             });
-                          });
-                        },
-                        child: ProfilePhoto(user: user, size: 80, radius: 60)),
-              ),
-              defaultSpace,
-              CustomField(
-                hintText: 'Enter your display name',
-                label: 'Display name',
-                controller: nameController,
-              ),
-              CustomField(
-                  controller: emailAddressController,
-                  label: 'Email address',
-                  hintText: 'Add email address'),
-              CustomField(
-                hintText: '+63900-000-0000',
-                label: 'Contact no.',
-                controller: contactController,
-              ),
-              CustomField(
-                hintText: 'Write your bio here...',
-                label: 'Bio',
-                controller: bioController,
-              ),
-              defaultSpace,
-            ],
+                          },
+                          child:
+                              ProfilePhoto(user: user, size: 80, radius: 60)),
+                ),
+                defaultSpace,
+                CustomField(
+                  hintText: 'Enter your display name',
+                  label: 'Display name',
+                  controller: nameController,
+                ),
+                CustomField(
+                    controller: emailAddressController,
+                    label: 'Email address',
+                    hintText: 'Add email address'),
+                CustomField(
+                  hintText: '+63900-000-0000',
+                  label: 'Contact no.',
+                  controller: contactController,
+                ),
+                CustomField(
+                  hintText: 'Write your bio here...',
+                  label: 'Bio',
+                  controller: bioController,
+                ),
+                defaultSpace,
+              ],
+            ),
           ),
         ),
-      ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(10),
-        height: 65,
-        child: Center(
-          child: CustomContainer(
-              onTap: () async {
-                UserJoinedModel userJoinedModel = widget.userJoinedModel;
-                if (file != null) {
-                  imageURL = await AuthRepository()
-                      .uploadProfilePicture(file!, user.userId!)
-                      .then((value) {
-                    userJoinedModel.userModel.photoUrl = value;
-                  }).whenComplete(() {
-                    setState(() {
-                      file = null;
+        bottomSheet: Container(
+          padding: const EdgeInsets.all(10),
+          height: 65,
+          child: Center(
+            child: CustomContainer(
+                onTap: () async {
+                  UserJoinedModel userJoinedModel = widget.userJoinedModel;
+                  if (file != null) {
+                    imageURL = await AuthRepository()
+                        .uploadProfilePicture(file!, user.userId!)
+                        .then((value) {
+                      userJoinedModel.userModel.photoUrl = value;
+                    }).whenComplete(() {
+                      setState(() {
+                        file = null;
+                      });
                     });
-                  });
-                }
+                  }
 
-                userJoinedModel.userModel.displayName = nameController.text;
-                userJoinedModel.userModel.bio = bioController.text;
-                userJoinedModel.userModel.emailAddress =
-                    emailAddressController.text;
-                userJoinedModel.userModel.phoneNumber = contactController.text;
+                  userJoinedModel.userModel.displayName = nameController.text;
+                  userJoinedModel.userModel.bio = bioController.text;
+                  userJoinedModel.userModel.emailAddress =
+                      emailAddressController.text;
+                  userJoinedModel.userModel.phoneNumber =
+                      contactController.text;
 
-                if (context.mounted) {
-                  BlocProvider.of<AuthenticationBloc>(context).add(
-                      UpdateProfile(
-                          displayName: nameController.text,
-                          emailAddress: emailAddressController.text,
-                          contactNo: contactController.text,
-                          bio: bioController.text,
-                          userID: user.userId!));
+                  if (context.mounted) {
+                    BlocProvider.of<AuthenticationBloc>(context).add(
+                        UpdateProfile(
+                            displayName: nameController.text,
+                            emailAddress: emailAddressController.text,
+                            contactNo: contactController.text,
+                            bio: bioController.text,
+                            userID: user.userId!,
+                            context: context));
 
-                  BlocProvider.of<AuthenticationBloc>(context)
-                      .add(SignIn(userJoinedModel));
-                }
-              },
-              widget: const Center(
-                  child:
-                      DefaultText(text: 'Confirm Changes', color: whiteColor)),
-              color: primaryColor),
+                    BlocProvider.of<AuthenticationBloc>(context)
+                        .add(SignIn(userJoinedModel));
+                  }
+                },
+                widget: const Center(
+                    child: DefaultText(
+                        text: 'Confirm Changes', color: whiteColor)),
+                color: primaryColor),
+          ),
         ),
       ),
     );

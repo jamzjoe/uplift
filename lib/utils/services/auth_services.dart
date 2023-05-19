@@ -62,7 +62,7 @@ class AuthServices {
 
       if (userSnapshot.exists) {
         final existingBio = userSnapshot.data()?['bio'];
-
+        await userDoc.update({'device_token': token});
         if (existingBio != null) {
           log('User bio already exists. Skipping update.');
           return; // Exit the function if bio exists

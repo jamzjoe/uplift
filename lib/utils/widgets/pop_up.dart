@@ -97,6 +97,11 @@ class CustomDialog {
     );
   }
 
+  static void showCustomSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: SmallText(text: message, color: whiteColor)));
+  }
+
   static void showLogoutConfirmation(BuildContext context, String message,
       String title, VoidCallback successFunction, String successButtonText) {
     showDialog(

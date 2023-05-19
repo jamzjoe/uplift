@@ -7,10 +7,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -143,16 +145,20 @@ class AuthenticationBloc
     });
 
     on<UpdateProfile>((event, emit) async {
+      event.context.loaderOverlay.show();
       try {
-        await AuthRepository.updateProfile(
-            event.displayName,
-            event.emailAddress,
-            event.contactNo,
-            event.bio,
-            event.userID);
+        await AuthRepository.updateProfile(event.displayName,
+                event.emailAddress, event.contactNo, event.bio, event.userID)
+            .then((value) {
+          CustomDialog.showCustomSnackBar(
+              event.context, 'Changes updated successfully!');
+
+          event.context.loaderOverlay.hide();
+        });
       } catch (e) {
         log(e.toString());
         emit(const UserIsOut('Update failed', 'Error'));
+        event.context.loaderOverlay.hide();
       }
     });
   }

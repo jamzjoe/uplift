@@ -5,15 +5,16 @@ import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
 
 class PostPhotoViewer extends StatelessWidget {
-  const PostPhotoViewer({super.key, required this.path});
+  const PostPhotoViewer({super.key, required this.path, this.radius});
   final String path;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => context.pushNamed('photo_view', extra: path),
       child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          borderRadius: BorderRadius.all(Radius.circular(radius ?? 15)),
           clipBehavior: Clip.hardEdge,
           child: CachedNetworkImage(
               fit: BoxFit.cover,
@@ -26,10 +27,9 @@ class PostPhotoViewer extends StatelessWidget {
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(radius ?? 15),
+                      color: primaryColor.withOpacity(0.2),
                     ),
-                    height: 250,
                     width: double.infinity,
                   )),
               errorWidget: (context, url, error) => const SizedBox())),
