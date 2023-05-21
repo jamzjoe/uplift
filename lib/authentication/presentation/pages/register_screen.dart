@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -32,21 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isChecked = false;
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listener: (context, state) {
-        if (state is UserIsIn) {
-          _emailController.clear();
-          _passwordController.clear();
-        } else if (state is Loading) {
-          setState(() {
-            isLoading = true;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-        }
-      },
+    return LoaderOverlay(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -170,10 +157,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           BlocProvider.of<AuthenticationBloc>(
                                                   context)
                                               .add(RegisterWithEmailAndPassword(
-                                                  _emailController.text,
-                                                  _passwordController.text,
+                                                  _emailController,
+                                                  _passwordController,
                                                   '',
-                                                  _userNameController.text));
+                                                  _userNameController,
+                                                  context));
                                         }
                                       }
                                     },
@@ -231,7 +219,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     onTap: () async {
                                       BlocProvider.of<AuthenticationBloc>(
                                               context)
-                                          .add(const GoogleSignInRequested(''));
+                                          .add(GoogleSignInRequested(
+                                              '', context, true));
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(

@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
@@ -38,7 +39,13 @@ class AuthenticationBloc
 
     on<GoogleSignInRequested>((event, emit) async {
       try {
-        final User? user = await AuthServices.signInWithGoogle();
+        final User? user =
+            await AuthServices.signInWithGoogle().then((value) async {
+          if (event.fromLogin) {
+            event.context.pop();
+          }
+          return null;
+        });
 
         await AuthServices.addUser(
             user!, "", user.displayName, 'google_sign_in');
@@ -56,11 +63,17 @@ class AuthenticationBloc
     });
 
     on<SignInWithEmailAndPassword>((event, emit) async {
-      emit(Loading());
-      log('login_with_email');
+      event.context.loaderOverlay.show();
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
-            event.email, event.password);
+                event.email.text, event.password.text)
+            .then((value) async {
+          event.context.loaderOverlay.hide();
+          event.context.pop();
+          event.email.clear();
+          event.password.clear();
+          return null;
+        });
         log(user.toString());
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
@@ -69,37 +82,77 @@ class AuthenticationBloc
           userModel.bio!,
           userModel.displayName,
         );
+
         emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
+          event.context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut(
               "No user found for that email.", 'Authentication Error'));
         } else if (e.code == 'wrong-password') {
+          event.context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut("Wrong password provided for that user.",
               'Authentication Error'));
+        } else {
+          event.context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, "Authentication Error", 'Confirm');
         }
+      } catch (e) {
+        event.context.loaderOverlay.hide();
+        CustomDialog.showErrorDialog(event.context, 'Something went wrong!',
+            'Authentication Error', 'Confirm');
       }
     });
 
     on<RegisterWithEmailAndPassword>((event, emit) async {
-      emit(Loading());
+      event.context.loaderOverlay.show();
       try {
         final User? user = await AuthServices.registerWithEmailAndPassword(
-            event.email, event.password);
-        log(user.toString());
-        log(event.userName);
+            event.email.text, event.password.text);
+
         AuthServices.addUserFromEmailAndPassword(
-            user!, event.bio, event.userName);
+                user!, event.bio, event.userName.text)
+            .then((value) async {
+          event.context.pop();
+          event.context.pop();
+          event.email.clear();
+          event.password.clear();
+          event.userName.clear();
+
+          event.context.loaderOverlay.hide();
+        });
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
+
         emit(UserIsIn(UserJoinedModel(userModel, user)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
+          event.context.loaderOverlay.hide();
           emit(const UserIsOut(
               "The password provided is too weak.", 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context,
+              'The password provided is too weak',
+              'Authentication Error',
+              'Confirm');
         } else if (e.code == 'email-already-in-use') {
+          event.context.loaderOverlay.hide();
           emit(const UserIsOut('The account already exists for that email.',
               'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context,
+              'The account already exists for that email.',
+              'Authentication Error',
+              'Confirm');
+        } else {
+          event.context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, "Authentication Error", 'Confirm');
         }
       }
     });
@@ -108,7 +161,6 @@ class AuthenticationBloc
       emit(Loading());
       emit(const UserIsOut(
           'You are redirected to login screen.', 'Logout Success'));
-      log('Sign out');
       AuthServices.signOut();
     });
 
