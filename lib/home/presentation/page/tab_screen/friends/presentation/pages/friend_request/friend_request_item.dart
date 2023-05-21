@@ -76,7 +76,8 @@ class FriendRequestItem extends StatelessWidget {
                           await NotificationRepository.sendPushMessage(
                               userModel.deviceToken!,
                               '${currentUser.displayName} accepted your friend request.',
-                              'Uplift Notification');
+                              'Uplift Notification',
+                              'friend-request');
                           await NotificationRepository.addNotification(
                             userModel.userId!,
                             'Uplift Notification',

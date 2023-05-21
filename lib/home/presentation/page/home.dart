@@ -16,7 +16,8 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
-import 'package:uplift/introduction/presentation/introduction_screen.dart';
+import 'package:uplift/authentication/presentation/pages/introduction/presentation/introduction_screen.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
@@ -59,12 +60,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               FetchListOfNotification(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendRequestBloc>(context).add(
               FetchFriendRequestEvent(state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<ApprovedFriendsBloc>(context)
-              .add(FetchApprovedFriendRequest(state.userJoinedModel.user.uid));
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
               .add(FetchUsersEvent());
+          BlocProvider.of<ApprovedFriendsBloc>(context)
+              .add(FetchApprovedFriendRequest(await AuthServices.userID()));
         } else {
-          
           setState(() {
             index = 0;
           });

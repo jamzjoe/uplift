@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -28,120 +30,134 @@ class AuthenticationBloc
   AuthenticationBloc(this.authRepository) : super(Loading()) {
     streamSubscription = authRepository.user.listen((user) async {
       if (user != null) {
-        log('From Stream');
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
-        add(SignIn(UserJoinedModel(userModel, user)));
+        final userModel =
+            await PrayerRequestRepository().getUserRecord(user.uid);
+        add(SignIn(UserJoinedModel(userModel!, user)));
       } else {
         add(SignOut());
       }
     });
 
-    on<GoogleSignInRequested>((event, emit) async {
-      try {
-        final User? user =
-            await AuthServices.signInWithGoogle().then((value) async {
-          if (event.fromLogin) {
-            event.context.pop();
-          }
-          return null;
-        });
+    on<SignIn>((event, emit) async {
+      emit(UserIsIn(event.userJoinedModel));
+    });
 
-        await AuthServices.addUser(
-            user!, "", user.displayName, 'google_sign_in');
+    on<GoogleSignInRequested>((event, emit) async {
+      event.context.loaderOverlay.show();
+      try {
+        final User? user = await AuthServices.signInWithGoogle();
+
+        await AuthServices.addUser(user!, user.displayName, 'google_sign_in');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
 
-        emit(UserIsIn(UserJoinedModel(userModel, user)));
+        emit(UserIsIn(UserJoinedModel(userModel!, user)));
+        if (event.fromLogin) {
+          // ignore: use_build_context_synchronously
+          event.context.pop();
+        }
+        event.context.loaderOverlay.hide();
       } on PlatformException catch (e) {
+        event.context.loaderOverlay.hide();
         log(e.code);
         if (e.code == 'network_error') {
           emit(const UserIsOut(
               'No internet connection', 'Authentication Error'));
+          CustomDialog.showErrorDialog(event.context, 'No internet connection',
+              'Authentication Error', 'Confirm');
+        } else {
+          emit(UserIsOut(e.message!, 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, 'Authentication Error', 'Confirm');
         }
+      } catch (e) {
+        event.context.loaderOverlay.hide();
       }
     });
 
     on<SignInWithEmailAndPassword>((event, emit) async {
       event.context.loaderOverlay.show();
+      emit(Loading());
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
-                event.email.text, event.password.text)
-            .then((value) async {
-          event.context.loaderOverlay.hide();
-          event.context.pop();
-          event.email.clear();
-          event.password.clear();
-          return null;
-        });
-        log(user.toString());
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
-        await AuthServices.addUserFromEmailAndPassword(
-          user!,
-          userModel.bio!,
-          userModel.displayName,
-        );
-
-        emit(UserIsIn(UserJoinedModel(userModel, user)));
+            event.email.text, event.password.text);
+        if (user != null) {
+          final userModel = await PrayerRequestRepository()
+              .getUserRecord(await AuthServices.userID());
+          final token = await FirebaseMessaging.instance.getToken();
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(user.uid)
+              .update({"device_token": token}).then(
+                  (value) => event.context.pop());
+          if (userModel != null) {
+            emit(UserIsIn(UserJoinedModel(userModel, user)));
+          } else {
+            emit(const UserIsOut(
+                "Failed to get user record.", 'Authentication Error'));
+          }
+        } else {
+          emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
+        }
+        event.email.clear();
+        event.password.clear();
+        event.context.loaderOverlay.hide();
       } on FirebaseAuthException catch (e) {
+        event.context.loaderOverlay.hide();
         if (e.code == 'user-not-found') {
-          event.context.loaderOverlay.hide();
-          CustomDialog.showErrorDialog(
-              event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut(
               "No user found for that email.", 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context, e.message!, 'Authentication Error', 'Confirm');
         } else if (e.code == 'wrong-password') {
-          event.context.loaderOverlay.hide();
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut("Wrong password provided for that user.",
               'Authentication Error'));
         } else {
-          event.context.loaderOverlay.hide();
+          UserIsOut(e.toString(), 'Error');
           CustomDialog.showErrorDialog(
-              event.context, e.message!, "Authentication Error", 'Confirm');
+              event.context, e.message!, 'Authentication Error', 'Confirm');
         }
       } catch (e) {
         event.context.loaderOverlay.hide();
-        CustomDialog.showErrorDialog(event.context, 'Something went wrong!',
-            'Authentication Error', 'Confirm');
+        CustomDialog.showErrorDialog(
+            event.context, e.toString(), 'Authentication Error', 'Confirm');
+        UserIsOut(e.toString(), 'Error');
       }
     });
 
     on<RegisterWithEmailAndPassword>((event, emit) async {
+      emit(Loading());
       event.context.loaderOverlay.show();
       try {
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email.text, event.password.text);
-
+        log(user.toString());
+        log(event.userName.text);
         AuthServices.addUserFromEmailAndPassword(
-                user!, event.bio, event.userName.text)
-            .then((value) async {
-          event.context.pop();
-          event.context.pop();
-          event.email.clear();
-          event.password.clear();
-          event.userName.clear();
+            user!, event.bio, event.userName.text);
 
+        final userModel = await PrayerRequestRepository()
+            .getUserRecord(await AuthServices.userID())
+            .then((value) {
+          event.context.pop();
+          event.context.pop();
           event.context.loaderOverlay.hide();
         });
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
 
-        emit(UserIsIn(UserJoinedModel(userModel, user)));
+        emit(UserIsIn(UserJoinedModel(userModel!, user)));
       } on FirebaseAuthException catch (e) {
+        event.context.loaderOverlay.hide();
         if (e.code == 'weak-password') {
-          event.context.loaderOverlay.hide();
           emit(const UserIsOut(
               "The password provided is too weak.", 'Authentication Error'));
           CustomDialog.showErrorDialog(
               event.context,
-              'The password provided is too weak',
+              "The password provided is too weak.",
               'Authentication Error',
               'Confirm');
         } else if (e.code == 'email-already-in-use') {
-          event.context.loaderOverlay.hide();
           emit(const UserIsOut('The account already exists for that email.',
               'Authentication Error'));
           CustomDialog.showErrorDialog(
@@ -149,10 +165,18 @@ class AuthenticationBloc
               'The account already exists for that email.',
               'Authentication Error',
               'Confirm');
-        } else {
-          event.context.loaderOverlay.hide();
+        } else if (e.code == 'network-request-failed') {
+          emit(const UserIsOut('No internet connection or unreachable host.',
+              'Authentication Error'));
           CustomDialog.showErrorDialog(
-              event.context, e.message!, "Authentication Error", 'Confirm');
+              event.context,
+              'No internet connection or unreachable host.',
+              'Authentication Error',
+              'Confirm');
+        } else {
+          emit(UserIsOut(e.message!, 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context, e.toString(), 'Authentication Error', 'Confirm');
         }
       }
     });
@@ -161,12 +185,10 @@ class AuthenticationBloc
       emit(Loading());
       emit(const UserIsOut(
           'You are redirected to login screen.', 'Logout Success'));
+      log('Sign out');
       AuthServices.signOut();
     });
 
-    on<SignIn>((event, emit) async {
-      emit(UserIsIn(event.userJoinedModel));
-    });
     on<SignOut>((event, emit) => emit(const UserIsOut(
         'You are redirected to login screen.', 'Logout Success')));
 
@@ -192,7 +214,7 @@ class AuthenticationBloc
       } catch (e) {
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
-        emit(UserIsIn(UserJoinedModel(userModel, event.user)));
+        emit(UserIsIn(UserJoinedModel(userModel!, event.user)));
       }
     });
 

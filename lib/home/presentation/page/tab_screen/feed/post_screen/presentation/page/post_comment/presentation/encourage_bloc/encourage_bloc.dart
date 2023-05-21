@@ -62,7 +62,7 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
           NotificationRepository.sendPushMessage(
               event.postUserModel.deviceToken!,
               '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
-              'Uplift notification');
+              'Uplift notification', 'comment');
         }
 
         add(RefreshEncourageEvent(event.postID));

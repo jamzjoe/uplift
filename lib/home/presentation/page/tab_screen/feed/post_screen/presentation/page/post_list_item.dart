@@ -138,7 +138,7 @@ class EndOfPostWidget extends StatelessWidget {
           visible: isEmpty,
           child: TextButton.icon(
               onPressed: () {
-                context.pushNamed('friends-list', extra: user.user);
+                context.pushNamed('friend_suggest', extra: user.userModel);
               },
               icon: const Icon(CupertinoIcons.person_add_solid),
               label: const DefaultText(

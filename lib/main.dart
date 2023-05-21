@@ -37,7 +37,7 @@ void main() async {
 
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   requestPermission();
-
+  FirebaseMessaging.onMessageOpenedApp.listen((event) {});
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     log('Got a message whilst in the foreground!');
     log('Message data: ${message.data}');

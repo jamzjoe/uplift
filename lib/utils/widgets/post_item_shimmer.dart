@@ -32,7 +32,7 @@ class _PostItemShimmerLoadingState extends State<PostItemShimmerLoading> {
                   Row(
                     children: [
                       const CircleAvatar(
-                        backgroundImage: AssetImage('assets/default1.jpg'),
+                        backgroundImage: AssetImage('assets/default.png'),
                       ),
                       const SizedBox(width: 10),
                       Column(

@@ -33,7 +33,7 @@ class AddFriendItem extends StatelessWidget {
           user.photoUrl == null
               ? const CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage('assets/default1.jpg'),
+                  backgroundImage: AssetImage('assets/default.png'),
                 )
               : SafePhotoViewer(user: user),
           const SizedBox(width: 15),
@@ -72,7 +72,8 @@ class AddFriendItem extends StatelessWidget {
                           await NotificationRepository.sendPushMessage(
                               user.deviceToken!,
                               '${currentUser.displayName} sent you a friend a request.',
-                              "Uplift Notification");
+                              "Uplift Notification",
+                              'add-friend');
 
                           await NotificationRepository.addNotification(
                             user.userId!,

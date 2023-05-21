@@ -16,32 +16,38 @@ import 'package:uplift/utils/services/auth_services.dart';
 class PrayerRequestRepository {
   Future<List<PostModel>> getPrayerRequestList() async {
     FriendsRepository friendsRepository = FriendsRepository();
-    final List<PostModel> listOfPost = [];
+    List<PostModel> listOfPost = [];
 
-    final userID = await AuthServices.userID();
-    final fetchingUserID =
-        await friendsRepository.fetchApprovedFriendRequest(userID);
-    List<String> friendsIDs =
-        fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
-    friendsIDs.add(await AuthServices.userID());
-    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-        .instance
-        .collection('Prayers')
-        .where('user_id', whereIn: friendsIDs)
-        .orderBy('date', descending: false)
-        .get();
-    List<PrayerRequestPostModel> data = response.docs
-        .map((e) => PrayerRequestPostModel.fromJson(e.data()))
-        .toList()
-        .reversed
-        .toList();
+    try {
+      final userID = await AuthServices.userID();
+      final fetchingUserID =
+          await friendsRepository.fetchApprovedFriendRequest(userID);
+      List<String> friendsIDs =
+          fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
+      friendsIDs.add(await AuthServices.userID());
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .where('user_id', whereIn: friendsIDs)
+          .orderBy('date', descending: true)
+          .get();
+      List<PrayerRequestPostModel> data = response.docs
+          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+          .toList();
 
-    for (var each in data) {
-      final UserModel user =
-          await PrayerRequestRepository().getUserRecord(each.userId!);
+      for (var each in data) {
+        final UserModel? user =
+            await PrayerRequestRepository().getUserRecord(each.userId!);
 
-      listOfPost.add(PostModel(user, each));
+        if (user != null) {
+          listOfPost.add(PostModel(user, each));
+        }
+      }
+    } catch (error) {
+      // Handle any potential errors or exceptions
+      log('Error in getPrayerRequestList: $error');
     }
+
     return listOfPost;
   }
 
@@ -67,10 +73,10 @@ class PrayerRequestRepository {
         .toList();
 
     for (var each in data) {
-      final UserModel user =
+      final UserModel? user =
           await PrayerRequestRepository().getUserRecord(each.userId!);
 
-      listOfPost.add(PostModel(user, each));
+      listOfPost.add(PostModel(user!, each));
     }
     return listOfPost
         .where((element) => element.prayerRequestPostModel.text!
@@ -79,11 +85,15 @@ class PrayerRequestRepository {
         .toList();
   }
 
-  Future<UserModel> getUserRecord(String userID) async {
+  Future<UserModel?> getUserRecord(String userID) async {
     DocumentSnapshot<Map<String, dynamic>> users =
         await FirebaseFirestore.instance.collection('Users').doc(userID).get();
 
-    return UserModel.fromJson(users.data()!);
+    if (users.exists) {
+      return UserModel.fromJson(users.data()!);
+    } else {
+      return null;
+    }
   }
 
   Future<bool> postPrayerRequest(User user, String text, List<File> imageFiles,
@@ -125,10 +135,10 @@ class PrayerRequestRepository {
       for (var each in friends) {
         log('Running notif');
         NotificationRepository.sendPushMessage(
-          each.userModel.deviceToken!,
-          '${user.displayName} post a prayer intention.',
-          'Uplift Notification',
-        );
+            each.userModel.deviceToken!,
+            '${user.displayName} post a prayer intention.',
+            'Uplift Notification',
+            'post');
       }
       return true;
     } catch (e) {
@@ -186,7 +196,8 @@ class PrayerRequestRepository {
         NotificationRepository.sendPushMessage(
             userModel.deviceToken!,
             '${currentUser.displayName} prayed your prayer intentions.',
-            'Uplift notification');
+            'Uplift notification',
+            'react');
       }
       return true;
     } catch (e) {

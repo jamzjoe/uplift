@@ -35,7 +35,7 @@ class NotificationRepository {
     flutterLocalNotificationsPlugin.initialize(initializeSettings);
   }
 
-  static sendPushMessage(String token, String body, String title) async {
+  static sendPushMessage(String token, String body, String title, String type) async {
     log(token);
     final data = {
       "notification": {"body": body, "title": title},
@@ -43,7 +43,8 @@ class NotificationRepository {
       "data": {
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "id": "1",
-        "status": "done"
+        "status": "done",
+        "type": type
       },
       "to": token
     };
@@ -100,7 +101,7 @@ class NotificationRepository {
         final notification = NotificationModel.fromJson(doc.data());
         final user = await PrayerRequestRepository()
             .getUserRecord(notification.senderID!);
-        return UserNotifModel(user, notification);
+        return UserNotifModel(user!, notification);
       });
 
       return await Future.wait(notifications.toList());

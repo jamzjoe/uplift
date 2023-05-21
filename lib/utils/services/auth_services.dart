@@ -36,8 +36,11 @@ class AuthServices {
   }
 
   static Future<void> addUser(
-      User user, String bio, String? userName, String? provider) async {
+      User user, String? userName, String? provider) async {
     final token = await getFCMToken();
+    final userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(user.uid);
+    await userDoc.update({'device_token': token});
     final UserModel userModel = UserModel(
       displayName: user.displayName,
       emailAddress: user.email,
@@ -46,16 +49,12 @@ class AuthServices {
       photoUrl: user.photoURL,
       phoneNumber: user.phoneNumber,
       createdAt: Timestamp.now(),
-      bio: bio,
       provider: provider!,
       searchKey: userName!.isEmpty
           ? user.displayName!.toLowerCase()
           : userName.toLowerCase(),
       deviceToken: token,
     );
-
-    final userDoc =
-        FirebaseFirestore.instance.collection('Users').doc(user.uid);
 
     try {
       final userSnapshot = await userDoc.get();
@@ -76,24 +75,28 @@ class AuthServices {
     }
   }
 
-  static Future addUserFromEmailAndPassword(
+  static Future<void> addUserFromEmailAndPassword(
       User user, String bio, String? userName) async {
-    log(userName!);
     final UserModel userModel = UserModel(
-        emailAddress: user.email,
-        userId: user.uid,
-        createdAt: Timestamp.now(),
-        searchKey: userName.toLowerCase(),
-        provider: 'email_and_password',
-        displayName: userName ?? 'Uplift User');
+      emailAddress: user.email,
+      userId: user.uid,
+      createdAt: Timestamp.now(),
+      searchKey: userName?.toLowerCase() ?? '',
+      provider: 'email_and_password',
+      displayName: userName ?? 'Uplift User',
+    );
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;
-    FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        .set(userModel.toJson())
-        .then((value) => print("User added"))
-        .catchError((error) => print("Failed to add user: $error"));
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .set(userModel.toJson());
+      log('User added');
+    } catch (error) {
+      log('Failed to add user: $error');
+    }
   }
 
   static Future<User?> registerWithEmailAndPassword(

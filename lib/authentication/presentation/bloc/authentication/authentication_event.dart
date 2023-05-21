@@ -30,6 +30,7 @@ class SignIn extends AuthenticationEvent {
 
 class SignInWithEmailAndPassword extends AuthenticationEvent {
   final TextEditingController email, password;
+
   final String bio;
   final BuildContext context;
 
