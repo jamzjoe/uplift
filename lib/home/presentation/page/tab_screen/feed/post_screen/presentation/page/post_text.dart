@@ -37,7 +37,7 @@ class _PostTextState extends State<PostText> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: SeeMoreText(
-                    text: widget.prayerRequest.text!,
+                    text: widget.prayerRequest.text!.trim(),
                     maxLines: 2,
                     color: secondaryColor),
               )
@@ -47,7 +47,8 @@ class _PostTextState extends State<PostText> {
                 decoration: const BoxDecoration(color: secondaryColor),
                 child: Column(
                   children: [
-                    SeeMoreText(text: widget.prayerRequest.text!, maxLines: 3),
+                    SeeMoreText(
+                        text: widget.prayerRequest.text!.trim(), maxLines: 10),
                   ],
                 ),
               ),

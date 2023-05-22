@@ -28,115 +28,127 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTabController(
-          initialIndex: 0,
-          length: 12,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const DefaultText(
-                        text: 'Embrace the journey of', color: secondaryColor),
-                    const HeaderText(
-                        text: 'spiritual discovery with us.',
-                        color: secondaryColor,
-                        size: 21),
-                    defaultSpace,
-                    MySearchBar(
-                      onSubmit: (p0) async {
-                        BlocProvider.of<GetPrayerRequestBloc>(context)
-                            .add(SearchPrayerRequest(p0.trim()));
-                        tabController!.animateTo(11);
-                      },
-                    ),
-                  ],
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: DefaultTabController(
+            initialIndex: 0,
+            length: 12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const DefaultText(
+                          text: 'Embrace the journey of',
+                          color: secondaryColor),
+                      const HeaderText(
+                          text: 'spiritual discovery with us.',
+                          color: secondaryColor,
+                          size: 21),
+                      defaultSpace,
+                      MySearchBar(
+                        onSubmit: (p0) async {
+                          BlocProvider.of<GetPrayerRequestBloc>(context)
+                              .add(SearchPrayerRequest(p0.trim()));
+                          tabController!.animateTo(11);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              TabBar(
-                  controller: tabController,
-                  onTap: (value) {
-                    setState(() {
-                      pageIndex + 1;
-                    });
-                    int index = value + 1;
-                    searchQueryConditions(index, context);
-                  },
-                  isScrollable: true,
-                  tabs: const [
-                    Tab(
-                      text: 'All',
-                    ),
-                    Tab(
-                      text: 'Popular',
-                    ),
-                    Tab(
-                      text: 'Personal',
-                    ),
-                    Tab(
-                      text: 'Family',
-                    ),
-                    Tab(
-                      text: 'Community',
-                    ),
-                    Tab(
-                      text: 'Global',
-                    ),
-                    Tab(
-                      text: 'Gratitude',
-                    ),
-                    Tab(
-                      text: 'Healing',
-                    ),
-                    Tab(
-                      text: 'Faith',
-                    ),
-                    Tab(
-                      text: 'Vocational',
-                    ),
-                    Tab(
-                      text: 'Special',
-                    ),
-                    Tab(
-                      text: 'Result',
-                    )
-                  ]),
-              Expanded(child:
-                  BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
-                builder: (context, state) {
-                  if (state is LoadingPrayerRequesListSuccess) {
-                    if (state.prayerRequestPostModel.isEmpty) {
-                      return const Center(
-                        child: DefaultText(
-                            text: 'Prayer request not found',
-                            color: secondaryColor),
+                TabBar(
+                    controller: tabController,
+                    onTap: (value) {
+                      setState(() {
+                        pageIndex + 1;
+                      });
+                      int index = value + 1;
+                      searchQueryConditions(index, context);
+                    },
+                    isScrollable: true,
+                    tabs: const [
+                      Tab(
+                        text: 'All',
+                      ),
+                      Tab(
+                        text: 'Popular',
+                      ),
+                      Tab(
+                        text: 'Personal',
+                      ),
+                      Tab(
+                        text: 'Family',
+                      ),
+                      Tab(
+                        text: 'Community',
+                      ),
+                      Tab(
+                        text: 'Global',
+                      ),
+                      Tab(
+                        text: 'Gratitude',
+                      ),
+                      Tab(
+                        text: 'Healing',
+                      ),
+                      Tab(
+                        text: 'Faith',
+                      ),
+                      Tab(
+                        text: 'Vocational',
+                      ),
+                      Tab(
+                        text: 'Special',
+                      ),
+                      Tab(
+                        text: 'Result',
+                      )
+                    ]),
+                BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
+                  builder: (context, state) {
+                    if (state is LoadingPrayerRequesListSuccess) {
+                      if (state.prayerRequestPostModel.isEmpty) {
+                        return Center(
+                          child: Stack(
+                            children: const [
+                              Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: DefaultText(
+                                    text: 'Prayer request not found.',
+                                    color: secondaryColor),
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          searchQueryConditions(pageIndex, context);
+                        },
+                        child: ListView(
+                          shrinkWrap: true,
+                          physics: const ClampingScrollPhysics(),
+                          children: [
+                            ...state.prayerRequestPostModel.map((e) => PostItem(
+                                  postModel: e,
+                                  user: e.userModel,
+                                  fullView: false,
+                                ))
+                          ],
+                        ),
                       );
                     }
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        searchQueryConditions(pageIndex, context);
-                      },
-                      child: ListView(
-                        children: [
-                          ...state.prayerRequestPostModel.map((e) => PostItem(
-                                postModel: e,
-                                user: e.userModel,
-                                fullView: false,
-                              ))
-                        ],
-                      ),
-                    );
-                  }
-                  return const PostShimmerLoading();
-                },
-              ))
-            ],
+                    return const PostShimmerLoading();
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

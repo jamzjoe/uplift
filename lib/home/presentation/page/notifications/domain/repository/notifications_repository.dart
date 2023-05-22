@@ -35,7 +35,8 @@ class NotificationRepository {
     flutterLocalNotificationsPlugin.initialize(initializeSettings);
   }
 
-  static sendPushMessage(String token, String body, String title, String type) async {
+  static sendPushMessage(
+      String token, String body, String title, String type) async {
     log(token);
     final data = {
       "notification": {"body": body, "title": title},
@@ -89,7 +90,7 @@ class NotificationRepository {
     }
   }
 
-  Future<List<UserNotifModel>> getUserNotifications(String userId) async {
+  Future<List<UserNotifModel>?> getUserNotifications(String userId) async {
     try {
       final querySnapshot = await FirebaseFirestore.instance
           .collection('Notifications')
@@ -106,7 +107,7 @@ class NotificationRepository {
       return await Future.wait(notifications.toList());
     } on FirebaseException catch (e) {
       log(e.toString());
-      return [];
+      return null;
     }
   }
 

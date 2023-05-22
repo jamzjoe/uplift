@@ -35,7 +35,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       try {
         final data =
             await notificationRepository.getUserNotifications(event.userID);
-        emit(NotificationLoadingSuccess(data, false));
+        emit(NotificationLoadingSuccess(data!, false));
       } catch (e) {
         log(e.toString());
         emit(NotificationLoadingError('Fetch error ${e.toString()}'));
@@ -47,7 +47,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       try {
         final data =
             await notificationRepository.getUserNotifications(event.userID);
-        emit(NotificationLoadingSuccess(data, false));
+        emit(NotificationLoadingSuccess(data!, false));
       } catch (e) {
         emit(const NotificationLoadingError('Refresh error'));
       }

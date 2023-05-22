@@ -35,7 +35,6 @@ class GetPrayerRequestBloc
 
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {
-        log(e.toString());
         emit(LoadingPrayerRequesListError());
       }
     });

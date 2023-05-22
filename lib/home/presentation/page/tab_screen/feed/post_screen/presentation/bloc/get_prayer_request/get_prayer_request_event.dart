@@ -12,6 +12,7 @@ class GetPostRequestList extends GetPrayerRequestEvent {
 }
 
 class RefreshPostRequestList extends GetPrayerRequestEvent {
+  const RefreshPostRequestList();
   @override
   List<Object?> get props => [];
 }

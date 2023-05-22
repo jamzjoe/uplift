@@ -26,6 +26,7 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
   int badgeCount = 0;
+  int paginationLimit = 10;
   List<UserNotifModel> notifications = [];
   @override
   Widget build(BuildContext context) {
@@ -58,16 +59,6 @@ class _FeedScreenState extends State<FeedScreen> {
                     width: 80,
                   ),
                   actions: [
-                    // IconButton(
-                    //     onPressed: () {
-                    //       showSearch(
-                    //           context: context,
-                    //           delegate: CustomSearchDelegate());
-                    //     },
-                    //     icon: const Icon(
-                    //       Icons.search,
-                    //       size: 30,
-                    //     )),
                     Badge.count(
                       isLabelVisible: badgeCount != 0,
                       count: badgeCount,
@@ -86,7 +77,7 @@ class _FeedScreenState extends State<FeedScreen> {
             body: RefreshIndicator(
               onRefresh: () async =>
                   BlocProvider.of<GetPrayerRequestBloc>(context)
-                      .add(RefreshPostRequestList()),
+                      .add(const RefreshPostRequestList()),
               child: PostListItem(userJoinedModel: userJoinedModel),
             ),
           ),

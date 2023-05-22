@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,7 @@ import '../../../feed_screen.dart';
 import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_item.dart';
 
-class PostListItem extends StatelessWidget {
+class PostListItem extends StatefulWidget {
   const PostListItem({
     super.key,
     required this.userJoinedModel,
@@ -25,10 +27,40 @@ class PostListItem extends StatelessWidget {
   final UserJoinedModel userJoinedModel;
 
   @override
+  State<PostListItem> createState() => _PostListItemState();
+}
+
+class _PostListItemState extends State<PostListItem> {
+  final ScrollController _scrollController = ScrollController();
+  int paginationLimit = 10;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      // Reached the end of the scroll view
+      // Perform your desired action here, such as fetching more data
+      loadMoreData();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final UserModel userModel = userJoinedModel.userModel;
-    final User user = userJoinedModel.user;
+    final UserModel userModel = widget.userJoinedModel.userModel;
+    final User user = widget.userJoinedModel.user;
     return ListView(
+      controller: _scrollController,
       children: [
         Padding(
           padding: const EdgeInsets.all(15),
@@ -41,12 +73,13 @@ class PostListItem extends StatelessWidget {
                   text: 'What would you like us to pray for?',
                   color: secondaryColor),
               defaultSpace,
-              PostField(userJoinModel: userJoinedModel)
+              PostField(userJoinModel: widget.userJoinedModel)
             ],
           ),
         ),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
+            log(state.toString());
             if (state is LoadingPrayerRequesListSuccess) {
               if (state.prayerRequestPostModel.isEmpty) {
                 return Center(
@@ -54,10 +87,11 @@ class PostListItem extends StatelessWidget {
                   height: MediaQuery.of(context).size.height - 250,
                   child: EndOfPostWidget(
                     isEmpty: true,
-                    user: userJoinedModel,
+                    user: widget.userJoinedModel,
                   ),
                 ));
               }
+
               return ListView(
                 padding: const EdgeInsets.only(bottom: 120),
                 physics: const ClampingScrollPhysics(),
@@ -72,7 +106,7 @@ class PostListItem extends StatelessWidget {
                   defaultSpace,
                   EndOfPostWidget(
                     isEmpty: false,
-                    user: userJoinedModel,
+                    user: widget.userJoinedModel,
                   )
                 ],
               );
@@ -86,6 +120,16 @@ class PostListItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void loadMoreData() async {
+    log('More data');
+    log(paginationLimit.toString());
+    setState(() {
+      paginationLimit = paginationLimit + 10;
+    });
+    BlocProvider.of<GetPrayerRequestBloc>(context)
+        .add(const GetPostRequestList());
   }
 }
 

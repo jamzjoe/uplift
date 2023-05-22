@@ -239,7 +239,6 @@ class FriendsRepository {
       String userID) async {
     String status = 'approved';
 
-    // Get all userID that you had sent friend request to (as the sender) and received (as the receiver)
     QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
         await FirebaseFirestore.instance
             .collection('Friendships')
@@ -274,29 +273,26 @@ class FriendsRepository {
 
     if (userIDS.isEmpty) {
       return [];
-    } else {
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Users')
-          .where('user_id', isNotEqualTo: userID)
-          .get();
-
-      List<UserModel> users = response.docs
-          .map((doc) => UserModel.fromJson(doc.data()))
-          .where((user) => userIDS.contains(user.userId))
-          .toList();
-
-      List<UserFriendshipModel> data =
-          friendshipID.asMap().entries.map((entry) {
-        int index = entry.key;
-        String friendID = entry.value;
-        UserModel user = users[index];
-
-        return UserFriendshipModel(FriendshipID(friendshipId: friendID), user);
-      }).toList();
-
-      return data;
     }
+
+    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+        .instance
+        .collection('Users')
+        .where('user_id', whereIn: userIDS)
+        .get();
+
+    List<UserModel> users =
+        response.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+    List<UserFriendshipModel> data = [];
+
+    for (int i = 0; i < friendshipID.length; i++) {
+      String friendID = friendshipID[i];
+
+      UserModel? user = users.firstWhere((u) => u.userId == userIDS[i]);
+      data.add(UserFriendshipModel(FriendshipID(friendshipId: friendID), user));
+    }
+
+    return data;
   }
 
   Future<List<UserFriendshipModel>> fetchApprovedFollowingRequest() async {
@@ -501,7 +497,11 @@ class FriendsRepository {
             (element.userModel.phoneNumber != null &&
                 element.userModel.phoneNumber!
                     .toLowerCase()
-                    .contains(query.toLowerCase().trim())))
+                    .contains(query.toLowerCase().trim())) ||
+            element.userModel.displayName != null &&
+                element.userModel.displayName!
+                    .toLowerCase()
+                    .contains(query.toLowerCase().trim()))
         .toList();
   }
 
