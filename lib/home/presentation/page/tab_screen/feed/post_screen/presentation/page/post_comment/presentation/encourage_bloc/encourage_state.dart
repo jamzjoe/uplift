@@ -26,8 +26,9 @@ class LoadingEncouragesSuccess extends EncourageState {
 }
 
 class LoadingEncouragesError extends EncourageState {
-  const LoadingEncouragesError();
+  final String error;
+  const LoadingEncouragesError(this.error);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [error];
 }

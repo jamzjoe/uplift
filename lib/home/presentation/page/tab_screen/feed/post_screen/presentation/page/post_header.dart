@@ -39,12 +39,12 @@ class PostHeader extends StatelessWidget {
                   backgroundImage: AssetImage('assets/default.png'),
                 )
               : Hero(
-                tag: 'profile',
-                child: ProfilePhoto(
+                  tag: 'profile',
+                  child: ProfilePhoto(
                     user: user,
-                    radius: 360,
+                    radius: 10,
                   ),
-              ),
+                ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

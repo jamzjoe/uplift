@@ -28,7 +28,6 @@ final TextEditingController _userNameController = TextEditingController();
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  bool isLoading = false;
   bool hidePassword = true;
   bool isChecked = false;
   @override
@@ -165,32 +164,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         }
                                       }
                                     },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Visibility(
-                                          visible: isLoading,
-                                          child: const SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: whiteColor,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: DefaultText(
-                                              text: !isLoading
-                                                  ? 'Create Account'
-                                                  : 'Creating UpLift Account',
-                                              color: whiteColor),
-                                        ),
-                                      ],
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15.0),
+                                      child: DefaultText(
+                                          text: 'Creating UpLift Account',
+                                          color: whiteColor),
                                     )),
                               ),
                               const SizedBox(

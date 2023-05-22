@@ -7,12 +7,14 @@ import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../feed_screen.dart';
 import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
-import 'post_field.dart';
 import 'post_item.dart';
 
 class PostListItem extends StatelessWidget {
@@ -28,7 +30,21 @@ class PostListItem extends StatelessWidget {
     final User user = userJoinedModel.user;
     return ListView(
       children: [
-        PostField(userJoinModel: userJoinedModel),
+        Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HeaderText(
+                  text: 'Hello ${user.displayName},', color: secondaryColor),
+              const SmallText(
+                  text: 'What would you like us to pray for?',
+                  color: secondaryColor),
+              defaultSpace,
+              PostField(userJoinModel: userJoinedModel)
+            ],
+          ),
+        ),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {

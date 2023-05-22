@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: FriendsScreen(
                   currentUser: userJoinedModel.userModel,
                 )),
-                const KeepAlivePage(child: ExploreScreen()),
+                const ExploreScreen(),
                 const KeepAlivePage(child: SettingsScreen())
               ],
             ),

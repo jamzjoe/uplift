@@ -103,7 +103,6 @@ class NotificationRepository {
             .getUserRecord(notification.senderID!);
         return UserNotifModel(user!, notification);
       });
-
       return await Future.wait(notifications.toList());
     } on FirebaseException catch (e) {
       log(e.toString());

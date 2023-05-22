@@ -26,7 +26,7 @@ class NotificationItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
         child: Row(children: [
-          ProfilePhoto(user: user, radius: 1000, size: 50),
+          ProfilePhoto(user: user, radius: 15, size: 50),
           const SizedBox(width: 10),
           Flexible(
             child: RichText(

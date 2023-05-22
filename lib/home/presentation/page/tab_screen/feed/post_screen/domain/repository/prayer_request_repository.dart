@@ -41,6 +41,7 @@ class PrayerRequestRepository {
 
         if (user != null) {
           listOfPost.add(PostModel(user, each));
+          log(each.reactions!.users!.length.toString());
         }
       }
     } catch (error) {
@@ -51,37 +52,88 @@ class PrayerRequestRepository {
     return listOfPost;
   }
 
-  Future<List<PostModel>> searchPrayerRequest(String query) async {
+  Future<List<PostModel>> getPrayerRequestListByReactions() async {
     FriendsRepository friendsRepository = FriendsRepository();
-    final List<PostModel> listOfPost = [];
-    final userID = await AuthServices.userID();
-    final fetchingUserID =
-        await friendsRepository.fetchApprovedFriendRequest(userID);
-    List<String> friendsIDs =
-        fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
-    friendsIDs.add(await AuthServices.userID());
-    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-        .instance
-        .collection('Prayers')
-        .where('user_id', whereIn: friendsIDs)
-        .orderBy('date', descending: false)
-        .get();
-    List<PrayerRequestPostModel> data = response.docs
-        .map((e) => PrayerRequestPostModel.fromJson(e.data()))
-        .toList()
-        .reversed
-        .toList();
+    List<PostModel> listOfPost = [];
 
-    for (var each in data) {
-      final UserModel? user =
-          await PrayerRequestRepository().getUserRecord(each.userId!);
+    try {
+      final userID = await AuthServices.userID();
+      final fetchingUserID =
+          await friendsRepository.fetchApprovedFriendRequest(userID);
+      List<String> friendsIDs =
+          fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
+      friendsIDs.add(await AuthServices.userID());
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .where('user_id', whereIn: friendsIDs)
+          .get();
+      List<PrayerRequestPostModel> data = response.docs
+          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+          .toList();
 
-      listOfPost.add(PostModel(user!, each));
+      // Sort prayer requests by the length of reactions
+      data.sort((a, b) => (b.reactions?.users?.length ?? 0)
+          .compareTo(a.reactions?.users?.length ?? 0));
+
+      for (var each in data) {
+        final UserModel? user =
+            await PrayerRequestRepository().getUserRecord(each.userId!);
+
+        if (user != null) {
+          listOfPost.add(PostModel(user, each));
+        }
+      }
+    } catch (error) {
+      // Handle any potential errors or exceptions
+      log('Error in getPrayerRequestListByReactions: $error');
     }
+
+    return listOfPost;
+  }
+
+  Future<List<PostModel>> seearchPrayerRequest(String query) async {
+    FriendsRepository friendsRepository = FriendsRepository();
+    List<PostModel> listOfPost = [];
+
+    try {
+      final userID = await AuthServices.userID();
+      final fetchingUserID =
+          await friendsRepository.fetchApprovedFriendRequest(userID);
+      List<String> friendsIDs =
+          fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
+      friendsIDs.add(await AuthServices.userID());
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .where('user_id', whereIn: friendsIDs)
+          .orderBy('date', descending: true)
+          .get();
+      List<PrayerRequestPostModel> data = response.docs
+          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+          .toList();
+
+      for (var each in data) {
+        final UserModel? user =
+            await PrayerRequestRepository().getUserRecord(each.userId!);
+
+        if (user != null) {
+          listOfPost.add(PostModel(user, each));
+        }
+      }
+    } catch (error) {
+      // Handle any potential errors or exceptions
+      log('Error in getPrayerRequestList: $error');
+    }
+
     return listOfPost
-        .where((element) => element.prayerRequestPostModel.text!
-            .toLowerCase()
-            .contains(query.toLowerCase()))
+        .where((element) =>
+            element.prayerRequestPostModel.text!
+                .toLowerCase()
+                .contains(query.toLowerCase()) ||
+            element.prayerRequestPostModel.title!
+                .toLowerCase()
+                .contains(query.toLowerCase()))
         .toList();
   }
 

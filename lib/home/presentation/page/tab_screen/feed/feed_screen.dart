@@ -58,16 +58,16 @@ class _FeedScreenState extends State<FeedScreen> {
                     width: 80,
                   ),
                   actions: [
-                    IconButton(
-                        onPressed: () {
-                          showSearch(
-                              context: context,
-                              delegate: CustomSearchDelegate());
-                        },
-                        icon: const Icon(
-                          Icons.search,
-                          size: 30,
-                        )),
+                    // IconButton(
+                    //     onPressed: () {
+                    //       showSearch(
+                    //           context: context,
+                    //           delegate: CustomSearchDelegate());
+                    //     },
+                    //     icon: const Icon(
+                    //       Icons.search,
+                    //       size: 30,
+                    //     )),
                     Badge.count(
                       isLabelVisible: badgeCount != 0,
                       count: badgeCount,
@@ -76,10 +76,8 @@ class _FeedScreenState extends State<FeedScreen> {
                           onPressed: () {
                             goToNotificationScreen(user.uid, notifications);
                           },
-                          icon: const Icon(
-                            Icons.notifications,
-                            size: 30,
-                          )),
+                          icon: const Image(
+                              image: AssetImage('assets/bell.png'), width: 30)),
                     ),
                   ],
                 )

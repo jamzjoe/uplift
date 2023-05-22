@@ -33,6 +33,19 @@ class DeletePost extends GetPrayerRequestEvent {
   List<Object?> get props => [userID, postID];
 }
 
+class GetPrayerRequestByPopularity extends GetPrayerRequestEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class SearchPrayerRequest extends GetPrayerRequestEvent {
+  final String query;
+
+  const SearchPrayerRequest(this.query);
+  @override
+  List<Object?> get props => [query];
+}
+
 class CheckInternet extends GetPrayerRequestEvent {
   final String type;
 

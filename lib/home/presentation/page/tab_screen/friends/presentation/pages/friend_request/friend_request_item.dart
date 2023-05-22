@@ -9,7 +9,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 
 class FriendRequestItem extends StatelessWidget {
   const FriendRequestItem({
@@ -27,11 +27,7 @@ class FriendRequestItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          userModel.photoUrl == null
-              ? const CircleAvatar(
-                  backgroundImage: AssetImage('assets/default.png'),
-                )
-              : SafePhotoViewer(user: userModel),
+          ProfilePhoto(user: userModel, radius: 15),
           const SizedBox(width: 15),
           Flexible(
             child: Column(

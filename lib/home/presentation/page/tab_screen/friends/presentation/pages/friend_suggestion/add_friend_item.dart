@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
@@ -10,7 +9,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/frie
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
-import 'package:uplift/utils/widgets/safe_photo_viewer.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class AddFriendItem extends StatelessWidget {
@@ -30,12 +29,10 @@ class AddFriendItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          user.photoUrl == null
-              ? const CircleAvatar(
-                  radius: 25,
-                  backgroundImage: AssetImage('assets/default.png'),
-                )
-              : SafePhotoViewer(user: user),
+          ProfilePhoto(
+            user: user,
+            radius: 15,
+          ),
           const SizedBox(width: 15),
           Flexible(
             child: Column(

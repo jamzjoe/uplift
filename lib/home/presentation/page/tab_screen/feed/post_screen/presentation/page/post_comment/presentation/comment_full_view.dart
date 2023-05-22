@@ -9,9 +9,10 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/utils/widgets/comment_shimmer_item.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 
-class FullCommentView extends StatelessWidget {
+class FullCommentView extends StatefulWidget {
   const FullCommentView(
       {super.key,
       required this.prayerRequestPostModel,
@@ -22,10 +23,17 @@ class FullCommentView extends StatelessWidget {
   final PostModel postModel;
   final UserModel userModel;
   final UserModel currentUser;
+
+  @override
+  State<FullCommentView> createState() => _FullCommentViewState();
+}
+
+final ScrollController scrollController = ScrollController();
+
+class _FullCommentViewState extends State<FullCommentView> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController commentController = TextEditingController();
-    final ScrollController scrollController = ScrollController();
     return Scaffold(
         bottomSheet: SingleChildScrollView(
           child: Container(
@@ -40,16 +48,16 @@ class FullCommentView extends StatelessWidget {
                     decoration: InputDecoration(
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: ProfilePhoto(user: currentUser, size: 20),
+                        child: ProfilePhoto(user: widget.currentUser, size: 20),
                       ),
                       suffixIcon: IconButton(
                           onPressed: () {
                             BlocProvider.of<EncourageBloc>(context).add(
                                 AddEncourageEvent(
-                                    prayerRequestPostModel.postId!,
+                                    widget.prayerRequestPostModel.postId!,
                                     commentController.text,
-                                    userModel,
-                                    currentUser,
+                                    widget.userModel,
+                                    widget.currentUser,
                                     commentController,
                                     context,
                                     scrollController));
@@ -71,11 +79,24 @@ class FullCommentView extends StatelessWidget {
             controller: scrollController,
             child: Column(
               children: [
-                PostItem(postModel: postModel, user: userModel, fullView: true),
+                PostItem(
+                    postModel: widget.postModel,
+                    user: widget.userModel,
+                    fullView: true),
                 BlocBuilder<EncourageBloc, EncourageState>(
                   builder: (context, state) {
                     if (state is LoadingEncouragesSuccess) {
+                      if (state.encourages.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(30),
+                          child: DefaultText(
+                              text: 'No encouragement yet...',
+                              color: secondaryColor),
+                        );
+                      }
                       return SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Column(
                           children: List.generate(
                               state.encourages.length,

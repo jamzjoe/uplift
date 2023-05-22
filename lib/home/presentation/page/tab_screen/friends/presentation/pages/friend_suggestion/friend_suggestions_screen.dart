@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -34,6 +35,7 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
       body:
           BlocBuilder<FriendsSuggestionsBlocBloc, FriendsSuggestionsBlocState>(
         builder: (context, state) {
+          log(state.toString());
           if (state is FriendsSuggestionLoading) {
             return ListView.builder(
               shrinkWrap: true,

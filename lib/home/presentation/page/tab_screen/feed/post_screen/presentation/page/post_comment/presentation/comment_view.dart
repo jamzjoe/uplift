@@ -22,59 +22,71 @@ class CommentView extends StatefulWidget {
       required this.currentUser,
       required this.prayerRequestPostModel,
       required this.postOwner,
-      required this.postModel});
+      required this.postModel,
+      required this.scrollController});
   final UserModel currentUser;
   final PrayerRequestPostModel prayerRequestPostModel;
   final UserModel postOwner;
   final PostModel postModel;
-
+  final ScrollController scrollController;
   @override
   _CommentViewState createState() => _CommentViewState();
 }
 
 class _CommentViewState extends State<CommentView> {
   final TextEditingController _commentController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+
   List<String> comments = [];
+  final formKey = GlobalKey<FormState>();
 
   Widget _showCommentBottomSheet() {
     final prayerRequestPostModel = widget.prayerRequestPostModel;
     final postOwner = widget.postOwner;
     final currentUser = widget.currentUser;
 
-    return Container(
-      color: whiteColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _commentController,
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Hero(
-                      tag: 'profile',
-                      child: ProfilePhoto(user: widget.currentUser, size: 20)),
+    return Form(
+      key: formKey,
+      child: Container(
+        color: whiteColor,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                validator: (value) =>
+                    value!.isEmpty ? 'Add some comment' : null,
+                controller: _commentController,
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Hero(
+                        tag: 'profile',
+                        child:
+                            ProfilePhoto(user: widget.currentUser, size: 20)),
+                  ),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          BlocProvider.of<EncourageBloc>(context).add(
+                              AddEncourageEvent(
+                                  prayerRequestPostModel.postId!,
+                                  _commentController.text,
+                                  postOwner,
+                                  currentUser,
+                                  _commentController,
+                                  context,
+                                  widget.scrollController));
+                        }
+                      },
+                      icon: const Icon(
+                        CupertinoIcons.paperplane_fill,
+                      )),
+                  hintText: 'Add a comment',
                 ),
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      BlocProvider.of<EncourageBloc>(context).add(
-                          AddEncourageEvent(
-                              prayerRequestPostModel.postId!,
-                              _commentController.text,
-                              postOwner,
-                              currentUser,
-                              _commentController,
-                              context,
-                              _scrollController));
-                    },
-                    icon: const Icon(CupertinoIcons.paperplane_fill)),
-                hintText: 'Add a comment',
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -86,7 +98,7 @@ class _CommentViewState extends State<CommentView> {
       backgroundColor: Colors.transparent,
       body: SafeArea(
         child: CommentPage(
-            scrollController: _scrollController,
+            scrollController: widget.scrollController,
             postModel: widget.postModel,
             postOwner: widget.postOwner),
       ),
@@ -97,23 +109,28 @@ class _CommentViewState extends State<CommentView> {
   @override
   void dispose() {
     _commentController.dispose();
-    _scrollController.dispose();
+    widget.scrollController.dispose();
     super.dispose();
   }
 }
 
-class CommentPage extends StatelessWidget {
+class CommentPage extends StatefulWidget {
   const CommentPage({
     super.key,
-    required ScrollController scrollController,
     required this.postModel,
     required this.postOwner,
-  }) : _scrollController = scrollController;
+    required this.scrollController,
+  });
 
-  final ScrollController _scrollController;
+  final ScrollController scrollController;
   final PostModel postModel;
   final UserModel postOwner;
 
+  @override
+  State<CommentPage> createState() => _CommentPageState();
+}
+
+class _CommentPageState extends State<CommentPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EncourageBloc, EncourageState>(
@@ -155,7 +172,7 @@ class CommentPage extends StatelessWidget {
                 ),
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
-                controller: _scrollController,
+                controller: widget.scrollController,
                 itemCount: encourages.length,
                 itemBuilder: (context, index) {
                   return CommentItem(encourages: encourages, index: index);
@@ -175,9 +192,16 @@ class CommentPage extends StatelessWidget {
             },
           );
         }
-        return const Center(
-            child: DefaultText(
-                text: 'Something went wron!.', color: secondaryColor));
+        return ListView.separated(
+          separatorBuilder: (context, index) => Divider(
+            color: lightColor.withOpacity(0.2),
+            thickness: 0.5,
+          ),
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return const CommentShimmerItem();
+          },
+        );
       },
     );
   }

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class TabBarMaterialWidget extends StatefulWidget {
@@ -53,8 +52,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             buildTabItem(
               label: 'Friends',
               index: 1,
-              icon:
-                  const Icon(CupertinoIcons.person_2_square_stack, size: 23),
+              icon: const Icon(CupertinoIcons.person_2_square_stack, size: 23),
               selectedIcon: const Icon(
                   CupertinoIcons.person_2_square_stack_fill,
                   size: 23),
@@ -84,6 +82,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       required Icon selectedIcon,
       required String label}) {
     final isSelected = index == widget.index;
+
     if (index == 1) {
       return BlocBuilder<FriendRequestBloc, FriendRequestState>(
         builder: (context, state) {

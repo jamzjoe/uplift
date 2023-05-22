@@ -94,7 +94,16 @@ class FriendsRepository {
 
     return data
         .where((element) =>
-            element.searchKey!.contains(query.toLowerCase().trim()))
+            (element.searchKey != null &&
+                element.searchKey!.contains(query.toLowerCase().trim())) ||
+            (element.emailAddress != null &&
+                element.emailAddress!
+                    .toLowerCase()
+                    .contains(query.toLowerCase().trim())) ||
+            (element.phoneNumber != null &&
+                element.phoneNumber!
+                    .toLowerCase()
+                    .contains(query.toLowerCase().trim())))
         .toList();
   }
 
@@ -482,7 +491,17 @@ class FriendsRepository {
 
     return data
         .where((element) =>
-            element.userModel.searchKey!.contains(query.toLowerCase().trim()))
+            (element.userModel.searchKey != null &&
+                element.userModel.searchKey!
+                    .contains(query.toLowerCase().trim())) ||
+            (element.userModel.emailAddress != null &&
+                element.userModel.emailAddress!
+                    .toLowerCase()
+                    .contains(query.toLowerCase().trim())) ||
+            (element.userModel.phoneNumber != null &&
+                element.userModel.phoneNumber!
+                    .toLowerCase()
+                    .contains(query.toLowerCase().trim())))
         .toList();
   }
 

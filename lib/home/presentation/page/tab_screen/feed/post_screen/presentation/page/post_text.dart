@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/see_more_text.dart';
 
 import '../../data/model/prayer_request_model.dart';
@@ -48,7 +47,6 @@ class _PostTextState extends State<PostText> {
                 decoration: const BoxDecoration(color: secondaryColor),
                 child: Column(
                   children: [
-                    DefaultText(text: title, color: whiteColor),
                     SeeMoreText(text: widget.prayerRequest.text!, maxLines: 3),
                   ],
                 ),

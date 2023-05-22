@@ -15,8 +15,10 @@ class FetchEncourageEvent extends EncourageEvent {
 
 class RefreshEncourageEvent extends EncourageEvent {
   final String postID;
+  final BuildContext context;
+  final ScrollController scrollController;
 
-  const RefreshEncourageEvent(this.postID);
+  const RefreshEncourageEvent(this.postID, this.context, this.scrollController);
 
   @override
   List<Object?> get props => [postID];

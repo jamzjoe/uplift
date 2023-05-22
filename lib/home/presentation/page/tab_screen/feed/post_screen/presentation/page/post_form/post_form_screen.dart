@@ -97,7 +97,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProfilePhoto(user: userModel, radius: 60),
+                    ProfilePhoto(user: userModel, radius: 15),
                     const SizedBox(width: 15),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

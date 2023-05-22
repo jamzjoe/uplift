@@ -26,8 +26,12 @@ class ProfilePhoto extends StatelessWidget {
             progressIndicatorBuilder: (context, url, progress) =>
                 const SizedBox(),
             errorWidget: (context, url, error) => Container(
+                clipBehavior: Clip.hardEdge,
                 decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                child: const Image(image: AssetImage('assets/default.png')))));
+                    BoxDecoration(borderRadius: BorderRadius.circular(15)),
+                child: const Image(
+                  image: AssetImage('assets/default.png'),
+                  fit: BoxFit.cover,
+                ))));
   }
 }

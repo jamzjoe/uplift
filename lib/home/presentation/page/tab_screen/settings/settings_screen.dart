@@ -51,6 +51,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   physics: const ClampingScrollPhysics(),
                   children: [
                     SettingsSection(
+                        title: 'Reminders',
+                        widget: Container(
+                          decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Column(
+                            children:
+                                ListTile.divideTiles(context: context, tiles: [
+                              SettingsItem(
+                                  onTap: () => context.pushNamed('donate'),
+                                  label: 'Set prayer intentions privacy',
+                                  icon: CupertinoIcons.globe),
+                              SettingsItem(
+                                  onTap: () => context.pushNamed('donate'),
+                                  label: 'Set reminders',
+                                  icon: CupertinoIcons.bell_fill),
+                            ]).toList(),
+                          ),
+                        )),
+                    SettingsSection(
                       title: 'Account',
                       widget: Container(
                         decoration: BoxDecoration(
@@ -63,14 +83,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 onTap: () => context.pushNamed('account'),
                                 label: 'Account',
                                 icon: CupertinoIcons.person_fill),
-                            SettingsItem(
-                                onTap: () => context.pushNamed('privacy'),
-                                label: 'Privacy',
-                                icon: CupertinoIcons.lock_fill),
-                            SettingsItem(
-                                onTap: () => context.pushNamed('security'),
-                                label: 'Security',
-                                icon: CupertinoIcons.shield_fill),
                             const SettingsItem(
                                 label: 'Share Profile',
                                 icon: CupertinoIcons

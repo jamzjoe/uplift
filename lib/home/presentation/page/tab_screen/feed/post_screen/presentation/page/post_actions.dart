@@ -55,6 +55,7 @@ class _PostActionsState extends State<PostActions> {
     final currentUser = widget.currentUser;
     final postID = widget.prayerRequest.postId;
     int length = widget.prayerRequest.reactions!.users!.length;
+    final ScrollController scrollController = ScrollController();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,7 +94,7 @@ class _PostActionsState extends State<PostActions> {
                 return;
               } else {
                 showComment(context, widget.userModel, widget.prayerRequest,
-                    widget.currentUser);
+                    widget.currentUser, scrollController);
               }
             },
             icon: const Icon(
@@ -132,7 +133,7 @@ class _PostActionsState extends State<PostActions> {
   }
 
   Future<dynamic> showComment(BuildContext context, UserModel user,
-      PrayerRequestPostModel prayerRequestPostModel, UserModel currentUser) {
+      PrayerRequestPostModel prayerRequestPostModel, UserModel currentUser, ScrollController scrollController) {
     BlocProvider.of<EncourageBloc>(context)
         .add(FetchEncourageEvent(widget.prayerRequest.postId!));
     return showModalBottomSheet(
@@ -150,6 +151,7 @@ class _PostActionsState extends State<PostActions> {
           prayerRequestPostModel: prayerRequestPostModel,
           postOwner: user,
           postModel: widget.postModel,
+          scrollController: scrollController,
         );
       },
     );

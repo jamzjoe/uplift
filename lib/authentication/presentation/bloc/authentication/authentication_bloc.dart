@@ -30,9 +30,13 @@ class AuthenticationBloc
   AuthenticationBloc(this.authRepository) : super(Loading()) {
     streamSubscription = authRepository.user.listen((user) async {
       if (user != null) {
-        final userModel =
-            await PrayerRequestRepository().getUserRecord(user.uid);
-        add(SignIn(UserJoinedModel(userModel!, user)));
+        try {
+          final userModel =
+              await PrayerRequestRepository().getUserRecord(user.uid);
+          add(SignIn(UserJoinedModel(userModel!, user)));
+        } catch (e) {
+          add(SignOut());
+        }
       } else {
         add(SignOut());
       }
@@ -76,8 +80,8 @@ class AuthenticationBloc
     });
 
     on<SignInWithEmailAndPassword>((event, emit) async {
-      event.context.loaderOverlay.show();
       emit(Loading());
+      event.context.loaderOverlay.show();
       try {
         final User? user = await AuthServices.signInWithEmailAndPassword(
             event.email.text, event.password.text);
@@ -92,38 +96,42 @@ class AuthenticationBloc
                   (value) => event.context.pop());
           if (userModel != null) {
             emit(UserIsIn(UserJoinedModel(userModel, user)));
+            event.email.clear();
+            event.password.clear();
+            event.context.loaderOverlay.hide();
           } else {
             emit(const UserIsOut(
                 "Failed to get user record.", 'Authentication Error'));
+            event.context.loaderOverlay.hide();
           }
         } else {
           emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
+          event.context.loaderOverlay.hide();
         }
-        event.email.clear();
-        event.password.clear();
-        event.context.loaderOverlay.hide();
       } on FirebaseAuthException catch (e) {
-        event.context.loaderOverlay.hide();
         if (e.code == 'user-not-found') {
           emit(const UserIsOut(
               "No user found for that email.", 'Authentication Error'));
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
+          event.context.loaderOverlay.hide();
         } else if (e.code == 'wrong-password') {
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut("Wrong password provided for that user.",
               'Authentication Error'));
+          event.context.loaderOverlay.hide();
         } else {
           UserIsOut(e.toString(), 'Error');
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
+          event.context.loaderOverlay.hide();
         }
       } catch (e) {
-        event.context.loaderOverlay.hide();
         CustomDialog.showErrorDialog(
             event.context, e.toString(), 'Authentication Error', 'Confirm');
         UserIsOut(e.toString(), 'Error');
+        event.context.loaderOverlay.hide();
       }
     });
 

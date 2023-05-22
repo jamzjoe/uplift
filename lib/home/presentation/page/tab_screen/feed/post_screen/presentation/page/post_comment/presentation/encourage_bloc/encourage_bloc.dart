@@ -29,7 +29,7 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
             .compareTo(b.commentModel.createdAt!.toDate()));
         emit(LoadingEncouragesSuccess(data));
       } catch (e) {
-        emit(const LoadingEncouragesError());
+        emit(LoadingEncouragesError(e.toString()));
       }
     });
 
@@ -40,9 +40,12 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
         data.sort((a, b) => a.commentModel.createdAt!
             .toDate()
             .compareTo(b.commentModel.createdAt!.toDate()));
+        if (data.length > 2) {
+          UIServices().scrollToBottom(event.scrollController);
+        }
         emit(LoadingEncouragesSuccess(data));
       } catch (e) {
-        emit(const LoadingEncouragesError());
+        emit(LoadingEncouragesError(e.toString()));
       }
     });
 
@@ -56,18 +59,19 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
           ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(
               content: SmallText(
                   text: 'Comment sent successfully!', color: whiteColor)));
-          UIServices().scrollToBottom(event.scrollController);
         });
         if (event.currentUser.userId != event.postUserModel.userId) {
           NotificationRepository.sendPushMessage(
               event.postUserModel.deviceToken!,
               '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
-              'Uplift notification', 'comment');
+              'Uplift notification',
+              'comment');
         }
 
-        add(RefreshEncourageEvent(event.postID));
+        add(RefreshEncourageEvent(
+            event.postID, event.context, event.scrollController));
       } catch (e) {
-        emit(const LoadingEncouragesError());
+        emit(LoadingEncouragesError(e.toString()));
       }
     });
   }

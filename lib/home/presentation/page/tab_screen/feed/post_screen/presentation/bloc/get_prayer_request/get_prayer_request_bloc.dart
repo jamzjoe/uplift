@@ -40,6 +40,29 @@ class GetPrayerRequestBloc
       }
     });
 
+    on<SearchPrayerRequest>((event, emit) async {
+      emit(LoadingPrayerRequesList());
+      try {
+        final data =
+            await prayerRequestRepository.seearchPrayerRequest(event.query);
+        emit(LoadingPrayerRequesListSuccess(data));
+      } catch (e) {
+        log(e.toString());
+        emit(LoadingPrayerRequesListError());
+      }
+    });
+
+    on<GetPrayerRequestByPopularity>((event, emit) async {
+      emit(LoadingPrayerRequesList());
+      try {
+        final data =
+            await prayerRequestRepository.getPrayerRequestListByReactions();
+        emit(LoadingPrayerRequesListSuccess(data));
+      } on FirebaseException {
+        emit(LoadingPrayerRequesListError());
+      }
+    });
+
     on<RefreshPostRequestList>((event, emit) async {
       emit(LoadingPrayerRequesList());
       try {

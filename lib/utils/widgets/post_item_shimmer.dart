@@ -31,8 +31,12 @@ class _PostItemShimmerLoadingState extends State<PostItemShimmerLoading> {
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
-                        backgroundImage: AssetImage('assets/default.png'),
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(15)),
                       ),
                       const SizedBox(width: 10),
                       Column(
@@ -109,22 +113,34 @@ class _PostItemShimmerLoadingState extends State<PostItemShimmerLoading> {
 
               const Divider(),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton.icon(
                       onPressed: () {},
                       icon: const Image(
-                        image: AssetImage('assets/pray.png'),
+                        image: AssetImage('assets/prayed.png'),
                         width: 30,
                       ),
                       label: SmallText(
-                        text: 'Prayed',
+                        text: '0',
                         color: secondaryColor.withOpacity(0.8),
                       )),
                   TextButton.icon(
                       onPressed: () {},
-                      icon: const Image(
-                        image: AssetImage('assets/share.png'),
-                        width: 30,
+                      icon: const Icon(
+                        CupertinoIcons.chat_bubble,
+                        size: 22,
+                        color: secondaryColor,
+                      ),
+                      label: const SmallText(
+                          text: 'Encourage', color: secondaryColor)),
+                  TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(
+                        CupertinoIcons.arrowshape_turn_up_right,
+                        size: 22,
+                        color: secondaryColor,
                       ),
                       label: SmallText(
                         text: 'Share',
