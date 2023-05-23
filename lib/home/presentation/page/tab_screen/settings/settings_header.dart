@@ -44,7 +44,7 @@ class SettingsProfileHeader extends StatelessWidget {
                   children: [
                     HeaderText(
                       text: userModel.displayName!,
-                      color: secondaryColor,
+                      color: lighter,
                       size: 18,
                     ),
                     Row(
@@ -119,9 +119,8 @@ class SettingsProfileHeader extends StatelessWidget {
               CustomContainer(
                 onTap: () =>
                     context.pushNamed('edit-profile', extra: userJoinedModel),
-                widget: const SmallText(
-                    text: 'Edit profile', color: secondaryColor),
-                color: secondaryColor.withOpacity(0.1),
+                widget: SmallText(text: 'Edit profile', color: lighter),
+                color: lighter.withOpacity(0.1),
               ),
             ],
           ),

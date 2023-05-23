@@ -23,7 +23,7 @@ class FriendRequestHeader extends StatelessWidget {
           children: [
             const HeaderText(
               text: 'Friend request',
-              color: secondaryColor,
+              color: darkColor,
               size: 18,
             ),
             const SizedBox(width: 5),

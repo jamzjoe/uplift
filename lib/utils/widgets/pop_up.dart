@@ -22,8 +22,8 @@ class CustomDialog {
                   width: 60,
                 ),
                 defaultSpace,
-                HeaderText(text: title, color: secondaryColor),
-                SmallText(text: message, color: secondaryColor),
+                HeaderText(text: title, color: lighter),
+                SmallText(text: message, color: lighter),
                 defaultSpace,
                 defaultSpace,
                 Flexible(
@@ -36,21 +36,19 @@ class CustomDialog {
                             height: 45,
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: .5, color: secondaryColor),
+                                border: Border.all(width: .5, color: lighter),
                                 borderRadius: BorderRadius.circular(5)),
                             child: Center(
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.close,
-                                    color: secondaryColor,
+                                    color: lighter,
                                     size: 18,
                                   ),
-                                  SmallText(
-                                      text: 'Cancel', color: secondaryColor),
+                                  SmallText(text: 'Cancel', color: lighter),
                                 ],
                               ),
                             ),
@@ -119,8 +117,8 @@ class CustomDialog {
                   width: 60,
                 ),
                 defaultSpace,
-                HeaderText(text: title, color: secondaryColor),
-                SmallText(text: message, color: secondaryColor),
+                HeaderText(text: title, color: lighter),
+                SmallText(text: message, color: lighter),
                 defaultSpace,
                 defaultSpace,
                 Flexible(
@@ -133,21 +131,19 @@ class CustomDialog {
                             height: 45,
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: .5, color: secondaryColor),
+                                border: Border.all(width: .5, color: lighter),
                                 borderRadius: BorderRadius.circular(5)),
                             child: Center(
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.close,
-                                    color: secondaryColor,
+                                    color: lighter,
                                     size: 18,
                                   ),
-                                  SmallText(
-                                      text: 'Cancel', color: secondaryColor),
+                                  SmallText(text: 'Cancel', color: lighter),
                                 ],
                               ),
                             ),
@@ -211,8 +207,8 @@ class CustomDialog {
                   width: 60,
                 ),
                 defaultSpace,
-                HeaderText(text: title, color: secondaryColor),
-                SmallText(text: message, color: secondaryColor),
+                HeaderText(text: title, color: lighter),
+                SmallText(text: message, color: lighter),
                 defaultSpace,
                 defaultSpace,
                 Flexible(
@@ -266,10 +262,10 @@ class CustomDialog {
                   width: 60,
                 ),
                 defaultSpace,
-                HeaderText(text: title, color: secondaryColor),
+                HeaderText(text: title, color: lighter),
                 SmallText(
                   text: message,
-                  color: secondaryColor,
+                  color: lighter,
                   textAlign: TextAlign.center,
                 ),
                 defaultSpace,

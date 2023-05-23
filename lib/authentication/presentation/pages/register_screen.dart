@@ -130,11 +130,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           isChecked = value!;
                                         });
                                       }),
-                                  const Flexible(
+                                  Flexible(
                                     child: SmallText(
                                         text:
                                             'Agrees to the Terms and Condition and Privacy Policy',
-                                        color: secondaryColor),
+                                        color: lighter),
                                   )
                                 ],
                               ),
@@ -177,11 +177,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               Row(
                                 children: [
                                   line(),
-                                  const Padding(
-                                    padding: EdgeInsets.all(10.0),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
                                     child: DefaultText(
-                                        text: 'Or login with',
-                                        color: secondaryColor),
+                                        text: 'Or login with', color: lighter),
                                   ),
                                   line(),
                                 ],
@@ -211,19 +210,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               color:
                                                   lightColor.withOpacity(0.2))),
                                       child: Row(
-                                        children: const [
-                                          Image(
+                                        children: [
+                                          const Image(
                                             image: AssetImage(
                                                 "assets/google-logo.png"),
                                             width: 25,
                                             height: 30,
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 15,
                                           ),
                                           DefaultText(
-                                              text: 'Google',
-                                              color: secondaryColor),
+                                              text: 'Google', color: lighter),
                                         ],
                                       ),
                                     ),
@@ -238,19 +236,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             color:
                                                 lightColor.withOpacity(0.2))),
                                     child: Row(
-                                      children: const [
-                                        Image(
+                                      children: [
+                                        const Image(
                                           image: AssetImage(
                                               "assets/facebook-logo.png"),
                                           width: 25,
                                           height: 30,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 15,
                                         ),
                                         DefaultText(
-                                            text: 'Facebook',
-                                            color: secondaryColor),
+                                            text: 'Facebook', color: lighter),
                                       ],
                                     ),
                                   ),
@@ -263,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(children: [
-                              const TextSpan(
+                              TextSpan(
                                   text: "Already have an account?",
                                   style: defaultTextStyle),
                               TextSpan(
@@ -287,7 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Expanded line() {
     return Expanded(
       child: Container(
-        color: secondaryColor.withOpacity(0.2),
+        color: lighter.withOpacity(0.2),
         height: 1,
       ),
     );

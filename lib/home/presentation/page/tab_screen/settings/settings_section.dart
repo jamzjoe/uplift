@@ -18,7 +18,7 @@ class SettingsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DefaultText(text: title, color: secondaryColor),
+          DefaultText(text: title, color: darkColor),
           const SizedBox(height: 10),
           widget
         ],

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,11 +138,11 @@ class _CommentPageState extends State<CommentPage> {
           if (encourages.isEmpty) {
             return Center(
               child: Column(
-                children: const [
+                children: [
                   Expanded(
                     child: Center(
-                      child: DefaultText(
-                          text: 'No Encourage Yet', color: secondaryColor),
+                      child:
+                          DefaultText(text: 'No Encourage Yet', color: lighter),
                     ),
                   ),
                 ],
@@ -158,7 +156,7 @@ class _CommentPageState extends State<CommentPage> {
                   padding: const EdgeInsets.all(15.0),
                   child: HeaderText(
                       text: '${encourages.length} Encourages',
-                      color: secondaryColor),
+                      color: darkColor),
                 ),
               ),
               Expanded(
@@ -246,7 +244,7 @@ class CommentItem extends StatelessWidget {
           children: [
             SmallText(
                 text: encourages[index].commentModel.commentText!,
-                color: secondaryColor),
+                color: lighter),
           ],
         ),
       ),

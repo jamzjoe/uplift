@@ -42,13 +42,18 @@ class _PostTextState extends State<PostText> {
                     color: secondaryColor),
               )
             : Container(
+                decoration: BoxDecoration(
+                    border: Border.symmetric(
+                        horizontal: BorderSide(
+                            color: lighter.withOpacity(0.1), width: .5))),
                 width: double.infinity,
                 padding: padding,
-                decoration: const BoxDecoration(color: secondaryColor),
                 child: Column(
                   children: [
                     SeeMoreText(
-                        text: widget.prayerRequest.text!.trim(), maxLines: 10),
+                        text: widget.prayerRequest.text!.trim(),
+                        maxLines: 10,
+                        color: darkColor),
                   ],
                 ),
               ),

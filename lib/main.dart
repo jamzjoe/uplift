@@ -125,8 +125,7 @@ class MyApp extends StatelessWidget {
                 surfaceTintColor: whiteColor,
                 elevation: 2,
                 shape: RoundedRectangleBorder()),
-            dividerTheme:
-                DividerThemeData(color: secondaryColor.withOpacity(0.2)),
+            dividerTheme: DividerThemeData(color: lighter.withOpacity(0.2)),
             scaffoldBackgroundColor: whiteColor,
             floatingActionButtonTheme: const FloatingActionButtonThemeData(
                 backgroundColor: whiteColor),

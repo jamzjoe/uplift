@@ -67,7 +67,7 @@ class PostHeader extends StatelessWidget {
                 SmallText(
                     text: DateFeature()
                         .formatDateTime(prayerRequest.date!.toDate()),
-                    color: lightColor)
+                    color: lighter)
               ],
             ),
           ),

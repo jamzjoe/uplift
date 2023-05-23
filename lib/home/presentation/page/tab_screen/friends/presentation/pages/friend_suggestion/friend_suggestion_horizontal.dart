@@ -32,9 +32,8 @@ class FriendSuggestionHorizontal extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SmallText(
-                  text: 'People with same interest like you:',
-                  color: secondaryColor),
+              SmallText(
+                  text: 'People with same interest like you:', color: lighter),
               SizedBox(
                 height: 80,
                 child: ListView.builder(
@@ -53,7 +52,7 @@ class FriendSuggestionHorizontal extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 25,
                                   backgroundColor:
-                                      primaryColor.withOpacity(0.5),
+                                      secondaryColor.withOpacity(1),
                                   child: const Icon(
                                     CupertinoIcons.add,
                                     size: 15,
@@ -113,14 +112,26 @@ class FriendSuggestionHorizontal extends StatelessWidget {
                               )),
                         ]),
                         Flexible(
-                            child: Text(suggestions[index].displayName ?? '',
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    overflow: TextOverflow.ellipsis)))
+                          child: Text(
+                            suggestions[index].displayName?.substring(
+                                    0,
+                                    suggestions[index].displayName!.length < 5
+                                        ? suggestions[index].displayName!.length
+                                        : 5) ??
+                                '',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
                       ],
                     );
                   },
                 ),
+              ),
+              Divider(
+                color: lightColor.withOpacity(0.2),
               ),
             ],
           );

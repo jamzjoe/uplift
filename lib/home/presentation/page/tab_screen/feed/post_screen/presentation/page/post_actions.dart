@@ -61,32 +61,45 @@ class _PostActionsState extends State<PostActions> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        LikeButton(
-            isLiked: !isReacted,
-            likeCountPadding: EdgeInsets.zero,
-            size: 50,
-            onTap: (isLiked) async {
-              if (!isLiked) {
-                PrayerRequestRepository().addReaction(postID!,
-                    currentUser.userId!, widget.userModel, currentUser);
-                setState(() {
-                  isReacted = !isReacted;
-                  length++;
-                });
-                return isLiked = true;
-              } else {
-                PrayerRequestRepository().unReact(postID!, currentUser.userId!);
-                setState(() {
-                  isReacted = !isReacted;
-                  length--;
-                });
-                return isLiked = false;
-              }
-            },
-            likeCount: length,
-            likeBuilder: (isLiked) => PrayedButton(
-                  path: isReacted ? "assets/unprayed.png" : "assets/prayed.png",
-                )),
+        StreamBuilder<Map<String, dynamic>>(
+          stream: getReactionInfo(postID!, currentUser.userId!),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator();
+            }
+            final bool isReacted = snapshot.data!['isReacted'];
+            final int reactionCount = snapshot.data!['reactionCount'];
+            return Row(
+              children: [
+                LikeButton(
+                    onTap: (isLiked) async {
+                      if (isLiked) {
+                        PrayerRequestRepository()
+                            .unReact(postID, currentUser.userId!);
+                        return isLiked = !isLiked;
+                      } else {
+                        PrayerRequestRepository().addReaction(postID,
+                            currentUser.userId!, widget.userModel, currentUser);
+                        return isLiked = !isLiked;
+                      }
+                    },
+                    padding: EdgeInsets.zero,
+                    likeCountPadding: EdgeInsets.zero,
+                    isLiked: !isReacted,
+                    likeCount: reactionCount,
+                    size: 30,
+                    likeBuilder: (isLiked) => PrayedButton(
+                          path: isReacted
+                              ? "assets/unprayed.png"
+                              : "assets/prayed.png",
+                        )
+                    // Rest of the code
+                    ),
+                // Rest of the code
+              ],
+            );
+          },
+        ),
         const SizedBox(width: 10),
         TextButton.icon(
             onPressed: () {
@@ -97,10 +110,10 @@ class _PostActionsState extends State<PostActions> {
                     widget.currentUser, scrollController);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               CupertinoIcons.chat_bubble,
               size: 22,
-              color: secondaryColor,
+              color: lighter,
             ),
             label: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: FirebaseFirestore.instance
@@ -112,46 +125,65 @@ class _PostActionsState extends State<PostActions> {
                     return const SmallText(text: '0', color: secondaryColor);
                   }
                   return SmallText(
-                      text: '${snapshot.data!.size} Encourage',
-                      color: secondaryColor);
+                      text: '${snapshot.data!.size} Encourage', color: lighter);
                 })),
         const SizedBox(width: 10),
         TextButton.icon(
-            label: const SmallText(text: 'Share', color: secondaryColor),
+            label: SmallText(text: 'Share', color: lighter),
             onPressed: () async {
               // final image = await saveImage();
 
               saveAndShare();
             },
-            icon: const Icon(
+            icon: Icon(
               CupertinoIcons.arrowshape_turn_up_right,
               size: 22,
-              color: secondaryColor,
+              color: lighter,
             )),
       ],
     );
   }
 
-  Future<dynamic> showComment(BuildContext context, UserModel user,
-      PrayerRequestPostModel prayerRequestPostModel, UserModel currentUser, ScrollController scrollController) {
+  Future<dynamic> showComment(
+      BuildContext context,
+      UserModel user,
+      PrayerRequestPostModel prayerRequestPostModel,
+      UserModel currentUser,
+      ScrollController scrollController) {
     BlocProvider.of<EncourageBloc>(context)
         .add(FetchEncourageEvent(widget.prayerRequest.postId!));
     return showModalBottomSheet(
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-      ),
+      clipBehavior: Clip.hardEdge,
+      isScrollControlled: true,
+      isDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.9),
+      backgroundColor:
+          Colors.transparent, // Set the background color to transparent
       context: context,
       builder: (BuildContext context) {
-        return CommentView(
-          currentUser: currentUser,
-          prayerRequestPostModel: prayerRequestPostModel,
-          postOwner: user,
-          postModel: widget.postModel,
-          scrollController: scrollController,
+        return Padding(
+          padding: const EdgeInsets.only(
+            top: 100, // Add padding at the top based on the system insets
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+              ),
+              child: CommentView(
+                currentUser: currentUser,
+                prayerRequestPostModel: prayerRequestPostModel,
+                postOwner: user,
+                postModel: widget.postModel,
+                scrollController: scrollController,
+              ),
+            ),
+          ),
         );
       },
     );
@@ -176,6 +208,34 @@ class _PostActionsState extends State<PostActions> {
           isReacted = value;
         });
       });
+    });
+  }
+
+  Stream<Map<String, dynamic>> getReactionInfo(String postID, String userID) {
+    return FirebaseFirestore.instance
+        .collection('Prayers')
+        .doc(postID)
+        .snapshots()
+        .map((snapshot) {
+      final List<dynamic> currentReactions =
+          snapshot.data()!['reactions']['users'];
+      bool userExist = false;
+      for (var reaction in currentReactions) {
+        if (reaction is Map && reaction.containsKey(userID)) {
+          userExist = true;
+        }
+      }
+      final int reactionCount = currentReactions.length;
+      return {
+        'isReacted': !userExist,
+        'reactionCount': reactionCount,
+      };
+    }).handleError((error) {
+      // Handle error if necessary
+      return {
+        'isReacted': false,
+        'reactionCount': 0,
+      };
     });
   }
 }

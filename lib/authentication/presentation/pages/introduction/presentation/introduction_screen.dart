@@ -35,10 +35,10 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 width: 100,
               ),
               const SizedBox(height: 5),
-              const SmallText(
+              SmallText(
                 textAlign: TextAlign.center,
                 text: 'Spreading Light, One Prayer at a Time',
-                color: secondaryColor,
+                color: lighter,
               ),
               GestureDetector(
                 onTap: () async {
@@ -58,16 +58,15 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                             vertical: 10, horizontal: 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Image(
+                          children: [
+                            const Image(
                               image: AssetImage("assets/google-logo.png"),
                               width: 25,
                               height: 25,
                             ),
-                            SizedBox(width: 15),
+                            const SizedBox(width: 15),
                             DefaultText(
-                                text: 'Continue with Google',
-                                color: secondaryColor),
+                                text: 'Continue with Google', color: lighter),
                           ],
                         ),
                       ),
@@ -81,12 +80,12 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                             vertical: 10, horizontal: 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            SizedBox(),
+                          children: [
+                            const SizedBox(),
                             DefaultText(
                                 text: 'Continue in another way',
-                                color: secondaryColor),
-                            SizedBox()
+                                color: lighter),
+                            const SizedBox()
                           ],
                         ),
                       ),
@@ -97,13 +96,13 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               defaultSpace,
               RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(children: [
+                  text: TextSpan(children: [
                     TextSpan(
                         text: 'By continuing you agree to UpLift',
                         style: defaultTextStyle),
-                    TextSpan(text: ' Terms of Use.', style: linkStyle),
+                    const TextSpan(text: ' Terms of Use.', style: linkStyle),
                     TextSpan(text: ' Read our', style: defaultTextStyle),
-                    TextSpan(text: ' Privacy Policy.', style: linkStyle),
+                    const TextSpan(text: ' Privacy Policy.', style: linkStyle),
                   ]))
             ],
           ),

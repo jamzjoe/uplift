@@ -89,8 +89,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-              color:
-                  isSelected ? secondaryColor : secondaryColor.withOpacity(0.5),
+              color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
               onPressed: () async {
                 BlocProvider.of<ExploreBloc>(context)
                     .add(const GetExplorePrayerRequestList());
@@ -100,8 +99,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
               icon: isSelected ? selectedIcon : icon),
           SmallText(
               text: label,
-              color:
-                  isSelected ? secondaryColor : secondaryColor.withOpacity(0.5))
+              color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
         ],
       );
     }
@@ -120,7 +118,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                   IconButton(
                       color: isSelected
                           ? secondaryColor
-                          : secondaryColor.withOpacity(0.5),
+                          : lighter.withOpacity(0.5),
                       onPressed: () async {
                         widget.onChangedTab(index);
                         widget.controller!.animateTo(index);
@@ -130,7 +128,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                       text: label,
                       color: isSelected
                           ? secondaryColor
-                          : secondaryColor.withOpacity(0.5))
+                          : lighter.withOpacity(0.5))
                 ],
               ),
             );
@@ -140,9 +138,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
-                  color: isSelected
-                      ? secondaryColor
-                      : secondaryColor.withOpacity(0.5),
+                  color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
                   onPressed: () async {
                     widget.onChangedTab(index);
                     widget.controller!.animateTo(index);
@@ -150,9 +146,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                   icon: isSelected ? selectedIcon : icon),
               SmallText(
                   text: label,
-                  color: isSelected
-                      ? secondaryColor
-                      : secondaryColor.withOpacity(0.5))
+                  color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
             ],
           );
         },
@@ -163,8 +157,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         IconButton(
-            color:
-                isSelected ? secondaryColor : secondaryColor.withOpacity(0.5),
+            color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
             onPressed: () async {
               widget.onChangedTab(index);
               widget.controller!.animateTo(index);
@@ -172,8 +165,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             icon: isSelected ? selectedIcon : icon),
         SmallText(
             text: label,
-            color:
-                isSelected ? secondaryColor : secondaryColor.withOpacity(0.5))
+            color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
       ],
     );
   }

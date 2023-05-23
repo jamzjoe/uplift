@@ -56,6 +56,7 @@ class _PostItemState extends State<PostItem> {
     return Screenshot(
       controller: screenshotController,
       child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: widget.fullView! ? 0 : 10),
         child: GestureDetector(
           onTap: () {
             if (widget.fullView == true) {
@@ -223,11 +224,9 @@ class PrayedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        onPressed: null,
-        icon: Image(
-          image: AssetImage(path),
-          width: 30,
-        ));
+    return Image(
+      image: AssetImage(path),
+      width: 30,
+    );
   }
 }

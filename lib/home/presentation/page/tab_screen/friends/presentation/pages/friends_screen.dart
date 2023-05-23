@@ -28,7 +28,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
       backgroundColor: whiteColor,
       appBar: AppBar(
         backgroundColor: whiteColor,
-        title: const HeaderText(text: 'Friends', color: secondaryColor),
+        title: const HeaderText(text: 'Friends', color: darkColor),
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -51,8 +51,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                       context)
                                   .add(FetchUsersEvent());
                             },
-                            widget: const DefaultText(
-                                text: 'Suggestions', color: secondaryColor),
+                            widget: DefaultText(
+                                text: 'Suggestions', color: lighter),
                             color: lightColor.withOpacity(0.3)),
                         const SizedBox(width: 15),
                         CustomContainer(
@@ -63,8 +63,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   FetchApprovedFriendRequest(
                                       widget.currentUser.userId!));
                             },
-                            widget: const DefaultText(
-                                text: 'Your Friends', color: secondaryColor),
+                            widget: DefaultText(
+                                text: 'Your Friends', color: lighter),
                             color: lightColor.withOpacity(0.3))
                       ],
                     ),

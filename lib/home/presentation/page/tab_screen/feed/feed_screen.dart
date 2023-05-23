@@ -48,7 +48,7 @@ class _FeedScreenState extends State<FeedScreen> {
     final User user = widget.user.user;
     final UserJoinedModel userJoinedModel = widget.user;
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Colors.grey.shade200,
       extendBody: true,
       body: BlocListener<NotificationBloc, NotificationState>(
         listener: (context, state) {

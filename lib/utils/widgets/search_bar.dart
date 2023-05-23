@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 
 class MySearchBar extends StatefulWidget {
   const MySearchBar({super.key, required this.onSubmit});
@@ -42,7 +40,7 @@ class _MySearchBarState extends State<MySearchBar> {
               controller: _searchController,
               onSubmitted: widget.onSubmit,
               decoration: const InputDecoration(
-                hintText: 'Search',
+                hintText: 'Search prayer intentions name, post, or date.',
                 border: InputBorder.none,
               ),
               onChanged: (value) {

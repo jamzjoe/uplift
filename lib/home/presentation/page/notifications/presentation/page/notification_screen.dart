@@ -27,7 +27,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const HeaderText(text: 'Notifications', color: secondaryColor),
+        title: const HeaderText(text: 'Notifications', color: darkColor),
         actions: [
           PopupMenuButton(
             itemBuilder: (context) {

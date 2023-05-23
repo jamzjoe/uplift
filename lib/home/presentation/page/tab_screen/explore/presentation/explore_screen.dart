@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/constant/constant.dart';
@@ -37,6 +35,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     return SafeArea(
       maintainBottomViewPadding: true,
       child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
         extendBody: true,
         body: RefreshIndicator(
           onRefresh: () async => searchQueryConditions(pageIndex, context),
@@ -49,61 +48,65 @@ class _ExploreScreenState extends State<ExploreScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const DefaultText(
-                              text: 'Embrace the journey of',
-                              color: secondaryColor,
-                            ),
-                            const HeaderText(
-                              text: 'spiritual discovery with us.',
-                              color: secondaryColor,
-                              size: 21,
-                            ),
-                            defaultSpace,
-                            MySearchBar(
-                              onSubmit: (p0) async {
-                                BlocProvider.of<ExploreBloc>(context)
-                                    .add(SearchPrayerRequest(p0.trim()));
-                                tabController.animateTo(11);
-                              },
-                            ),
+                  Container(
+                    color: whiteColor,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const DefaultText(
+                                text: 'Embrace the journey of',
+                                color: darkColor,
+                              ),
+                              const HeaderText(
+                                text: 'spiritual discovery with us.',
+                                color: secondaryColor,
+                                size: 21,
+                              ),
+                              defaultSpace,
+                              MySearchBar(
+                                onSubmit: (p0) async {
+                                  BlocProvider.of<ExploreBloc>(context)
+                                      .add(SearchPrayerRequest(p0.trim()));
+                                  tabController.animateTo(11);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        TabBar(
+                          controller: tabController,
+                          onTap: (value) {
+                            setState(() {
+                              pageIndex = value + 1;
+                            });
+                            int index = value + 1;
+                            searchQueryConditions(index, context);
+                          },
+                          isScrollable: true,
+                          tabs: const [
+                            Tab(text: 'All'),
+                            Tab(text: 'Popular'),
+                            Tab(text: 'Personal'),
+                            Tab(text: 'Family'),
+                            Tab(text: 'Community'),
+                            Tab(text: 'Global'),
+                            Tab(text: 'Gratitude'),
+                            Tab(text: 'Healing'),
+                            Tab(text: 'Faith'),
+                            Tab(text: 'Vocational'),
+                            Tab(text: 'Special'),
+                            Tab(text: 'Result'),
                           ],
                         ),
-                      ),
-                      TabBar(
-                        controller: tabController,
-                        onTap: (value) {
-                          setState(() {
-                            pageIndex = value + 1;
-                          });
-                          int index = value + 1;
-                          searchQueryConditions(index, context);
-                        },
-                        isScrollable: true,
-                        tabs: const [
-                          Tab(text: 'All'),
-                          Tab(text: 'Popular'),
-                          Tab(text: 'Personal'),
-                          Tab(text: 'Family'),
-                          Tab(text: 'Community'),
-                          Tab(text: 'Global'),
-                          Tab(text: 'Gratitude'),
-                          Tab(text: 'Healing'),
-                          Tab(text: 'Faith'),
-                          Tab(text: 'Vocational'),
-                          Tab(text: 'Special'),
-                          Tab(text: 'Result'),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(height: 10),
                   BlocBuilder<ExploreBloc, ExploreState>(
                     builder: (context, state) {
                       if (state is LoadingPrayerRequesListSuccess) {

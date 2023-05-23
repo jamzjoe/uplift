@@ -31,8 +31,14 @@ class AuthenticationBloc
     streamSubscription = authRepository.user.listen((user) async {
       if (user != null) {
         try {
+          final token = await FirebaseMessaging.instance.getToken();
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(user.uid)
+              .update({"device_token": token});
           final userModel =
               await PrayerRequestRepository().getUserRecord(user.uid);
+
           add(SignIn(UserJoinedModel(userModel!, user)));
         } catch (e) {
           add(SignOut());

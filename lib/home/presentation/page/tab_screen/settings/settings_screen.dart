@@ -28,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return Scaffold(
             backgroundColor: const Color(0xffF0F0F0),
             appBar: AppBar(
-              title: const HeaderText(text: 'Settings', color: secondaryColor),
+              title: const HeaderText(text: 'Settings', color: darkColor),
               actions: [
                 IconButton(
                   icon: IconButton(

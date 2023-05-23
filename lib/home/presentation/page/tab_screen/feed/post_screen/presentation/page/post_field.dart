@@ -38,8 +38,7 @@ class _PostFieldState extends State<PostField> {
                 border: Border.all(
                     color: secondaryColor.withOpacity(0.2), width: 0.5),
                 borderRadius: BorderRadius.circular(15)),
-            child: const SmallText(
-                text: "Share anything you want.", color: secondaryColor),
+            child: SmallText(text: "Share anything you want.", color: lighter),
           ),
         )),
         const SizedBox(width: 5),

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,57 +40,64 @@ class _PostListItemState extends State<PostListItem> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        HeaderText(
-                            text: 'Hello ${userModel.displayName},',
-                            color: secondaryColor),
-                        const SmallText(
-                            text: 'What would you like us to pray for?',
-                            color: secondaryColor),
-                      ],
+        Container(
+          color: whiteColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              const HeaderText(
+                                  text: 'Hello,', color: darkColor),
+                              HeaderText(
+                                  text: ' ${userModel.displayName}',
+                                  color: secondaryColor),
+                            ],
+                          ),
+                          SmallText(
+                              text: 'What would you like us to pray for?',
+                              color: darkColor.withOpacity(0.8)),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                      width: 60,
-                      height: 60,
-                      clipBehavior: Clip.none,
-                      decoration: const BoxDecoration(),
-                      child: Transform.scale(
-                        scale: 2,
-                        origin: const Offset(3, 6),
-                        child: LottieBuilder.asset(
-                          'assets/thinking.json',
-                          height: 150,
-                          width: 150,
-                        ),
-                      )),
-                ],
-              ),
-              defaultSpace,
-              PostField(userJoinModel: widget.userJoinedModel),
-              defaultSpace,
-              FriendSuggestionHorizontal(currentUser: userModel)
-            ],
+                    Container(
+                        width: 60,
+                        height: 60,
+                        clipBehavior: Clip.none,
+                        decoration: const BoxDecoration(),
+                        child: Transform.scale(
+                          scale: 2,
+                          origin: const Offset(3, 6),
+                          child: LottieBuilder.asset(
+                            'assets/thinking.json',
+                            height: 150,
+                            width: 150,
+                          ),
+                        )),
+                  ],
+                ),
+                defaultSpace,
+                PostField(userJoinModel: widget.userJoinedModel),
+                defaultSpace,
+                FriendSuggestionHorizontal(currentUser: userModel),
+               
+              ],
+            ),
           ),
         ),
-        Divider(
-          height: 50,
-          color: lightColor.withOpacity(0.2),
-        ),
+        const SizedBox(height: 10),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {

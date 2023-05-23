@@ -19,11 +19,11 @@ class SettingsItem extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       trailing: Icon(CupertinoIcons.chevron_forward,
-          color: secondaryColor.withOpacity(0.6)),
-      title: DefaultText(text: label, color: secondaryColor),
+          color: darkColor.withOpacity(0.6)),
+      title: DefaultText(text: label, color: darkColor),
       leading: Icon(
         icon,
-        color: secondaryColor.withOpacity(0.6),
+        color: darkColor.withOpacity(0.6),
       ),
     );
   }
