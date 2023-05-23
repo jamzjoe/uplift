@@ -5,12 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -30,56 +32,69 @@ class PostListItem extends StatefulWidget {
   State<PostListItem> createState() => _PostListItemState();
 }
 
+List<UserModel> suggestions = [];
+
 class _PostListItemState extends State<PostListItem> {
-  final ScrollController _scrollController = ScrollController();
-  int paginationLimit = 10;
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      // Reached the end of the scroll view
-      // Perform your desired action here, such as fetching more data
-      loadMoreData();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final UserModel userModel = widget.userJoinedModel.userModel;
     final User user = widget.userJoinedModel.user;
-    return ListView(
-      controller: _scrollController,
+
+    return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              HeaderText(
-                  text: 'Hello ${user.displayName},', color: secondaryColor),
-              const SmallText(
-                  text: 'What would you like us to pray for?',
-                  color: secondaryColor),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HeaderText(
+                            text: 'Hello ${userModel.displayName},',
+                            color: secondaryColor),
+                        const SmallText(
+                            text: 'What would you like us to pray for?',
+                            color: secondaryColor),
+                      ],
+                    ),
+                  ),
+                  Container(
+                      width: 60,
+                      height: 60,
+                      clipBehavior: Clip.none,
+                      decoration: const BoxDecoration(),
+                      child: Transform.scale(
+                        scale: 2,
+                        origin: const Offset(3, 6),
+                        child: LottieBuilder.asset(
+                          'assets/thinking.json',
+                          height: 150,
+                          width: 150,
+                        ),
+                      )),
+                ],
+              ),
               defaultSpace,
-              PostField(userJoinModel: widget.userJoinedModel)
+              PostField(userJoinModel: widget.userJoinedModel),
+              defaultSpace,
+              FriendSuggestionHorizontal(currentUser: userModel)
             ],
           ),
         ),
+        Divider(
+          height: 50,
+          color: lightColor.withOpacity(0.2),
+        ),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
-            log(state.toString());
             if (state is LoadingPrayerRequesListSuccess) {
               if (state.prayerRequestPostModel.isEmpty) {
                 return Center(
@@ -107,7 +122,7 @@ class _PostListItemState extends State<PostListItem> {
                   EndOfPostWidget(
                     isEmpty: false,
                     user: widget.userJoinedModel,
-                  )
+                  ),
                 ],
               );
             } else if (state is LoadingPrayerRequesList) {
@@ -120,16 +135,6 @@ class _PostListItemState extends State<PostListItem> {
         ),
       ],
     );
-  }
-
-  void loadMoreData() async {
-    log('More data');
-    log(paginationLimit.toString());
-    setState(() {
-      paginationLimit = paginationLimit + 10;
-    });
-    BlocProvider.of<GetPrayerRequestBloc>(context)
-        .add(const GetPostRequestList());
   }
 }
 

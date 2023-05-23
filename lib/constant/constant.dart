@@ -8,7 +8,14 @@ const linkColor = Color(0xff00A82B);
 
 const defaultSpace = SizedBox(height: 15);
 const linkStyle = TextStyle(
-    color: Color(0xff00A82B), fontSize: 14, fontWeight: FontWeight.normal);
+    color: Color(0xff00A82B),
+    fontSize: 14,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.normal,
+    fontFamily: 'froxima');
 
 const defaultTextStyle = TextStyle(
-    color: secondaryColor, fontSize: 14, fontWeight: FontWeight.normal);
+    color: secondaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    fontFamily: 'froxima');

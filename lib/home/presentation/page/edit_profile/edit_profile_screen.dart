@@ -121,6 +121,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Center(
             child: CustomContainer(
                 onTap: () async {
+                  context.loaderOverlay.show();
                   UserJoinedModel userJoinedModel = widget.userJoinedModel;
                   if (file != null) {
                     imageURL = await AuthRepository()

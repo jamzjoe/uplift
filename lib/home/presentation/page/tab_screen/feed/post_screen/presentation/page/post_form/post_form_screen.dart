@@ -45,6 +45,13 @@ class _PostFormScreenState extends State<PostFormScreen> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final User user = widget.user.user;
     final UserModel userModel = widget.user.userModel;
@@ -69,7 +76,6 @@ class _PostFormScreenState extends State<PostFormScreen> {
                         final bloc =
                             BlocProvider.of<ApprovedFriendsBloc>(context);
                         final state = bloc.state;
-                        log(state.toString());
                         if (state is ApprovedFriendsSuccess2) {
                           friends = state.approvedFriendList;
                         }

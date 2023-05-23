@@ -63,7 +63,6 @@ class AuthenticationBloc
         event.context.loaderOverlay.hide();
       } on PlatformException catch (e) {
         event.context.loaderOverlay.hide();
-        log(e.code);
         if (e.code == 'network_error') {
           emit(const UserIsOut(
               'No internet connection', 'Authentication Error'));
@@ -80,33 +79,37 @@ class AuthenticationBloc
     });
 
     on<SignInWithEmailAndPassword>((event, emit) async {
-      emit(Loading());
       event.context.loaderOverlay.show();
+
       try {
+        emit(Loading());
+
         final User? user = await AuthServices.signInWithEmailAndPassword(
-            event.email.text, event.password.text);
+          event.email.text,
+          event.password.text,
+        );
+
         if (user != null) {
           final userModel = await PrayerRequestRepository()
               .getUserRecord(await AuthServices.userID());
           final token = await FirebaseMessaging.instance.getToken();
+
           await FirebaseFirestore.instance
               .collection('Users')
               .doc(user.uid)
               .update({"device_token": token}).then(
                   (value) => event.context.pop());
+
           if (userModel != null) {
             emit(UserIsIn(UserJoinedModel(userModel, user)));
             event.email.clear();
             event.password.clear();
-            event.context.loaderOverlay.hide();
           } else {
             emit(const UserIsOut(
                 "Failed to get user record.", 'Authentication Error'));
-            event.context.loaderOverlay.hide();
           }
         } else {
           emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
-          event.context.loaderOverlay.hide();
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -114,35 +117,31 @@ class AuthenticationBloc
               "No user found for that email.", 'Authentication Error'));
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
-          event.context.loaderOverlay.hide();
         } else if (e.code == 'wrong-password') {
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
           emit(const UserIsOut("Wrong password provided for that user.",
               'Authentication Error'));
-          event.context.loaderOverlay.hide();
         } else {
           UserIsOut(e.toString(), 'Error');
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
-          event.context.loaderOverlay.hide();
         }
       } catch (e) {
         CustomDialog.showErrorDialog(
             event.context, e.toString(), 'Authentication Error', 'Confirm');
         UserIsOut(e.toString(), 'Error');
+      } finally {
         event.context.loaderOverlay.hide();
       }
     });
 
     on<RegisterWithEmailAndPassword>((event, emit) async {
-      emit(Loading());
       event.context.loaderOverlay.show();
       try {
+        emit(Loading());
         final User? user = await AuthServices.registerWithEmailAndPassword(
             event.email.text, event.password.text);
-        log(user.toString());
-        log(event.userName.text);
         AuthServices.addUserFromEmailAndPassword(
             user!, event.bio, event.userName.text);
 
@@ -156,7 +155,6 @@ class AuthenticationBloc
 
         emit(UserIsIn(UserJoinedModel(userModel!, user)));
       } on FirebaseAuthException catch (e) {
-        event.context.loaderOverlay.hide();
         if (e.code == 'weak-password') {
           emit(const UserIsOut(
               "The password provided is too weak.", 'Authentication Error'));
@@ -186,6 +184,8 @@ class AuthenticationBloc
           CustomDialog.showErrorDialog(
               event.context, e.toString(), 'Authentication Error', 'Confirm');
         }
+      } finally {
+        event.context.loaderOverlay.hide();
       }
     });
 
@@ -238,8 +238,8 @@ class AuthenticationBloc
           event.context.loaderOverlay.hide();
         });
       } catch (e) {
-        log(e.toString());
         emit(const UserIsOut('Update failed', 'Error'));
+      } finally {
         event.context.loaderOverlay.hide();
       }
     });

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -29,39 +30,60 @@ class _FriendsScreenState extends State<FriendsScreen> {
         backgroundColor: whiteColor,
         title: const HeaderText(text: 'Friends', color: secondaryColor),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(30),
-        children: [
-          Row(
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+          height: MediaQuery.of(context).size.height - 150,
+          child: Column(
             children: [
-              CustomContainer(
-                  onTap: () => context.pushNamed('friend_suggest',
-                      extra: widget.currentUser),
-                  widget: const DefaultText(
-                      text: 'Suggestions', color: secondaryColor),
-                  color: lightColor.withOpacity(0.3)),
-              const SizedBox(width: 15),
-              CustomContainer(
-                  onTap: () {
-                    context.pushNamed("friends-list",
-                        extra: widget.currentUser);
-                    BlocProvider.of<ApprovedFriendsBloc>(context).add(
-                        FetchApprovedFriendRequest(widget.currentUser.userId!));
-                  },
-                  widget: const DefaultText(
-                      text: 'Your Friends', color: secondaryColor),
-                  color: lightColor.withOpacity(0.3))
+              SizedBox(
+                height: 80,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        CustomContainer(
+                            onTap: () {
+                              context.pushNamed('friend_suggest',
+                                  extra: widget.currentUser);
+                              BlocProvider.of<FriendsSuggestionsBlocBloc>(
+                                      context)
+                                  .add(FetchUsersEvent());
+                            },
+                            widget: const DefaultText(
+                                text: 'Suggestions', color: secondaryColor),
+                            color: lightColor.withOpacity(0.3)),
+                        const SizedBox(width: 15),
+                        CustomContainer(
+                            onTap: () {
+                              context.pushNamed("friends-list",
+                                  extra: widget.currentUser);
+                              BlocProvider.of<ApprovedFriendsBloc>(context).add(
+                                  FetchApprovedFriendRequest(
+                                      widget.currentUser.userId!));
+                            },
+                            widget: const DefaultText(
+                                text: 'Your Friends', color: secondaryColor),
+                            color: lightColor.withOpacity(0.3))
+                      ],
+                    ),
+                    defaultSpace,
+                    const Divider(),
+                    defaultSpace,
+                  ],
+                ),
+              ),
+              Expanded(
+                child: KeepAlivePage(
+                  child: FriendRequestList(
+                    currentUser: widget.currentUser,
+                  ),
+                ),
+              )
             ],
           ),
-          defaultSpace,
-          const Divider(),
-          defaultSpace,
-          KeepAlivePage(
-            child: FriendRequestList(
-              currentUser: widget.currentUser,
-            ),
-          )
-        ],
+        ),
       ),
     );
   }

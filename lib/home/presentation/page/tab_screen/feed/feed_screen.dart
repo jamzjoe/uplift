@@ -4,23 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-import 'post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
 
 class FeedScreen extends StatefulWidget {
-  const FeedScreen({super.key, required this.user});
+  const FeedScreen({Key? key, required this.user}) : super(key: key);
   final UserJoinedModel user;
 
   @override
-  State<FeedScreen> createState() => _FeedScreenState();
+  _FeedScreenState createState() => _FeedScreenState();
 }
 
 class _FeedScreenState extends State<FeedScreen> {
@@ -28,6 +28,21 @@ class _FeedScreenState extends State<FeedScreen> {
   int badgeCount = 0;
   int paginationLimit = 10;
   List<UserNotifModel> notifications = [];
+
+  final ScrollController scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final User user = widget.user.user;
@@ -49,6 +64,7 @@ class _FeedScreenState extends State<FeedScreen> {
         child: SafeArea(
           maintainBottomViewPadding: true,
           child: NestedScrollView(
+            controller: scrollController,
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
@@ -64,21 +80,33 @@ class _FeedScreenState extends State<FeedScreen> {
                       count: badgeCount,
                       alignment: AlignmentDirectional.bottomStart,
                       child: IconButton(
-                          onPressed: () {
-                            goToNotificationScreen(user.uid, notifications);
-                          },
-                          icon: const Image(
-                              image: AssetImage('assets/bell.png'), width: 30)),
+                        onPressed: () {
+                          goToNotificationScreen(user.uid, notifications);
+                        },
+                        icon: const Image(
+                          image: AssetImage('assets/bell.png'),
+                          width: 30,
+                        ),
+                      ),
                     ),
                   ],
-                )
+                ),
               ];
             },
-            body: RefreshIndicator(
-              onRefresh: () async =>
-                  BlocProvider.of<GetPrayerRequestBloc>(context)
-                      .add(const RefreshPostRequestList()),
-              child: PostListItem(userJoinedModel: userJoinedModel),
+            body: Column(
+              children: [
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      BlocProvider.of<GetPrayerRequestBloc>(context)
+                          .add(const RefreshPostRequestList());
+                    },
+                    child: SingleChildScrollView(
+                      child: PostListItem(userJoinedModel: userJoinedModel),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -90,12 +118,27 @@ class _FeedScreenState extends State<FeedScreen> {
       String userID, List<UserNotifModel> notifications) {
     context.pushNamed('notification', extra: notifications);
   }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      // Reached the end of the scroll view
+      // Perform your desired action here, such as fetching more data
+      loadMoreData();
+    }
+  }
+
+  void loadMoreData() async {
+    setState(() {
+      paginationLimit = paginationLimit + 10;
+    });
+    BlocProvider.of<GetPrayerRequestBloc>(context)
+        .add(GetPostRequestList(limit: paginationLimit));
+  }
 }
 
 class PostStatusWidget extends StatelessWidget {
-  const PostStatusWidget({
-    super.key,
-  });
+  const PostStatusWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +160,9 @@ class PostStatusWidget extends StatelessWidget {
                 ),
                 SizedBox(width: 15),
                 SmallText(
-                    text: 'Posting your prayer request...',
-                    color: secondaryColor)
+                  text: 'Posting your prayer request...',
+                  color: secondaryColor,
+                ),
               ],
             ),
           );
@@ -128,10 +172,16 @@ class PostStatusWidget extends StatelessWidget {
             color: whiteColor,
             child: Row(
               children: const [
-                Icon(Ionicons.checkmark_done_circle,
-                    color: linkColor, size: 25),
+                Icon(
+                  Ionicons.checkmark_done_circle,
+                  color: linkColor,
+                  size: 25,
+                ),
                 SizedBox(width: 15),
-                SmallText(text: 'Prayer request posted.', color: secondaryColor)
+                SmallText(
+                  text: 'Prayer request posted.',
+                  color: secondaryColor,
+                ),
               ],
             ),
           );
@@ -139,66 +189,5 @@ class PostStatusWidget extends StatelessWidget {
         return const SizedBox();
       },
     );
-  }
-}
-
-class CustomSearchDelegate extends SearchDelegate {
-  List<String> searchTerms = ['Test', 'Joe'];
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-          onPressed: () {
-            query = '';
-          },
-          icon: const Icon(Ionicons.close))
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          close(context, null);
-        },
-        icon: const Icon(Ionicons.search));
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var each in searchTerms) {
-      if (each.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(each);
-      }
-    }
-    return ListView.builder(
-        itemCount: matchQuery.length,
-        itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: ListTile(
-                  dense: true,
-                  title: DefaultText(
-                      text: matchQuery[index], color: secondaryColor)),
-            ));
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var each in searchTerms) {
-      if (each.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(each);
-      }
-    }
-    return ListView.builder(
-        itemCount: matchQuery.length,
-        itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: ListTile(
-                  dense: true,
-                  title: DefaultText(
-                      text: matchQuery[index], color: secondaryColor)),
-            ));
   }
 }

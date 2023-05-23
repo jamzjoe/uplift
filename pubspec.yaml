@@ -71,13 +71,18 @@ dependencies:
   # contacts_service: ^0.6.3
   photo_view: ^0.14.0
   flutter_keyboard_visibility: ^5.4.1
+  contacts_service: ^0.6.3
 
 flutter_native_splash:
   android: true
   ios: true
-  color: "#ffffff"
-  image: assets/uplift-logo.png
+  web: false
+  image: assets/splash_icon.png
+  background_image: "assets/splash_bg.png"
 
+  android_12:
+    image: assets/splash_icon.png
+    background_image: "assets/splash_bg.png"
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -5,7 +5,6 @@ class Assets {
   static const String assetsAngel = 'assets/angel.png';
   static const String assetsBackground = 'assets/background.png';
   static const String assetsDefault = 'assets/default.png';
-  static const String assetsDefault1 = 'assets/default1.jpg';
   static const String assetsError = 'assets/error.png';
   static const String assetsExploreSearchBg = 'assets/explore_search_bg.png';
   static const String assetsFacebookLogo = 'assets/facebook-logo.png';
@@ -24,5 +23,4 @@ class Assets {
   static const String assetsUnprayed = 'assets/unprayed.png';
   static const String assetsUnreact = 'assets/unreact.mp3';
   static const String assetsUpliftLogo = 'assets/uplift-logo.png';
-
 }

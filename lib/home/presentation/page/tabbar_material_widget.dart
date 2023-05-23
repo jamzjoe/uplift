@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -82,7 +83,28 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       required Icon selectedIcon,
       required String label}) {
     final isSelected = index == widget.index;
-
+    if (index == 2) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+              color:
+                  isSelected ? secondaryColor : secondaryColor.withOpacity(0.5),
+              onPressed: () async {
+                BlocProvider.of<ExploreBloc>(context)
+                    .add(const GetExplorePrayerRequestList());
+                widget.onChangedTab(index);
+                widget.controller!.animateTo(index);
+              },
+              icon: isSelected ? selectedIcon : icon),
+          SmallText(
+              text: label,
+              color:
+                  isSelected ? secondaryColor : secondaryColor.withOpacity(0.5))
+        ],
+      );
+    }
     if (index == 1) {
       return BlocBuilder<FriendRequestBloc, FriendRequestState>(
         builder: (context, state) {

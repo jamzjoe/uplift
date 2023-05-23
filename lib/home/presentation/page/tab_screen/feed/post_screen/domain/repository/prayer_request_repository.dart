@@ -14,7 +14,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/domain/reposito
 import 'package:uplift/utils/services/auth_services.dart';
 
 class PrayerRequestRepository {
-  Future<List<PostModel>> getPrayerRequestList() async {
+  Future<List<PostModel>> getPrayerRequestList({int? limit}) async {
     FriendsRepository friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = [];
 
@@ -30,6 +30,7 @@ class PrayerRequestRepository {
           .collection('Prayers')
           .where('user_id', whereIn: friendsIDs)
           .orderBy('date', descending: true)
+          .limit(limit ?? 10)
           .get();
       List<PrayerRequestPostModel> data = response.docs
           .map((e) => PrayerRequestPostModel.fromJson(e.data()))

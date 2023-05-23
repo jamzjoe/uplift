@@ -13,30 +13,21 @@ import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-class SettingsProfileHeader extends StatefulWidget {
-  const SettingsProfileHeader({super.key, required this.userJoinedModel});
+class SettingsProfileHeader extends StatelessWidget {
+  const SettingsProfileHeader({
+    Key? key,
+    required this.userJoinedModel,
+  }) : super(key: key);
 
   final UserJoinedModel userJoinedModel;
 
   @override
-  State<SettingsProfileHeader> createState() => _SettingsProfileHeaderState();
-}
-
-bool isEditable = false;
-final TextEditingController _bioController = TextEditingController();
-
-class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final user = widget.userJoinedModel.user;
+    final user = userJoinedModel.user;
+    final userModel = userJoinedModel.userModel;
 
-    _bioController.text = widget.userJoinedModel.userModel.bio ?? '';
-    final userModel = widget.userJoinedModel.userModel;
+    final bioController = TextEditingController(text: userModel.bio ?? '');
+
     return Container(
       padding: const EdgeInsets.all(20),
       color: whiteColor,
@@ -59,18 +50,21 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                     Row(
                       children: [
                         SmallText(
-                            text: userModel.emailAddress!, color: lightColor),
+                          text: userModel.emailAddress!,
+                          color: lightColor,
+                        ),
                         const SizedBox(width: 5),
                         GestureDetector(
-                            onTap: () => context.pushNamed('qr_generator2',
-                                extra: userModel),
-                            child: const Icon(Ionicons.qr_code,
-                                size: 15, color: lightColor))
+                          onTap: () => context.pushNamed('qr_generator2',
+                              extra: userModel),
+                          child: const Icon(Ionicons.qr_code,
+                              size: 15, color: lightColor),
+                        ),
                       ],
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
           defaultSpace,
@@ -93,25 +87,27 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                 ),
                 const VerticalDivider(),
                 FutureBuilder(
-                    future: FriendsRepository()
-                        .fetchApprovedFollowerFriendRequest(),
-                    builder: (context, _) {
-                      if (_.hasData) {
-                        int data = _.data!.length;
-                        return CountAndName(details: 'Followers', count: data);
-                      }
-                      return const CountAndName(details: 'Followers', count: 0);
-                    }),
+                  future:
+                      FriendsRepository().fetchApprovedFollowerFriendRequest(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data!.length;
+                      return CountAndName(details: 'Followers', count: data);
+                    }
+                    return const CountAndName(details: 'Followers', count: 0);
+                  },
+                ),
                 const VerticalDivider(),
                 FutureBuilder(
-                    future: FriendsRepository().fetchApprovedFollowingRequest(),
-                    builder: (context, _) {
-                      if (_.hasData) {
-                        int data = _.data!.length;
-                        return CountAndName(details: 'Following', count: data);
-                      }
-                      return const CountAndName(details: 'Following', count: 0);
-                    }),
+                  future: FriendsRepository().fetchApprovedFollowingRequest(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data!.length;
+                      return CountAndName(details: 'Following', count: data);
+                    }
+                    return const CountAndName(details: 'Following', count: 0);
+                  },
+                ),
               ],
             ),
           ),
@@ -121,36 +117,34 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomContainer(
-                  onTap: () => context.pushNamed('edit-profile',
-                      extra: widget.userJoinedModel),
-                  widget: const SmallText(
-                      text: 'Edit profile', color: secondaryColor),
-                  color: secondaryColor.withOpacity(0.1)),
+                onTap: () =>
+                    context.pushNamed('edit-profile', extra: userJoinedModel),
+                widget: const SmallText(
+                    text: 'Edit profile', color: secondaryColor),
+                color: secondaryColor.withOpacity(0.1),
+              ),
             ],
           ),
           defaultSpace,
           TextFormField(
-            controller: _bioController,
+            controller: bioController,
             keyboardType: TextInputType.text,
             autofocus: false,
             onFieldSubmitted: (value) {
-              UserJoinedModel? userJoinedModel = widget.userJoinedModel;
-              userJoinedModel.userModel.bio = _bioController.text;
+              userJoinedModel.userModel.bio = bioController.text;
               BlocProvider.of<AuthenticationBloc>(context)
                   .add(SignIn(userJoinedModel));
               BlocProvider.of<AuthenticationBloc>(context)
-                  .add(UpdateBio(user.uid, _bioController.text));
-              setState(() {
-                isEditable = !isEditable;
-              });
+                  .add(UpdateBio(user.uid, bioController.text));
             },
             maxLines: 2,
             textAlign: TextAlign.center,
             maxLength: 40,
             decoration: const InputDecoration(
-                hintText: 'Write your bio here...',
-                contentPadding: EdgeInsets.symmetric(horizontal: 100),
-                border: UnderlineInputBorder(borderSide: BorderSide.none)),
+              hintText: 'Write your bio here...',
+              contentPadding: EdgeInsets.symmetric(horizontal: 100),
+              border: UnderlineInputBorder(borderSide: BorderSide.none),
+            ),
           ),
         ],
       ),

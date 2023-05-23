@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/explore/explore_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
@@ -50,6 +50,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   @override
+  void dispose() {
+    _tabController!.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
@@ -71,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       },
       builder: (context, state) {
-        log(state.toString());
         if (state is UserIsIn) {
           final UserJoinedModel userJoinedModel = state.userJoinedModel;
           final User user = state.userJoinedModel.user;
@@ -93,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: FriendsScreen(
                   currentUser: userJoinedModel.userModel,
                 )),
-                const ExploreScreen(),
+                const KeepAlivePage(child: ExploreScreen()),
                 const KeepAlivePage(child: SettingsScreen())
               ],
             ),

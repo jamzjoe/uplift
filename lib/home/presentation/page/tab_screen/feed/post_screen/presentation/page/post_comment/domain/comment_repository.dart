@@ -17,7 +17,6 @@ class CommentRepository {
             postId: postID,
             createdAt: Timestamp.now())
         .toJson();
-    log(commentModel.toString());
     await ref.doc(commentID).set(commentModel);
   }
 

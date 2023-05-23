@@ -43,23 +43,26 @@ class FriendRequestListView extends StatelessWidget {
       builder: (context, state) {
         if (state is FriendRequestLoadingSuccess) {
           if (state.users.isEmpty) {
-            return ListView(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
+            return Column(
               children: [
-                FriendRequestHeader(
-                  friendRequestCount: state.users.length,
+                SizedBox(
+                  height: 20,
+                  child: FriendRequestHeader(
+                    friendRequestCount: state.users.length,
+                  ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 80),
-                  child: NoDataMessage(text: 'No friend request yet'),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const NoDataMessage(text: 'No friend request yet'),
+                  ),
                 ),
               ],
             );
           }
           return ListView(
             shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               FriendRequestHeader(
                 friendRequestCount: state.users.length,

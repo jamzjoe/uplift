@@ -10,6 +10,7 @@ import 'package:uplift/authentication/presentation/bloc/authentication/authentic
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
@@ -59,7 +60,6 @@ Future<String?> getFCMToken() async {
   String? token;
   try {
     token = await FirebaseMessaging.instance.getToken();
-    log(token.toString());
   } catch (e) {
     log("Error getting FCM token: $e");
   }
@@ -107,7 +107,8 @@ class MyApp extends StatelessWidget {
             create: (context) => FriendRequestBloc()),
         BlocProvider<ApprovedFriendsBloc>(
             create: (context) => ApprovedFriendsBloc()),
-        BlocProvider<EncourageBloc>(create: (context) => EncourageBloc())
+        BlocProvider<EncourageBloc>(create: (context) => EncourageBloc()),
+        BlocProvider<ExploreBloc>(create: (context) => ExploreBloc())
       ],
       child: MaterialApp.router(
         routerConfig: router,

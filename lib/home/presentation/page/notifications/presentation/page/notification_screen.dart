@@ -64,7 +64,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           if (state is NotificationLoadingSuccess) {}
         },
         builder: (context, state) {
-          log(state.toString());
           if (state is NotificationLoading) {
             return ListView.builder(
                 physics: const ClampingScrollPhysics(),

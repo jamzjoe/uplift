@@ -135,7 +135,6 @@ class _CommentPageState extends State<CommentPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<EncourageBloc, EncourageState>(
       builder: (context, state) {
-        log(state.toString());
         if (state is LoadingEncouragesSuccess) {
           final encourages = state.encourages;
           if (encourages.isEmpty) {

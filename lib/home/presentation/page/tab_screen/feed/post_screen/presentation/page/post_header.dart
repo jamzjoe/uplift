@@ -13,6 +13,7 @@ import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/report_dialog.dart';
+import 'package:uplift/utils/widgets/set_reminders_dialog.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostHeader extends StatelessWidget {
@@ -97,6 +98,22 @@ class PostHeader extends StatelessWidget {
                             color: Colors.red[300]),
                         title: const DefaultText(
                             text: 'Report Post', color: secondaryColor),
+                      )),
+                  PopupMenuItem(
+                      onTap: () async {
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => SetReminderDialog());
+                        });
+                      },
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(CupertinoIcons.bell_circle_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
+                            text: 'Set reminder for this post',
+                            color: secondaryColor),
                       )),
                   PopupMenuItem(
                       onTap: () async {

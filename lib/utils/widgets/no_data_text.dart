@@ -17,7 +17,14 @@ class NoDataMessage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Lottie.asset('assets/no-data.json', width: 200),
+          Transform.scale(
+              scale: text == 'No prayer intention found.' ? 1.2 : 1.5,
+              child: Lottie.asset(
+                  text == 'No prayer intention found.'
+                      ? 'assets/no-data.json'
+                      : 'assets/no-user.json',
+                  width: 200)),
+          defaultSpace,
           DefaultText(text: text, color: lightColor),
         ],
       ),

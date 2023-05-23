@@ -33,7 +33,6 @@ class FriendsRepository {
         allID.map((e) => e.data()['receiver'].toString()).toList();
     userIDS.addAll(allID.map((e) => e.data()['sender'].toString()).toList());
     userIDS = userIDS.toSet().toList();
-    log(userIDS.map((e) => e.toString()).toString());
 
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance
@@ -77,7 +76,6 @@ class FriendsRepository {
         allID.map((e) => e.data()['receiver'].toString()).toList();
     userIDS.addAll(allID.map((e) => e.data()['sender'].toString()).toList());
     userIDS = userIDS.toSet().toList();
-    log(userIDS.map((e) => e.toString()).toString());
 
     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
         .instance

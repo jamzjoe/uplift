@@ -63,10 +63,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   onTap: () => context.pushNamed('donate'),
                                   label: 'Set prayer intentions privacy',
                                   icon: CupertinoIcons.globe),
-                              SettingsItem(
-                                  onTap: () => context.pushNamed('donate'),
-                                  label: 'Set reminders',
-                                  icon: CupertinoIcons.bell_fill),
                             ]).toList(),
                           ),
                         )),

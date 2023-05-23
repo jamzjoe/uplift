@@ -4,6 +4,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 import '../../../bloc/authentication/authentication_bloc.dart';
 
 class IntroductionScreen extends StatefulWidget {
@@ -21,9 +22,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
     return LoaderOverlay(
       child: Scaffold(
         body: Container(
-          padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 60),
-          width: double.infinity,
-          height: double.infinity,
+          padding: const EdgeInsets.all(30),
           decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/background.png'),
@@ -35,55 +34,64 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 image: AssetImage('assets/uplift-logo.png'),
                 width: 100,
               ),
-              defaultSpace,
-              const DefaultText(
-                  text: 'Spreading Light, One Prayer at a Time',
-                  color: secondaryColor),
-              SizedBox(height: MediaQuery.of(context).size.height - 650),
+              const SizedBox(height: 5),
+              const SmallText(
+                textAlign: TextAlign.center,
+                text: 'Spreading Light, One Prayer at a Time',
+                color: secondaryColor,
+              ),
               GestureDetector(
                 onTap: () async {
                   BlocProvider.of<AuthenticationBloc>(context)
                       .add(GoogleSignInRequested('', context, false));
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(5)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Image(
-                        image: AssetImage("assets/google-logo.png"),
-                        width: 25,
-                        height: 25,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  shrinkWrap: true,
+                  children: [
+                    Card(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(5)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Image(
+                              image: AssetImage("assets/google-logo.png"),
+                              width: 25,
+                              height: 25,
+                            ),
+                            SizedBox(width: 15),
+                            DefaultText(
+                                text: 'Continue with Google',
+                                color: secondaryColor),
+                          ],
+                        ),
                       ),
-                      DefaultText(
-                          text: 'Continue with Google', color: secondaryColor),
-                      SizedBox(),
-                    ],
-                  ),
-                ),
-              ),
-              defaultSpace,
-              GestureDetector(
-                onTap: goToLogin,
-                child: Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      SizedBox(),
-                      DefaultText(
-                          text: 'Continue in another way',
-                          color: secondaryColor),
-                      SizedBox()
-                    ],
-                  ),
+                    ),
+                    GestureDetector(
+                      onTap: goToLogin,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            SizedBox(),
+                            DefaultText(
+                                text: 'Continue in another way',
+                                color: secondaryColor),
+                            SizedBox()
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               defaultSpace,

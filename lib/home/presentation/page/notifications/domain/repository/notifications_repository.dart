@@ -37,7 +37,6 @@ class NotificationRepository {
 
   static sendPushMessage(
       String token, String body, String title, String type) async {
-    log(token);
     final data = {
       "notification": {"body": body, "title": title},
       "priority": "high",

@@ -31,7 +31,8 @@ class GetPrayerRequestBloc
 
     on<GetPostRequestList>((event, emit) async {
       try {
-        final data = await prayerRequestRepository.getPrayerRequestList();
+        final data = await prayerRequestRepository.getPrayerRequestList(
+            limit: event.limit ?? 10);
 
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {

@@ -6,17 +6,20 @@ class HeaderText extends StatelessWidget {
       required this.text,
       required this.color,
       this.size,
-      this.onTap});
+      this.onTap,
+      this.textAlign});
   final String text;
   final double? size;
   final Color color;
   final VoidCallback? onTap;
+  final TextAlign? textAlign;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Text(
         text,
+        textAlign: textAlign ?? TextAlign.start,
         style: TextStyle(
             color: color,
             fontWeight: FontWeight.bold,
