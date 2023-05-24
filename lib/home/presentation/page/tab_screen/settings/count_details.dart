@@ -14,11 +14,19 @@ class CountAndName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        HeaderText(text: count.toString(), color: secondaryColor),
-        SmallText(text: details, color: lightColor)
-      ],
+    return SizedBox(
+      width: 80,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          HeaderText(text: count.toString(), color: secondaryColor),
+          SmallText(
+            text: details,
+            color: lightColor,
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
     );
   }
 }

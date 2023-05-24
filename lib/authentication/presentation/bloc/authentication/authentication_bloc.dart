@@ -32,14 +32,24 @@ class AuthenticationBloc
       if (user != null) {
         try {
           final token = await FirebaseMessaging.instance.getToken();
-          await FirebaseFirestore.instance
+          final userDoc = await FirebaseFirestore.instance
               .collection('Users')
               .doc(user.uid)
-              .update({"device_token": token});
-          final userModel =
-              await PrayerRequestRepository().getUserRecord(user.uid);
+              .get();
 
-          add(SignIn(UserJoinedModel(userModel!, user)));
+          if (userDoc.exists) {
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({"device_token": token});
+
+            final userModel =
+                await PrayerRequestRepository().getUserRecord(user.uid);
+
+            add(SignIn(UserJoinedModel(userModel!, user)));
+          } else {
+            add(SignOut());
+          }
         } catch (e) {
           add(SignOut());
         }
@@ -152,7 +162,7 @@ class AuthenticationBloc
             user!, event.bio, event.userName.text);
 
         final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID())
+            .getUserRecord(user.uid)
             .then((value) {
           event.context.pop();
           event.context.pop();

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
@@ -29,14 +28,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             backgroundColor: const Color(0xffF0F0F0),
             appBar: AppBar(
               title: const HeaderText(text: 'Settings', color: darkColor),
-              actions: [
-                IconButton(
-                  icon: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Ionicons.pencil_outline)),
-                  onPressed: () {},
-                )
-              ],
             ),
             body: ListView(
               padding: const EdgeInsets.only(bottom: 100),

@@ -161,27 +161,22 @@ class _PostActionsState extends State<PostActions> {
           Colors.transparent, // Set the background color to transparent
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.only(
-            top: 100, // Add padding at the top based on the system insets
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
           ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
             ),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-              ),
-              child: CommentView(
-                currentUser: currentUser,
-                prayerRequestPostModel: prayerRequestPostModel,
-                postOwner: user,
-                postModel: widget.postModel,
-                scrollController: scrollController,
-              ),
+            child: CommentView(
+              currentUser: currentUser,
+              prayerRequestPostModel: prayerRequestPostModel,
+              postOwner: user,
+              postModel: widget.postModel,
+              scrollController: scrollController,
             ),
           ),
         );

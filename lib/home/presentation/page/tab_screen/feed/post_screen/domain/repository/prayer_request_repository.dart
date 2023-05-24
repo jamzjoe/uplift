@@ -327,4 +327,47 @@ class PrayerRequestRepository {
 
     return canDelete;
   }
+
+  Future<List<PostModel>> getPrayerIntentions(
+      String userID, bool isSelf) async {
+    FriendsRepository friendsRepository = FriendsRepository();
+    List<PostModel> listOfPost = [];
+
+    try {
+      final fetchingUserID =
+          await friendsRepository.fetchApprovedFriendRequest(userID);
+      List<String> friendsIDs =
+          fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
+      friendsIDs.add(await AuthServices.userID());
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .where('user_id', isEqualTo: userID)
+          .orderBy('date', descending: true)
+          .get();
+      List<PrayerRequestPostModel> data = response.docs
+          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+          .toList();
+
+      for (var each in data) {
+        final UserModel? user =
+            await PrayerRequestRepository().getUserRecord(each.userId!);
+
+        if (user != null) {
+          listOfPost.add(PostModel(user, each));
+          log(each.reactions!.users!.length.toString());
+        }
+      }
+    } catch (error) {
+      // Handle any potential errors or exceptions
+      log('Error in getPrayerRequestList: $error');
+    }
+    if (isSelf == true) {
+      return listOfPost;
+    } else {
+      return listOfPost
+          .where((element) => element.prayerRequestPostModel.name!.isEmpty)
+          .toList();
+    }
+  }
 }

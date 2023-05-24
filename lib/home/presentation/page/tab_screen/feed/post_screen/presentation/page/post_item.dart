@@ -88,7 +88,10 @@ class _PostItemState extends State<PostItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //Profile, Name and Action Buttons
-                PostHeader(user: user, prayerRequest: prayerRequest),
+                PostHeader(
+                    user: user,
+                    prayerRequest: prayerRequest,
+                    currentUser: currentUser),
                 const SizedBox(height: 5),
                 prayerRequest.imageUrls!.isEmpty
                     ? const SizedBox()

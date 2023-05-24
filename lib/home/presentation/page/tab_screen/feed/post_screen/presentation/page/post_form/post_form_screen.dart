@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,7 +63,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
         key: _key,
         child: Scaffold(
           appBar: AppBar(
-            title: const HeaderText(text: 'Create post', color: secondaryColor),
+            title: const HeaderText(text: 'Create post', color: darkColor),
             actions: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -111,8 +110,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
                         HeaderText(
                           text: user.displayName ?? 'Anonymous User',
                           color: postType != "unanonymous"
-                              ? secondaryColor.withOpacity(0.5)
-                              : secondaryColor,
+                              ? darkColor.withOpacity(0.5)
+                              : darkColor,
                           size: 18,
                         ),
                         const SizedBox(height: 5),
@@ -133,8 +132,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
                                 horizontal: 5, vertical: 2),
                             decoration: BoxDecoration(
                                 color: postType == "unanonymous"
-                                    ? secondaryColor.withOpacity(0.5)
-                                    : secondaryColor,
+                                    ? lighter.withOpacity(0.4)
+                                    : lighter,
                                 borderRadius: BorderRadius.circular(60)),
                             child: Row(
                               children: const [

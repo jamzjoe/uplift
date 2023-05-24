@@ -1,14 +1,9 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
+import 'package:uplift/home/presentation/page/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -40,92 +35,83 @@ class FriendSuggestionHorizontal extends StatelessWidget {
                   itemCount: suggestions.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Stack(children: [
-                          Positioned(
-                              top: 0,
-                              bottom: 0,
-                              right: 0,
-                              left: 0,
-                              child: Center(
-                                child: CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor:
-                                      secondaryColor.withOpacity(1),
-                                  child: const Icon(
-                                    CupertinoIcons.add,
-                                    size: 15,
-                                    color: whiteColor,
+                    return GestureDetector(
+                      onTap: () async {
+                        final user = suggestions[index];
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                        showModalBottomSheet(
+                          backgroundColor: Colors.transparent,
+                          barrierColor: Colors.black.withOpacity(0.5),
+                          isScrollControlled: true,
+                          enableDrag: true,
+                          context: context,
+                          builder: (context) {
+                            return FriendsFeed(userModel: user, currentUser: currentUser);
+                          },
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Stack(children: [
+                            Positioned(
+                                top: 0,
+                                bottom: 0,
+                                right: 0,
+                                left: 0,
+                                child: Center(
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        primaryColor.withOpacity(0.5),
+                                    child: const Icon(
+                                      CupertinoIcons.add,
+                                      size: 15,
+                                      color: whiteColor,
+                                    ),
                                   ),
-                                ),
-                              )),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final FriendShipModel friendShipModel =
-                                      FriendShipModel(
-                                    sender: currentUser.userId,
-                                    receiver: suggestions[index].userId,
-                                    status: 'pending',
-                                    timestamp: Timestamp.now(),
-                                  );
-                                  try {
-                                    await FriendsRepository()
-                                        .addFriendshipRequest(friendShipModel);
-                                    await NotificationRepository.sendPushMessage(
-                                        suggestions[index].deviceToken!,
-                                        '${currentUser.displayName} sent you a friend a request.',
-                                        "Uplift Notification",
-                                        'add-friend');
-
-                                    await NotificationRepository
-                                        .addNotification(
-                                      suggestions[index].userId!,
-                                      'Friend request',
-                                      'sent you a friend a request.',
-                                    );
-                                  } catch (e) {
-                                    log(e.toString());
-                                  }
-                                },
+                                )),
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
                                 child: ProfilePhoto(
                                   user: suggestions[index],
                                   radius: 60,
                                 ),
                               ),
                             ),
-                          ),
-                          const Positioned(
-                              top: 0,
-                              bottom: 0,
-                              right: 0,
-                              left: 0,
-                              child: Center(
-                                child: Icon(
-                                  CupertinoIcons.add,
-                                  size: 15,
-                                  color: whiteColor,
-                                ),
-                              )),
-                        ]),
-                        Flexible(
-                          child: Text(
-                            suggestions[index].displayName?.substring(
-                                    0,
-                                    suggestions[index].displayName!.length < 5
-                                        ? suggestions[index].displayName!.length
-                                        : 5) ??
-                                '',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              overflow: TextOverflow.ellipsis,
+                            const Positioned(
+                                top: 0,
+                                bottom: 0,
+                                right: 0,
+                                left: 0,
+                                child: Center(
+                                  child: Icon(
+                                    CupertinoIcons.add,
+                                    size: 15,
+                                    color: whiteColor,
+                                  ),
+                                )),
+                          ]),
+                          Flexible(
+                            child: Text(
+                              suggestions[index].displayName?.substring(
+                                      0,
+                                      suggestions[index].displayName!.length < 5
+                                          ? suggestions[index]
+                                              .displayName!
+                                              .length
+                                          : 5) ??
+                                  '',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   },
                 ),

@@ -11,6 +11,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
+import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -60,9 +61,10 @@ class _PostListItemState extends State<PostListItem> {
                           Row(
                             children: [
                               const HeaderText(
-                                  text: 'Hello,', color: darkColor),
+                                  text: 'Hello ', color: darkColor),
                               HeaderText(
-                                  text: ' ${userModel.displayName}',
+                                  text: capitalizeFirstLetter(
+                                      '${userModel.displayName},'),
                                   color: secondaryColor),
                             ],
                           ),
@@ -89,10 +91,12 @@ class _PostListItemState extends State<PostListItem> {
                   ],
                 ),
                 defaultSpace,
-                PostField(userJoinModel: widget.userJoinedModel),
+                Tooltip(
+                    showDuration: const Duration(seconds: 1),
+                    message: 'New Prayer',
+                    child: PostField(userJoinModel: widget.userJoinedModel)),
                 defaultSpace,
                 FriendSuggestionHorizontal(currentUser: userModel),
-               
               ],
             ),
           ),
@@ -104,7 +108,7 @@ class _PostListItemState extends State<PostListItem> {
               if (state.prayerRequestPostModel.isEmpty) {
                 return Center(
                     child: SizedBox(
-                  height: MediaQuery.of(context).size.height - 250,
+                  height: MediaQuery.of(context).size.height - 450,
                   child: EndOfPostWidget(
                     isEmpty: true,
                     user: widget.userJoinedModel,
@@ -159,19 +163,6 @@ class EndOfPostWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        const Image(
-          image: AssetImage('assets/angel.png'),
-          width: 70,
-          height: 70,
-        ),
-        defaultSpace,
-        DefaultText(
-            textAlign: TextAlign.center,
-            text: isEmpty
-                ? "No Prayer Intentions yet from\nyour friends."
-                : "Keep spreading joy and positivity\nwherever you go!",
-            color: secondaryColor),
-        defaultSpace,
         Visibility(
           visible: isEmpty,
           child: BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
@@ -199,8 +190,7 @@ class EndOfPostWidget extends StatelessWidget {
                   icon: const Icon(CupertinoIcons.pencil_circle_fill,
                       color: whiteColor),
                   label: const DefaultText(
-                      text: 'Write your first prayer intention',
-                      color: whiteColor));
+                      text: 'New Prayer Intentions', color: whiteColor));
             },
           ),
         ),

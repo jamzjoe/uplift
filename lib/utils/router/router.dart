@@ -7,7 +7,6 @@ import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
 import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.dart';
-import 'package:uplift/home/presentation/page/friends_feed.dart';
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
@@ -146,12 +145,6 @@ final GoRouter router = GoRouter(
                   child: NotificationScreen(
                 notifications: state.extra as List<UserNotifModel>,
               )),
-            ),
-            GoRoute(
-              path: 'friend-feed',
-              name: 'friend-feed',
-              pageBuilder: (context, state) => MaterialPage(
-                  child: FriendsFeed(userModel: state.extra as UserModel)),
             ),
             GoRoute(
                 path: 'qr_reader',

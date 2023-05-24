@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
@@ -21,9 +20,11 @@ class PostHeader extends StatelessWidget {
     super.key,
     required this.user,
     required this.prayerRequest,
+    required this.currentUser,
   });
 
   final UserModel user;
+  final UserModel currentUser;
   final PrayerRequestPostModel prayerRequest;
 
   @override
@@ -41,9 +42,13 @@ class PostHeader extends StatelessWidget {
                 )
               : Hero(
                   tag: 'profile',
-                  child: ProfilePhoto(
-                    user: user,
-                    radius: 10,
+                  child: GestureDetector(
+                    onTap: () => context.pushNamed('photo_view',
+                        extra: user.photoUrl ?? ''),
+                    child: ProfilePhoto(
+                      user: user,
+                      radius: 10,
+                    ),
                   ),
                 ),
           const SizedBox(width: 10),
@@ -54,9 +59,31 @@ class PostHeader extends StatelessWidget {
               children: [
                 HeaderText(
                   onTap: () async {
-                    context.pushNamed('friend-feed', extra: user);
-                    BlocProvider.of<ApprovedFriendsBloc>(context)
-                        .add(FetchApprovedFriendRequest(user.userId!));
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+                    if (prayerRequest.name!.isNotEmpty) {
+                      CustomDialog.showErrorDialog(
+                          context,
+                          "This user set his/her post into private.",
+                          'Request Denied',
+                          'Confirm');
+                      return;
+                    }
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      barrierColor: Colors.black.withOpacity(0.5),
+                      enableDrag: true,
+                      context: context,
+                      builder: (context) {
+                        return FriendsFeed(
+                          userModel: user,
+                          isSelf: user.userId == currentUser.userId,
+                          currentUser: currentUser,
+                        );
+                      },
+                    );
                   },
                   text: prayerRequest.name!.isEmpty
                       ? user.displayName!

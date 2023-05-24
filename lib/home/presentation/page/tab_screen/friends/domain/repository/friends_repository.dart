@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
@@ -233,6 +235,21 @@ class FriendsRepository {
     return data;
   }
 
+  Stream<FriendshipStatus?> checkFriendsStatus(String userID) async* {
+    final currentUserID = FirebaseAuth.instance.currentUser!.uid;
+    List<UserFriendshipModel> friends =
+        await fetchApprovedFriendRequest(userID);
+
+    for (var friend in friends) {
+      if (friend.userModel.userId == currentUserID) {
+        yield FriendshipStatus(friend.friendshipID.friendshipId!, true);
+        return;
+      }
+    }
+
+    yield FriendshipStatus('', false);
+  }
+
   Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(
       String userID) async {
     String status = 'approved';
@@ -293,9 +310,9 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserFriendshipModel>> fetchApprovedFollowingRequest() async {
+  Future<List<UserFriendshipModel>> fetchApprovedFollowingRequest(
+      String userID) async {
     List<UserFriendshipModel> data = [];
-    final userID = await AuthServices.userID();
     String status = 'approved';
 
     //get all userID that you had send friend request - you are the sender and also the one that you received
@@ -355,9 +372,9 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserFriendshipModel>> fetchApprovedFollowerFriendRequest() async {
+  Future<List<UserFriendshipModel>> fetchApprovedFollowerFriendRequest(
+      String userID) async {
     List<UserFriendshipModel> data = [];
-    final userID = await AuthServices.userID();
     String status = 'approved';
 
     //get all userID that you had send friend request - you are the sender and also the one that you received

@@ -156,6 +156,7 @@ class PostStatusWidget extends StatelessWidget {
                   child: SpinKitFadingCircle(
                     color: primaryColor,
                     size: 25,
+                    
                   ),
                 ),
                 SizedBox(width: 15),

@@ -64,7 +64,7 @@ class _SeeMoreTextState extends State<SeeMoreText> {
               child: SmallText(
                   fontStyle: FontStyle.italic,
                   text: isExpanded ? 'See less' : 'See more',
-                  color: whiteColor),
+                  color: linkColor),
             ),
         ],
       ),

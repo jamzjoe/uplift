@@ -92,15 +92,15 @@ class _CommentViewState extends State<CommentView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: CommentPage(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: CommentPage(
             scrollController: widget.scrollController,
             postModel: widget.postModel,
             postOwner: widget.postOwner),
+        bottomSheet: _showCommentBottomSheet(),
       ),
-      bottomSheet: _showCommentBottomSheet(),
     );
   }
 
@@ -151,6 +151,8 @@ class _CommentPageState extends State<CommentPage> {
           }
           return Column(
             children: [
+              defaultSpace,
+              defaultSpace,
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),

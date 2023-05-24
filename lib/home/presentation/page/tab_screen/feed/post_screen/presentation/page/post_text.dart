@@ -26,7 +26,7 @@ class _PostTextState extends State<PostText> {
       title = widget.prayerRequest.title!;
     }
     final bool isEmpty = widget.prayerRequest.imageUrls!.isEmpty;
-    const padding = EdgeInsets.symmetric(vertical: 60, horizontal: 20);
+    const padding = EdgeInsets.symmetric(vertical: 40, horizontal: 20);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
