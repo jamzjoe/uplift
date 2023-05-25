@@ -262,12 +262,14 @@ class _FriendsFeedState extends State<FriendsFeed>
                       children: [
                         // Content for Tab 1
                         PrayerIntentionPage(
-                            user: widget.userModel,
-                            scrollController: widget.scrollController),
+                          user: widget.userModel,
+                          currentUser: widget.currentUser,
+                        ),
                         // Content for Tab 2
                         FollowingPage(
                             user: user, currentUser: widget.currentUser),
-                        FollowerPage(user: user, currentUser: widget.currentUser),
+                        FollowerPage(
+                            user: user, currentUser: widget.currentUser),
                       ],
                     ),
                   ),

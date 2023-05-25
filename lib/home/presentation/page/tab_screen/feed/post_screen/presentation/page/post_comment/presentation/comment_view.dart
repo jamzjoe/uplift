@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
@@ -136,18 +137,28 @@ class _CommentPageState extends State<CommentPage> {
         if (state is LoadingEncouragesSuccess) {
           final encourages = state.encourages;
           if (encourages.isEmpty) {
-            return Center(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child:
-                          DefaultText(text: 'No Encourage Yet', color: lighter),
-                    ),
+            return GestureDetector(
+                onVerticalDragDown: (details) {
+                  if (context.canPop()) {
+                    context.pop();
+                  }
+                },
+                child: LayoutBuilder(
+                  builder: (context, constraints) => ListView(
+                    controller: widget.scrollController,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: const Center(
+                            child: DefaultText(
+                                text: 'No encourages yet', color: darkColor)),
+                      )
+                    ],
                   ),
-                ],
-              ),
-            );
+                ));
           }
           return Column(
             children: [

@@ -84,12 +84,9 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
                     );
                   } else if (state is FriendsSuggestionLoadingSuccess) {
                     if (state.users.isEmpty) {
-                      return Column(
-                        children: const [
-                          Center(
-                            child: NoDataMessage(text: 'No user found'),
-                          ),
-                        ],
+                      return const Align(
+                        alignment: Alignment.center,
+                        child: NoDataMessage(text: 'No user found'),
                       );
                     }
                     return Column(

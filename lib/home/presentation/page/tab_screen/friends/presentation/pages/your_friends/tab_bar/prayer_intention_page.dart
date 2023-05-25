@@ -11,17 +11,18 @@ class PrayerIntentionPage extends StatefulWidget {
   const PrayerIntentionPage({
     super.key,
     required this.user,
-    this.isSelf,
-    required this.scrollController,
+    this.isSelf, required this.currentUser,
   });
 
   final UserModel user;
+  final UserModel currentUser;
   final bool? isSelf;
-  final ScrollController scrollController;
 
   @override
   State<PrayerIntentionPage> createState() => _PrayerIntentionPageState();
 }
+
+final ScrollController scrollController = ScrollController();
 
 class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
   @override
@@ -52,7 +53,7 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
                 ...data!.map(
                   (e) => PostItem(
                     postModel: e,
-                    user: e.userModel,
+                    user: widget.currentUser,
                     fullView: false,
                   ),
                 )

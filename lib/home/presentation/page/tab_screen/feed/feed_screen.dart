@@ -50,6 +50,29 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       extendBody: true,
+      appBar: AppBar(
+        backgroundColor: whiteColor,
+        title: const Image(
+          image: AssetImage('assets/uplift-logo.png'),
+          width: 80,
+        ),
+        actions: [
+          Badge.count(
+            isLabelVisible: badgeCount != 0,
+            count: badgeCount,
+            alignment: AlignmentDirectional.bottomStart,
+            child: IconButton(
+              onPressed: () {
+                goToNotificationScreen(user.uid, notifications);
+              },
+              icon: const Image(
+                image: AssetImage('assets/bell.png'),
+                width: 30,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: BlocListener<NotificationBloc, NotificationState>(
         listener: (context, state) {
           if (state is NotificationLoadingSuccess) {
@@ -62,52 +85,20 @@ class _FeedScreenState extends State<FeedScreen> {
           }
         },
         child: SafeArea(
-          maintainBottomViewPadding: true,
-          child: NestedScrollView(
-            controller: scrollController,
-            floatHeaderSlivers: true,
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                backgroundColor: whiteColor,
-                title: const Image(
-                  image: AssetImage('assets/uplift-logo.png'),
-                  width: 80,
-                ),
-                actions: [
-                  Badge.count(
-                    isLabelVisible: badgeCount != 0,
-                    count: badgeCount,
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: IconButton(
-                      onPressed: () {
-                        goToNotificationScreen(user.uid, notifications);
-                      },
-                      icon: const Image(
-                        image: AssetImage('assets/bell.png'),
-                        width: 30,
-                      ),
-                    ),
-                  ),
-                ],
+            maintainBottomViewPadding: true,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<GetPrayerRequestBloc>(context)
+                    .add(RefreshPostRequestList(widget.user.user.uid));
+              },
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return PostListItem(userJoinedModel: userJoinedModel);
+                },
               ),
-            ],
-            body: Column(
-              children: [
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      BlocProvider.of<GetPrayerRequestBloc>(context)
-                          .add(RefreshPostRequestList(widget.user.user.uid));
-                    },
-                    child: SingleChildScrollView(
-                      child: PostListItem(userJoinedModel: userJoinedModel),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+            )),
       ),
     );
   }

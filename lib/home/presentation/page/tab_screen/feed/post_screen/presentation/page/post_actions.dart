@@ -111,6 +111,10 @@ class _PostActionsState extends State<PostActions> {
                     .add(FetchEncourageEvent(widget.prayerRequest.postId!));
                 showFlexibleBottomSheet(
                   minHeight: 0,
+                  isExpand: true,
+                  isDismissible: true,
+                  isCollapsible: true,
+                  isModal: true,
                   initHeight: 0.92,
                   maxHeight: 1,
                   context: context,

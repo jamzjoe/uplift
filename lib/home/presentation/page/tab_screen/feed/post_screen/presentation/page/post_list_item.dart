@@ -8,7 +8,6 @@ import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
@@ -20,24 +19,18 @@ import '../../../feed_screen.dart';
 import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_item.dart';
 
-class PostListItem extends StatefulWidget {
+class PostListItem extends StatelessWidget {
   const PostListItem({
-    super.key,
+    Key? key,
     required this.userJoinedModel,
-  });
+  }) : super(key: key);
+
   final UserJoinedModel userJoinedModel;
 
   @override
-  State<PostListItem> createState() => _PostListItemState();
-}
-
-List<UserModel> suggestions = [];
-
-class _PostListItemState extends State<PostListItem> {
-  @override
   Widget build(BuildContext context) {
-    final UserModel userModel = widget.userJoinedModel.userModel;
-    final User user = widget.userJoinedModel.user;
+    final UserModel userModel = userJoinedModel.userModel;
+    final User user = userJoinedModel.user;
 
     return Column(
       children: [
@@ -47,54 +40,48 @@ class _PostListItemState extends State<PostListItem> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Row(
                             children: [
                               const HeaderText(
                                   text: 'Hello ', color: darkColor),
                               HeaderText(
-                                  text: capitalizeFirstLetter(
-                                      '${userModel.displayName},'),
-                                  color: secondaryColor),
+                                text: capitalizeFirstLetter(
+                                    '${userModel.displayName},'),
+                                color: secondaryColor,
+                              ),
                             ],
                           ),
                           SmallText(
-                              text: 'What would you like us to pray for?',
-                              color: darkColor.withOpacity(0.8)),
+                            text: 'What would you like us to pray for?',
+                            color: darkColor.withOpacity(0.8),
+                          ),
                         ],
                       ),
                     ),
                     Container(
-                        width: 60,
-                        height: 60,
-                        clipBehavior: Clip.none,
-                        decoration: const BoxDecoration(),
-                        child: Transform.scale(
-                          scale: 2,
-                          origin: const Offset(3, 6),
-                          child: LottieBuilder.asset(
-                            'assets/thinking.json',
-                            height: 150,
-                            width: 150,
-                          ),
-                        )),
+                      width: 60,
+                      height: 60,
+                      clipBehavior: Clip.none,
+                      child: Transform.scale(
+                        scale: 2,
+                        origin: const Offset(3, 6),
+                        child: LottieBuilder.asset(
+                          'assets/thinking.json',
+                          height: 150,
+                          width: 150,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                defaultSpace,
-                Tooltip(
-                    showDuration: const Duration(seconds: 1),
-                    message: 'New Prayer',
-                    child: PostField(userJoinModel: widget.userJoinedModel)),
                 defaultSpace,
                 FriendSuggestionHorizontal(currentUser: userModel),
               ],
@@ -107,37 +94,44 @@ class _PostListItemState extends State<PostListItem> {
             if (state is LoadingPrayerRequesListSuccess) {
               if (state.prayerRequestPostModel.isEmpty) {
                 return Center(
-                    child: SizedBox(
-                  height: MediaQuery.of(context).size.height - 450,
-                  child: EndOfPostWidget(
-                    isEmpty: true,
-                    user: widget.userJoinedModel,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height - 450,
+                    child: EndOfPostWidget(
+                      isEmpty: true,
+                      user: userJoinedModel,
+                    ),
                   ),
-                ));
+                );
               }
 
-              return ListView(
+              return ListView.builder(
                 padding: const EdgeInsets.only(bottom: 120),
                 physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
-                children: [
-                  const PostStatusWidget(),
-                  ...state.prayerRequestPostModel.map((e) => PostItem(
-                        postModel: e,
-                        user: userModel,
-                        fullView: false,
-                      )),
-                  defaultSpace,
-                  EndOfPostWidget(
-                    isEmpty: false,
-                    user: widget.userJoinedModel,
-                  ),
-                ],
+                itemCount: state.prayerRequestPostModel.length + 3,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return const PostStatusWidget();
+                  } else if (index <= state.prayerRequestPostModel.length) {
+                    final e = state.prayerRequestPostModel[index - 1];
+                    return PostItem(
+                      postModel: e,
+                      user: userModel,
+                      fullView: false,
+                    );
+                  } else if (index == state.prayerRequestPostModel.length + 1) {
+                    return defaultSpace;
+                  } else {
+                    return EndOfPostWidget(
+                      isEmpty: false,
+                      user: userJoinedModel,
+                    );
+                  }
+                },
               );
-            } else if (state is LoadingPrayerRequesList) {
+            } else if (state is LoadingPrayerRequesList ||
+                state is NoInternetConnnection) {
               return const PostShimmerLoading();
-            } else if (state is NoInternetConnnection) {
-              return const Text('No Internet Connection');
             }
             return const PostShimmerLoading();
           },
@@ -149,10 +143,11 @@ class _PostListItemState extends State<PostListItem> {
 
 class EndOfPostWidget extends StatelessWidget {
   const EndOfPostWidget({
-    super.key,
+    Key? key,
     required this.isEmpty,
     required this.user,
-  });
+  }) : super(key: key);
+
   final bool isEmpty;
   final UserJoinedModel user;
 
@@ -167,42 +162,43 @@ class EndOfPostWidget extends StatelessWidget {
           visible: isEmpty,
           child: BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
             builder: (context, state) {
-              if (state is PostPrayerRequestLoading) {
-                return ElevatedButton.icon(
-                    onPressed: () {
-                      context.pushNamed('post_field', extra: user);
-                    },
-                    icon: const SizedBox(
+              final isLoading = state is PostPrayerRequestLoading;
+
+              return ElevatedButton.icon(
+                onPressed: () {
+                  context.pushNamed('post_field', extra: user);
+                },
+                icon: isLoading
+                    ? const SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
                           color: whiteColor,
-                        )),
-                    label: const DefaultText(
-                        text: 'Posting your prayer request..',
-                        color: whiteColor));
-              }
-              return ElevatedButton.icon(
-                  onPressed: () {
-                    context.pushNamed('post_field', extra: user);
-                  },
-                  icon: const Icon(CupertinoIcons.pencil_circle_fill,
-                      color: whiteColor),
-                  label: const DefaultText(
-                      text: 'New Prayer Intentions', color: whiteColor));
+                        ),
+                      )
+                    : const Icon(CupertinoIcons.pencil_circle_fill,
+                        color: whiteColor),
+                label: DefaultText(
+                  text: isLoading
+                      ? 'Posting your prayer request..'
+                      : 'New Prayer Intentions',
+                  color: whiteColor,
+                ),
+              );
             },
           ),
         ),
         Visibility(
           visible: isEmpty,
           child: TextButton.icon(
-              onPressed: () {
-                context.pushNamed('friend_suggest', extra: user.userModel);
-              },
-              icon: const Icon(CupertinoIcons.person_add_solid),
-              label: const DefaultText(
-                  text: 'Find friends', color: secondaryColor)),
+            onPressed: () {
+              context.pushNamed('friend_suggest', extra: user.userModel);
+            },
+            icon: const Icon(CupertinoIcons.person_add_solid),
+            label:
+                const DefaultText(text: 'Find friends', color: secondaryColor),
+          ),
         ),
       ],
     );
