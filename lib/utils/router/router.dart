@@ -129,7 +129,7 @@ final GoRouter router = GoRouter(
                 pageBuilder: (context, state) {
                   return MaterialPage(
                       child: FollowingListScreen(
-                    currentUser: state.extra as User,
+                    currentUser: state.extra as UserModel,
                   ));
                 }),
             GoRoute(

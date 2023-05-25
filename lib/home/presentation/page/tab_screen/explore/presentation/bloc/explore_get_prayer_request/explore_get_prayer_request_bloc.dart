@@ -24,14 +24,14 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
         .collection('Prayers')
         .snapshots()
         .listen((event) async {
-      add(const GetExplorePrayerRequestList());
+      add(GetExplorePrayerRequestList(userID));
     });
     on<ExploreEvent>((event, emit) {});
 
     on<GetExplorePrayerRequestList>((event, emit) async {
       try {
         final data = await prayerRequestRepository.getPrayerRequestList(
-            limit: event.limit);
+            limit: event.limit, userID: event.userID);
 
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {
@@ -43,7 +43,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       emit(LoadingPrayerRequesList());
       try {
         final data =
-            await prayerRequestRepository.seearchPrayerRequest(event.query);
+            await prayerRequestRepository.searchPrayerRequest(event.query);
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {
         emit(LoadingPrayerRequesListError());
@@ -64,7 +64,8 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
     on<RefreshPostRequestList>((event, emit) async {
       emit(LoadingPrayerRequesList());
       try {
-        final data = await prayerRequestRepository.getPrayerRequestList();
+        final data = await prayerRequestRepository.getPrayerRequestList(
+            userID: event.userID);
         emit(LoadingPrayerRequesListSuccess(data));
       } on FirebaseException {
         emit(LoadingPrayerRequesListError());

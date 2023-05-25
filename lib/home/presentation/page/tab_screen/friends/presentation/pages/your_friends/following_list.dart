@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'friends_item.dart';
@@ -10,7 +11,7 @@ class FollowingListScreen extends StatefulWidget {
     super.key,
     required this.currentUser,
   });
-  final User currentUser;
+  final UserModel currentUser;
 
   @override
   State<FollowingListScreen> createState() => _FollowingListScreenState();
@@ -34,7 +35,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
             physics: const ClampingScrollPhysics(),
             children: [
               ...state.approvedFriendList
-                  .map((e) => FriendsItem(userFriendship: e))
+                  .map((e) => FriendsItem(userFriendship: e, currentUser: widget.currentUser,))
             ],
           );
         } else if (state is EmptySearchResult) {

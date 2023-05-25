@@ -118,62 +118,7 @@ class FriendsRepository {
     });
   }
 
-  // Future<List<FriendShipModel>> getFriendRequest(String currentUserID) async {
-  //   try {
-  //     QuerySnapshot<Map<String, dynamic>> fetching = await FirebaseFirestore
-  //         .instance
-  //         .collection('Friendships')
-  //         .where('status', isEqualTo: 'pending')
-  //         .where('receiver', isEqualTo: currentUserID)
-  //         .get();
 
-  //     List<FriendShipModel> data = fetching.docs
-  //         .map((e) => FriendShipModel.fromJson(e.data()))
-  //         .toList()
-  //         .reversed
-  //         .toList();
-
-  //     return data;
-  //   } catch (e) {
-  //     return Future.error(e.toString());
-  //   }
-  // }
-
-  // Future<List<UserModel>> fetchFriendRequest() async {
-  //   List<UserModel> data = [];
-  //   final cuurentUserID = await AuthServices.userID();
-  //   String status = 'pending';
-  //   List<String> pendingReceiverIDs = [];
-
-  //   //get all userID that you had send friend request - you are the sender and also the one that you received
-  //   QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
-  //       await FirebaseFirestore.instance
-  //           .collection('Friendships')
-  //           .where('status', isEqualTo: status)
-  //           .where('receiver', isEqualTo: cuurentUserID)
-  //           .get();
-
-  //   for (var doc in fetchingReceiverID.docs) {
-  //     String senderID = doc.data()['sender'];
-  //     pendingReceiverIDs.add(senderID);
-  //   }
-  //   if (pendingReceiverIDs.isEmpty) {
-  //     return [];
-  //   } else {
-  //     QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-  //         .instance
-  //         .collection('Users')
-  //         .where('user_id', whereIn: pendingReceiverIDs)
-  //         .get();
-  //     data = response.docs
-  //         .map((e) => UserModel.fromJson(e.data()))
-  //         .toList()
-  //         .reversed
-  //         .toList();
-  //   }
-
-  //   return data;
-  // }
 
   Future<List<UserFriendshipModel>> fetchFriendRequest(String userID) async {
     List<UserFriendshipModel> data = [];
@@ -253,6 +198,8 @@ class FriendsRepository {
   Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(
       String userID) async {
     String status = 'approved';
+    List<String> userIDS = [];
+    List<String> friendshipID = [];
 
     QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
         await FirebaseFirestore.instance
@@ -266,9 +213,6 @@ class FriendsRepository {
             .where('status', isEqualTo: status)
             .where('sender', isEqualTo: userID)
             .get();
-
-    List<String> userIDS = [];
-    List<String> friendshipID = [];
 
     for (var doc in fetchingReceiverID.docs) {
       String sender = doc.data()['sender'];
@@ -290,14 +234,24 @@ class FriendsRepository {
       return [];
     }
 
-    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-        .instance
-        .collection('Users')
-        .where('user_id', whereIn: userIDS)
-        .get();
+    // Split userIDS into chunks of 10 (or the desired limit)
+    const chunkSize = 10;
+    final chunks = _splitListIntoChunks(userIDS, chunkSize);
 
-    List<UserModel> users =
-        response.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+    List<UserModel> users = [];
+    for (var chunk in chunks) {
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .where('user_id', whereIn: chunk)
+          .get();
+
+      List<UserModel> chunkUsers =
+          response.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+
+      users.addAll(chunkUsers);
+    }
+
     List<UserFriendshipModel> data = [];
 
     for (int i = 0; i < friendshipID.length; i++) {
@@ -308,6 +262,15 @@ class FriendsRepository {
     }
 
     return data;
+  }
+
+  List<List<T>> _splitListIntoChunks<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
   }
 
   Future<List<NewUserFriendshipModel>> fetchAllFriendRequest(

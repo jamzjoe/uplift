@@ -5,12 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_tab_bar.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/friends_tab_bar.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -149,7 +150,21 @@ class _FriendsFeedState extends State<FriendsFeed>
                         AsyncSnapshot<NewUserFriendshipModel?> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         // Show a loading indicator while fetching the data
-                        return const CircularProgressIndicator();
+                        return Shimmer.fromColors(
+                          baseColor: secondaryColor.withOpacity(0.2),
+                          highlightColor: Colors.grey.shade100.withOpacity(0.5),
+                          child: ElevatedButton.icon(
+                            label: const SmallText(
+                              text: 'UNFOLLOW',
+                              color: whiteColor,
+                            ),
+                            onPressed: () {},
+                            icon: const Icon(
+                              CupertinoIcons.add_circled_solid,
+                              color: whiteColor,
+                            ),
+                          ),
+                        );
                       } else if (snapshot.hasError) {
                         // Show an error message if an error occurred
                         return Text('Error: ${snapshot.error}');
@@ -218,7 +233,11 @@ class _FriendsFeedState extends State<FriendsFeed>
                 defaultSpace,
               ],
             ),
-            Flexible(child: FriendsTabBarView(user: user))
+            Flexible(
+                child: FriendsTabBarView(
+              user: user,
+              currentUser: widget.currentUser,
+            ))
           ],
         ),
       ),

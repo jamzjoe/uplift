@@ -17,9 +17,11 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -35,6 +37,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  tz.initializeTimeZones();
 
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   requestPermission();
@@ -52,6 +55,8 @@ void main() async {
   }).onError((handleError) {
     log(handleError);
   });
+
+  NotificationRepository.showNotification();
 
   runApp(const MyApp());
 }
@@ -97,8 +102,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PostPrayerRequestBloc>(
             create: (context) => PostPrayerRequestBloc()),
         BlocProvider<GetPrayerRequestBloc>(
-            create: (context) =>
-                GetPrayerRequestBloc()..add(const GetPostRequestList())),
+            create: (context) => GetPrayerRequestBloc()),
         BlocProvider<FriendsSuggestionsBlocBloc>(
             create: (context) =>
                 FriendsSuggestionsBlocBloc()..add(FetchUsersEvent())),
@@ -108,7 +112,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ApprovedFriendsBloc>(
             create: (context) => ApprovedFriendsBloc()),
         BlocProvider<EncourageBloc>(create: (context) => EncourageBloc()),
-        BlocProvider<ExploreBloc>(create: (context) => ExploreBloc())
+        BlocProvider<ExploreBloc>(create: (context) => ExploreBloc()),
+        BlocProvider<SameIntentionsSuggestionBloc>(
+            create: (context) => SameIntentionsSuggestionBloc())
       ],
       child: MaterialApp.router(
         routerConfig: router,

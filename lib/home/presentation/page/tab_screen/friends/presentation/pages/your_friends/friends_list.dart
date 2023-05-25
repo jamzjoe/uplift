@@ -35,7 +35,8 @@ class _FriendsListState extends State<FriendsList> {
               physics: const ClampingScrollPhysics(),
               itemBuilder: (context, index) {
                 return FriendsItem(
-                    userFriendship: state.approvedFriendList[index]);
+                    userFriendship: state.approvedFriendList[index],
+                    currentUser: widget.currentUser);
               },
               separatorBuilder: (context, index) {
                 return Divider(

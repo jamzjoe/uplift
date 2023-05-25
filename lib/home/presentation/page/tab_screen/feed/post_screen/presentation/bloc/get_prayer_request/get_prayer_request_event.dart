@@ -6,14 +6,16 @@ abstract class GetPrayerRequestEvent extends Equatable {
 
 class GetPostRequestList extends GetPrayerRequestEvent {
   final int? limit;
-  const GetPostRequestList({this.limit});
+  final String userID;
+  const GetPostRequestList(this.userID, {this.limit});
 
   @override
   List<Object> get props => [];
 }
 
 class RefreshPostRequestList extends GetPrayerRequestEvent {
-  const RefreshPostRequestList();
+  final String userID;
+  const RefreshPostRequestList(this.userID);
   @override
   List<Object?> get props => [];
 }

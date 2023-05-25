@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/settings/reminder_page.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../../../../constant/constant.dart';
@@ -51,7 +52,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children:
                                 ListTile.divideTiles(context: context, tiles: [
                               SettingsItem(
-                                  onTap: () => context.pushNamed('donate'),
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ReminderPage())),
                                   label: 'Set prayer intentions privacy',
                                   icon: CupertinoIcons.globe),
                             ]).toList(),

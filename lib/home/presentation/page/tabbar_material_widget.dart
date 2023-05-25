@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
@@ -11,12 +12,14 @@ class TabBarMaterialWidget extends StatefulWidget {
   final int index;
   final ValueChanged<int> onChangedTab;
   final TabController? controller;
+  final UserModel user;
 
   const TabBarMaterialWidget({
     required this.index,
     required this.onChangedTab,
     super.key,
     this.controller,
+    required this.user,
   });
 
   @override
@@ -45,32 +48,33 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             buildTabItem(
-              label: 'Feed',
-              index: 0,
-              icon: const Icon(Ionicons.grid_outline, size: 23),
-              selectedIcon: const Icon(Ionicons.grid, size: 23),
-            ),
+                label: 'Feed',
+                index: 0,
+                icon: const Icon(Ionicons.grid_outline, size: 23),
+                selectedIcon: const Icon(Ionicons.grid, size: 23),
+                userID: widget.user.userId!),
             buildTabItem(
-              label: 'Friends',
-              index: 1,
-              icon: const Icon(CupertinoIcons.person_2_square_stack, size: 23),
-              selectedIcon: const Icon(
-                  CupertinoIcons.person_2_square_stack_fill,
-                  size: 23),
-            ),
+                label: 'Friends',
+                index: 1,
+                icon:
+                    const Icon(CupertinoIcons.person_2_square_stack, size: 23),
+                selectedIcon: const Icon(
+                    CupertinoIcons.person_2_square_stack_fill,
+                    size: 23),
+                userID: widget.user.userId!),
             placeholder,
             buildTabItem(
                 label: 'Explore',
                 index: 2,
                 icon: const Icon(CupertinoIcons.compass, size: 23),
-                selectedIcon:
-                    const Icon(CupertinoIcons.compass_fill, size: 23)),
+                selectedIcon: const Icon(CupertinoIcons.compass_fill, size: 23),
+                userID: widget.user.userId!),
             buildTabItem(
-              label: 'Settings',
-              index: 3,
-              icon: const Icon(Ionicons.settings_outline, size: 23),
-              selectedIcon: const Icon(Ionicons.settings, size: 23),
-            ),
+                label: 'Settings',
+                index: 3,
+                icon: const Icon(Ionicons.settings_outline, size: 23),
+                selectedIcon: const Icon(Ionicons.settings, size: 23),
+                userID: widget.user.userId!),
           ],
         ),
       ),
@@ -81,7 +85,8 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       {required int index,
       required Icon icon,
       required Icon selectedIcon,
-      required String label}) {
+      required String label,
+      required String userID}) {
     final isSelected = index == widget.index;
     if (index == 2) {
       return Column(
@@ -92,7 +97,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
               color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
               onPressed: () async {
                 BlocProvider.of<ExploreBloc>(context)
-                    .add(const GetExplorePrayerRequestList());
+                    .add(GetExplorePrayerRequestList(userID));
                 widget.onChangedTab(index);
                 widget.controller!.animateTo(index);
               },

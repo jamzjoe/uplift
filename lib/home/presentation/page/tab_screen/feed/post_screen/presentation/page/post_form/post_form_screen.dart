@@ -34,6 +34,21 @@ class _PostFormScreenState extends State<PostFormScreen> {
   List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
   String postType = "unanonymous";
+  String selectedPrayerIntention = 'Personal';
+
+  // List of prayer intentions titles
+  List<String> prayerIntentions = [
+    'Personal',
+    'Family',
+    'Community',
+    'Global',
+    'Gratitude',
+    'Healing',
+    'Faith',
+    'Vocational',
+    'Special'
+    // Add more prayer intentions titles as needed
+  ];
 
   @override
   void initState() {
@@ -85,7 +100,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                                 files,
                                 postType == 'anonymous' ? 'Uplift User' : '',
                                 friends,
-                                _titleController.text));
+                                selectedPrayerIntention, context));
                         context.pop();
                       }
                     },
@@ -153,12 +168,24 @@ class _PostFormScreenState extends State<PostFormScreen> {
                   ],
                 ),
                 defaultSpace,
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                      prefixIcon:
-                          Icon(CupertinoIcons.textbox, color: secondaryColor),
-                      hintText: 'Add title'),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: selectedPrayerIntention,
+                    hint: const Text('Select Prayer Intention'),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPrayerIntention = value ?? '';
+                      });
+                    },
+                    items: prayerIntentions.map((String intention) {
+                      return DropdownMenuItem<String>(
+                        value: intention,
+                        child: Text(intention),
+                      );
+                    }).toList(),
+                  ),
                 ),
                 defaultSpace,
                 Expanded(

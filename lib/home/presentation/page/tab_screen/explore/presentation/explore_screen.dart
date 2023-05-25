@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
@@ -10,8 +11,8 @@ import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'package:uplift/utils/widgets/search_bar.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({Key? key}) : super(key: key);
-
+  const ExploreScreen({Key? key, required this.user}) : super(key: key);
+  final UserModel user;
   @override
   _ExploreScreenState createState() => _ExploreScreenState();
 }
@@ -38,7 +39,8 @@ class _ExploreScreenState extends State<ExploreScreen>
         backgroundColor: Colors.grey.shade200,
         extendBody: true,
         body: RefreshIndicator(
-          onRefresh: () async => searchQueryConditions(pageIndex, context),
+          onRefresh: () async =>
+              searchQueryConditions(pageIndex, context, widget.user.userId!),
           child: SingleChildScrollView(
             controller: scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
@@ -85,7 +87,8 @@ class _ExploreScreenState extends State<ExploreScreen>
                               pageIndex = value + 1;
                             });
                             int index = value + 1;
-                            searchQueryConditions(index, context);
+                            searchQueryConditions(
+                                index, context, widget.user.userId!);
                           },
                           isScrollable: true,
                           tabs: const [
@@ -150,9 +153,9 @@ class _ExploreScreenState extends State<ExploreScreen>
     );
   }
 
-  void searchQueryConditions(int index, BuildContext context) {
+  void searchQueryConditions(int index, BuildContext context, String userID) {
     if (index == 1) {
-      getAll(context);
+      getAll(context, userID);
     } else if (index == 2) {
       getAllPopular(context);
     } else if (index >= 3 && index <= 10) {
@@ -178,9 +181,9 @@ class _ExploreScreenState extends State<ExploreScreen>
     BlocProvider.of<ExploreBloc>(context).add(GetPrayerRequestByPopularity());
   }
 
-  void getAll(BuildContext context) {
+  void getAll(BuildContext context, String userID) {
     BlocProvider.of<ExploreBloc>(context)
-        .add(const GetExplorePrayerRequestList());
+        .add(GetExplorePrayerRequestList(userID));
   }
 
   void _scrollListener() {
@@ -188,15 +191,15 @@ class _ExploreScreenState extends State<ExploreScreen>
         scrollController.position.maxScrollExtent) {
       // Reached the end of the scroll view
       // Perform your desired action here, such as fetching more data
-      loadMoreData();
+      loadMoreData(widget.user.userId!);
     }
   }
 
-  void loadMoreData() async {
+  void loadMoreData(String userID) async {
     setState(() {
       paginationLimit = paginationLimit + 10;
     });
     BlocProvider.of<ExploreBloc>(context)
-        .add(GetExplorePrayerRequestList(limit: paginationLimit));
+        .add(GetExplorePrayerRequestList(limit: paginationLimit, userID));
   }
 }

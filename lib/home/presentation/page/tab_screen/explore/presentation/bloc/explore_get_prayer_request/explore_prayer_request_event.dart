@@ -6,14 +6,17 @@ abstract class ExploreEvent extends Equatable {
 
 class GetExplorePrayerRequestList extends ExploreEvent {
   final int? limit;
-  const GetExplorePrayerRequestList({this.limit});
+  final String userID;
+  const GetExplorePrayerRequestList(this.userID, {this.limit});
 
   @override
   List<Object> get props => [limit ?? ''];
 }
 
 class RefreshPostRequestList extends ExploreEvent {
-  const RefreshPostRequestList();
+  const RefreshPostRequestList(this.userID);
+
+  final String userID;
   @override
   List<Object?> get props => [];
 }

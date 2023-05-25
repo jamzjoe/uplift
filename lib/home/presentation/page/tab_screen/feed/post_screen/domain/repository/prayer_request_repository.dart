@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/intentions_user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
@@ -14,27 +15,39 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/domain/reposito
 import 'package:uplift/utils/services/auth_services.dart';
 
 class PrayerRequestRepository {
-  Future<List<PostModel>> getPrayerRequestList({int? limit}) async {
+  Future<List<PostModel>> getPrayerRequestList({int? limit, required String userID}) async {
     FriendsRepository friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = [];
 
     try {
-      final userID = await AuthServices.userID();
       final fetchingUserID =
           await friendsRepository.fetchApprovedFriendRequest(userID);
       List<String> friendsIDs =
           fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
       friendsIDs.add(await AuthServices.userID());
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Prayers')
-          .where('user_id', whereIn: friendsIDs)
-          .orderBy('date', descending: true)
-          .limit(limit ?? 10)
-          .get();
-      List<PrayerRequestPostModel> data = response.docs
-          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
-          .toList();
+
+      // Split friendsIDs into chunks of 10 (or the specified limit)
+      const chunkSize = 10;
+      final chunks = _splitListIntoChunks(friendsIDs, chunkSize);
+
+      List<PrayerRequestPostModel> data = [];
+
+      // Perform multiple queries for each chunk
+      for (var chunk in chunks) {
+        QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+            .instance
+            .collection('Prayers')
+            .where('user_id', whereIn: chunk)
+            .orderBy('date', descending: true)
+            .limit(limit ?? 10)
+            .get();
+
+        List<PrayerRequestPostModel> chunkData = response.docs
+            .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+            .toList();
+
+        data.addAll(chunkData);
+      }
 
       for (var each in data) {
         final UserModel? user =
@@ -45,12 +58,25 @@ class PrayerRequestRepository {
           log(each.reactions!.users!.length.toString());
         }
       }
+
+      // Sort the list of posts by date in descending order
+      listOfPost.sort((a, b) => b.prayerRequestPostModel.date!
+          .compareTo(a.prayerRequestPostModel.date!));
     } catch (error) {
       // Handle any potential errors or exceptions
-      log('Error in getPrayerRequestList: $error');
+      log('Error in get prayer: $error');
     }
 
     return listOfPost;
+  }
+
+  List<List<T>> _splitListIntoChunks<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
   }
 
   Future<List<PostModel>> getPrayerRequestListByReactions() async {
@@ -64,14 +90,27 @@ class PrayerRequestRepository {
       List<String> friendsIDs =
           fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
       friendsIDs.add(await AuthServices.userID());
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Prayers')
-          .where('user_id', whereIn: friendsIDs)
-          .get();
-      List<PrayerRequestPostModel> data = response.docs
-          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
-          .toList();
+
+      // Split friendsIDs into chunks of 10 (or the desired limit)
+      const chunkSize = 10;
+      final chunks = _splitListIntoChunks(friendsIDs, chunkSize);
+
+      List<PrayerRequestPostModel> data = [];
+
+      // Perform multiple queries for each chunk
+      for (var chunk in chunks) {
+        QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+            .instance
+            .collection('Prayers')
+            .where('user_id', whereIn: chunk)
+            .get();
+
+        List<PrayerRequestPostModel> chunkData = response.docs
+            .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+            .toList();
+
+        data.addAll(chunkData);
+      }
 
       // Sort prayer requests by the length of reactions
       data.sort((a, b) => (b.reactions?.users?.length ?? 0)
@@ -93,7 +132,16 @@ class PrayerRequestRepository {
     return listOfPost;
   }
 
-  Future<List<PostModel>> seearchPrayerRequest(String query) async {
+  List<List<T>> splitListIntoChunks<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  Future<List<PostModel>> searchPrayerRequest(String query) async {
     FriendsRepository friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = [];
 
@@ -104,15 +152,29 @@ class PrayerRequestRepository {
       List<String> friendsIDs =
           fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
       friendsIDs.add(await AuthServices.userID());
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Prayers')
-          .where('user_id', whereIn: friendsIDs)
-          .orderBy('date', descending: true)
-          .get();
-      List<PrayerRequestPostModel> data = response.docs
-          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
-          .toList();
+
+      // Split friendsIDs into chunks of 10 (or the specified limit)
+      const chunkSize = 10;
+      final chunks = _splitListIntoChunks(friendsIDs, chunkSize);
+
+      List<PrayerRequestPostModel> data = [];
+
+      // Perform multiple queries for each chunk
+      for (var chunk in chunks) {
+        QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+            .instance
+            .collection('Prayers')
+            .where('user_id', whereIn: chunk)
+            .orderBy('date', descending: true)
+            .limit(10)
+            .get();
+
+        List<PrayerRequestPostModel> chunkData = response.docs
+            .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+            .toList();
+
+        data.addAll(chunkData);
+      }
 
       for (var each in data) {
         final UserModel? user =
@@ -120,11 +182,12 @@ class PrayerRequestRepository {
 
         if (user != null) {
           listOfPost.add(PostModel(user, each));
+          log(each.reactions!.users!.length.toString());
         }
       }
     } catch (error) {
       // Handle any potential errors or exceptions
-      log('Error in getPrayerRequestList: $error');
+      log('Error in get prayer: $error');
     }
 
     return listOfPost
@@ -369,5 +432,61 @@ class PrayerRequestRepository {
           .where((element) => element.prayerRequestPostModel.name!.isEmpty)
           .toList();
     }
+  }
+
+  Future<List<IntentionsAndUserModel>> getSuggestedThatHaveSameIntentions(
+      String userID) async {
+    final List<PostModel> myPrayerIntentions =
+        await PrayerRequestRepository().getPrayerIntentions(userID, true);
+    final List<PrayerRequestPostModel> allPrayerIntentions =
+        await PrayerRequestRepository().getAllPrayerRequestList();
+    List<IntentionsAndUserModel> myIntentionsAndUser = [];
+    List<IntentionsAndUserModel> publicPrayerIntentions = [];
+
+    for (var intention in myPrayerIntentions) {
+      myIntentionsAndUser.add(IntentionsAndUserModel(
+          intention.prayerRequestPostModel.title?.toLowerCase() ?? '',
+          intention.userModel));
+    }
+    for (var otherIntention in allPrayerIntentions) {
+      final UserModel user =
+          await AuthServices().getUserRecord(otherIntention.userId!);
+      publicPrayerIntentions.add(IntentionsAndUserModel(
+          otherIntention.title?.toLowerCase() ?? '', user));
+    }
+
+    List<IntentionsAndUserModel> filteredIntentions = [];
+
+    for (var intention in publicPrayerIntentions) {
+      if (myIntentionsAndUser
+          .any((publicIntention) => publicIntention.text == intention.text)) {
+        if (intention.userModel!.userId != userID &&
+            !filteredIntentions.any((filteredIntention) =>
+                filteredIntention.userModel!.userId ==
+                intention.userModel!.userId)) {
+          filteredIntentions.add(intention);
+        }
+      }
+    }
+
+    return filteredIntentions;
+  }
+
+  Future<List<PrayerRequestPostModel>> getAllPrayerRequestList(
+      {int? limit}) async {
+    List<PrayerRequestPostModel> prayerIntentions = [];
+    try {
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Prayers')
+          .orderBy('date', descending: true)
+          .get();
+      prayerIntentions = response.docs
+          .map((e) => PrayerRequestPostModel.fromJson(e.data()))
+          .toList();
+    } catch (e) {
+      log(e.toString());
+    }
+    return prayerIntentions;
   }
 }

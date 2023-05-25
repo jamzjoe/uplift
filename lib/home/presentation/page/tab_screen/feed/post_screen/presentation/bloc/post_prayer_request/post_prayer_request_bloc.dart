@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 
@@ -20,14 +19,10 @@ class PostPrayerRequestBloc
     on<PostPrayerRequestActivity>((event, emit) async {
       emit(PostPrayerRequestLoading());
       try {
-        await Future.delayed(const Duration(seconds: 3), () async {
-          await prayerRequestRepository.postPrayerRequest(
-              event.user, event.text, event.image, event.name, event.approvedFriendsList, event.title);
-        });
+        await prayerRequestRepository.postPrayerRequest(event.user, event.text,
+            event.image, event.name, event.approvedFriendsList, event.title);
         emit(Posted());
-        await Future.delayed(const Duration(seconds: 3), () async {
-          emit(PostPrayerRequestSuccess());
-        });
+        emit(PostPrayerRequestSuccess());
       } catch (e) {
         emit(PostPrayerRequestError());
       }

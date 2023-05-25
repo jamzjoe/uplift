@@ -46,7 +46,7 @@ class AddFriendItem extends StatelessWidget {
                         children: [
                           HeaderText(
                               text: user.displayName ?? 'Anonymous User',
-                              color: secondaryColor,
+                              color: darkColor,
                               size: 16),
                           SmallText(
                               text:

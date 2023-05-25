@@ -72,6 +72,8 @@ dependencies:
   photo_view: ^0.14.0
   flutter_keyboard_visibility: ^5.4.1
   contacts_service: ^0.6.3
+  chat_bubbles: ^1.4.0
+  flutter_datetime_picker: ^1.5.1
 
 flutter_native_splash:
   android: true

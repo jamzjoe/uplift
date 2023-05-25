@@ -12,6 +12,7 @@ class UserModel {
   String? searchKey;
   String? deviceToken;
   String? provider;
+  String? privacy;
 
   UserModel(
       {this.displayName,
@@ -24,7 +25,8 @@ class UserModel {
       this.bio,
       this.searchKey,
       this.deviceToken,
-      this.provider});
+      this.provider,
+      this.privacy});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     displayName = json['display_name'];
@@ -38,6 +40,7 @@ class UserModel {
     deviceToken = json['device_token'];
     searchKey = json['search_key'];
     provider = json['provider'];
+    privacy = json['privacy'];
   }
 
   Map<String, dynamic> toJson() {
@@ -53,6 +56,7 @@ class UserModel {
     data['device_token'] = deviceToken;
     data['search_key'] = searchKey;
     data['provider'] = provider;
+    data['privacy'] = privacy;
     return data;
   }
 }

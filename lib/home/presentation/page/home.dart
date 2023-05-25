@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,11 +11,11 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
 import 'package:uplift/authentication/presentation/pages/introduction/presentation/introduction_screen.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import '../../../authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
@@ -62,15 +60,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       listener: (context, state) async {
         if (state is UserIsIn) {
           BlocProvider.of<GetPrayerRequestBloc>(context)
-              .add(const GetPostRequestList());
+              .add(GetPostRequestList(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<NotificationBloc>(context).add(
               FetchListOfNotification(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendRequestBloc>(context).add(
               FetchFriendRequestEvent(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
               .add(FetchUsersEvent());
-          BlocProvider.of<ApprovedFriendsBloc>(context)
-              .add(FetchApprovedFriendRequest(await AuthServices.userID()));
+          BlocProvider.of<ApprovedFriendsBloc>(context).add(
+              FetchApprovedFriendRequest(
+                  state.userJoinedModel.userModel.userId!));
+          // ignore: use_build_context_synchronously
+          BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
+              FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
         } else {
           setState(() {
             index = 0;
@@ -99,7 +101,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: FriendsScreen(
                   currentUser: userJoinedModel.userModel,
                 )),
-                const KeepAlivePage(child: ExploreScreen()),
+                KeepAlivePage(
+                    child: ExploreScreen(
+                  user: userJoinedModel.userModel,
+                )),
                 const KeepAlivePage(child: SettingsScreen())
               ],
             ),
@@ -108,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             floatingActionButton: Visibility(
               visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
               child: FloatingActionButton(
+                  mini: true,
                   backgroundColor: secondaryColor,
                   splashColor: primaryColor,
                   elevation: 2,
@@ -116,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: const Icon(
                     Ionicons.qr_code,
                     color: whiteColor,
+                    size: 20,
                   ),
                   onPressed: () {
                     context.pushNamed('qr_reader',
@@ -125,7 +132,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             bottomNavigationBar: TabBarMaterialWidget(
                 index: index,
                 onChangedTab: onChangedTab,
-                controller: _tabController),
+                controller: _tabController,
+                user: userJoinedModel.userModel),
           );
         } else if (state is UserIsOut) {
           return const IntroductionScreen();

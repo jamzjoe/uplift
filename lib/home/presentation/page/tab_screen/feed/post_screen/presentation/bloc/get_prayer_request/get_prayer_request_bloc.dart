@@ -25,14 +25,14 @@ class GetPrayerRequestBloc
         .collection('Prayers')
         .snapshots()
         .listen((event) async {
-      add(const GetPostRequestList());
+      add(GetPostRequestList(userID));
     });
     on<GetPrayerRequestEvent>((event, emit) {});
 
     on<GetPostRequestList>((event, emit) async {
       try {
         final data = await prayerRequestRepository.getPrayerRequestList(
-            limit: event.limit ?? 10);
+            limit: event.limit ?? 10, userID: event.userID);
 
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {
@@ -44,7 +44,7 @@ class GetPrayerRequestBloc
       emit(LoadingPrayerRequesList());
       try {
         final data =
-            await prayerRequestRepository.seearchPrayerRequest(event.query);
+            await prayerRequestRepository.searchPrayerRequest(event.query);
         emit(LoadingPrayerRequesListSuccess(data));
       } catch (e) {
         log(e.toString());
@@ -66,7 +66,8 @@ class GetPrayerRequestBloc
     on<RefreshPostRequestList>((event, emit) async {
       emit(LoadingPrayerRequesList());
       try {
-        final data = await prayerRequestRepository.getPrayerRequestList();
+        final data = await prayerRequestRepository.getPrayerRequestList(
+            userID: event.userID);
         emit(LoadingPrayerRequesListSuccess(data));
       } on FirebaseException {
         emit(LoadingPrayerRequesListError());

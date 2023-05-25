@@ -4,14 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
-
+import 'package:chat_bubbles/chat_bubbles.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
 
@@ -27,9 +26,11 @@ class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
   int badgeCount = 0;
   int paginationLimit = 10;
+  bool showPopUp = true;
   List<UserNotifModel> notifications = [];
 
   final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -66,43 +67,106 @@ class _FeedScreenState extends State<FeedScreen> {
           child: NestedScrollView(
             controller: scrollController,
             floatHeaderSlivers: true,
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  backgroundColor: whiteColor,
-                  title: const Image(
-                    image: AssetImage('assets/uplift-logo.png'),
-                    width: 80,
-                  ),
-                  actions: [
-                    Badge.count(
-                      isLabelVisible: badgeCount != 0,
-                      count: badgeCount,
-                      alignment: AlignmentDirectional.bottomStart,
-                      child: IconButton(
-                        onPressed: () {
-                          goToNotificationScreen(user.uid, notifications);
-                        },
-                        icon: const Image(
-                          image: AssetImage('assets/bell.png'),
-                          width: 30,
-                        ),
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                backgroundColor: whiteColor,
+                title: const Image(
+                  image: AssetImage('assets/uplift-logo.png'),
+                  width: 80,
+                ),
+                actions: [
+                  Badge.count(
+                    isLabelVisible: badgeCount != 0,
+                    count: badgeCount,
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: IconButton(
+                      onPressed: () {
+                        goToNotificationScreen(user.uid, notifications);
+                      },
+                      icon: const Image(
+                        image: AssetImage('assets/bell.png'),
+                        width: 30,
                       ),
                     ),
-                  ],
-                ),
-              ];
-            },
+                  ),
+                ],
+              ),
+            ],
             body: Column(
               children: [
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: () async {
                       BlocProvider.of<GetPrayerRequestBloc>(context)
-                          .add(const RefreshPostRequestList());
+                          .add(RefreshPostRequestList(widget.user.user.uid));
                     },
-                    child: SingleChildScrollView(
-                      child: PostListItem(userJoinedModel: userJoinedModel),
+                    child: Stack(
+                      children: [
+                        SingleChildScrollView(
+                          child: PostListItem(userJoinedModel: userJoinedModel),
+                        ),
+                        Positioned(
+                          right: 30,
+                          bottom: 110,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                children: [
+                                  AnimatedSwitcher(
+                                    switchInCurve: Curves.easeOut,
+                                    duration: const Duration(milliseconds: 500),
+                                    child: showPopUp
+                                        ? GestureDetector(
+                                            onTap: () => context.pushNamed(
+                                                'post_field',
+                                                extra: userJoinedModel),
+                                            child: const BubbleSpecialTwo(
+                                              text: 'New Prayer?',
+                                              color: Color(0xFF1B97F3),
+                                              tail: true,
+                                              textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13),
+                                            ),
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                  const SizedBox(width: 15)
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    showPopUp = !showPopUp;
+                                  });
+                                },
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                    color: whiteColor,
+                                    image: const DecorationImage(
+                                        fit: BoxFit.fitWidth,
+                                        image: AssetImage(
+                                            'assets/uplift-logo.png')),
+                                    borderRadius: BorderRadius.circular(60),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -120,20 +184,25 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void _scrollListener() {
+    if (scrollController.keepScrollOffset) {
+      setState(() {
+        showPopUp = false;
+      });
+    }
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-      // Reached the end of the scroll view
-      // Perform your desired action here, such as fetching more data
       loadMoreData();
     }
   }
 
-  void loadMoreData() async {
+  void loadMoreData() {
     setState(() {
-      paginationLimit = paginationLimit + 10;
+      paginationLimit += 10;
     });
-    BlocProvider.of<GetPrayerRequestBloc>(context)
-        .add(GetPostRequestList(limit: paginationLimit));
+    BlocProvider.of<GetPrayerRequestBloc>(context).add(GetPostRequestList(
+      limit: paginationLimit,
+      widget.user.user.uid,
+    ));
   }
 }
 
@@ -156,7 +225,6 @@ class PostStatusWidget extends StatelessWidget {
                   child: SpinKitFadingCircle(
                     color: primaryColor,
                     size: 25,
-                    
                   ),
                 ),
                 SizedBox(width: 15),

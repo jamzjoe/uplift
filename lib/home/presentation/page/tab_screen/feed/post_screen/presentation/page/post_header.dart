@@ -9,6 +9,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
+import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/report_dialog.dart';
@@ -77,10 +78,12 @@ class PostHeader extends StatelessWidget {
                       enableDrag: true,
                       context: context,
                       builder: (context) {
-                        return FriendsFeed(
-                          userModel: user,
-                          isSelf: user.userId == currentUser.userId,
-                          currentUser: currentUser,
+                        return KeepAlivePage(
+                          child: FriendsFeed(
+                            userModel: user,
+                            isSelf: user.userId == currentUser.userId,
+                            currentUser: currentUser,
+                          ),
                         );
                       },
                     );
