@@ -1,3 +1,4 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,6 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
-import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/report_dialog.dart';
@@ -71,21 +71,27 @@ class PostHeader extends StatelessWidget {
                           'Confirm');
                       return;
                     }
-                    showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      barrierColor: Colors.black.withOpacity(0.5),
-                      enableDrag: true,
+                    showFlexibleBottomSheet(
+                      minHeight: 0,
+                      initHeight: 0.92,
+                      maxHeight: 1,
+                      isSafeArea: true,
                       context: context,
-                      builder: (context) {
-                        return KeepAlivePage(
+                      builder: (context, scrollController, bottomSheetOffset) {
+                        return Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+                          ),
                           child: FriendsFeed(
                             userModel: user,
                             isSelf: user.userId == currentUser.userId,
                             currentUser: currentUser,
+                            scrollController: scrollController,
                           ),
                         );
                       },
+                      anchors: [0, 0.5, 1],
                     );
                   },
                   text: prayerRequest.name!.isEmpty

@@ -1,3 +1,4 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,14 +27,27 @@ class FriendsItem extends StatelessWidget {
     UserModel user = userFriendship.userModel;
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-            isScrollControlled: true,
-            context: context,
-            builder: (context) {
-              return FriendsFeed(
-                  userModel: userFriendship.userModel,
-                  currentUser: currentUser);
-            });
+        showFlexibleBottomSheet(
+          minHeight: 0,
+          initHeight: 0.92,
+          maxHeight: 1,
+          context: context,
+          builder: (context, scrollController, bottomSheetOffset) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+              ),
+              child: FriendsFeed(
+                userModel: userFriendship.userModel,
+                currentUser: currentUser,
+                scrollController: scrollController,
+              ),
+            );
+          },
+          anchors: [0, 0.5, 1],
+          isSafeArea: true,
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 15),

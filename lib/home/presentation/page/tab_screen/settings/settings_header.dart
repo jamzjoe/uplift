@@ -1,3 +1,4 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +23,6 @@ class SettingsProfileHeader extends StatelessWidget {
   }) : super(key: key);
 
   final UserJoinedModel userJoinedModel;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class SettingsProfileHeader extends StatelessWidget {
               Flexible(
                 child: GestureDetector(
                   onTap: () async {
-                    showPopProfile(context, userModel);
+                    showPopProfile(context, userModel, userModel);
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -80,7 +80,7 @@ class SettingsProfileHeader extends StatelessWidget {
           ),
           defaultSpace,
           GestureDetector(
-            onTap: () async => showPopProfile(context, userModel),
+            onTap: () async => showPopProfile(context, userModel, userModel),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,18 +165,32 @@ class SettingsProfileHeader extends StatelessWidget {
     );
   }
 
-  void showPopProfile(BuildContext context, UserModel userModel) {
+  void showPopProfile(
+      BuildContext context, UserModel userModel, UserModel currentUser) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
-    showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      enableDrag: true,
+    showFlexibleBottomSheet(
+      minHeight: 0,
+      initHeight: 0.92,
+      maxHeight: 1,
       context: context,
-      builder: (context) {
-        return FriendsFeed(userModel: userModel, isSelf: true, currentUser: userModel);
+      builder: (context, scrollController, bottomSheetOffset) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+          ),
+          child: FriendsFeed(
+            isSelf: true,
+            userModel: userModel,
+            currentUser: currentUser,
+            scrollController: scrollController,
+          ),
+        );
       },
+      anchors: [0, 0.5, 1],
+      isSafeArea: true,
     );
   }
 }

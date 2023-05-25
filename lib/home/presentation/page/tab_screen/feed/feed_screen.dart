@@ -10,7 +10,6 @@ import 'package:uplift/home/presentation/page/notifications/data/model/user_noti
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
-import 'package:chat_bubbles/chat_bubbles.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
 
@@ -100,73 +99,8 @@ class _FeedScreenState extends State<FeedScreen> {
                       BlocProvider.of<GetPrayerRequestBloc>(context)
                           .add(RefreshPostRequestList(widget.user.user.uid));
                     },
-                    child: Stack(
-                      children: [
-                        SingleChildScrollView(
-                          child: PostListItem(userJoinedModel: userJoinedModel),
-                        ),
-                        Positioned(
-                          right: 30,
-                          bottom: 110,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  AnimatedSwitcher(
-                                    switchInCurve: Curves.easeOut,
-                                    duration: const Duration(milliseconds: 500),
-                                    child: showPopUp
-                                        ? GestureDetector(
-                                            onTap: () => context.pushNamed(
-                                                'post_field',
-                                                extra: userJoinedModel),
-                                            child: const BubbleSpecialTwo(
-                                              text: 'New Prayer?',
-                                              color: Color(0xFF1B97F3),
-                                              tail: true,
-                                              textStyle: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13),
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                  ),
-                                  const SizedBox(width: 15)
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    showPopUp = !showPopUp;
-                                  });
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                    color: whiteColor,
-                                    image: const DecorationImage(
-                                        fit: BoxFit.fitWidth,
-                                        image: AssetImage(
-                                            'assets/uplift-logo.png')),
-                                    borderRadius: BorderRadius.circular(60),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      child: PostListItem(userJoinedModel: userJoinedModel),
                     ),
                   ),
                 ),

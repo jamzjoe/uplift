@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/data/user_comment_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
-import 'package:uplift/utils/widgets/comment_shimmer_item.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
@@ -151,8 +151,6 @@ class _CommentPageState extends State<CommentPage> {
           }
           return Column(
             children: [
-              defaultSpace,
-              defaultSpace,
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -180,26 +178,18 @@ class _CommentPageState extends State<CommentPage> {
             ],
           );
         } else if (state is LoadingEncourages) {
-          return ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-              color: lightColor.withOpacity(0.2),
-              thickness: 0.5,
+          return const Center(
+            child: SpinKitFadingCircle(
+              color: primaryColor,
+              size: 50,
             ),
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return const CommentShimmerItem();
-            },
           );
         }
-        return ListView.separated(
-          separatorBuilder: (context, index) => Divider(
-            color: lightColor.withOpacity(0.2),
-            thickness: 0.5,
+        return const Center(
+          child: SpinKitFadingCircle(
+            color: primaryColor,
+            size: 50,
           ),
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return const CommentShimmerItem();
-          },
         );
       },
     );

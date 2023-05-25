@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,47 +55,57 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
           ],
           title: const HeaderText(
             text: 'Friend suggestions',
-            color: secondaryColor,
+            color: darkColor,
             size: 18,
           ),
         ),
-        body: BlocBuilder<FriendsSuggestionsBlocBloc,
-            FriendsSuggestionsBlocState>(
-          builder: (context, state) {
-            if (state is FriendsSuggestionLoading) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return const FriendsShimmerItem();
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+          child: Column(
+            children: [
+              CustomSearchBar(
+                hint: 'Search uplift user...',
+                controller: searchController,
+                onFieldSubmitted: (query) {
+                  search(context, query);
                 },
-              );
-            } else if (state is FriendsSuggestionLoadingSuccess) {
-              return ListView(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                children: [
-                  CustomSearchBar(
-                    hint: 'Search uplift user...',
-                    controller: searchController,
-                    onFieldSubmitted: (query) {
-                      search(context, query);
-                    },
-                  ),
-                  state.users.isEmpty
-                      ? const Center(
-                          child: NoDataMessage(text: 'No user found'),
-                        )
-                      : FriendSuggestionList(
+              ),
+              BlocBuilder<FriendsSuggestionsBlocBloc,
+                  FriendsSuggestionsBlocState>(
+                builder: (context, state) {
+                  if (state is FriendsSuggestionLoading) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return const FriendsShimmerItem();
+                      },
+                    );
+                  } else if (state is FriendsSuggestionLoadingSuccess) {
+                    if (state.users.isEmpty) {
+                      return Column(
+                        children: const [
+                          Center(
+                            child: NoDataMessage(text: 'No user found'),
+                          ),
+                        ],
+                      );
+                    }
+                    return Column(
+                      children: [
+                        FriendSuggestionList(
                           users: state.users,
                           currentUser: widget.currentUser,
                         ),
-                ],
-              );
-            }
-            return const SizedBox();
-          },
+                      ],
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

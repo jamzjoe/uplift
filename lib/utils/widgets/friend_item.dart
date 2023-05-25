@@ -1,3 +1,4 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -24,13 +25,27 @@ class FriendItem extends StatelessWidget {
         if (context.canPop()) {
           context.pop();
         }
-        showModalBottomSheet(
-            isScrollControlled: true,
-            context: context,
-            builder: (context) {
-              return FriendsFeed(
-                  userModel: userFriendship, currentUser: currentUser);
-            });
+        showFlexibleBottomSheet(
+          minHeight: 0,
+          initHeight: 0.92,
+          maxHeight: 1,
+          isSafeArea: true,
+          context: context,
+          builder: (context, scrollController, bottomSheetOffset) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+              ),
+              child: FriendsFeed(
+                userModel: user,
+                currentUser: currentUser,
+                scrollController: scrollController,
+              ),
+            );
+          },
+          anchors: [0, 0.5, 1],
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 15),

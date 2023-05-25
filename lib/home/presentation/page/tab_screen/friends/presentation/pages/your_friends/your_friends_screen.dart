@@ -31,7 +31,7 @@ class _YourFriendsScreenState extends State<YourFriendsScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const HeaderText(text: 'All friends', color: secondaryColor),
+          title: const HeaderText(text: 'All friends', color: darkColor),
           actions: [
             TextButton.icon(
                 label: const HeaderText(

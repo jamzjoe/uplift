@@ -82,7 +82,7 @@ class _PostItemState extends State<PostItem> {
                 border: Border(
                     bottom: BorderSide(
                         width: 0.5, color: lightColor.withOpacity(0.2)))),
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

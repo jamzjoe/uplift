@@ -56,8 +56,6 @@ void main() async {
     log(handleError);
   });
 
-  NotificationRepository.showNotification();
-
   runApp(const MyApp());
 }
 

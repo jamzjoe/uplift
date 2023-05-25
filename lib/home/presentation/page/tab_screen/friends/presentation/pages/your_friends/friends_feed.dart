@@ -11,7 +11,9 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/friends_tab_bar.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/follower_page.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/following_page.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/prayer_intention_page.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -25,10 +27,12 @@ class FriendsFeed extends StatefulWidget {
     this.isSelf,
     this.friendshipID,
     required this.currentUser,
+    required this.scrollController,
   }) : super(key: key);
 
   final UserModel userModel;
   final UserModel currentUser;
+  final ScrollController scrollController;
   final bool? isSelf;
   final String? friendshipID;
 
@@ -116,130 +120,162 @@ class _FriendsFeedState extends State<FriendsFeed>
     super.build(context);
     final UserModel user = widget.userModel;
     return Scaffold(
-      body: DefaultTabController(
-        length: 3,
-        child: Column(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 60),
-                GestureDetector(
-                  onTap: () =>
-                      context.pushNamed('photo_view', extra: user.photoUrl),
-                  child: ProfilePhoto(
-                    user: user,
-                    radius: 60,
-                    size: 90,
+      body: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () =>
+                        context.pushNamed('photo_view', extra: user.photoUrl),
+                    child: ProfilePhoto(
+                      user: user,
+                      radius: 60,
+                      size: 90,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                HeaderText(text: user.displayName ?? '', color: darkColor),
-                SmallText(text: user.emailAddress ?? '', color: lightColor),
-                defaultSpace,
-                SmallText(
-                  text: user.bio?.isEmpty ?? true ? 'User Bio' : user.bio ?? '',
-                  color: darkColor,
-                ),
-                defaultSpace,
-                Visibility(
-                  visible: user.userId != widget.currentUser.userId,
-                  child: FutureBuilder<NewUserFriendshipModel?>(
-                    future: checkFriendsStatus(user.userId!),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<NewUserFriendshipModel?> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // Show a loading indicator while fetching the data
-                        return Shimmer.fromColors(
-                          baseColor: secondaryColor.withOpacity(0.2),
-                          highlightColor: Colors.grey.shade100.withOpacity(0.5),
-                          child: ElevatedButton.icon(
-                            label: const SmallText(
-                              text: 'UNFOLLOW',
-                              color: whiteColor,
-                            ),
-                            onPressed: () {},
-                            icon: const Icon(
-                              CupertinoIcons.add_circled_solid,
-                              color: whiteColor,
-                            ),
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        // Show an error message if an error occurred
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        final friendshipStatus = snapshot.data;
-
-                        if (friendshipStatus != null) {
-                          // User is a friend
-                          if (friendshipStatus.status.status == 'pending') {
-                            return ElevatedButton.icon(
-                              icon: const Icon(
-                                CupertinoIcons.clock_solid,
+                  const SizedBox(height: 10),
+                  HeaderText(text: user.displayName ?? '', color: darkColor),
+                  SmallText(text: user.emailAddress ?? '', color: lightColor),
+                  defaultSpace,
+                  SmallText(
+                    text:
+                        user.bio?.isEmpty ?? true ? 'User Bio' : user.bio ?? '',
+                    color: darkColor,
+                  ),
+                  defaultSpace,
+                  Visibility(
+                    visible: user.userId != widget.currentUser.userId,
+                    child: FutureBuilder<NewUserFriendshipModel?>(
+                      future: checkFriendsStatus(user.userId!),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<NewUserFriendshipModel?> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Show a loading indicator while fetching the data
+                          return Shimmer.fromColors(
+                            baseColor: secondaryColor.withOpacity(0.2),
+                            highlightColor:
+                                Colors.grey.shade100.withOpacity(0.5),
+                            child: ElevatedButton.icon(
+                              label: const SmallText(
+                                text: 'UNFOLLOW',
                                 color: whiteColor,
                               ),
+                              onPressed: () {},
+                              icon: const Icon(
+                                CupertinoIcons.add_circled_solid,
+                                color: whiteColor,
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          // Show an error message if an error occurred
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          final friendshipStatus = snapshot.data;
+
+                          if (friendshipStatus != null) {
+                            // User is a friend
+                            if (friendshipStatus.status.status == 'pending') {
+                              return ElevatedButton.icon(
+                                icon: const Icon(
+                                  CupertinoIcons.clock_solid,
+                                  color: whiteColor,
+                                ),
+                                label: const SmallText(
+                                  text: 'Request Pending',
+                                  color: whiteColor,
+                                ),
+                                onPressed: () {
+                                  unfriend(friendshipStatus
+                                      .friendshipID.friendshipId!);
+                                },
+                              );
+                            }
+                            return ElevatedButton.icon(
                               label: const SmallText(
-                                text: 'Request Pending',
+                                text: 'UNFOLLOW',
                                 color: whiteColor,
                               ),
                               onPressed: () {
                                 unfriend(friendshipStatus
                                     .friendshipID.friendshipId!);
                               },
+                              icon: const Icon(
+                                CupertinoIcons.add_circled_solid,
+                                color: whiteColor,
+                              ),
+                            );
+                          } else {
+                            // User is not a friend
+                            return Column(
+                              children: [
+                                SmallText(
+                                    text: 'You are not friends',
+                                    color: lighter),
+                                ElevatedButton.icon(
+                                  label: const SmallText(
+                                    text: 'FOLLOW',
+                                    color: whiteColor,
+                                  ),
+                                  onPressed: () {
+                                    addFriend(widget.currentUser.userId!,
+                                        user.userId);
+                                  },
+                                  icon: const Icon(
+                                    CupertinoIcons.add_circled_solid,
+                                    color: whiteColor,
+                                  ),
+                                ),
+                              ],
                             );
                           }
-                          return ElevatedButton.icon(
-                            label: const SmallText(
-                              text: 'UNFOLLOW',
-                              color: whiteColor,
-                            ),
-                            onPressed: () {
-                              unfriend(
-                                  friendshipStatus.friendshipID.friendshipId!);
-                            },
-                            icon: const Icon(
-                              CupertinoIcons.add_circled_solid,
-                              color: whiteColor,
-                            ),
-                          );
-                        } else {
-                          // User is not a friend
-                          return Column(
-                            children: [
-                              SmallText(
-                                  text: 'You are not friends', color: lighter),
-                              ElevatedButton.icon(
-                                label: const SmallText(
-                                  text: 'FOLLOW',
-                                  color: whiteColor,
-                                ),
-                                onPressed: () {
-                                  addFriend(
-                                      widget.currentUser.userId!, user.userId);
-                                },
-                                icon: const Icon(
-                                  CupertinoIcons.add_circled_solid,
-                                  color: whiteColor,
-                                ),
-                              ),
-                            ],
-                          );
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-                defaultSpace,
-              ],
+                ],
+              ),
             ),
-            Flexible(
-                child: FriendsTabBarView(
-              user: user,
-              currentUser: widget.currentUser,
-            ))
-          ],
-        ),
+          ),
+          SliverFillRemaining(
+            child: DefaultTabController(
+              length: 3,
+              child: Column(
+                children: [
+                  const TabBar(
+                    tabs: [
+                      Tab(text: 'Prayer Intentions'),
+                      Tab(text: 'Following'),
+                      Tab(text: 'Follower'),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        // Content for Tab 1
+                        PrayerIntentionPage(
+                            user: widget.userModel,
+                            scrollController: widget.scrollController),
+                        // Content for Tab 2
+                        FollowingPage(
+                            user: user, currentUser: widget.currentUser),
+                        FollowerPage(user: user, currentUser: widget.currentUser),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

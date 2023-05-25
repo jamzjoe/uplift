@@ -7,7 +7,8 @@ abstract class GetPrayerRequestEvent extends Equatable {
 class GetPostRequestList extends GetPrayerRequestEvent {
   final int? limit;
   final String userID;
-  const GetPostRequestList(this.userID, {this.limit});
+  final BuildContext? context;
+  const GetPostRequestList(this.userID, {this.limit, this.context});
 
   @override
   List<Object> get props => [];

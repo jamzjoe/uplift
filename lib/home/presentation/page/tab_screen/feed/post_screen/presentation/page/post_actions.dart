@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +107,31 @@ class _PostActionsState extends State<PostActions> {
               if (widget.isFullView == true) {
                 return;
               } else {
-                showComment(context, widget.userModel, widget.prayerRequest,
-                    widget.currentUser, scrollController);
+                BlocProvider.of<EncourageBloc>(context)
+                    .add(FetchEncourageEvent(widget.prayerRequest.postId!));
+                showFlexibleBottomSheet(
+                  minHeight: 0,
+                  initHeight: 0.92,
+                  maxHeight: 1,
+                  context: context,
+                  builder: (context, scrollController, bottomSheetOffset) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+                      ),
+                      child: CommentView(
+                        currentUser: widget.currentUser,
+                        prayerRequestPostModel: widget.prayerRequest,
+                        postOwner: widget.userModel,
+                        postModel: widget.postModel,
+                        scrollController: scrollController,
+                      ),
+                    );
+                  },
+                  anchors: [0, 0.5, 1],
+                  isSafeArea: true,
+                );
               }
             },
             icon: Icon(
@@ -141,46 +165,6 @@ class _PostActionsState extends State<PostActions> {
               color: lighter,
             )),
       ],
-    );
-  }
-
-  Future<dynamic> showComment(
-      BuildContext context,
-      UserModel user,
-      PrayerRequestPostModel prayerRequestPostModel,
-      UserModel currentUser,
-      ScrollController scrollController) {
-    BlocProvider.of<EncourageBloc>(context)
-        .add(FetchEncourageEvent(widget.prayerRequest.postId!));
-    return showModalBottomSheet(
-      clipBehavior: Clip.hardEdge,
-      isScrollControlled: true,
-      isDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.9),
-      backgroundColor:
-          Colors.transparent, // Set the background color to transparent
-      context: context,
-      builder: (BuildContext context) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-            ),
-            child: CommentView(
-              currentUser: currentUser,
-              prayerRequestPostModel: prayerRequestPostModel,
-              postOwner: user,
-              postModel: widget.postModel,
-              scrollController: scrollController,
-            ),
-          ),
-        );
-      },
     );
   }
 
