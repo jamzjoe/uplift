@@ -1,8 +1,12 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+
+import '../../home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 
 class CustomDialog {
   static void showDeleteConfirmation(BuildContext context, String message,
@@ -301,6 +305,31 @@ class CustomDialog {
           ),
         );
       },
+    );
+  }
+
+  Future<dynamic> showProfile(
+      BuildContext context, UserModel currentUser, UserModel userModel) {
+    return showFlexibleBottomSheet(
+      minHeight: 0,
+      initHeight: 0.92,
+      maxHeight: 1,
+      context: context,
+      builder: (context, scrollController, bottomSheetOffset) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+          ),
+          child: FriendsFeed(
+            userModel: userModel,
+            currentUser: currentUser,
+            scrollController: scrollController,
+          ),
+        );
+      },
+      anchors: [0, 0.5, 1],
+      isSafeArea: true,
     );
   }
 

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -47,9 +46,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             onTap: () {
                               context.pushNamed('friend_suggest',
                                   extra: widget.currentUser);
-                              BlocProvider.of<FriendsSuggestionsBlocBloc>(
-                                      context)
-                                  .add(FetchUsersEvent());
                             },
                             widget: DefaultText(
                                 text: 'Suggestions', color: lighter),

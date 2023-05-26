@@ -38,7 +38,7 @@ class FriendRequestItem extends StatelessWidget {
                     Flexible(
                       child: HeaderText(
                         text: userModel.displayName ?? 'User',
-                        color: secondaryColor,
+                        color: darkColor,
                         size: 18,
                       ),
                     ),
@@ -58,9 +58,8 @@ class FriendRequestItem extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                             color: lightColor.withOpacity(0.2),
                           ),
-                          child: const Center(
-                            child: DefaultText(
-                                text: 'Ignore', color: secondaryColor),
+                          child: Center(
+                            child: DefaultText(text: 'Ignore', color: lighter),
                           ),
                         ),
                       ),

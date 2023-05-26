@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 
 part 'friends_suggestions_bloc_event.dart';
@@ -19,18 +20,20 @@ late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
 class FriendsSuggestionsBlocBloc
     extends Bloc<FriendsSuggestionsBlocEvent, FriendsSuggestionsBlocState> {
   FriendsSuggestionsBlocBloc() : super(FriendsSuggestionsBlocInitial()) {
-    streamSubscription = FirebaseFirestore.instance
-        .collection('Friendships')
-        .snapshots()
-        .listen((event) async {
-      add(FetchUsersEvent());
-    });
+    // streamSubscription = FirebaseFirestore.instance
+    //     .collection('Friendships')
+    //     .snapshots()
+    //     .listen((event) async {
+    //   add(FetchUsersEvent());
+    // });
 
     on<FriendsSuggestionsBlocEvent>((event, emit) {});
 
     on<FetchUsersEvent>((event, emit) async {
+      emit(FriendsSuggestionLoading());
       try {
-        final data = await friendSuggestionRepository.fetchUsersSuggestions();
+        final data =
+            await friendSuggestionRepository.fetchMyFriendFriends(event.userID);
         emit(FriendsSuggestionLoadingSuccess(data));
       } on FirebaseAuthException {
         emit(FriendsSuggestionLoadingError());
@@ -44,14 +47,14 @@ class FriendsSuggestionsBlocBloc
       } catch (e) {}
     });
 
-    on<SearchFriendSuggestions>((event, emit) async {
-      try {
-        final data =
-            await friendSuggestionRepository.searchSuggestions(event.query);
-        emit(FriendsSuggestionLoadingSuccess(data));
-      } catch (e) {
-        emit(FriendsSuggestionLoadingError());
-      }
-    });
+    // on<SearchFriendSuggestions>((event, emit) async {
+    //   try {
+    //     final data =
+    //         await friendSuggestionRepository.searchSuggestions(event.query);
+    //     emit(FriendsSuggestionLoadingSuccess(data));
+    //   } catch (e) {
+    //     emit(FriendsSuggestionLoadingError());
+    //   }
+    // });
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 
 import 'add_friend_item.dart';
 
@@ -10,27 +8,30 @@ class FriendSuggestionList extends StatefulWidget {
     super.key,
     required this.users,
     required this.currentUser,
+    required this.context,
   });
   final List<UserModel> users;
   final UserModel currentUser;
+  final BuildContext context;
 
   @override
   State<FriendSuggestionList> createState() => _FriendSuggestionListState();
 }
 
 class _FriendSuggestionListState extends State<FriendSuggestionList> {
-
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ListView.builder(
         shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
         itemBuilder: (context, index) {
-          return AddFriendItem(
-              user: widget.users[index], currentUser: widget.currentUser);
-        },
-        separatorBuilder: (context, index) {
-          return Divider(thickness: .5, color: secondaryColor.withOpacity(0.2));
+          return Dismissible(
+            key: Key(widget.users[index].userId!),
+            child: AddFriendItem(
+                user: widget.users[index],
+                currentUser: widget.currentUser,
+                screenContext: widget.context),
+          );
         },
         itemCount: widget.users.length);
   }

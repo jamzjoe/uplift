@@ -60,13 +60,13 @@ class PrayerRequestRepository {
 
       // Perform multiple queries for each chunk
       for (var chunk in chunks) {
-        QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-            .instance
-            .collection('Prayers')
-            .where('user_id', whereIn: chunk)
-            .orderBy('date', descending: true)
-            .limit(limit ?? 10)
-            .get();
+        QuerySnapshot<Map<String, dynamic>> response =
+            await FirebaseFirestore.instance
+                .collection('Prayers')
+                .where('user_id', whereIn: chunk)
+                .orderBy('date', descending: true)
+                // .limit(limit ?? 10)
+                .get();
 
         List<PrayerRequestPostModel> chunkData = response.docs
             .map((e) => PrayerRequestPostModel.fromJson(e.data()))

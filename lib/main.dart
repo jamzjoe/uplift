@@ -102,8 +102,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetPrayerRequestBloc>(
             create: (context) => GetPrayerRequestBloc()),
         BlocProvider<FriendsSuggestionsBlocBloc>(
-            create: (context) =>
-                FriendsSuggestionsBlocBloc()..add(FetchUsersEvent())),
+            create: (context) => FriendsSuggestionsBlocBloc()),
         BlocProvider<NotificationBloc>(create: (context) => NotificationBloc()),
         BlocProvider<FriendRequestBloc>(
             create: (context) => FriendRequestBloc()),

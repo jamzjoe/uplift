@@ -93,7 +93,7 @@ class _PostActionsState extends State<PostActions> {
                         padding: EdgeInsets.zero,
                         likeCountPadding: EdgeInsets.zero,
                         isLiked: !isReacted,
-                        size: 30,
+                        size: 32,
                         likeBuilder: (isLiked) => PrayedButton(
                               path: isReacted
                                   ? "assets/unprayed.png"
@@ -101,6 +101,7 @@ class _PostActionsState extends State<PostActions> {
                             )
                         // Rest of the code
                         ),
+                    const SizedBox(width: 10),
                     SmallText(text: 'Pray', color: lighter)
                     // Rest of the code
                   ],

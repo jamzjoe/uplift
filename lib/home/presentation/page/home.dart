@@ -66,11 +66,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           BlocProvider.of<FriendRequestBloc>(context).add(
               FetchFriendRequestEvent(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
-              .add(FetchUsersEvent());
+              .add(FetchUsersEvent(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<ApprovedFriendsBloc>(context).add(
               FetchApprovedFriendRequest(
                   state.userJoinedModel.userModel.userId!));
-          // ignore: use_build_context_synchronously
           BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
               FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
         } else {

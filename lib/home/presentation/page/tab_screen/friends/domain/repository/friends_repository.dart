@@ -195,25 +195,76 @@ class FriendsRepository {
     return FriendshipStatus('', false);
   }
 
-  Future<List<UserModel>> fetchMutualFriend(
-      String userID, String currentUserID) async {
-    List<UserFriendshipModel> userFriends =
-        await fetchApprovedFriendRequest(userID);
+  Future<List<List<UserFriendshipModel>>> fetchFriendsOfFriends(
+      String currentUserID) async {
     List<UserFriendshipModel> myFriends =
         await fetchApprovedFriendRequest(currentUserID);
 
-    List<UserModel> mutualFriends = [];
+    List<List<UserFriendshipModel>> friendsOfFriends = [];
 
-    for (var userFriend in userFriends) {
-      for (var myFriend in myFriends) {
-        if (userFriend.userModel.userId == myFriend.userModel.userId) {
-          mutualFriends.add(userFriend.userModel);
-          break; // Once a match is found, no need to continue searching
+    for (var friend in myFriends) {
+      List<UserFriendshipModel> theirFriends =
+          await fetchApprovedFriendRequest(friend.userModel.userId!);
+      List<UserFriendshipModel> mutualFriends = [];
+
+      for (var theirFriend in theirFriends) {
+        if (theirFriend.userModel.userId == friend.userModel.userId) {
+          mutualFriends.add(theirFriend);
+        }
+      }
+
+      friendsOfFriends.add(mutualFriends);
+    }
+
+    return friendsOfFriends;
+  }
+
+  Future<List<UserFriendshipModel>> fetchMutualFriendsWithFriend(
+      String currentUserID, String friendID) async {
+    List<UserFriendshipModel> myFriends =
+        await fetchApprovedFriendRequest(currentUserID);
+
+    List<UserFriendshipModel> friendFriends =
+        await fetchApprovedFriendRequest(friendID);
+
+    List<UserFriendshipModel> mutualFriends = [];
+
+    for (var myFriend in myFriends) {
+      if (friendFriends.any(
+          (friend) => friend.userModel.userId == myFriend.userModel.userId)) {
+        mutualFriends.add(myFriend);
+      }
+    }
+
+    return mutualFriends;
+  }
+
+  Future<List<UserModel>> fetchMyFriendFriends(String currentUserID) async {
+    List<UserFriendshipModel> myFriends =
+        await fetchApprovedFriendRequest(currentUserID);
+
+    final List<UserModel> myFriendsFriends = [];
+    final Set<String> userIds = {}; // To store unique user IDs
+
+    // Get the user IDs of your own friends
+    final Set<String> myFriendUserIds =
+        myFriends.map((friend) => friend.userModel.userId!).toSet();
+
+    for (var friend in myFriends) {
+      final theirFriend =
+          await fetchApprovedFriendRequest(friend.userModel.userId!);
+
+      for (var each in theirFriend) {
+        if (!userIds.contains(each.userModel.userId) &&
+            !myFriendUserIds.contains(each.userModel.userId!) &&
+            each.userModel.userId != currentUserID) {
+          myFriendsFriends.add(each.userModel);
+          userIds.add(each.userModel.userId!);
         }
       }
     }
-    saveMutualFriends(mutualFriends);
-    return mutualFriends;
+
+    return myFriendsFriends;
   }
 
   Future<List<UserModel>> readMutualFriends() async {

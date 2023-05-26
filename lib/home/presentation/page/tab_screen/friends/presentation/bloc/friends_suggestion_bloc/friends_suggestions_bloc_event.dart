@@ -7,7 +7,11 @@ abstract class FriendsSuggestionsBlocEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchUsersEvent extends FriendsSuggestionsBlocEvent {}
+class FetchUsersEvent extends FriendsSuggestionsBlocEvent {
+  final String userID;
+
+  const FetchUsersEvent(this.userID);
+}
 
 class AddFriendEvent extends FriendsSuggestionsBlocEvent {
   final FriendShipModel friendShipModel;
