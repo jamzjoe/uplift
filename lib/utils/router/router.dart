@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
@@ -8,7 +7,6 @@ import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
 import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.dart';
 import 'package:uplift/home/presentation/page/home.dart';
-import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
@@ -143,7 +141,7 @@ final GoRouter router = GoRouter(
               name: 'notification',
               pageBuilder: (context, state) => MaterialPage(
                   child: NotificationScreen(
-                notifications: state.extra as List<UserNotifModel>,
+                currentUser: state.extra as UserModel,
               )),
             ),
             GoRoute(

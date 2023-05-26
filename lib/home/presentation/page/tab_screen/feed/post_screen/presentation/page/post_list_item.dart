@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
@@ -66,29 +66,33 @@ class PostListItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      width: 60,
-                      height: 60,
-                      clipBehavior: Clip.none,
-                      child: Transform.scale(
-                        scale: 2,
-                        origin: const Offset(3, 6),
-                        child: LottieBuilder.asset(
-                          'assets/thinking.json',
-                          height: 150,
-                          width: 150,
-                        ),
-                      ),
-                    ),
+                    // const Image(
+                    //     image: AssetImage('assets/prayer.png'), width: 50)
+                    // Container(
+                    //   width: 60,
+                    //   height: 60,
+                    //   clipBehavior: Clip.none,
+                    //   child: Transform.scale(
+                    //     scale: 2,
+                    //     origin: const Offset(3, 6),
+                    //     child: LottieBuilder.asset(
+                    //       'assets/thinking.json',
+                    //       height: 150,
+                    //       width: 150,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
-                defaultSpace,
+                const SizedBox(height: 5),
+                PostField(userJoinModel: userJoinedModel),
+                const SizedBox(height: 5),
                 FriendSuggestionHorizontal(currentUser: userModel),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 2.5),
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {
@@ -108,7 +112,7 @@ class PostListItem extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 120),
                 physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: state.prayerRequestPostModel.length + 3,
+                itemCount: state.prayerRequestPostModel.length + 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return const PostStatusWidget();
@@ -119,8 +123,6 @@ class PostListItem extends StatelessWidget {
                       user: userModel,
                       fullView: false,
                     );
-                  } else if (index == state.prayerRequestPostModel.length + 1) {
-                    return defaultSpace;
                   } else {
                     return EndOfPostWidget(
                       isEmpty: false,

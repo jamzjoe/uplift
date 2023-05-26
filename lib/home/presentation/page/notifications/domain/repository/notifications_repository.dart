@@ -20,6 +20,17 @@ class NotificationRepository {
         iOS: DarwinNotificationDetails());
   }
 
+  Stream<Map<String, dynamic>> notificationListener(String userID) {
+    return FirebaseFirestore.instance
+        .collection('Notifications')
+        .where('receiver_id', isEqualTo: userID)
+        .where('read', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+      return {'length': snapshot.docs.length};
+    });
+  }
+
   static Future showNotification(
       {int id = 0, String? title, String? body, String? payload}) async {
     return _notification.show(id, title, body, await _notificationDetails());
@@ -93,7 +104,7 @@ class NotificationRepository {
     try {
       final querySnapshot = await FirebaseFirestore.instance
           .collection('Notifications')
-          .orderBy('timestamp', descending: false)
+          .orderBy('timestamp', descending: true)
           .where('receiver_id', isEqualTo: userId)
           .get();
 
@@ -116,6 +127,46 @@ class NotificationRepository {
         .collection("Notifications")
         .doc(notifID)
         .update({"read": true});
+  }
+
+  // Create a method to update the read status of this notification
+  Future<bool> markAllAsRead(String userID) async {
+    final List<UserNotifModel>? notifications =
+        await NotificationRepository().getUserNotifications(userID);
+
+    try {
+      if (notifications != null) {
+        for (var each in notifications) {
+          await FirebaseFirestore.instance
+              .collection("Notifications")
+              .doc(each.notificationModel.notificationId)
+              .update({"read": true});
+        }
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Create a method to update the read status of this notification
+  Future<bool> deleteAll(String userID) async {
+    final List<UserNotifModel>? notifications =
+        await NotificationRepository().getUserNotifications(userID);
+
+    try {
+      if (notifications != null) {
+        for (var each in notifications) {
+          await FirebaseFirestore.instance
+              .collection("Notifications")
+              .doc(each.notificationModel.notificationId)
+              .delete();
+        }
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Create a method to update the read status of this notification

@@ -15,7 +15,33 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/domain/reposito
 import 'package:uplift/utils/services/auth_services.dart';
 
 class PrayerRequestRepository {
-  Future<List<PostModel>> getPrayerRequestList({int? limit, required String userID}) async {
+  Stream<Map<String, dynamic>> getReactionInfo(String postID, String userID) {
+    return FirebaseFirestore.instance
+        .collection('Prayers')
+        .doc(postID)
+        .snapshots()
+        .map((snapshot) {
+      final List<dynamic> currentReactions =
+          snapshot.data()!['reactions']['users'];
+      bool userExist = false;
+      for (var reaction in currentReactions) {
+        if (reaction is Map && reaction.containsKey(userID)) {
+          userExist = true;
+        }
+      }
+      final int reactionCount = currentReactions.length;
+      return {
+        'isReacted': !userExist,
+        'reactionCount': reactionCount,
+      };
+    }).handleError((error) {
+      // Handle error if necessary
+      return {'isReacted': false, 'reactionCount': 0};
+    });
+  }
+
+  Future<List<PostModel>> getPrayerRequestList(
+      {int? limit, required String userID}) async {
     FriendsRepository friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = [];
 

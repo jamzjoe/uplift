@@ -22,20 +22,18 @@ class RefreshListOfNotification extends NotificationEvent {
 }
 
 class ClearNotification extends NotificationEvent {
-  final List<UserNotifModel> notificationList;
   final String userID;
 
-  const ClearNotification(this.notificationList, this.userID);
+  const ClearNotification(this.userID);
 
   @override
   List<Object?> get props => [];
 }
 
 class MarkAllAsRead extends NotificationEvent {
-  final List<UserNotifModel> notificationList;
   final String userID;
 
-  const MarkAllAsRead(this.notificationList, this.userID);
+  const MarkAllAsRead(this.userID);
 
   @override
   List<Object?> get props => [];

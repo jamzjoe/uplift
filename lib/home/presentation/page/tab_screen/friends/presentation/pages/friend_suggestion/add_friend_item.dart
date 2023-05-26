@@ -25,73 +25,70 @@ class AddFriendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          ProfilePhoto(
-            user: user,
-            radius: 15,
-          ),
-          const SizedBox(width: 15),
-          Flexible(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          HeaderText(
-                              text: user.displayName ?? 'Anonymous User',
-                              color: darkColor,
-                              size: 16),
-                          SmallText(
-                              text:
-                                  'Active ${DateFeature().formatDateTime(user.createdAt!.toDate())}',
-                              color: secondaryColor),
-                        ],
-                      ),
+    return Row(
+      children: [
+        ProfilePhoto(
+          user: user,
+          radius: 15,
+        ),
+        const SizedBox(width: 15),
+        Flexible(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeaderText(
+                            text: user.displayName ?? 'Anonymous User',
+                            color: darkColor,
+                            size: 16),
+                        SmallText(
+                            text:
+                                'Active ${DateFeature().formatDateTime(user.createdAt!.toDate())}',
+                            color: secondaryColor),
+                      ],
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        final FriendShipModel friendShipModel = FriendShipModel(
-                          sender: currentUser.userId,
-                          receiver: user.userId,
-                          status: 'pending',
-                          timestamp: Timestamp.now(),
-                        );
-                        try {
-                          await FriendsRepository()
-                              .addFriendshipRequest(friendShipModel);
-                          await NotificationRepository.sendPushMessage(
-                              user.deviceToken!,
-                              '${currentUser.displayName} sent you a friend a request.',
-                              "Uplift Notification",
-                              'add-friend');
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      final FriendShipModel friendShipModel = FriendShipModel(
+                        sender: currentUser.userId,
+                        receiver: user.userId,
+                        status: 'pending',
+                        timestamp: Timestamp.now(),
+                      );
+                      try {
+                        await FriendsRepository()
+                            .addFriendshipRequest(friendShipModel);
+                        await NotificationRepository.sendPushMessage(
+                            user.deviceToken!,
+                            '${currentUser.displayName} sent you a friend a request.',
+                            "Uplift Notification",
+                            'add-friend');
 
-                          await NotificationRepository.addNotification(
-                            user.userId!,
-                            'Friend request',
-                            'sent you a friend a request.',
-                          );
-                          controller!.clear();
-                        } catch (e) {
-                          log(e.toString());
-                        }
-                      },
-                      child: Icon(CupertinoIcons.add_circled_solid,
-                          color: secondaryColor.withOpacity(0.4), size: 30),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+                        await NotificationRepository.addNotification(
+                          user.userId!,
+                          'Friend request',
+                          'sent you a friend a request.',
+                        );
+                        controller!.clear();
+                      } catch (e) {
+                        log(e.toString());
+                      }
+                    },
+                    child: Icon(CupertinoIcons.add_circled_solid,
+                        color: secondaryColor.withOpacity(0.4), size: 30),
+                  )
+                ],
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

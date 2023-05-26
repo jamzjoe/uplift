@@ -26,7 +26,7 @@ class GetPrayerRequestBloc
         .collection('Prayers')
         .snapshots()
         .listen((event) async {
-      add(GetPostRequestList(userID));
+      add(GetPostRequestList(userID, limit: 10));
     });
     on<GetPrayerRequestEvent>((event, emit) {});
 

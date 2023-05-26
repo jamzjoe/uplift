@@ -26,26 +26,19 @@ class _PostTextState extends State<PostText> {
       title = widget.prayerRequest.title!;
     }
     final bool isEmpty = widget.prayerRequest.imageUrls!.isEmpty;
-    const padding = EdgeInsets.symmetric(vertical: 15, horizontal: 20);
+    const padding = EdgeInsets.symmetric(vertical: 15, horizontal: 0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
         !isEmpty
-            ? Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: SeeMoreText(
-                    text: widget.prayerRequest.text!.trim(),
-                    maxLines: 2,
-                    color: secondaryColor),
-              )
+            ? SeeMoreText(
+                text: widget.prayerRequest.text!.trim(),
+                maxLines: 2,
+                color: secondaryColor)
             : Container(
-                decoration: BoxDecoration(
-                    border: Border.symmetric(
-                        horizontal: BorderSide(
-                            color: lighter.withOpacity(0.1), width: .5))),
+                decoration: const BoxDecoration(),
                 width: double.infinity,
                 padding: padding,
                 child: Column(

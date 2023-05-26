@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
@@ -118,8 +120,6 @@ class FriendsRepository {
     });
   }
 
-
-
   Future<List<UserFriendshipModel>> fetchFriendRequest(String userID) async {
     List<UserFriendshipModel> data = [];
     String status = 'pending';
@@ -193,6 +193,50 @@ class FriendsRepository {
     }
 
     return FriendshipStatus('', false);
+  }
+
+  Future<List<UserModel>> fetchMutualFriend(
+      String userID, String currentUserID) async {
+    List<UserFriendshipModel> userFriends =
+        await fetchApprovedFriendRequest(userID);
+    List<UserFriendshipModel> myFriends =
+        await fetchApprovedFriendRequest(currentUserID);
+
+    List<UserModel> mutualFriends = [];
+
+    for (var userFriend in userFriends) {
+      for (var myFriend in myFriends) {
+        if (userFriend.userModel.userId == myFriend.userModel.userId) {
+          mutualFriends.add(userFriend.userModel);
+          break; // Once a match is found, no need to continue searching
+        }
+      }
+    }
+    saveMutualFriends(mutualFriends);
+    return mutualFriends;
+  }
+
+  Future<List<UserModel>> readMutualFriends() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? serializedFriends = prefs.getStringList('mutual_friends');
+
+    if (serializedFriends == null) {
+      return [];
+    }
+
+    List<UserModel> mutualFriends = serializedFriends
+        .map((friendData) => UserModel.fromJson(jsonDecode(friendData)))
+        .toList();
+
+    return mutualFriends;
+  }
+
+  Future<void> saveMutualFriends(List<UserModel> mutualFriends) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List serializedFriends =
+        mutualFriends.map((friend) => friend.toJson()).toList();
+    await prefs.setStringList(
+        'mutual_friends', serializedFriends.cast<String>());
   }
 
   Future<List<UserFriendshipModel>> fetchApprovedFriendRequest(

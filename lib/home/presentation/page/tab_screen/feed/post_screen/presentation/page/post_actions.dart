@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:bottom_sheet/bottom_sheet.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,44 +58,53 @@ class _PostActionsState extends State<PostActions> {
     final ScrollController scrollController = ScrollController();
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         StreamBuilder<Map<String, dynamic>>(
-          stream: getReactionInfo(postID!, currentUser.userId!),
+          stream: PrayerRequestRepository()
+              .getReactionInfo(postID!, currentUser.userId!),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const CircularProgressIndicator();
             }
             final bool isReacted = snapshot.data!['isReacted'];
             final int reactionCount = snapshot.data!['reactionCount'];
-            return Row(
+            return Column(
               children: [
-                LikeButton(
-                    onTap: (isLiked) async {
-                      if (isLiked) {
-                        PrayerRequestRepository()
-                            .unReact(postID, currentUser.userId!);
-                        return isLiked = !isLiked;
-                      } else {
-                        PrayerRequestRepository().addReaction(postID,
-                            currentUser.userId!, widget.userModel, currentUser);
-                        return isLiked = !isLiked;
-                      }
-                    },
-                    padding: EdgeInsets.zero,
-                    likeCountPadding: EdgeInsets.zero,
-                    isLiked: !isReacted,
-                    likeCount: reactionCount,
-                    size: 30,
-                    likeBuilder: (isLiked) => PrayedButton(
-                          path: isReacted
-                              ? "assets/unprayed.png"
-                              : "assets/prayed.png",
-                        )
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    LikeButton(
+                        onTap: (isLiked) async {
+                          if (isLiked) {
+                            PrayerRequestRepository()
+                                .unReact(postID, currentUser.userId!);
+                            return isLiked = !isLiked;
+                          } else {
+                            PrayerRequestRepository().addReaction(
+                                postID,
+                                currentUser.userId!,
+                                widget.userModel,
+                                currentUser);
+                            return isLiked = !isLiked;
+                          }
+                        },
+                        padding: EdgeInsets.zero,
+                        likeCountPadding: EdgeInsets.zero,
+                        isLiked: !isReacted,
+                        size: 30,
+                        likeBuilder: (isLiked) => PrayedButton(
+                              path: isReacted
+                                  ? "assets/unprayed.png"
+                                  : "assets/prayed.png",
+                            )
+                        // Rest of the code
+                        ),
+                    SmallText(text: 'Pray', color: lighter)
                     // Rest of the code
-                    ),
-                // Rest of the code
+                  ],
+                ),
               ],
             );
           },
@@ -143,18 +151,7 @@ class _PostActionsState extends State<PostActions> {
               size: 22,
               color: lighter,
             ),
-            label: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: FirebaseFirestore.instance
-                    .collection('Comments')
-                    .where('post_id', isEqualTo: postID)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const SmallText(text: '0', color: secondaryColor);
-                  }
-                  return SmallText(
-                      text: '${snapshot.data!.size} Encourage', color: lighter);
-                })),
+            label: SmallText(text: 'Encourage', color: lighter)),
         const SizedBox(width: 10),
         TextButton.icon(
             label: SmallText(text: 'Share', color: lighter),
@@ -191,34 +188,6 @@ class _PostActionsState extends State<PostActions> {
           isReacted = value;
         });
       });
-    });
-  }
-
-  Stream<Map<String, dynamic>> getReactionInfo(String postID, String userID) {
-    return FirebaseFirestore.instance
-        .collection('Prayers')
-        .doc(postID)
-        .snapshots()
-        .map((snapshot) {
-      final List<dynamic> currentReactions =
-          snapshot.data()!['reactions']['users'];
-      bool userExist = false;
-      for (var reaction in currentReactions) {
-        if (reaction is Map && reaction.containsKey(userID)) {
-          userExist = true;
-        }
-      }
-      final int reactionCount = currentReactions.length;
-      return {
-        'isReacted': !userExist,
-        'reactionCount': reactionCount,
-      };
-    }).handleError((error) {
-      // Handle error if necessary
-      return {
-        'isReacted': false,
-        'reactionCount': 0,
-      };
     });
   }
 }

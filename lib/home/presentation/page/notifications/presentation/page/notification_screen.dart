@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_shimmer.dart';
 import 'package:uplift/utils/services/auth_services.dart';
@@ -14,9 +14,9 @@ import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'notification_item.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key, required this.notifications});
+  const NotificationScreen({super.key, required this.currentUser});
+  final UserModel currentUser;
 
-  final List<UserNotifModel> notifications;
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
@@ -33,7 +33,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  onTap: () => markAllAsRead(widget.notifications),
+                  onTap: () => markAllAsRead(widget.currentUser.userId!),
                   child: TextButton.icon(
                       label: const DefaultText(
                           text: 'Mark all as read', color: secondaryColor),
@@ -44,7 +44,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       )),
                 ),
                 PopupMenuItem(
-                  onTap: () => deleteAll(widget.notifications),
+                  onTap: () => deleteAll(widget.currentUser.userId!),
                   child: TextButton.icon(
                       label: const DefaultText(
                           text: 'Delete all', color: secondaryColor),
@@ -114,14 +114,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  void markAllAsRead(List<UserNotifModel> notifications) async {
+  void markAllAsRead(String userID) async {
     log("Tap");
-    BlocProvider.of<NotificationBloc>(context)
-        .add(MarkAllAsRead(notifications, await AuthServices.userID()));
+    BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
   }
 
-  void deleteAll(List<UserNotifModel> notifications) async {
-    BlocProvider.of<NotificationBloc>(context).add(
-        ClearNotification(widget.notifications, await AuthServices.userID()));
+  void deleteAll(String userID) async {
+    BlocProvider.of<NotificationBloc>(context).add(ClearNotification(userID));
   }
 }

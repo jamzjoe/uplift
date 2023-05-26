@@ -19,30 +19,34 @@ class NotificationItem extends StatelessWidget {
     final user = notificationModel.userModel;
     final notification = notificationModel.notificationModel;
 
-    return InkWell(
-      onTapDown: (TapDownDetails tapDownDetails) {
-        _showMenu(tapDownDetails, context, notification);
+    return Dismissible(
+      key: Key(notification.notificationId!),
+      onDismissed: (direction) {
+        BlocProvider.of<NotificationBloc>(context)
+            .add(DeleteOneNotif(userID, notification.notificationId!));
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-        child: Row(children: [
-          ProfilePhoto(user: user, radius: 15, size: 50),
-          const SizedBox(width: 10),
-          Flexible(
-            child: RichText(
-                text: TextSpan(children: [
-              TextSpan(
-                  text: user.displayName,
-                  style: const TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15)),
-              TextSpan(
-                  text: ' ${notification.message}',
-                  style: TextStyle(color: lighter, fontSize: 15)),
-            ])),
-          )
-        ]),
+      child: InkWell(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+          child: Row(children: [
+            ProfilePhoto(user: user, radius: 15, size: 50),
+            const SizedBox(width: 10),
+            Flexible(
+              child: RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: user.displayName,
+                    style: const TextStyle(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                TextSpan(
+                    text: ' ${notification.message}',
+                    style: TextStyle(color: lighter, fontSize: 15)),
+              ])),
+            )
+          ]),
+        ),
       ),
     );
   }

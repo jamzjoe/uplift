@@ -30,172 +30,167 @@ class PostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          user.photoUrl == null || prayerRequest.name == 'Uplift User'
-              ? const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: AssetImage('assets/default.png'),
-                )
-              : Hero(
-                  tag: 'profile',
-                  child: GestureDetector(
-                    onTap: () => context.pushNamed('photo_view',
-                        extra: user.photoUrl ?? ''),
-                    child: ProfilePhoto(
-                      user: user,
-                      radius: 10,
-                    ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        user.photoUrl == null || prayerRequest.name == 'Uplift User'
+            ? const CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('assets/default.png'),
+              )
+            : Hero(
+                tag: 'profile',
+                child: GestureDetector(
+                  onTap: () => context.pushNamed('photo_view',
+                      extra: user.photoUrl ?? ''),
+                  child: ProfilePhoto(
+                    user: user,
+                    radius: 10,
                   ),
                 ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HeaderText(
-                  onTap: () async {
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                    if (prayerRequest.name!.isNotEmpty) {
-                      CustomDialog.showErrorDialog(
-                          context,
-                          "This user set his/her post into private.",
-                          'Request Denied',
-                          'Confirm');
-                      return;
-                    }
-                    showFlexibleBottomSheet(
-                      minHeight: 0,
-                      initHeight: 0.92,
-                      maxHeight: 1,
-                      isSafeArea: true,
-                      context: context,
-                      builder: (context, scrollController, bottomSheetOffset) {
-                        return Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-                          ),
-                          child: FriendsFeed(
-                            userModel: user,
-                            isSelf: user.userId == currentUser.userId,
-                            currentUser: currentUser,
-                            scrollController: scrollController,
-                          ),
-                        );
-                      },
-                      anchors: [0, 0.5, 1],
-                    );
-                  },
-                  text: prayerRequest.name!.isEmpty
-                      ? user.displayName!
-                      : prayerRequest.name!,
-                  color: secondaryColor,
-                  size: 16,
-                ),
-                SmallText(
-                    text: DateFeature()
-                        .formatDateTime(prayerRequest.date!.toDate()),
-                    color: lighter)
+              ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HeaderText(
+                onTap: () async {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                  if (prayerRequest.name!.isNotEmpty) {
+                    CustomDialog.showErrorDialog(
+                        context,
+                        "This user set his/her post into private.",
+                        'Request Denied',
+                        'Confirm');
+                    return;
+                  }
+                  showFlexibleBottomSheet(
+                    minHeight: 0,
+                    initHeight: 0.92,
+                    maxHeight: 1,
+                    isSafeArea: true,
+                    context: context,
+                    builder: (context, scrollController, bottomSheetOffset) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+                        ),
+                        child: FriendsFeed(
+                          userModel: user,
+                          isSelf: user.userId == currentUser.userId,
+                          currentUser: currentUser,
+                          scrollController: scrollController,
+                        ),
+                      );
+                    },
+                    anchors: [0, 0.5, 1],
+                  );
+                },
+                text: prayerRequest.name!.isEmpty
+                    ? user.displayName!
+                    : prayerRequest.name!,
+                color: secondaryColor,
+                size: 16,
+              ),
+              SmallText(
+                  text: DateFeature()
+                      .formatDateTime(prayerRequest.date!.toDate()),
+                  color: lighter)
+            ],
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PopupMenuButton(
+              padding: EdgeInsets.zero,
+              icon: const Icon(
+                CupertinoIcons.ellipsis_vertical,
+                size: 15,
+                color: secondaryColor,
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                    onTap: () async {
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        showDialog(
+                            context: context,
+                            builder: (context) =>
+                                const ReportPrayerRequestDialog());
+                      });
+                    },
+                    child: ListTile(
+                      dense: true,
+                      leading: Icon(CupertinoIcons.exclamationmark_bubble_fill,
+                          color: Colors.red[300]),
+                      title: const DefaultText(
+                          text: 'Report Post', color: secondaryColor),
+                    )),
+                PopupMenuItem(
+                    onTap: () async {
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => SetReminderDialog());
+                      });
+                    },
+                    child: ListTile(
+                      dense: true,
+                      leading: Icon(CupertinoIcons.bell_circle_fill,
+                          color: Colors.red[300]),
+                      title: const DefaultText(
+                          text: 'Set reminder for this post',
+                          color: secondaryColor),
+                    )),
+                PopupMenuItem(
+                    onTap: () async {
+                      Future.delayed(
+                          const Duration(milliseconds: 300),
+                          () => CustomDialog.showDeleteConfirmation(
+                                  context,
+                                  'This will delete this prayer request.',
+                                  'Delete Confirmation', () async {
+                                context.pop();
+                                final canDelete =
+                                    await PrayerRequestRepository().deletePost(
+                                        prayerRequest.postId!, user.userId!);
+                                if (canDelete) {
+                                  if (context.mounted) {
+                                    CustomDialog.showSuccessDialog(
+                                        context,
+                                        'Prayer request deleted successfully!',
+                                        'Request Granted',
+                                        'Confirm');
+                                  }
+                                } else {
+                                  if (context.mounted) {
+                                    CustomDialog.showErrorDialog(
+                                        context,
+                                        "You can't delete someone's prayer request.",
+                                        'Request Denied',
+                                        'Confirm');
+                                  }
+                                }
+                              }, 'Delete'));
+                    },
+                    child: ListTile(
+                      dense: true,
+                      leading: Icon(CupertinoIcons.delete_left_fill,
+                          color: Colors.red[300]),
+                      title: const DefaultText(
+                          text: 'Delete Post', color: secondaryColor),
+                    ))
               ],
             ),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton(
-                padding: EdgeInsets.zero,
-                icon: const Icon(
-                  CupertinoIcons.ellipsis_vertical,
-                  size: 15,
-                  color: secondaryColor,
-                ),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const ReportPrayerRequestDialog());
-                        });
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(
-                            CupertinoIcons.exclamationmark_bubble_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
-                            text: 'Report Post', color: secondaryColor),
-                      )),
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => SetReminderDialog());
-                        });
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(CupertinoIcons.bell_circle_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
-                            text: 'Set reminder for this post',
-                            color: secondaryColor),
-                      )),
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(
-                            const Duration(milliseconds: 300),
-                            () => CustomDialog.showDeleteConfirmation(
-                                    context,
-                                    'This will delete this prayer request.',
-                                    'Delete Confirmation', () async {
-                                  context.pop();
-                                  final canDelete =
-                                      await PrayerRequestRepository()
-                                          .deletePost(prayerRequest.postId!,
-                                              user.userId!);
-                                  if (canDelete) {
-                                    if (context.mounted) {
-                                      CustomDialog.showSuccessDialog(
-                                          context,
-                                          'Prayer request deleted successfully!',
-                                          'Request Granted',
-                                          'Confirm');
-                                    }
-                                  } else {
-                                    if (context.mounted) {
-                                      CustomDialog.showErrorDialog(
-                                          context,
-                                          "You can't delete someone's prayer request.",
-                                          'Request Denied',
-                                          'Confirm');
-                                    }
-                                  }
-                                }, 'Delete'));
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(CupertinoIcons.delete_left_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
-                            text: 'Delete Post', color: secondaryColor),
-                      ))
-                ],
-              ),
-            ],
-          )
-        ],
-      ),
+          ],
+        )
+      ],
     );
   }
 

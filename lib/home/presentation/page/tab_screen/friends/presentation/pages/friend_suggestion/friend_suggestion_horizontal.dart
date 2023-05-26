@@ -41,7 +41,7 @@ class _FriendSuggestionHorizontalState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SmallText(
-                    text: 'People with same interest like you:',
+                    text: 'People with same prayer intentions like you:',
                     color: lighter),
                 SizedBox(
                   height: 80,

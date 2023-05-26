@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -57,55 +58,51 @@ class _FeedScreenState extends State<FeedScreen> {
           width: 80,
         ),
         actions: [
-          Badge.count(
-            isLabelVisible: badgeCount != 0,
-            count: badgeCount,
-            alignment: AlignmentDirectional.bottomStart,
-            child: IconButton(
-              onPressed: () {
-                goToNotificationScreen(user.uid, notifications);
-              },
-              icon: const Image(
-                image: AssetImage('assets/bell.png'),
-                width: 30,
-              ),
-            ),
-          ),
+          StreamBuilder<Map<String, dynamic>>(
+              stream: NotificationRepository().notificationListener(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final count = snapshot.data!['length'];
+                  return Badge.count(
+                    isLabelVisible: count != 0,
+                    count: count,
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: IconButton(
+                      onPressed: () {
+                        goToNotificationScreen(user.uid);
+                      },
+                      icon: const Image(
+                        image: AssetImage('assets/bell.png'),
+                        width: 30,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              }),
         ],
       ),
-      body: BlocListener<NotificationBloc, NotificationState>(
-        listener: (context, state) {
-          if (state is NotificationLoadingSuccess) {
-            setState(() {
-              badgeCount = state.notifications
-                  .where((element) => element.notificationModel.read == false)
-                  .length;
-              notifications.addAll(state.notifications);
-            });
-          }
-        },
-        child: SafeArea(
-            maintainBottomViewPadding: true,
-            child: RefreshIndicator(
-              onRefresh: () async {
-                BlocProvider.of<GetPrayerRequestBloc>(context)
-                    .add(RefreshPostRequestList(widget.user.user.uid));
+      body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              BlocProvider.of<GetPrayerRequestBloc>(context)
+                  .add(RefreshPostRequestList(widget.user.user.uid));
+            },
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: 1,
+              itemBuilder: (context, index) {
+                return PostListItem(userJoinedModel: userJoinedModel);
               },
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return PostListItem(userJoinedModel: userJoinedModel);
-                },
-              ),
-            )),
-      ),
+            ),
+          )),
     );
   }
 
-  void goToNotificationScreen(
-      String userID, List<UserNotifModel> notifications) {
-    context.pushNamed('notification', extra: notifications);
+  void goToNotificationScreen(String userID) {
+    BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
+    context.pushNamed('notification', extra: widget.user.userModel);
   }
 
   void _scrollListener() {
