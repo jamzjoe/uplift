@@ -6,7 +6,7 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
-import 'package:uplift/utils/services/auth_services.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
@@ -80,11 +80,12 @@ class FriendRequestItem extends StatelessWidget {
                           );
                           if (context.mounted) {
                             BlocProvider.of<FriendRequestBloc>(context).add(
-                                FetchFriendRequestEvent(
-                                    await AuthServices.userID()));
+                                FetchFriendRequestEvent(currentUser.userId!));
+                            FriendsRepository().acceptFriendshipRequest(
+                                userModel.userId!, currentUser.userId!);
+                            BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
+                                .add(FetchUsersEvent(currentUser.userId!));
                           }
-                          FriendsRepository().acceptFriendshipRequest(
-                              userModel.userId!, await AuthServices.userID());
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(

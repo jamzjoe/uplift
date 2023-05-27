@@ -8,7 +8,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/contacts.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_item_shimmer.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/search_bar.dart';
+import 'package:uplift/utils/widgets/default_loading.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 
@@ -24,7 +24,6 @@ class FriendSuggestions extends StatefulWidget {
 }
 
 final TextEditingController searchController = TextEditingController();
-String contact = '';
 
 class _FriendSuggestionsState extends State<FriendSuggestions> {
   @override
@@ -37,75 +36,34 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
         },
         child: Scaffold(
           appBar: AppBar(
-            actions: [
-              TextButton.icon(
-                  label: const HeaderText(
-                      text: 'IMPORT', color: secondaryColor, size: 12),
-                  onPressed: () async {
-                    final result = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const Contacts();
-                    }));
-
-                    setState(() {
-                      contact = result;
-                      searchController.text = result;
-                      search(context, result);
-                    });
-                  },
-                  icon: const Icon(CupertinoIcons.add_circled_solid)),
-            ],
+            
             title: const HeaderText(
               text: 'Friend suggestions',
               color: darkColor,
               size: 18,
             ),
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-            child: Column(
-              children: [
-                CustomSearchBar(
-                  hint: 'Search uplift user...',
-                  controller: searchController,
-                  onFieldSubmitted: (query) {
-                    search(context, query);
-                  },
-                ),
-                BlocBuilder<FriendsSuggestionsBlocBloc,
-                    FriendsSuggestionsBlocState>(
-                  builder: (context, state) {
-                    context.loaderOverlay.show();
-                    if (state is FriendsSuggestionLoading) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return const FriendsShimmerItem();
-                        },
-                      );
-                    } else if (state is FriendsSuggestionLoadingSuccess) {
-                      if (state.users.isEmpty) {
-                        return const Align(
-                          alignment: Alignment.center,
-                          child: NoDataMessage(text: 'No user found'),
-                        );
-                      }
-                      return Column(
-                        children: [
-                          FriendSuggestionList(
-                              users: state.users,
-                              currentUser: widget.currentUser,
-                              context: context),
-                        ],
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
-              ],
-            ),
+          body: BlocBuilder<FriendsSuggestionsBlocBloc,
+              FriendsSuggestionsBlocState>(
+            builder: (context, state) {
+              if (state is FriendsSuggestionLoading) {
+                return const Center(
+                  child: DefaultLoading(),
+                );
+              } else if (state is FriendsSuggestionLoadingSuccess) {
+                if (state.users.isEmpty) {
+                  return const Align(
+                    alignment: Alignment.center,
+                    child: NoDataMessage(text: 'No user found'),
+                  );
+                }
+                return FriendSuggestionList(
+                    users: state.users,
+                    currentUser: widget.currentUser,
+                    context: context);
+              }
+              return const SizedBox();
+            },
           ),
         ),
       ),

@@ -55,9 +55,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             onTap: () {
                               context.pushNamed("friends-list",
                                   extra: widget.currentUser);
-                              BlocProvider.of<ApprovedFriendsBloc>(context).add(
-                                  FetchApprovedFriendRequest(
-                                      widget.currentUser.userId!));
+                           
                             },
                             widget: DefaultText(
                                 text: 'Your Friends', color: lighter),

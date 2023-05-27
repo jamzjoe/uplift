@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/widgets/default_loading.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -46,10 +47,10 @@ class _ContactsState extends State<Contacts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const HeaderText(text: 'My Contacts', color: secondaryColor),
+        title: const HeaderText(text: 'My Contacts', color: darkColor),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const DefaultLoading()
           : ListView(
               children: [
                 ...contacts.map((e) => ListTile(
@@ -68,10 +69,9 @@ class _ContactsState extends State<Contacts> {
                           icon: const Icon(CupertinoIcons.add_circled_solid,
                               size: 30)),
                       subtitle: SmallText(
-                          text: e.displayName ?? '', color: secondaryColor),
+                          text: e.displayName ?? '', color: darkColor),
                       title: SmallText(
-                          text: e.phones!.first.value ?? '',
-                          color: secondaryColor),
+                          text: e.phones!.first.value ?? '', color: darkColor),
                     ))
               ],
             ),

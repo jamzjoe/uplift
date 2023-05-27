@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_approved_mutual.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
 import '../../../domain/repository/friends_repository.dart';
@@ -30,8 +30,10 @@ class ApprovedFriendsBloc
     });
 
     on<FetchApprovedFriendRequest>((event, emit) async {
+      emit(ApprovedFriendsLoading());
       try {
-        final data = await friendsRepository.fetchApprovedFriendRequest(event.userID);
+        final data = await friendsRepository
+            .fetchApprovedFriendRequestWithMutual(event.userID);
         emit(ApprovedFriendsSuccess2(data));
       } catch (e) {
         log(e.toString());
@@ -39,19 +41,19 @@ class ApprovedFriendsBloc
       }
     });
 
-    on<SearchApprovedFriend>((event, emit) async {
-      try {
-        final data =
-            await friendsRepository.searchApprovedFriendRequest(event.query);
-        if (data.isEmpty) {
-          emit(EmptySearchResult());
-        } else {
-          emit(ApprovedFriendsSuccess2(data));
-        }
-      } catch (e) {
-        emit(ApprovedFriendsError());
-      }
-    });
+    // on<SearchApprovedFriend>((event, emit) async {
+    //   try {
+    //     final data =
+    //         await friendsRepository.searchApprovedFriendRequest(event.query);
+    //     if (data.isEmpty) {
+    //       emit(EmptySearchResult());
+    //     } else {
+    //       emit(ApprovedFriendsSuccess2(data));
+    //     }
+    //   } catch (e) {
+    //     emit(ApprovedFriendsError());
+    //   }
+    // });
 
     on<UnfriendEvent>((event, emit) async {
       final userID = await AuthServices.userID();

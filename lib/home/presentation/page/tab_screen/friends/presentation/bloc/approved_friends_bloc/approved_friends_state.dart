@@ -24,7 +24,7 @@ class ApprovedFriendsSuccess extends ApprovedFriendsState {
 }
 
 class ApprovedFriendsSuccess2 extends ApprovedFriendsState {
-  final List<UserFriendshipModel> approvedFriendList;
+  final List<UserApprovedMutualFriends> approvedFriendList;
 
   const ApprovedFriendsSuccess2(this.approvedFriendList);
   @override

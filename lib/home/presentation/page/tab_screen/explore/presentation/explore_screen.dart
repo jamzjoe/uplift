@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_post_list_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -126,20 +126,8 @@ class _ExploreScreenState extends State<ExploreScreen>
                             ),
                           );
                         }
-                        return ListView(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom +
-                                  150),
-                          shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          children: [
-                            ...state.prayerRequestPostModel.map((e) => PostItem(
-                                  postModel: e,
-                                  user: e.userModel,
-                                  fullView: false,
-                                )),
-                          ],
-                        );
+                        return PostListView(
+                            postList: state.prayerRequestPostModel);
                       }
                       return const PostShimmerLoading();
                     },

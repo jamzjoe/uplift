@@ -6,9 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_approved_mutual.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_mutual_friends_model.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
 class FriendsRepository {
@@ -181,18 +182,17 @@ class FriendsRepository {
     return data;
   }
 
-  Future<FriendshipStatus?> checkFriendsStatus(String userID) async {
+  Future<NewUserFriendshipModel?> checkFriendsStatus(String userID) async {
     final currentUserID = FirebaseAuth.instance.currentUser!.uid;
-    List<UserFriendshipModel> friends =
-        await fetchApprovedFriendRequest(userID);
+    List<NewUserFriendshipModel> friends =
+        await FriendsRepository().fetchAllFriendRequest(userID);
 
     for (var friend in friends) {
       if (friend.userModel.userId == currentUserID) {
-        return FriendshipStatus(friend.friendshipID.friendshipId!, true);
+        return friend;
       }
     }
-
-    return FriendshipStatus('', false);
+    return null;
   }
 
   Future<List<List<UserFriendshipModel>>> fetchFriendsOfFriends(
@@ -239,7 +239,8 @@ class FriendsRepository {
     return mutualFriends;
   }
 
-  Future<List<UserModel>> fetchMyFriendFriends(String currentUserID) async {
+  Future<List<UserMutualFriendsModel>> fetchMyFriendFriends(
+      String currentUserID) async {
     List<UserFriendshipModel> myFriends =
         await fetchApprovedFriendRequest(currentUserID);
 
@@ -264,7 +265,14 @@ class FriendsRepository {
       }
     }
 
-    return myFriendsFriends;
+    final List<UserMutualFriendsModel> mutualFriends = [];
+    for (var each in myFriendsFriends) {
+      final commonFriends =
+          await fetchMutualFriendsWithFriend(currentUserID, each.userId!);
+      mutualFriends.add(UserMutualFriendsModel(each, commonFriends));
+    }
+
+    return mutualFriends;
   }
 
   Future<List<UserModel>> readMutualFriends() async {
@@ -712,5 +720,79 @@ class FriendsRepository {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<List<UserApprovedMutualFriends>> fetchApprovedFriendRequestWithMutual(
+      String userID) async {
+    String status = 'approved';
+    List<String> userIDS = [];
+    List<String> friendshipID = [];
+
+    QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', isEqualTo: status)
+            .where('receiver', isEqualTo: userID)
+            .get();
+    QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
+        await FirebaseFirestore.instance
+            .collection('Friendships')
+            .where('status', isEqualTo: status)
+            .where('sender', isEqualTo: userID)
+            .get();
+
+    for (var doc in fetchingReceiverID.docs) {
+      String sender = doc.data()['sender'];
+      String friendID = doc.data()['friendship_id'];
+
+      userIDS.add(sender);
+      friendshipID.add(friendID);
+    }
+
+    for (var doc in fetchingSenderID.docs) {
+      String receiver = doc.data()['receiver'];
+      String friendID = doc.data()['friendship_id'];
+
+      userIDS.add(receiver);
+      friendshipID.add(friendID);
+    }
+
+    if (userIDS.isEmpty) {
+      return [];
+    }
+
+    // Split userIDS into chunks of 10 (or the desired limit)
+    const chunkSize = 10;
+    final chunks = _splitListIntoChunks(userIDS, chunkSize);
+
+    List<UserModel> users = [];
+    for (var chunk in chunks) {
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('Users')
+          .where('user_id', whereIn: chunk)
+          .get();
+
+      List<UserModel> chunkUsers =
+          response.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
+
+      users.addAll(chunkUsers);
+    }
+
+    List<UserFriendshipModel> data = [];
+
+    for (int i = 0; i < friendshipID.length; i++) {
+      String friendID = friendshipID[i];
+
+      UserModel? user = users.firstWhere((u) => u.userId == userIDS[i]);
+      data.add(UserFriendshipModel(FriendshipID(friendshipId: friendID), user));
+    }
+    final List<UserApprovedMutualFriends> mutualFriends = [];
+    for (var each in data) {
+      final commonFriends =
+          await fetchMutualFriendsWithFriend(userID, each.userModel.userId!);
+      mutualFriends.add(UserApprovedMutualFriends(each, commonFriends));
+    }
+    return mutualFriends;
   }
 }

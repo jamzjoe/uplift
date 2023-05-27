@@ -15,7 +15,7 @@ class FriendsSuggestionLoading extends FriendsSuggestionsBlocState {
 }
 
 class FriendsSuggestionLoadingSuccess extends FriendsSuggestionsBlocState {
-  final List<UserModel> users;
+  final List<UserMutualFriendsModel> users;
 
   const FriendsSuggestionLoadingSuccess(this.users);
   @override

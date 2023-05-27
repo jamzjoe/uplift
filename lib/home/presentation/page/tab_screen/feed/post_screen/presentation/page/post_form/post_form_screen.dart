@@ -91,7 +91,9 @@ class _PostFormScreenState extends State<PostFormScreen> {
                             BlocProvider.of<ApprovedFriendsBloc>(context);
                         final state = bloc.state;
                         if (state is ApprovedFriendsSuccess2) {
-                          friends = state.approvedFriendList;
+                          friends = state.approvedFriendList
+                              .map((e) => e.userFriendshipModel)
+                              .toList();
                         }
                         BlocProvider.of<PostPrayerRequestBloc>(context).add(
                             PostPrayerRequestActivity(
@@ -100,7 +102,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
                                 files,
                                 postType == 'anonymous' ? 'Uplift User' : '',
                                 friends,
-                                selectedPrayerIntention, context));
+                                selectedPrayerIntention,
+                                context));
                         context.pop();
                       }
                     },

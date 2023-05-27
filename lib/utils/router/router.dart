@@ -12,7 +12,6 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/following_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
@@ -121,15 +120,7 @@ final GoRouter router = GoRouter(
                     user: state.extra as UserModel,
                   ));
                 }),
-            GoRoute(
-                path: 'follower-list',
-                name: 'follower-list',
-                pageBuilder: (context, state) {
-                  return MaterialPage(
-                      child: FollowingListScreen(
-                    currentUser: state.extra as UserModel,
-                  ));
-                }),
+        
             GoRoute(
                 path: 'edit-profile',
                 name: 'edit-profile',

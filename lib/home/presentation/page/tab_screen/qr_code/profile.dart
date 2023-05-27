@@ -27,12 +27,13 @@ class UserProfile extends StatelessWidget {
           size: 80,
         ),
         defaultSpace,
-        HeaderText(text: user.displayName!, color: secondaryColor),
+        HeaderText(text: user.displayName ?? 'Name', color: secondaryColor),
         defaultSpace,
-        SmallText(text: user.emailAddress!, color: secondaryColor),
-        SmallText(text: user.phoneNumber!, color: secondaryColor),
         SmallText(
-            text: user.bio!.isEmpty ? 'Bio' : user.bio!, color: secondaryColor),
+            text: user.emailAddress ?? 'Email address', color: secondaryColor),
+        SmallText(
+            text: user.phoneNumber ?? 'Phone number', color: secondaryColor),
+        SmallText(text: user.bio ?? '', color: secondaryColor),
         defaultSpace,
         GestureDetector(
           onTap: () async {
