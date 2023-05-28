@@ -4,9 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_mutual_friends_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 
@@ -25,13 +23,23 @@ class FriendsSuggestionsBlocBloc
     //     .collection('Friendships')
     //     .snapshots()
     //     .listen((event) async {
-    //   add(FetchUsersEvent());
+    //   add(FetchUsersEvent(userID));
     // });
 
     on<FriendsSuggestionsBlocEvent>((event, emit) {});
 
     on<FetchUsersEvent>((event, emit) async {
       emit(FriendsSuggestionLoading());
+      try {
+        final data =
+            await friendSuggestionRepository.fetchMyFriendFriends(event.userID);
+        emit(FriendsSuggestionLoadingSuccess(data));
+      } on FirebaseAuthException {
+        emit(FriendsSuggestionLoadingError());
+      }
+    });
+
+    on<RefreshFriendSuggestion>((event, emit) async {
       try {
         final data =
             await friendSuggestionRepository.fetchMyFriendFriends(event.userID);

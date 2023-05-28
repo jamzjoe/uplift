@@ -45,10 +45,11 @@ class GetPrayerRequestByPopularity extends ExploreEvent {
 
 class SearchPrayerRequest extends ExploreEvent {
   final String query;
+  final List<PostModel> posts;
 
-  const SearchPrayerRequest(this.query);
+  const SearchPrayerRequest(this.query, this.posts);
   @override
-  List<Object?> get props => [query];
+  List<Object?> get props => [query, posts];
 }
 
 class CheckInternet extends ExploreEvent {

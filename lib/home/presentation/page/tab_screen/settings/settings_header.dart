@@ -1,4 +1,3 @@
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,12 +6,12 @@ import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/count_details.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -143,7 +142,6 @@ class SettingsProfileHeader extends StatelessWidget {
           TextFormField(
             controller: bioController,
             keyboardType: TextInputType.text,
-            autofocus: false,
             onFieldSubmitted: (value) {
               userJoinedModel.userModel.bio = bioController.text;
               BlocProvider.of<AuthenticationBloc>(context)
@@ -170,27 +168,6 @@ class SettingsProfileHeader extends StatelessWidget {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
-    showFlexibleBottomSheet(
-      minHeight: 0,
-      initHeight: 0.92,
-      maxHeight: 1,
-      context: context,
-      builder: (context, scrollController, bottomSheetOffset) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-          ),
-          child: FriendsFeed(
-            isSelf: true,
-            userModel: userModel,
-            currentUser: currentUser,
-            scrollController: scrollController,
-          ),
-        );
-      },
-      anchors: [0, 0.5, 1],
-      isSafeArea: true,
-    );
+    CustomDialog().showProfile(context, currentUser, userModel);
   }
 }

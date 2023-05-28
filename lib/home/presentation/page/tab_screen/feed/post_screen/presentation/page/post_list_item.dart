@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,66 +29,37 @@ class PostListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserModel userModel = userJoinedModel.userModel;
-    final User user = userJoinedModel.user;
 
     return Column(
       children: [
         Container(
           color: whiteColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2.5),
+                child: Row(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const HeaderText(
-                                  text: 'Hello ', color: darkColor),
-                              HeaderText(
-                                text: capitalizeFirstLetter(
-                                    '${userModel.displayName},'),
-                                color: secondaryColor,
-                              ),
-                            ],
-                          ),
-                          SmallText(
-                            text: 'What would you like us to pray for?',
-                            color: darkColor.withOpacity(0.8),
-                          ),
-                        ],
-                      ),
+                    const SmallText(text: 'Hello ', color: darkColor),
+                    SmallText(
+                      text: capitalizeFirstLetter('${userModel.displayName},'),
+                      color: secondaryColor,
                     ),
-                    // const Image(
-                    //     image: AssetImage('assets/prayer.png'), width: 50)
-                    // Container(
-                    //   width: 60,
-                    //   height: 60,
-                    //   clipBehavior: Clip.none,
-                    //   child: Transform.scale(
-                    //     scale: 2,
-                    //     origin: const Offset(3, 6),
-                    //     child: LottieBuilder.asset(
-                    //       'assets/thinking.json',
-                    //       height: 150,
-                    //       width: 150,
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
-                const SizedBox(height: 5),
-                PostField(userJoinModel: userJoinedModel),
-                const SizedBox(height: 5),
-                FriendSuggestionHorizontal(currentUser: userModel),
-              ],
-            ),
+              ),
+              HeaderText(
+                text: 'What would you like us to pray for?',
+                color: darkColor.withOpacity(0.8),
+                size: 20,
+              ),
+              const SizedBox(height: 15),
+              PostField(userJoinModel: userJoinedModel),
+              const SizedBox(height: 15),
+              FriendSuggestionHorizontal(currentUser: userModel),
+            ],
           ),
         ),
         const SizedBox(height: 2.5),
@@ -97,9 +67,9 @@ class PostListItem extends StatelessWidget {
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {
               if (state.prayerRequestPostModel.isEmpty) {
-                return Center(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height - 450,
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height - 250,
+                  child: Center(
                     child: EndOfPostWidget(
                       isEmpty: true,
                       user: userJoinedModel,
@@ -119,14 +89,17 @@ class PostListItem extends StatelessWidget {
                   } else if (index <= state.prayerRequestPostModel.length) {
                     final e = state.prayerRequestPostModel[index - 1];
                     return PostItem(
+                      allPost: state.prayerRequestPostModel,
                       postModel: e,
                       user: userModel,
                       fullView: false,
                     );
                   } else {
-                    return EndOfPostWidget(
-                      isEmpty: false,
-                      user: userJoinedModel,
+                    return Center(
+                      child: EndOfPostWidget(
+                        isEmpty: false,
+                        user: userJoinedModel,
+                      ),
                     );
                   }
                 },
@@ -165,7 +138,6 @@ class EndOfPostWidget extends StatelessWidget {
           child: BlocBuilder<PostPrayerRequestBloc, PostPrayerRequestState>(
             builder: (context, state) {
               final isLoading = state is PostPrayerRequestLoading;
-
               return ElevatedButton.icon(
                 onPressed: () {
                   context.pushNamed('post_field', extra: user);

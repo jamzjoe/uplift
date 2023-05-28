@@ -16,6 +16,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/comment_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
 import 'package:uplift/utils/services/auth_services.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/post_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import '../../../../../../../../constant/constant.dart';
@@ -29,8 +30,10 @@ class PostItem extends StatefulWidget {
     required this.postModel,
     required this.user,
     this.fullView,
+    required this.allPost,
   });
   final PostModel postModel;
+  final List<PostModel> allPost;
   final UserModel user;
   final bool? fullView;
 
@@ -77,7 +80,8 @@ class _PostItemState extends State<PostItem> {
                 PostHeader(
                     user: user,
                     prayerRequest: prayerRequest,
-                    currentUser: currentUser),
+                    currentUser: currentUser,
+                    postModel: widget.allPost),
                 prayerRequest.imageUrls!.isEmpty
                     ? const SizedBox()
                     : prayerRequest.imageUrls!.length == 1
@@ -189,34 +193,8 @@ class _PostItemState extends State<PostItem> {
                       onTap: () {
                         BlocProvider.of<EncourageBloc>(context)
                             .add(FetchEncourageEvent(prayerRequest.postId!));
-                        showFlexibleBottomSheet(
-                          minHeight: 0,
-                          isExpand: true,
-                          isDismissible: true,
-                          isCollapsible: true,
-                          isModal: true,
-                          initHeight: 0.92,
-                          maxHeight: 1,
-                          context: context,
-                          builder:
-                              (context, scrollController, bottomSheetOffset) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-                              ),
-                              child: CommentView(
-                                currentUser: currentUser,
-                                prayerRequestPostModel: prayerRequest,
-                                postOwner: user,
-                                postModel: widget.postModel,
-                                scrollController: scrollController,
-                              ),
-                            );
-                          },
-                          anchors: [0, 0.5, 1],
-                          isSafeArea: true,
-                        );
+                        CustomDialog().showComment(context, currentUser, user,
+                            prayerRequest, widget.postModel);
                       },
                       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                           stream: FirebaseFirestore.instance

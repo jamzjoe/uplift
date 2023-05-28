@@ -32,8 +32,9 @@ class AddReaction extends GetPrayerRequestEvent {
 
 class DeletePost extends GetPrayerRequestEvent {
   final String userID, postID;
-
-  const DeletePost(this.userID, this.postID);
+  final List<PostModel> posts;
+  final BuildContext context;
+  const DeletePost(this.userID, this.postID, this.posts, this.context);
   @override
   List<Object?> get props => [userID, postID];
 }

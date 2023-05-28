@@ -1,12 +1,14 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/just_now.dart';
@@ -22,11 +24,13 @@ class PostHeader extends StatelessWidget {
     required this.user,
     required this.prayerRequest,
     required this.currentUser,
+    required this.postModel,
   });
 
   final UserModel user;
   final UserModel currentUser;
   final PrayerRequestPostModel prayerRequest;
+  final List<PostModel> postModel;
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +43,12 @@ class PostHeader extends StatelessWidget {
                 radius: 18,
                 backgroundImage: AssetImage('assets/default.png'),
               )
-            : Hero(
-                tag: 'profile',
-                child: GestureDetector(
-                  onTap: () => context.pushNamed('photo_view',
-                      extra: user.photoUrl ?? ''),
-                  child: ProfilePhoto(
-                    user: user,
-                    radius: 10,
-                  ),
+            : GestureDetector(
+                onTap: () =>
+                    context.pushNamed('photo_view', extra: user.photoUrl ?? ''),
+                child: ProfilePhoto(
+                  user: user,
+                  radius: 10,
                 ),
               ),
         const SizedBox(width: 10),
@@ -83,7 +84,7 @@ class PostHeader extends StatelessWidget {
                         ),
                         child: FriendsFeed(
                           userModel: user,
-                          isSelf: user.userId == currentUser.userId,
+                          isSelf: prayerRequest.userId == userID,
                           currentUser: currentUser,
                           scrollController: scrollController,
                         ),
@@ -157,17 +158,13 @@ class PostHeader extends StatelessWidget {
                                   'This will delete this prayer request.',
                                   'Delete Confirmation', () async {
                                 context.pop();
-                                final canDelete =
-                                    await PrayerRequestRepository().deletePost(
-                                        prayerRequest.postId!, user.userId!);
-                                if (canDelete) {
-                                  if (context.mounted) {
-                                    CustomDialog.showSuccessDialog(
-                                        context,
-                                        'Prayer request deleted successfully!',
-                                        'Request Granted',
-                                        'Confirm');
-                                  }
+                                if (prayerRequest.userId == userID) {
+                                  BlocProvider.of<GetPrayerRequestBloc>(context)
+                                      .add(DeletePost(
+                                          userID,
+                                          prayerRequest.postId!,
+                                          postModel,
+                                          context));
                                 } else {
                                   if (context.mounted) {
                                     CustomDialog.showErrorDialog(

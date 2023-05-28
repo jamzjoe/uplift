@@ -52,6 +52,7 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
               children: [
                 ...data!.map(
                   (e) => PostItem(
+                    allPost: data,
                     postModel: e,
                     user: widget.currentUser,
                     fullView: false,

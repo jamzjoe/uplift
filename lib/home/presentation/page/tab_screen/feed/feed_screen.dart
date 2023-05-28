@@ -71,9 +71,9 @@ class _FeedScreenState extends State<FeedScreen> {
                       onPressed: () {
                         goToNotificationScreen(user.uid);
                       },
-                      icon: const Image(
-                        image: AssetImage('assets/bell.png'),
-                        width: 30,
+                      icon: const Icon(
+                        Ionicons.notifications,
+                        size: 25,
                       ),
                     ),
                   );

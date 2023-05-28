@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_item.dart';
+import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 
 import '../../../data/model/user_approved_mutual.dart';
@@ -9,10 +14,10 @@ import '../friend_suggestion/contacts.dart';
 
 class FriendListView extends StatefulWidget {
   const FriendListView({
-    super.key,
+    Key? key,
     required this.approvedFriendList,
     required this.currentUser,
-  });
+  }) : super(key: key);
 
   final UserModel currentUser;
   final List<UserApprovedMutualFriends> approvedFriendList;
@@ -47,60 +52,98 @@ class _FriendListViewState extends State<FriendListView> {
     });
   }
 
+  void updateUsers(List<UserApprovedMutualFriends> updatedUsers) {
+    setState(() {
+      filteredFriends = updatedUsers;
+    });
+  }
+
+  Future<void> _importContacts() async {
+    final result =
+        await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const Contacts();
+    }));
+
+    if (result != null) {
+      _search(result);
+      _searchController.text = result;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-      child: Column(
-        children: [
-          TextField(
-            controller: _searchController,
-            onChanged: _search,
-            decoration: InputDecoration(
-                hintText: 'Search',
-                suffixIcon: TextButton.icon(
+    return BlocListener<ApprovedFriendsBloc, ApprovedFriendsState>(
+      listener: (context, state) {
+        log(state.toString());
+        if (state is ApprovedFriendsSuccess2) {
+          updateUsers(state.approvedFriendList);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomContainer(
+              color: whiteColor,
+              widget: TextField(
+                controller: _searchController,
+                onChanged: _search,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Search',
+                  suffixIcon: TextButton.icon(
                     label: const HeaderText(
-                        text: 'IMPORT', color: secondaryColor, size: 12),
-                    onPressed: () async {
-                      final result = await Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const Contacts();
-                      }));
-
-                      _search(result);
-                      setState(() {
-                        _searchController.text = result;
-                      });
-                    },
-                    icon: const Icon(Icons.contact_mail, size: 18))),
-          ),
-          Expanded(
-            child: filteredFriends.isNotEmpty
-                ? ListView.separated(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return FriendsItem(
-                        mutualFriends: filteredFriends[index].mutualFriends,
-                        userFriendship:
-                            filteredFriends[index].userFriendshipModel,
-                        currentUser: widget.currentUser,
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        thickness: .5,
-                        color: secondaryColor.withOpacity(0.2),
-                      );
-                    },
-                    itemCount: filteredFriends.length,
-                  )
-                : const Center(
-                    child: Text('No user found'),
+                      text: 'IMPORT',
+                      color: secondaryColor,
+                      size: 12,
+                    ),
+                    onPressed: _importContacts,
+                    icon: const Icon(Icons.contact_mail, size: 18),
                   ),
-          ),
-        ],
+                ),
+              ),
+            ),
+            filteredFriends.isNotEmpty
+                ? RefreshIndicator(
+                    onRefresh: () async {
+                      BlocProvider.of<ApprovedFriendsBloc>(context).add(
+                          RefreshApprovedFriend(widget.currentUser.userId!));
+                    },
+                    child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shrinkWrap: true,
+                          physics: const ClampingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final userFriendship =
+                                filteredFriends[index].userFriendshipModel;
+
+                            return FriendsItem(
+                              mutualFriends:
+                                  filteredFriends[index].mutualFriends,
+                              userFriendship: userFriendship,
+                              currentUser: widget.currentUser,
+                              users: filteredFriends,
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              thickness: .5,
+                              color: secondaryColor.withOpacity(0.2),
+                            );
+                          },
+                          itemCount: filteredFriends.length,
+                        )),
+                  )
+                : const Expanded(
+                    child: Center(
+                      child: Text('No user found'),
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }

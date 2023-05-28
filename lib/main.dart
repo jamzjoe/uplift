@@ -117,6 +117,11 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         title: 'Uplift Development',
         theme: ThemeData(
+            pageTransitionsTheme: const PageTransitionsTheme(
+                builders: <TargetPlatform, PageTransitionsBuilder>{
+                  TargetPlatform.android:
+                      ZoomPageTransitionsBuilder(), // Apply this to every platforms you need.
+                }),
             fontFamily: 'froxima',
             dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
             elevatedButtonTheme: ElevatedButtonThemeData(

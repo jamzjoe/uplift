@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,9 +15,8 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
-
-import 'post_comment/presentation/comment_view.dart';
 
 class PostActions extends StatefulWidget {
   const PostActions(
@@ -66,7 +64,7 @@ class _PostActionsState extends State<PostActions> {
               .getReactionInfo(postID!, currentUser.userId!),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const CircularProgressIndicator();
+              return const SizedBox();
             }
             final bool isReacted = snapshot.data!['isReacted'];
             final int reactionCount = snapshot.data!['reactionCount'];
@@ -78,22 +76,17 @@ class _PostActionsState extends State<PostActions> {
                     LikeButton(
                         onTap: (isLiked) async {
                           if (isLiked) {
-                            PrayerRequestRepository()
-                                .unReact(postID, currentUser.userId!);
+                            unreact(postID, currentUser);
                             return isLiked = !isLiked;
                           } else {
-                            PrayerRequestRepository().addReaction(
-                                postID,
-                                currentUser.userId!,
-                                widget.userModel,
-                                currentUser);
+                            addReact(postID, currentUser);
                             return isLiked = !isLiked;
                           }
                         },
                         padding: EdgeInsets.zero,
                         likeCountPadding: EdgeInsets.zero,
                         isLiked: !isReacted,
-                        size: 32,
+                        size: 30,
                         likeBuilder: (isLiked) => PrayedButton(
                               path: isReacted
                                   ? "assets/unprayed.png"
@@ -102,7 +95,13 @@ class _PostActionsState extends State<PostActions> {
                         // Rest of the code
                         ),
                     const SizedBox(width: 10),
-                    SmallText(text: 'Pray', color: lighter)
+                    isReacted
+                        ? GestureDetector(
+                            onTap: () => addReact(postID, currentUser),
+                            child: SmallText(text: 'Pray', color: lighter))
+                        : GestureDetector(
+                            onTap: () => unreact(postID, currentUser),
+                            child: SmallText(text: 'Prayed', color: lighter))
                     // Rest of the code
                   ],
                 ),
@@ -118,33 +117,12 @@ class _PostActionsState extends State<PostActions> {
               } else {
                 BlocProvider.of<EncourageBloc>(context)
                     .add(FetchEncourageEvent(widget.prayerRequest.postId!));
-                showFlexibleBottomSheet(
-                  minHeight: 0,
-                  isExpand: true,
-                  isDismissible: true,
-                  isCollapsible: true,
-                  isModal: true,
-                  initHeight: 0.92,
-                  maxHeight: 1,
-                  context: context,
-                  builder: (context, scrollController, bottomSheetOffset) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-                      ),
-                      child: CommentView(
-                        currentUser: widget.currentUser,
-                        prayerRequestPostModel: widget.prayerRequest,
-                        postOwner: widget.userModel,
-                        postModel: widget.postModel,
-                        scrollController: scrollController,
-                      ),
-                    );
-                  },
-                  anchors: [0, 0.5, 1],
-                  isSafeArea: true,
-                );
+                CustomDialog().showComment(
+                    context,
+                    currentUser,
+                    widget.postModel.userModel,
+                    widget.prayerRequest,
+                    widget.postModel);
               }
             },
             icon: Icon(
@@ -168,6 +146,15 @@ class _PostActionsState extends State<PostActions> {
             )),
       ],
     );
+  }
+
+  Future<bool> addReact(String postID, UserModel currentUser) {
+    return PrayerRequestRepository().addReaction(
+        postID, currentUser.userId!, widget.userModel, currentUser);
+  }
+
+  Future<bool> unreact(String postID, UserModel currentUser) {
+    return PrayerRequestRepository().unReact(postID, currentUser.userId!);
   }
 
   Future saveAndShare() async {

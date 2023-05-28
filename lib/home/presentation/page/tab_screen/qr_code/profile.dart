@@ -27,12 +27,10 @@ class UserProfile extends StatelessWidget {
           size: 80,
         ),
         defaultSpace,
-        HeaderText(text: user.displayName ?? 'Name', color: secondaryColor),
+        HeaderText(text: user.displayName ?? 'Name', color: darkColor),
         defaultSpace,
-        SmallText(
-            text: user.emailAddress ?? 'Email address', color: secondaryColor),
-        SmallText(
-            text: user.phoneNumber ?? 'Phone number', color: secondaryColor),
+        SmallText(text: user.emailAddress ?? 'Email address', color: lighter),
+        SmallText(text: user.phoneNumber ?? 'Phone number', color: lighter),
         SmallText(text: user.bio ?? '', color: secondaryColor),
         defaultSpace,
         GestureDetector(

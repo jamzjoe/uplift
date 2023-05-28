@@ -4,7 +4,6 @@ class Assets {
 
   static const String assetsAngel = 'assets/angel.png';
   static const String assetsBackground = 'assets/background.png';
-  static const String assetsBell = 'assets/bell.png';
   static const String assetsDefault = 'assets/default.png';
   static const String assetsError = 'assets/error.png';
   static const String assetsFacebookLogo = 'assets/facebook-logo.png';
@@ -17,14 +16,11 @@ class Assets {
   static const String assetsNoData = 'assets/no-data.json';
   static const String assetsNoUser = 'assets/no-user.json';
   static const String assetsPrayed = 'assets/prayed.png';
-  static const String assetsReact = 'assets/react.mp3';
   static const String assetsShare = 'assets/share.png';
   static const String assetsSplashBg = 'assets/splash_bg.png';
   static const String assetsSplashIcon = 'assets/splash_icon.png';
   static const String assetsSuccess = 'assets/success.png';
   static const String assetsThinking = 'assets/thinking.json';
   static const String assetsUnprayed = 'assets/unprayed.png';
-  static const String assetsUnreact = 'assets/unreact.mp3';
   static const String assetsUpliftLogo = 'assets/uplift-logo.png';
-
 }

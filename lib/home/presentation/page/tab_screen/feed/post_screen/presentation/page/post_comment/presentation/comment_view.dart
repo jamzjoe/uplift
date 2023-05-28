@@ -35,6 +35,12 @@ class CommentView extends StatefulWidget {
 class _CommentViewState extends State<CommentView> {
   final TextEditingController _commentController = TextEditingController();
 
+  @override
+  void dispose() {
+    _commentController.dispose(); // Dispose the controller
+    super.dispose();
+  }
+
   List<String> comments = [];
   final formKey = GlobalKey<FormState>();
 
@@ -59,10 +65,7 @@ class _CommentViewState extends State<CommentView> {
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Hero(
-                        tag: 'profile',
-                        child:
-                            ProfilePhoto(user: widget.currentUser, size: 20)),
+                    child: ProfilePhoto(user: widget.currentUser, size: 20),
                   ),
                   suffixIcon: IconButton(
                       onPressed: () {
@@ -81,7 +84,7 @@ class _CommentViewState extends State<CommentView> {
                       icon: const Icon(
                         CupertinoIcons.paperplane_fill,
                       )),
-                  hintText: 'Add a comment',
+                  hintText: 'Add an encourage',
                 ),
               ),
             ],
@@ -103,13 +106,6 @@ class _CommentViewState extends State<CommentView> {
         bottomSheet: _showCommentBottomSheet(),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _commentController.dispose();
-    widget.scrollController.dispose();
-    super.dispose();
   }
 }
 

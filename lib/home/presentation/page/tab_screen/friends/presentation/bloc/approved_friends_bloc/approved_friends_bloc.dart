@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_approved_mutual.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 
 import '../../../domain/repository/friends_repository.dart';
 
@@ -21,16 +20,27 @@ class ApprovedFriendsBloc
     extends Bloc<ApprovedFriendsEvent, ApprovedFriendsState> {
   ApprovedFriendsBloc() : super(ApprovedFriendsInitial()) {
     on<ApprovedFriendsEvent>((event, emit) {});
-    streamSubscription = FirebaseFirestore.instance
-        .collection('Friendships')
-        .snapshots()
-        .listen((event) async {
-      final userID = await AuthServices.userID();
-      add(FetchApprovedFriendRequest(userID));
-    });
+    // streamSubscription = FirebaseFirestore.instance
+    //     .collection('Friendships')
+    //     .snapshots()
+    //     .listen((event) async {
+    //   final userID = await AuthServices.userID();
+    //   add(RefreshApprovedFriend(userID));
+    // });
 
     on<FetchApprovedFriendRequest>((event, emit) async {
       emit(ApprovedFriendsLoading());
+      try {
+        final data = await friendsRepository
+            .fetchApprovedFriendRequestWithMutual(event.userID);
+        emit(ApprovedFriendsSuccess2(data));
+      } catch (e) {
+        log(e.toString());
+        emit(ApprovedFriendsError());
+      }
+    });
+
+    on<RefreshApprovedFriend>((event, emit) async {
       try {
         final data = await friendsRepository
             .fetchApprovedFriendRequestWithMutual(event.userID);
@@ -56,10 +66,13 @@ class ApprovedFriendsBloc
     // });
 
     on<UnfriendEvent>((event, emit) async {
-      final userID = await AuthServices.userID();
       try {
         await friendsRepository.unfriend(event.friendShipID);
-        add(FetchApprovedFriendRequest(userID));
+        emit(ApprovedFriendsSuccess2(event.users
+            .where((element) =>
+                element.userFriendshipModel.friendshipID.friendshipId !=
+                event.friendShipID)
+            .toList()));
       } catch (e) {
         emit(ApprovedFriendsError());
       }

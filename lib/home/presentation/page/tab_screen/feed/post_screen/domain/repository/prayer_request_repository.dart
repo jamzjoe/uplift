@@ -42,33 +42,29 @@ class PrayerRequestRepository {
 
   Future<List<PostModel>> getPrayerRequestList(
       {int? limit, required String userID}) async {
-    FriendsRepository friendsRepository = FriendsRepository();
-    List<PostModel> listOfPost = [];
+    final friendsRepository = FriendsRepository();
+    final listOfPost = <PostModel>[];
 
     try {
       final fetchingUserID =
           await friendsRepository.fetchApprovedFriendRequest(userID);
-      List<String> friendsIDs =
+      final friendsIDs =
           fetchingUserID.map((e) => e.userModel.userId.toString()).toList();
       friendsIDs.add(await AuthServices.userID());
 
-      // Split friendsIDs into chunks of 10 (or the specified limit)
       const chunkSize = 10;
       final chunks = _splitListIntoChunks(friendsIDs, chunkSize);
 
-      List<PrayerRequestPostModel> data = [];
+      final data = <PrayerRequestPostModel>[];
 
-      // Perform multiple queries for each chunk
       for (var chunk in chunks) {
-        QuerySnapshot<Map<String, dynamic>> response =
-            await FirebaseFirestore.instance
-                .collection('Prayers')
-                .where('user_id', whereIn: chunk)
-                .orderBy('date', descending: true)
-                // .limit(limit ?? 10)
-                .get();
+        final response = await FirebaseFirestore.instance
+            .collection('Prayers')
+            .where('user_id', whereIn: chunk)
+            .orderBy('date', descending: true)
+            .get();
 
-        List<PrayerRequestPostModel> chunkData = response.docs
+        final chunkData = response.docs
             .map((e) => PrayerRequestPostModel.fromJson(e.data()))
             .toList();
 
@@ -76,20 +72,17 @@ class PrayerRequestRepository {
       }
 
       for (var each in data) {
-        final UserModel? user =
+        final user =
             await PrayerRequestRepository().getUserRecord(each.userId!);
 
         if (user != null) {
           listOfPost.add(PostModel(user, each));
-          log(each.reactions!.users!.length.toString());
         }
       }
 
-      // Sort the list of posts by date in descending order
       listOfPost.sort((a, b) => b.prayerRequestPostModel.date!
           .compareTo(a.prayerRequestPostModel.date!));
     } catch (error) {
-      // Handle any potential errors or exceptions
       log('Error in get prayer: $error');
     }
 
@@ -208,7 +201,6 @@ class PrayerRequestRepository {
 
         if (user != null) {
           listOfPost.add(PostModel(user, each));
-          log(each.reactions!.users!.length.toString());
         }
       }
     } catch (error) {
@@ -444,7 +436,6 @@ class PrayerRequestRepository {
 
         if (user != null) {
           listOfPost.add(PostModel(user, each));
-          log(each.reactions!.users!.length.toString());
         }
       }
     } catch (error) {

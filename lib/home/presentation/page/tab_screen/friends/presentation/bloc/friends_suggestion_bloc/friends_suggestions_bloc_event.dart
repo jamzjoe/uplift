@@ -13,6 +13,12 @@ class FetchUsersEvent extends FriendsSuggestionsBlocEvent {
   const FetchUsersEvent(this.userID);
 }
 
+class RefreshFriendSuggestion extends FriendsSuggestionsBlocEvent {
+  final String userID;
+
+  const RefreshFriendSuggestion(this.userID);
+}
+
 class AddFriendEvent extends FriendsSuggestionsBlocEvent {
   final FriendShipModel friendShipModel;
 

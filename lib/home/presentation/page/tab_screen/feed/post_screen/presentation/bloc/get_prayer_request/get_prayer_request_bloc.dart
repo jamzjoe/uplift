@@ -15,82 +15,133 @@ part 'get_prayer_request_state.dart';
 
 final PrayerRequestRepository prayerRequestRepository =
     PrayerRequestRepository();
-late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
-    streamSubscription;
 final String userID = FirebaseAuth.instance.currentUser!.uid;
 
 class GetPrayerRequestBloc
     extends Bloc<GetPrayerRequestEvent, GetPrayerRequestState> {
+  late StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
+      streamSubscription;
+
   GetPrayerRequestBloc() : super(GetPrayerRequestInitial()) {
     streamSubscription = FirebaseFirestore.instance
         .collection('Prayers')
         .snapshots()
-        .listen((event) async {
-      add(GetPostRequestList(userID, limit: 10));
-    });
-    on<GetPrayerRequestEvent>((event, emit) {});
+        .listen((QuerySnapshot event) {
+      for (var change in event.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          // This code will be executed only for new documents added
 
-    on<GetPostRequestList>((event, emit) async {
-      try {
-        final data = await prayerRequestRepository.getPrayerRequestList(
-            limit: event.limit ?? 10, userID: event.userID);
-
-        emit(LoadingPrayerRequesListSuccess(data));
-      } catch (e) {
-        emit(LoadingPrayerRequesListError());
+          // Perform operations on the new document
+          add(GetPostRequestList(userID, limit: 10));
+        }
       }
     });
 
-    on<SearchPrayerRequest>((event, emit) async {
-      emit(LoadingPrayerRequesList());
-      try {
-        final data =
-            await prayerRequestRepository.searchPrayerRequest(event.query);
-        emit(LoadingPrayerRequesListSuccess(data));
-      } catch (e) {
-        log(e.toString());
-        emit(LoadingPrayerRequesListError());
-      }
-    });
+    on<GetPostRequestList>(_handleGetPostRequestList);
 
-    on<GetPrayerRequestByPopularity>((event, emit) async {
-      emit(LoadingPrayerRequesList());
-      try {
-        final data =
-            await prayerRequestRepository.getPrayerRequestListByReactions();
-        emit(LoadingPrayerRequesListSuccess(data));
-      } on FirebaseException {
-        emit(LoadingPrayerRequesListError());
-      }
-    });
+    on<SearchPrayerRequest>(_handleSearchPrayerRequest);
 
-    on<RefreshPostRequestList>((event, emit) async {
-      emit(LoadingPrayerRequesList());
-      try {
-        final data = await prayerRequestRepository.getPrayerRequestList(
-            userID: event.userID);
-        emit(LoadingPrayerRequesListSuccess(data));
-      } on FirebaseException {
-        emit(LoadingPrayerRequesListError());
-      }
-    });
+    on<GetPrayerRequestByPopularity>(_handleGetPrayerRequestByPopularity);
 
-    on<AddReaction>((event, emit) async {
-      log('Running');
-      try {
-        await prayerRequestRepository.addReaction(
-            event.postID, event.userID, event.userModel, event.currentUser);
-      } catch (e) {
-        log(e.toString());
-      }
-    });
+    on<RefreshPostRequestList>(_handleRefreshPostRequestList);
 
-    on<DeletePost>((event, emit) async {
-      try {
-        await prayerRequestRepository.deletePost(event.postID, event.userID);
-      } catch (e) {
-        log(e.toString());
-      }
-    });
+    on<AddReaction>(_handleAddReaction);
+
+    on<DeletePost>(_handleDeletePost);
+  }
+
+  @override
+  Future<void> close() {
+    streamSubscription.cancel();
+    return super.close();
+  }
+
+  Future<void> _handleGetPostRequestList(
+    GetPostRequestList event,
+    Emitter<GetPrayerRequestState> emit,
+  ) async {
+    try {
+      final data = await prayerRequestRepository.getPrayerRequestList(
+        limit: event.limit ?? 10,
+        userID: event.userID,
+      );
+
+      emit(LoadingPrayerRequesListSuccess(data));
+    } catch (_) {
+      emit(LoadingPrayerRequesListError());
+    }
+  }
+
+  Future<void> _handleSearchPrayerRequest(
+    SearchPrayerRequest event,
+    Emitter<GetPrayerRequestState> emit,
+  ) async {
+    emit(LoadingPrayerRequesList());
+    try {
+      final data =
+          await prayerRequestRepository.searchPrayerRequest(event.query);
+      emit(LoadingPrayerRequesListSuccess(data));
+    } catch (e) {
+      log(e.toString());
+      emit(LoadingPrayerRequesListError());
+    }
+  }
+
+  Future<void> _handleGetPrayerRequestByPopularity(
+    GetPrayerRequestByPopularity event,
+    Emitter<GetPrayerRequestState> emit,
+  ) async {
+    emit(LoadingPrayerRequesList());
+    try {
+      final data =
+          await prayerRequestRepository.getPrayerRequestListByReactions();
+      emit(LoadingPrayerRequesListSuccess(data));
+    } on FirebaseException {
+      emit(LoadingPrayerRequesListError());
+    }
+  }
+
+  Future<void> _handleRefreshPostRequestList(
+    RefreshPostRequestList event,
+    Emitter<GetPrayerRequestState> emit,
+  ) async {
+    emit(LoadingPrayerRequesList());
+    try {
+      final data = await prayerRequestRepository.getPrayerRequestList(
+        userID: event.userID,
+      );
+      emit(LoadingPrayerRequesListSuccess(data));
+    } on FirebaseException {
+      emit(LoadingPrayerRequesListError());
+    }
+  }
+
+  Future<void> _handleAddReaction(
+      AddReaction event, Emitter<GetPrayerRequestState> emit) async {
+    log('Running');
+    try {
+      await prayerRequestRepository.addReaction(
+        event.postID,
+        event.userID,
+        event.userModel,
+        event.currentUser,
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> _handleDeletePost(
+      DeletePost event, Emitter<GetPrayerRequestState> emit) async {
+    try {
+      List<PostModel> data = event.posts
+          .where((element) =>
+              element.prayerRequestPostModel.postId! != event.postID)
+          .toList();
+      emit(LoadingPrayerRequesListSuccess(data));
+      await prayerRequestRepository.deletePost(event.postID, event.userID);
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

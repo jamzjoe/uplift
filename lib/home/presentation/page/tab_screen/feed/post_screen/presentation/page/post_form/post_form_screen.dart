@@ -126,7 +126,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         HeaderText(
-                          text: user.displayName ?? 'Anonymous User',
+                          text: userModel.displayName ?? 'Anonymous User',
                           color: postType != "unanonymous"
                               ? darkColor.withOpacity(0.5)
                               : darkColor,

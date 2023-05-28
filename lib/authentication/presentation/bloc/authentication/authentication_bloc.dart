@@ -128,11 +128,15 @@ class AuthenticationBloc
           emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
         }
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
+        log(e.code);
+        if (e.code == 'NOT_FOUND') {
           emit(const UserIsOut(
-              "No user found for that email.", 'Authentication Error'));
+              "No user found for that credentials.", 'Authentication Error'));
           CustomDialog.showErrorDialog(
-              event.context, e.message!, 'Authentication Error', 'Confirm');
+              event.context,
+              'No user found for that email.',
+              'Authentication Error',
+              'Confirm');
         } else if (e.code == 'wrong-password') {
           CustomDialog.showErrorDialog(
               event.context, e.message!, 'Authentication Error', 'Confirm');
@@ -144,6 +148,7 @@ class AuthenticationBloc
               event.context, e.message!, 'Authentication Error', 'Confirm');
         }
       } catch (e) {
+        event.context.loaderOverlay.hide();
         CustomDialog.showErrorDialog(
             event.context, e.toString(), 'Authentication Error', 'Confirm');
         UserIsOut(e.toString(), 'Error');
