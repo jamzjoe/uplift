@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -11,7 +9,7 @@ import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'friend_request/friend_request_list.dart';
 
 class FriendsScreen extends StatefulWidget {
-  const FriendsScreen({super.key, required this.currentUser});
+  const FriendsScreen({Key? key, required this.currentUser}) : super(key: key);
   final UserModel currentUser;
 
   @override
@@ -43,23 +41,26 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     Row(
                       children: [
                         CustomContainer(
-                            onTap: () {
-                              context.pushNamed('friend_suggest',
-                                  extra: widget.currentUser);
-                            },
-                            widget: DefaultText(
-                                text: 'Suggestions', color: lighter),
-                            color: lightColor.withOpacity(0.3)),
+                          // Navigate to 'friend_suggest' route
+                          onTap: () {
+                            context.pushNamed('friend_suggest',
+                                extra: widget.currentUser);
+                          },
+                          widget:
+                              DefaultText(text: 'Suggestions', color: lighter),
+                          color: lightColor.withOpacity(0.3),
+                        ),
                         const SizedBox(width: 15),
                         CustomContainer(
-                            onTap: () {
-                              context.pushNamed("friends-list",
-                                  extra: widget.currentUser);
-                           
-                            },
-                            widget: DefaultText(
-                                text: 'Your Friends', color: lighter),
-                            color: lightColor.withOpacity(0.3))
+                          // Navigate to 'friends-list' route
+                          onTap: () {
+                            context.pushNamed("friends-list",
+                                extra: widget.currentUser);
+                          },
+                          widget:
+                              DefaultText(text: 'Your Friends', color: lighter),
+                          color: lightColor.withOpacity(0.3),
+                        ),
                       ],
                     ),
                     defaultSpace,
@@ -74,7 +75,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     currentUser: widget.currentUser,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
@@ -12,6 +15,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pa
 import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../feed_screen.dart';
@@ -29,31 +33,66 @@ class PostListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserModel userModel = userJoinedModel.userModel;
-
-    return Column(
+    return ListView(
       children: [
         Container(
+          width: double.infinity,
           color: whiteColor,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2.5),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SmallText(text: 'Hello ', color: darkColor),
-                    SmallText(
-                      text: capitalizeFirstLetter('${userModel.displayName},'),
-                      color: secondaryColor,
+                    Row(
+                      children: [
+                        ProfilePhoto(user: userModel),
+                        const SizedBox(width: 15),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SmallText(text: 'Hello,', color: darkColor),
+                            HeaderText(
+                              text: capitalizeFirstLetter(
+                                  '${userModel.displayName}'),
+                              color: secondaryColor,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    StreamBuilder<Map<String, dynamic>>(
+                      stream: NotificationRepository()
+                          .notificationListener(userModel.userId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final count = snapshot.data!['length'];
+                          return Badge.count(
+                            isLabelVisible: count != 0,
+                            count: count,
+                            alignment: AlignmentDirectional.bottomStart,
+                            child: IconButton(
+                              onPressed: () {
+                                goToNotificationScreen(
+                                    userModel.userId!, context, userModel);
+                              },
+                              icon: const Icon(
+                                Ionicons.notifications,
+                                size: 25,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
                     ),
                   ],
                 ),
-              ),
-              HeaderText(
-                text: 'What would you like us to pray for?',
-                color: darkColor.withOpacity(0.8),
-                size: 20,
               ),
               const SizedBox(height: 15),
               PostField(userJoinModel: userJoinedModel),
@@ -113,6 +152,12 @@ class PostListItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void goToNotificationScreen(
+      String userID, BuildContext context, UserModel userModel) {
+    BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
+    context.pushNamed('notification', extra: userModel);
   }
 }
 

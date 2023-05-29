@@ -2,13 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
-import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
-import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import 'post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
@@ -51,37 +48,6 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       extendBody: true,
-      appBar: AppBar(
-        backgroundColor: whiteColor,
-        title: const Image(
-          image: AssetImage('assets/uplift-logo.png'),
-          width: 80,
-        ),
-        actions: [
-          StreamBuilder<Map<String, dynamic>>(
-              stream: NotificationRepository().notificationListener(user.uid),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final count = snapshot.data!['length'];
-                  return Badge.count(
-                    isLabelVisible: count != 0,
-                    count: count,
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: IconButton(
-                      onPressed: () {
-                        goToNotificationScreen(user.uid);
-                      },
-                      icon: const Icon(
-                        Ionicons.notifications,
-                        size: 25,
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox();
-              }),
-        ],
-      ),
       body: SafeArea(
           maintainBottomViewPadding: true,
           child: RefreshIndicator(
@@ -89,20 +55,9 @@ class _FeedScreenState extends State<FeedScreen> {
               BlocProvider.of<GetPrayerRequestBloc>(context)
                   .add(RefreshPostRequestList(widget.user.user.uid));
             },
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return PostListItem(userJoinedModel: userJoinedModel);
-              },
-            ),
+            child: PostListItem(userJoinedModel: userJoinedModel),
           )),
     );
-  }
-
-  void goToNotificationScreen(String userID) {
-    BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
-    context.pushNamed('notification', extra: widget.user.userModel);
   }
 
   void _scrollListener() {
