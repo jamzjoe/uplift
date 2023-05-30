@@ -12,7 +12,9 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
+import 'package:uplift/utils/services/ui_services.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
+import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
@@ -54,13 +56,27 @@ class PostListItem extends StatelessWidget {
                         const SizedBox(width: 15),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SmallText(text: 'Hello,', color: darkColor),
-                            HeaderText(
-                              text: capitalizeFirstLetter(
-                                  '${userModel.displayName}'),
-                              color: secondaryColor,
-                              size: 20,
+                            Row(
+                              children: [
+                                const SmallText(
+                                    text: 'Hello ', color: darkColor),
+                                HeaderText(
+                                  text:
+                                      "${Tools().splitName(capitalizeFirstLetter('${userModel.displayName}'))},",
+                                  color: secondaryColor,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                TextDateWidget(
+                                  date: DateTime.now(),
+                                  fillers: 'Today is',
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -94,9 +110,7 @@ class PostListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 15),
               PostField(userJoinModel: userJoinedModel),
-              const SizedBox(height: 15),
               FriendSuggestionHorizontal(currentUser: userModel),
             ],
           ),

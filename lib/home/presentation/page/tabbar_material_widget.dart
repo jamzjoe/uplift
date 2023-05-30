@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
@@ -29,19 +30,11 @@ class TabBarMaterialWidget extends StatefulWidget {
 class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
   @override
   Widget build(BuildContext context) {
-    const placeholder = Opacity(
-      opacity: 0,
-      child: IconButton(icon: Icon(Icons.no_cell), onPressed: null),
-    );
-
     return BottomAppBar(
       color: whiteColor,
-      elevation: 10,
       surfaceTintColor: whiteColor,
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.zero,
       shape: const CircularNotchedRectangle(),
-      notchMargin: 5,
-      clipBehavior: Clip.antiAlias,
       child: Container(
         color: whiteColor,
         child: Row(
@@ -62,7 +55,17 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
                     CupertinoIcons.person_2_square_stack_fill,
                     size: 23),
                 userID: widget.user.userId!),
-            placeholder,
+            GestureDetector(
+              onTap: () => context.pushNamed('qr_reader', extra: widget.user),
+              child: CircleAvatar(
+                backgroundColor: primaryColor.withOpacity(0.1),
+                radius: 23,
+                child: Icon(
+                  CupertinoIcons.qrcode,
+                  color: lighter,
+                ),
+              ),
+            ),
             buildTabItem(
                 label: 'Explore',
                 index: 2,
@@ -81,97 +84,63 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
     );
   }
 
-  Widget buildTabItem(
-      {required int index,
-      required Icon icon,
-      required Icon selectedIcon,
-      required String label,
-      required String userID}) {
+  Widget buildTabItem({
+    required int index,
+    required Icon icon,
+    required Icon selectedIcon,
+    required String label,
+    required String userID,
+  }) {
     final isSelected = index == widget.index;
+    final color = isSelected ? lighter : lighter.withOpacity(0.5);
+
     if (index == 2) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-              color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
-              onPressed: () async {
-                BlocProvider.of<ExploreBloc>(context)
-                    .add(GetExplorePrayerRequestList(userID));
-                widget.onChangedTab(index);
-                widget.controller!.animateTo(index);
-              },
-              icon: isSelected ? selectedIcon : icon),
-          SmallText(
-              text: label,
-              color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
-        ],
-      );
-    }
-    if (index == 1) {
-      return BlocBuilder<FriendRequestBloc, FriendRequestState>(
-        builder: (context, state) {
-          if (state is FriendRequestLoadingSuccess) {
-            int count = state.users.length;
-            return Badge.count(
-              isLabelVisible: count != 0,
-              count: count,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  IconButton(
-                      color: isSelected
-                          ? secondaryColor
-                          : lighter.withOpacity(0.5),
-                      onPressed: () async {
-                        widget.onChangedTab(index);
-                        widget.controller!.animateTo(index);
-                      },
-                      icon: isSelected ? selectedIcon : icon),
-                  SmallText(
-                      text: label,
-                      color: isSelected
-                          ? secondaryColor
-                          : lighter.withOpacity(0.5))
-                ],
-              ),
-            );
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                  color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
-                  onPressed: () async {
-                    widget.onChangedTab(index);
-                    widget.controller!.animateTo(index);
-                  },
-                  icon: isSelected ? selectedIcon : icon),
-              SmallText(
-                  text: label,
-                  color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
-            ],
-          );
-        },
-      );
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IconButton(
-            color: isSelected ? secondaryColor : lighter.withOpacity(0.5),
+            color: color,
             onPressed: () async {
+              BlocProvider.of<ExploreBloc>(context)
+                  .add(GetExplorePrayerRequestList(userID));
               widget.onChangedTab(index);
               widget.controller!.animateTo(index);
             },
-            icon: isSelected ? selectedIcon : icon),
-        SmallText(
-            text: label,
-            color: isSelected ? secondaryColor : lighter.withOpacity(0.5))
-      ],
+            icon: isSelected ? selectedIcon : icon,
+          ),
+          SmallText(text: label, color: color),
+        ],
+      );
+    }
+
+    final friendRequestBloc = BlocProvider.of<FriendRequestBloc>(context);
+    return BlocBuilder<FriendRequestBloc, FriendRequestState>(
+      bloc: friendRequestBloc,
+      builder: (context, state) {
+        final int count =
+            state is FriendRequestLoadingSuccess ? state.users.length : 0;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Badge.count(
+              isLabelVisible: count != 0,
+              count: count,
+              child: IconButton(
+                color: color,
+                onPressed: () async {
+                  widget.onChangedTab(index);
+                  widget.controller!.animateTo(index);
+                },
+                icon: isSelected ? selectedIcon : icon,
+              ),
+            ),
+            SmallText(text: label, color: color),
+          ],
+        );
+      },
     );
   }
 }

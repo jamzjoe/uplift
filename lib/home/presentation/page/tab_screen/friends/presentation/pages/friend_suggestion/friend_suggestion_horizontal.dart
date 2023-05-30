@@ -37,111 +37,114 @@ class _FriendSuggestionHorizontalState
             if (suggestions.isEmpty) {
               return const SizedBox();
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SmallText(
-                    text: 'People with same prayer intentions like you:',
-                    color: lighter),
-                SizedBox(
-                  height: 80,
-                  child: ListView.builder(
-                    itemCount: suggestions.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final user = suggestions[index].userModel;
-                      final text = suggestions[index].text;
-                      return GestureDetector(
-                        onTap: () async {
-                          if (Navigator.of(context).canPop()) {
-                            Navigator.of(context).pop();
-                          }
-                          showFlexibleBottomSheet(
-                            minHeight: 0,
-                            initHeight: 0.92,
-                            maxHeight: 1,
-                            context: context,
-                            builder:
-                                (context, scrollController, bottomSheetOffset) {
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+            return Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SmallText(
+                      text: 'People with same prayer intentions like you:',
+                      color: lighter),
+                  SizedBox(
+                    height: 80,
+                    child: ListView.builder(
+                      itemCount: suggestions.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final user = suggestions[index].userModel;
+                        final text = suggestions[index].text;
+                        return GestureDetector(
+                          onTap: () async {
+                            if (Navigator.of(context).canPop()) {
+                              Navigator.of(context).pop();
+                            }
+                            showFlexibleBottomSheet(
+                              minHeight: 0,
+                              initHeight: 0.92,
+                              maxHeight: 1,
+                              context: context,
+                              builder: (context, scrollController,
+                                  bottomSheetOffset) {
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+                                  ),
+                                  child: FriendsFeed(
+                                    userModel: user,
+                                    currentUser: widget.currentUser,
+                                    scrollController: scrollController,
+                                  ),
+                                );
+                              },
+                              anchors: [0, 0.5, 1],
+                              isSafeArea: true,
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Stack(children: [
+                                Positioned(
+                                    top: 0,
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Center(
+                                      child: CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            primaryColor.withOpacity(0.5),
+                                        child: const Icon(
+                                          CupertinoIcons.add,
+                                          size: 15,
+                                          color: whiteColor,
+                                        ),
+                                      ),
+                                    )),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: ProfilePhoto(
+                                      user: user!,
+                                      radius: 60,
+                                    ),
+                                  ),
                                 ),
-                                child: FriendsFeed(
-                                  userModel: user,
-                                  currentUser: widget.currentUser,
-                                  scrollController: scrollController,
-                                ),
-                              );
-                            },
-                            anchors: [0, 0.5, 1],
-                            isSafeArea: true,
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            Stack(children: [
-                              Positioned(
-                                  top: 0,
-                                  bottom: 0,
-                                  right: 0,
-                                  left: 0,
-                                  child: Center(
-                                    child: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          primaryColor.withOpacity(0.5),
-                                      child: const Icon(
+                                const Positioned(
+                                    top: 0,
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Center(
+                                      child: Icon(
                                         CupertinoIcons.add,
                                         size: 15,
                                         color: whiteColor,
                                       ),
-                                    ),
-                                  )),
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: ProfilePhoto(
-                                    user: user!,
-                                    radius: 60,
+                                    )),
+                              ]),
+                              Flexible(
+                                child: Text(
+                                  capitalizeFirstLetter(text?.substring(0,
+                                          text.length < 7 ? text.length : 7) ??
+                                      ''),
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
-                              const Positioned(
-                                  top: 0,
-                                  bottom: 0,
-                                  right: 0,
-                                  left: 0,
-                                  child: Center(
-                                    child: Icon(
-                                      CupertinoIcons.add,
-                                      size: 15,
-                                      color: whiteColor,
-                                    ),
-                                  )),
-                            ]),
-                            Flexible(
-                              child: Text(
-                                capitalizeFirstLetter(text?.substring(
-                                        0, text.length < 7 ? text.length : 7) ??
-                                    ''),
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                Divider(
-                  color: lightColor.withOpacity(0.2),
-                ),
-              ],
+                  Divider(
+                    color: lightColor.withOpacity(0.2),
+                  ),
+                ],
+              ),
             );
           } else {
             return const SizedBox();

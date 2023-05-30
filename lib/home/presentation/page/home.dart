@@ -1,8 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
@@ -30,32 +27,21 @@ class HomeScreen extends StatefulWidget {
 
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-int index = 0;
-TabController? _tabController;
-PageController _pageController = PageController(initialPage: 0, keepPage: true);
-
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
+  int index = 0;
   @override
-  void initState() {
-    _tabController = TabController(length: 4, vsync: this);
-    hideKeyBoard();
-    super.initState();
-  }
-
-  void hideKeyBoard() {
-    Future.delayed(
-        const Duration(seconds: 1), () => FocusScope.of(context).unfocus());
-  }
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
-    _tabController!.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Ensure the state is kept alive
+
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
         if (state is UserIsIn) {
@@ -81,57 +67,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       builder: (context, state) {
         if (state is UserIsIn) {
           final UserJoinedModel userJoinedModel = state.userJoinedModel;
-          final User user = state.userJoinedModel.user;
           return Scaffold(
             key: _scaffoldKey,
             extendBody: true,
-            body: PageView(
-              pageSnapping: true,
-              allowImplicitScrolling: false,
-              controller: _pageController,
-              onPageChanged: (value) {
-                setState(() {
-                  index = value;
-                });
-              },
+            body: IndexedStack(
+              index: index,
               children: [
                 KeepAlivePage(child: FeedScreen(user: userJoinedModel)),
                 KeepAlivePage(
-                    child: FriendsScreen(
-                  currentUser: userJoinedModel.userModel,
-                )),
+                  child: FriendsScreen(currentUser: userJoinedModel.userModel),
+                ),
                 KeepAlivePage(
-                    child: ExploreScreen(
-                  user: userJoinedModel.userModel,
-                )),
+                  child: ExploreScreen(user: userJoinedModel.userModel),
+                ),
                 const KeepAlivePage(child: SettingsScreen())
               ],
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: Visibility(
-              visible: MediaQuery.of(context).viewInsets.bottom == 0.0,
-              child: FloatingActionButton(
-                  backgroundColor: secondaryColor,
-                  splashColor: primaryColor,
-                  elevation: 2,
-                  shape: const CircleBorder(
-                      side: BorderSide(color: whiteColor), eccentricity: .5),
-                  child: const Icon(
-                    Ionicons.qr_code,
-                    color: whiteColor,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    context.pushNamed('qr_reader',
-                        extra: userJoinedModel.userModel);
-                  }),
-            ),
             bottomNavigationBar: TabBarMaterialWidget(
-                index: index,
-                onChangedTab: onChangedTab,
-                controller: _tabController,
-                user: userJoinedModel.userModel),
+              index: index,
+              onChangedTab: onChangedTab,
+              user: userJoinedModel.userModel,
+            ),
           );
         } else if (state is UserIsOut) {
           return const IntroductionScreen();
@@ -163,16 +119,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void signOut() {
-    BlocProvider.of<AuthenticationBloc>(context).add(SignOutRequested());
-  }
-
   void onChangedTab(int value) {
     setState(() {
       index = value;
-      _tabController!.animateTo(value);
-      _pageController.animateToPage(value,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
     });
   }
 }

@@ -45,18 +45,18 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     final User user = widget.user.user;
     final UserJoinedModel userJoinedModel = widget.user;
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      extendBody: true,
-      body: SafeArea(
-          maintainBottomViewPadding: true,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              BlocProvider.of<GetPrayerRequestBloc>(context)
-                  .add(RefreshPostRequestList(widget.user.user.uid));
-            },
-            child: PostListItem(userJoinedModel: userJoinedModel),
-          )),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        extendBody: true,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            BlocProvider.of<GetPrayerRequestBloc>(context)
+                .add(RefreshPostRequestList(widget.user.user.uid));
+          },
+          child: PostListItem(userJoinedModel: userJoinedModel),
+        ),
+      ),
     );
   }
 
