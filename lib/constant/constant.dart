@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Color(0xff1B7AE4);
-const secondaryColor = Color(0xff004A8B);
+const primaryColor = Color(0xff4D2B96);
+const secondaryColor = Color(0xff4D2B96);
 const darkColor = Color(0xff202124);
 final lighter = const Color(0xff202124).withOpacity(0.8);
 const whiteColor = Color(0xffffffff);
@@ -14,10 +14,10 @@ const linkStyle = TextStyle(
     fontSize: 14,
     fontStyle: FontStyle.italic,
     fontWeight: FontWeight.normal,
-    fontFamily: 'froxima');
+    fontFamily: 'Quicksand');
 
 final defaultTextStyle = TextStyle(
     color: lighter,
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    fontFamily: 'froxima');
+    fontFamily: 'Quicksand');

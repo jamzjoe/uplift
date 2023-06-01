@@ -24,7 +24,7 @@ class _SeeMoreTextState extends State<SeeMoreText> {
       style: TextStyle(
           color: widget.color ?? whiteColor,
           height: 1.4,
-          fontFamily: 'froxima'),
+          fontFamily: 'Quicksand'),
     );
 
     final textPainter = TextPainter(

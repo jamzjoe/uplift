@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -55,6 +56,13 @@ class _FeedScreenState extends State<FeedScreen> {
                 .add(RefreshPostRequestList(widget.user.user.uid));
           },
           child: PostListItem(userJoinedModel: userJoinedModel),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(
+            CupertinoIcons.add,
+            color: primaryColor,
+          ),
         ),
       ),
     );

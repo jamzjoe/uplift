@@ -79,11 +79,13 @@ flutter_native_splash:
   ios: true
   web: false
   color: "#ffffff"
-  image: assets/uplift-logo.png
+  icon_background_color: "#ffffff"
+  image: assets/uplift-logo-violet.png
 
   android_12:
     color: "#ffffff"
-    image: assets/uplift-logo.png
+    icon_background_color: "#ffffff"
+    image: assets/uplift-logo-violet.png
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -123,9 +125,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: froxima
+    - family: Quicksand
       fonts:
-        - asset: assets/froxima.ttf
+        - asset: assets/Quicksand.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

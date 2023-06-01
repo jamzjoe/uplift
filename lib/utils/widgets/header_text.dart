@@ -22,7 +22,7 @@ class HeaderText extends StatelessWidget {
         textAlign: textAlign ?? TextAlign.start,
         style: TextStyle(
             color: color,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
             fontSize: size ?? 20,
             overflow: TextOverflow.ellipsis),
       ),

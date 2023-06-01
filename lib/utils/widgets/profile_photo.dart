@@ -17,7 +17,7 @@ class ProfilePhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-        borderRadius: BorderRadius.circular(radius ?? 10),
+        borderRadius: BorderRadius.circular(360),
         child: CachedNetworkImage(
             fit: BoxFit.cover,
             width: size ?? 45,

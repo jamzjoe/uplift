@@ -65,9 +65,16 @@ class AuthenticationBloc
     on<GoogleSignInRequested>((event, emit) async {
       event.context.loaderOverlay.show();
       try {
+       
         final User? user = await AuthServices.signInWithGoogle();
 
-        await AuthServices.addUser(user!, user.displayName, 'google_sign_in');
+        if (user == null) {
+          // Google sign-in was canceled
+          event.context.loaderOverlay.hide();
+          return; // Exit the function without further processing
+        }
+
+        await AuthServices.addUser(user, user.displayName, 'google_sign_in');
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
 
@@ -76,6 +83,7 @@ class AuthenticationBloc
           // ignore: use_build_context_synchronously
           event.context.pop();
         }
+
         event.context.loaderOverlay.hide();
       } on PlatformException catch (e) {
         event.context.loaderOverlay.hide();

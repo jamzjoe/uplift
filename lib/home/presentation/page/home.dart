@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
@@ -45,6 +46,9 @@ class _HomeScreenState extends State<HomeScreen>
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
         if (state is UserIsIn) {
+          if (context.canPop()) {
+            context.pop();
+          }
           BlocProvider.of<GetPrayerRequestBloc>(context)
               .add(GetPostRequestList(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<NotificationBloc>(context).add(
@@ -100,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Image(
-                    image: AssetImage('assets/uplift-logo.png'),
+                    image: AssetImage('assets/uplift-logo-white.png'),
                     width: 100,
                   ),
                   defaultSpace,

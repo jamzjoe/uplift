@@ -1,5 +1,4 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -45,6 +44,7 @@ class _FriendSuggestionHorizontalState
                   SmallText(
                       text: 'People with same prayer intentions like you:',
                       color: lighter),
+                  const SizedBox(height: 5),
                   SizedBox(
                     height: 80,
                     child: ListView.builder(
@@ -89,45 +89,27 @@ class _FriendSuggestionHorizontalState
                                     bottom: 0,
                                     right: 0,
                                     left: 0,
-                                    child: Center(
-                                      child: CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor:
-                                            primaryColor.withOpacity(0.5),
-                                        child: const Icon(
-                                          CupertinoIcons.add,
-                                          size: 15,
-                                          color: whiteColor,
-                                        ),
-                                      ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 2, color: primaryColor),
+                                          borderRadius:
+                                              BorderRadius.circular(360)),
                                     )),
                                 Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(7),
                                     child: ProfilePhoto(
                                       user: user!,
-                                      radius: 60,
+                                      radius: 80,
                                     ),
                                   ),
                                 ),
-                                const Positioned(
-                                    top: 0,
-                                    bottom: 0,
-                                    right: 0,
-                                    left: 0,
-                                    child: Center(
-                                      child: Icon(
-                                        CupertinoIcons.add,
-                                        size: 15,
-                                        color: whiteColor,
-                                      ),
-                                    )),
                               ]),
+                              const SizedBox(height: 5),
                               Flexible(
                                 child: Text(
-                                  capitalizeFirstLetter(text?.substring(0,
-                                          text.length < 7 ? text.length : 7) ??
-                                      ''),
+                                  capitalizeFirstLetter(text ?? ''),
                                   style: const TextStyle(
                                     fontSize: 10,
                                     overflow: TextOverflow.ellipsis,

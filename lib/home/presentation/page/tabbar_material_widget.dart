@@ -60,9 +60,9 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
               child: CircleAvatar(
                 backgroundColor: primaryColor.withOpacity(0.1),
                 radius: 23,
-                child: Icon(
+                child: const Icon(
                   CupertinoIcons.qrcode,
-                  color: lighter,
+                  color: primaryColor,
                 ),
               ),
             ),
@@ -92,7 +92,7 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
     required String userID,
   }) {
     final isSelected = index == widget.index;
-    final color = isSelected ? lighter : lighter.withOpacity(0.5);
+    final color = isSelected ? primaryColor : lighter.withOpacity(0.5);
 
     if (index == 2) {
       return Column(

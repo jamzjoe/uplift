@@ -7,7 +7,7 @@ class Assets {
   static const String assetsDefault = 'assets/default.png';
   static const String assetsError = 'assets/error.png';
   static const String assetsFacebookLogo = 'assets/facebook-logo.png';
-  static const String assetsFroxima = 'assets/froxima.ttf';
+  static const String assetsQuicksand = 'assets/Quicksand.ttf';
   static const String assetsGallery = 'assets/gallery.png';
   static const String assetsGoogleLogo = 'assets/google-logo.png';
   static const String assetsIncognito = 'assets/incognito.png';
@@ -22,5 +22,5 @@ class Assets {
   static const String assetsSuccess = 'assets/success.png';
   static const String assetsThinking = 'assets/thinking.json';
   static const String assetsUnprayed = 'assets/unprayed.png';
-  static const String assetsUpliftLogo = 'assets/uplift-logo.png';
+  static const String assetsUpliftLogo = 'assets/uplift-logo-white.png';
 }

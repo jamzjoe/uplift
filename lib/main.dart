@@ -122,7 +122,7 @@ class MyApp extends StatelessWidget {
                   TargetPlatform.android:
                       ZoomPageTransitionsBuilder(), // Apply this to every platforms you need.
                 }),
-            fontFamily: 'froxima',
+            fontFamily: 'Quicksand',
             dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
             elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ButtonStyle(
