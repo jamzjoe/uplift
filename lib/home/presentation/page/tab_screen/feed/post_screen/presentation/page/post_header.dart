@@ -96,8 +96,8 @@ class PostHeader extends StatelessWidget {
                 text: prayerRequest.name!.isEmpty
                     ? user.displayName!
                     : prayerRequest.name!,
-                color: secondaryColor,
-                size: 16,
+                color: darkColor,
+                size: 18,
               ),
               SmallText(
                   text: DateFeature()
@@ -114,7 +114,7 @@ class PostHeader extends StatelessWidget {
               icon: const Icon(
                 CupertinoIcons.ellipsis_vertical,
                 size: 15,
-                color: secondaryColor,
+                color: darkColor,
               ),
               itemBuilder: (context) => [
                 PopupMenuItem(
@@ -131,7 +131,7 @@ class PostHeader extends StatelessWidget {
                       leading: Icon(CupertinoIcons.exclamationmark_bubble_fill,
                           color: Colors.red[300]),
                       title: const DefaultText(
-                          text: 'Report Post', color: secondaryColor),
+                          text: 'Report Post', color: darkColor),
                     )),
                 PopupMenuItem(
                     onTap: () async {
@@ -146,8 +146,7 @@ class PostHeader extends StatelessWidget {
                       leading: Icon(CupertinoIcons.bell_circle_fill,
                           color: Colors.red[300]),
                       title: const DefaultText(
-                          text: 'Set reminder for this post',
-                          color: secondaryColor),
+                          text: 'Set reminder for this post', color: darkColor),
                     )),
                 PopupMenuItem(
                     onTap: () async {
@@ -181,7 +180,7 @@ class PostHeader extends StatelessWidget {
                       leading: Icon(CupertinoIcons.delete_left_fill,
                           color: Colors.red[300]),
                       title: const DefaultText(
-                          text: 'Delete Post', color: secondaryColor),
+                          text: 'Delete Post', color: darkColor),
                     ))
               ],
             ),

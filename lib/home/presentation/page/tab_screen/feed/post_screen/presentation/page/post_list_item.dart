@@ -9,9 +9,8 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_field.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_shimmer_loading.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_tab_view.dart';
 import 'package:uplift/utils/services/ui_services.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/date_widget.dart';
@@ -20,11 +19,9 @@ import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-import '../../../feed_screen.dart';
 import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
-import 'post_item.dart';
 
-class PostListItem extends StatelessWidget {
+class PostListItem extends StatefulWidget {
   const PostListItem({
     Key? key,
     required this.userJoinedModel,
@@ -33,8 +30,13 @@ class PostListItem extends StatelessWidget {
   final UserJoinedModel userJoinedModel;
 
   @override
+  State<PostListItem> createState() => _PostListItemState();
+}
+
+class _PostListItemState extends State<PostListItem> {
+  @override
   Widget build(BuildContext context) {
-    final UserModel userModel = userJoinedModel.userModel;
+    final UserModel userModel = widget.userJoinedModel.userModel;
     return ListView(
       children: [
         Container(
@@ -97,9 +99,10 @@ class PostListItem extends StatelessWidget {
                                 goToNotificationScreen(
                                     userModel.userId!, context, userModel);
                               },
-                              icon: const Icon(
+                              icon: Icon(
                                 Ionicons.notifications,
-                                size: 25,
+                                size: 28,
+                                color: lighter,
                               ),
                             ),
                           );
@@ -110,8 +113,6 @@ class PostListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              PostField(userJoinModel: userJoinedModel),
-              FriendSuggestionHorizontal(currentUser: userModel),
             ],
           ),
         ),
@@ -119,44 +120,20 @@ class PostListItem extends StatelessWidget {
         BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
           builder: (context, state) {
             if (state is LoadingPrayerRequesListSuccess) {
-              if (state.prayerRequestPostModel.isEmpty) {
+              final posts = state.prayerRequestPostModel;
+              if (posts.isEmpty) {
                 return SizedBox(
                   height: MediaQuery.of(context).size.height - 250,
                   child: Center(
                     child: EndOfPostWidget(
                       isEmpty: true,
-                      user: userJoinedModel,
+                      user: widget.userJoinedModel,
                     ),
                   ),
                 );
               }
-
-              return ListView.builder(
-                padding: const EdgeInsets.only(bottom: 120),
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: state.prayerRequestPostModel.length + 2,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return const PostStatusWidget();
-                  } else if (index <= state.prayerRequestPostModel.length) {
-                    final e = state.prayerRequestPostModel[index - 1];
-                    return PostItem(
-                      allPost: state.prayerRequestPostModel,
-                      postModel: e,
-                      user: userModel,
-                      fullView: false,
-                    );
-                  } else {
-                    return Center(
-                      child: EndOfPostWidget(
-                        isEmpty: false,
-                        user: userJoinedModel,
-                      ),
-                    );
-                  }
-                },
-              );
+              return PostTabView(
+                  posts: posts, userModel: userModel, widget: widget);
             } else if (state is LoadingPrayerRequesList ||
                 state is NoInternetConnnection) {
               return const PostShimmerLoading();

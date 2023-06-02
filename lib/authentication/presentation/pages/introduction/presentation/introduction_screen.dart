@@ -54,7 +54,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           child: Container(
             decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/background.jpg'),
+                    image: AssetImage('assets/background.png'),
                     fit: BoxFit.cover)),
           ),
         ),

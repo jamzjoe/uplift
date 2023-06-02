@@ -47,7 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return LoaderOverlay(
       child: Scaffold(
         appBar: AppBar(
-          title: const HeaderText(text: 'Edit profile', color: secondaryColor),
+          title: const HeaderText(text: 'Edit profile', color: darkColor),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 100),

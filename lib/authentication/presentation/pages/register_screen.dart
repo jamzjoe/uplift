@@ -35,12 +35,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return LoaderOverlay(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        backgroundColor: primaryColor,
         body: SafeArea(
-          child: Container(
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/login-bg.png"),
-                    fit: BoxFit.cover)),
+          child: SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Column(

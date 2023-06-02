@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Image(
-                    image: AssetImage('assets/uplift-logo-white.png'),
+                    image: AssetImage('assets/uplift-logo-violet.png'),
                     width: 100,
                   ),
                   defaultSpace,

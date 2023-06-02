@@ -6,6 +6,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
+import 'package:uplift/utils/widgets/gradient_border_painter.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -90,11 +91,39 @@ class _FriendSuggestionHorizontalState
                                     right: 0,
                                     left: 0,
                                     child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              width: 2, color: primaryColor),
-                                          borderRadius:
-                                              BorderRadius.circular(360)),
+                                      margin: const EdgeInsets.all(2),
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                width: 1,
+                                                color: Colors.transparent,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(360),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 200,
+                                            width: 200,
+                                            child: CustomPaint(
+                                              painter: GradientBorderPainter(
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    Colors.blue,
+                                                    Colors.purple
+                                                  ],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                ),
+                                                strokeWidth: 1.0,
+                                                radius: 360.0,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     )),
                                 Center(
                                   child: Padding(

@@ -18,23 +18,22 @@ class _ForgrotPasswordScreenState extends State<ForgrotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            const DefaultText(text: 'Forgot password', color: secondaryColor),
+        title: const DefaultText(text: 'Forgot password', color: darkColor),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Column(
-          children: const [
+          children: [
             SmallText(
                 text:
                     'Please provide the email address that is currently associated with your UpLift account.',
-                color: secondaryColor),
-            SizedBox(height: 10),
-            CustomField(
+                color: lighter),
+            const SizedBox(height: 10),
+            const CustomField(
               hintText: 'Your email address here...',
               label: 'Email Address',
             ),
-            CustomContainer(
+            const CustomContainer(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,
                 widget: Center(

@@ -78,7 +78,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                           text: 'Share QR code so others can follow you',
                           color: secondaryColor),
                       defaultSpace,
-                      Image.asset('assets/uplift-logo-white.png', width: 60),
+                      Image.asset('assets/uplift-logo-violet.png', width: 60),
                     ],
                   )
                 ],

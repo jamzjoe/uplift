@@ -22,8 +22,9 @@ class _SeeMoreTextState extends State<SeeMoreText> {
     final textSpan = TextSpan(
       text: widget.text,
       style: TextStyle(
-          color: widget.color ?? whiteColor,
+          color: widget.color!.withOpacity(0.85),
           height: 1.4,
+          fontSize: 14,
           fontFamily: 'Quicksand'),
     );
 

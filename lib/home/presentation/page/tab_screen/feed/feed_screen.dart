@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
@@ -48,7 +49,7 @@ class _FeedScreenState extends State<FeedScreen> {
     final UserJoinedModel userJoinedModel = widget.user;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: whiteColor,
         extendBody: true,
         body: RefreshIndicator(
           onRefresh: () async {
@@ -58,7 +59,9 @@ class _FeedScreenState extends State<FeedScreen> {
           child: PostListItem(userJoinedModel: userJoinedModel),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            context.pushNamed('post_field', extra: userJoinedModel);
+          },
           child: const Icon(
             CupertinoIcons.add,
             color: primaryColor,

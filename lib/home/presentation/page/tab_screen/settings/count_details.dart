@@ -19,7 +19,7 @@ class CountAndName extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          HeaderText(text: count.toString(), color: darkColor),
+          HeaderText(text: count.toString(), color: primaryColor, size: 24),
           SmallText(
             text: details,
             color: lightColor,
