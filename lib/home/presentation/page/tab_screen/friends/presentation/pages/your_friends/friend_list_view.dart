@@ -85,7 +85,7 @@ class _FriendListViewState extends State<FriendListView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomContainer(
-              color: whiteColor,
+              color: Colors.grey.shade100,
               widget: TextField(
                 controller: _searchController,
                 onChanged: _search,

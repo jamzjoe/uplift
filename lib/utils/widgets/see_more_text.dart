@@ -25,7 +25,7 @@ class _SeeMoreTextState extends State<SeeMoreText> {
           color: widget.color!.withOpacity(0.85),
           height: 1.4,
           fontSize: 14,
-          fontFamily: 'Quicksand'),
+          fontFamily: 'Varela'),
     );
 
     final textPainter = TextPainter(

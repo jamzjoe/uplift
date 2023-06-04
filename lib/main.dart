@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,6 +88,35 @@ Future<NotificationSettings> requestPermission() async {
   return settings;
 }
 
+Future<void> backgroundMessageHandler(RemoteMessage message) async {
+  if (message.data.containsKey('event') &&
+      message.data['event'] == 'token_refresh') {
+    // Refresh FCM token in the background
+    updateFCMTokenInBackground();
+  }
+}
+
+void registerBackgroundMessageHandler() {
+  FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+}
+
+void updateFCMTokenInBackground() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  final currentUserID = FirebaseAuth.instance.currentUser!.uid;
+  final token = await messaging.getToken();
+
+  // Update the token in Firestore for the current user
+  // Assuming you have a 'users' collection in Firestore
+  FirebaseFirestore.instance
+      .collection('Users')
+      .doc(currentUserID)
+      .update({'device_token': token}).then((_) {
+    log('FCM token updated successfully in Firestore');
+  }).catchError((error) {
+    log('Failed to update FCM token in Firestore: $error');
+  });
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -122,7 +153,7 @@ class MyApp extends StatelessWidget {
                   TargetPlatform.android:
                       ZoomPageTransitionsBuilder(), // Apply this to every platforms you need.
                 }),
-            fontFamily: 'Quicksand',
+            fontFamily: 'Varela',
             dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
             elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ButtonStyle(

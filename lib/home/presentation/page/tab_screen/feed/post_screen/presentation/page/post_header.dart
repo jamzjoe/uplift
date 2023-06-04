@@ -112,7 +112,7 @@ class PostHeader extends StatelessWidget {
             PopupMenuButton(
               padding: EdgeInsets.zero,
               icon: const Icon(
-                CupertinoIcons.ellipsis_vertical,
+                CupertinoIcons.ellipsis,
                 size: 15,
                 color: darkColor,
               ),

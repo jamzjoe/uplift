@@ -78,14 +78,14 @@ flutter_native_splash:
   android: true
   ios: true
   web: false
-  color: "#ffffff"
-  icon_background_color: "#ffffff"
-  image: assets/uplift-logo-violet.png
+  color: "#6351A2"
+  icon_background_color: "#6351A2"
+  image: assets/uplift-logo-white.png
 
   android_12:
     color: "#ffffff"
     icon_background_color: "#ffffff"
-    image: assets/uplift-logo-violet.png
+    image: assets/uplift-logo-white.png
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -128,6 +128,9 @@ flutter:
     - family: Quicksand
       fonts:
         - asset: assets/Quicksand.ttf
+    - family: Varela
+      fonts:
+        - asset: assets/varela.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -17,45 +19,84 @@ class IntroductionScreen extends StatefulWidget {
 
 class _IntroductionScreenState extends State<IntroductionScreen> {
   bool _isBottomSheetVisible = false;
-  @override
-  Widget build(BuildContext context) {
-    _showBottomSheet(BuildContext context) {
-      if (_isBottomSheetVisible) {
-        return;
-      }
-      setState(() {
-        _isBottomSheetVisible = true;
-      });
-      showFlexibleBottomSheet(
-        bottomSheetColor: Colors.transparent,
-        initHeight: .58,
-        maxHeight: 1,
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-        barrierColor: Colors.transparent,
-        duration: Duration(seconds: 1.5.toInt()),
-        context: context,
-        builder: (context, scrollController, bottomSheetOffset) {
-          return const BottomSheetContent();
-        },
-      );
-    }
+  List<String> images = [
+    'assets/bg1.png',
+    'assets/bg2.jpg',
+    'assets/bg3.jpg',
+  ];
+  int currentIndex = 0;
+  Timer? timer;
 
-    // Show the bottom sheet automatically when the page is built
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      setState(() {
+        currentIndex = (currentIndex + 1) % images.length;
+      });
+    });
+
+    // Show the bottom sheet automatically when the page is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showBottomSheet(context);
     });
+  }
 
+  @override
+  void dispose() {
+    timer?.cancel(); // Cancel the timer when the screen is disposed
+    super.dispose();
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    if (_isBottomSheetVisible) {
+      return;
+    }
+    setState(() {
+      _isBottomSheetVisible = true;
+    });
+    showFlexibleBottomSheet(
+      bottomSheetColor: Colors.transparent,
+      initHeight: .50,
+      maxHeight: 1,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      barrierColor: Colors.transparent,
+      duration: const Duration(seconds: 1),
+      context: context,
+      builder: (context, scrollController, bottomSheetOffset) {
+        return const BottomSheetContent();
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return LoaderOverlay(
       child: Scaffold(
-        backgroundColor: whiteColor,
+        backgroundColor: Colors.white,
         body: SafeArea(
-          child: Container(
-            decoration: const BoxDecoration(
+          child: AnimatedSwitcher(
+            duration: const Duration(seconds: 2),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: Container(
+              key: ValueKey<String>(images[currentIndex]),
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/background.png'),
-                    fit: BoxFit.cover)),
+                  image: AssetImage(images[currentIndex]),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
         ),
       ),

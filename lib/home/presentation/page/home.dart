@@ -97,20 +97,20 @@ class _HomeScreenState extends State<HomeScreen>
           return const IntroductionScreen();
         } else if (state is Loading) {
           return Scaffold(
-            backgroundColor: whiteColor,
+            backgroundColor: primaryColor,
             body: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Image(
-                    image: AssetImage('assets/uplift-logo-violet.png'),
-                    width: 100,
+                    image: AssetImage('assets/uplift-logo-white.png'),
+                    width: 80,
                   ),
                   defaultSpace,
-                  SpinKitFadingCircle(
-                    color: primaryColor,
-                    size: 50,
+                  SpinKitFadingGrid(
+                    color: whiteColor,
+                    size: 45,
                   ),
                 ],
               ),

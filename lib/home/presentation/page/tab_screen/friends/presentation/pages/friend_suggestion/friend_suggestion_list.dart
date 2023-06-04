@@ -86,7 +86,7 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             CustomContainer(
-              color: whiteColor,
+              color: Colors.grey.shade100,
               widget: TextField(
                 controller: _searchController,
                 onChanged: _search,

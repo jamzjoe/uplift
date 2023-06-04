@@ -17,10 +17,9 @@ class DefaultText extends StatelessWidget {
       text,
       textAlign: textAlign,
       style: TextStyle(
-          
           color: color,
           fontWeight: FontWeight.normal,
-          fontSize: 16,
+          fontSize: 18,
           overflow: overflow ?? TextOverflow.ellipsis),
     );
   }

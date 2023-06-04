@@ -37,14 +37,14 @@ class NotificationItem extends StatelessWidget {
                 TextSpan(
                     text: user.displayName,
                     style: const TextStyle(
-                        color: primaryColor,
-                        fontFamily: 'Quicksand',
+                        color: darkColor,
+                        fontFamily: 'Varela',
                         fontWeight: FontWeight.bold,
                         fontSize: 15)),
                 TextSpan(
                     text: ' ${notification.message}',
                     style: TextStyle(
-                        color: lighter, fontSize: 14, fontFamily: 'Quicksand')),
+                        color: lighter, fontSize: 14, fontFamily: 'Varela')),
               ])),
             )
           ]),
