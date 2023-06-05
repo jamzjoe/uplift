@@ -144,7 +144,7 @@ class _PostTabViewState extends State<PostTabView> {
                                           "${Tools().splitName(capitalizeFirstLetter('${widget.userModel.displayName}'))},",
                                       color: secondaryColor,
                                       size: 20,
-                                    ),
+                                    )
                                   ],
                                 ),
                                 Row(
@@ -226,45 +226,51 @@ class _PostTabViewState extends State<PostTabView> {
               ),
             ),
           ],
-          body: ListView(
-            padding: const EdgeInsets.only(top: 10),
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    FriendSuggestionHorizontal(currentUser: widget.userModel),
-                  ],
+          body: RefreshIndicator(
+            onRefresh: () async {
+              BlocProvider.of<GetPrayerRequestBloc>(context)
+                  .add(RefreshPostRequestList(widget.userModel.userId!));
+            },
+            child: ListView(
+              padding: const EdgeInsets.only(top: 10),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      FriendSuggestionHorizontal(currentUser: widget.userModel),
+                    ],
+                  ),
                 ),
-              ),
-              ListView.builder(
-                padding: const EdgeInsets.only(bottom: 120),
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: filteredPosts.length + 2,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return const PostStatusWidget();
-                  } else if (index <= filteredPosts.length) {
-                    final e = filteredPosts[index - 1];
-                    return PostItem(
-                      allPost: filteredPosts,
-                      postModel: e,
-                      user: widget.userModel,
-                      fullView: false,
-                    );
-                  } else {
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height - 300,
-                      child: const Center(
-                        child:
-                            NoDataMessage(text: 'No prayer intention found.'),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
+                ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 120),
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: filteredPosts.length + 2,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return const PostStatusWidget();
+                    } else if (index <= filteredPosts.length) {
+                      final e = filteredPosts[index - 1];
+                      return PostItem(
+                        allPost: filteredPosts,
+                        postModel: e,
+                        user: widget.userModel,
+                        fullView: false,
+                      );
+                    } else {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height - 300,
+                        child: const Center(
+                          child:
+                              NoDataMessage(text: 'No prayer intention found.'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -90,7 +90,7 @@ class SettingsProfileHeader extends StatelessWidget {
                       if (state is LoadingPrayerRequesListSuccess) {
                         return CountAndName(
                             details: 'Prayer Intentions',
-                            count: state.prayerRequestPostModel.length);
+                            count: state.length ?? 0);
                       } else {
                         return const CountAndName(
                             details: 'Prayer Intentions', count: 0);

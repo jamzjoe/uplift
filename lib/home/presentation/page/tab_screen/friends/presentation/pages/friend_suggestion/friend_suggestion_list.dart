@@ -7,7 +7,6 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/contacts.dart';
 import 'package:uplift/utils/widgets/button.dart';
-import 'package:uplift/utils/widgets/header_text.dart';
 
 import 'add_friend_item.dart';
 
@@ -93,14 +92,10 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Search',
-                  suffixIcon: TextButton.icon(
-                    label: const HeaderText(
-                      text: 'IMPORT',
-                      color: secondaryColor,
-                      size: 12,
-                    ),
+                  suffixIcon: IconButton(
                     onPressed: _importContacts,
-                    icon: const Icon(Icons.contact_mail, size: 18),
+                    icon: const Icon(Icons.contact_mail,
+                        size: 18, color: primaryColor),
                   ),
                 ),
               ),

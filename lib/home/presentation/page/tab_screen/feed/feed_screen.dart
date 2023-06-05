@@ -1,8 +1,4 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,17 +51,10 @@ class _FeedScreenState extends State<FeedScreen> {
       child: Scaffold(
         backgroundColor: whiteColor,
         extendBody: true,
-        body: RefreshIndicator(
-          onRefresh: () async {
-            BlocProvider.of<GetPrayerRequestBloc>(context)
-                .add(RefreshPostRequestList(widget.user.user.uid));
-          },
-          child: PostListItem(userJoinedModel: userJoinedModel),
-        ),
+        body: PostListItem(userJoinedModel: userJoinedModel),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             context.pushNamed('post_field', extra: userJoinedModel);
-            updateFCMTokenInBackground();
           },
           child: const Icon(
             CupertinoIcons.add,
@@ -96,23 +85,6 @@ class _FeedScreenState extends State<FeedScreen> {
       limit: paginationLimit,
       widget.user.user.uid,
     ));
-  }
-
-  void updateFCMTokenInBackground() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    final currentUserID = FirebaseAuth.instance.currentUser!.uid;
-    final token = await messaging.getToken();
-
-    // Update the token in Firestore for the current user
-    // Assuming you have a 'users' collection in Firestore
-    FirebaseFirestore.instance
-        .collection('Users')
-        .doc(currentUserID)
-        .update({'device_token': token}).then((_) {
-      log('FCM token updated successfully in Firestore');
-    }).catchError((error) {
-      log('Failed to update FCM token in Firestore: $error');
-    });
   }
 }
 

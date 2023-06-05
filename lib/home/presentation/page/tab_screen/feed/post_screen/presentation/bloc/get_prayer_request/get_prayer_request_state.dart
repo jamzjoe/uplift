@@ -16,8 +16,9 @@ class LoadingPrayerRequesList extends GetPrayerRequestState {
 
 class LoadingPrayerRequesListSuccess extends GetPrayerRequestState {
   final List<PostModel> prayerRequestPostModel;
+  final int? length;
 
-  const LoadingPrayerRequesListSuccess(this.prayerRequestPostModel);
+  const LoadingPrayerRequesListSuccess(this.prayerRequestPostModel, {this.length});
   @override
   List<Object> get props => [prayerRequestPostModel];
 }

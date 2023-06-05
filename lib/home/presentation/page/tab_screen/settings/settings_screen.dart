@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/settings/reminder_page.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../../../../constant/constant.dart';
@@ -42,26 +41,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   children: [
-                    SettingsSection(
-                        title: 'Reminders',
-                        widget: Container(
-                          decoration: BoxDecoration(
-                              color: whiteColor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            children:
-                                ListTile.divideTiles(context: context, tiles: [
-                              SettingsItem(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ReminderPage())),
-                                  label: 'Set prayer intentions privacy',
-                                  icon: CupertinoIcons.globe),
-                            ]).toList(),
-                          ),
-                        )),
+                    // SettingsSection(
+                    //     title: 'Reminders',
+                    //     widget: Container(
+                    //       decoration: BoxDecoration(
+                    //           color: whiteColor,
+                    //           borderRadius: BorderRadius.circular(10)),
+                    //       child: Column(
+                    //         children:
+                    //             ListTile.divideTiles(context: context, tiles: [
+                    //           SettingsItem(
+                    //               onTap: () => Navigator.push(
+                    //                   context,
+                    //                   MaterialPageRoute(
+                    //                       builder: (context) =>
+                    //                           const ReminderPage())),
+                    //               label: 'Set prayer intentions privacy',
+                    //               icon: CupertinoIcons.globe),
+                    //         ]).toList(),
+                    //       ),
+                    //     )),
                     SettingsSection(
                       title: 'Account',
                       widget: Container(

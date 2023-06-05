@@ -120,22 +120,38 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
       builder: (context, state) {
         final int count =
             state is FriendRequestLoadingSuccess ? state.users.length : 0;
-
+        if (index == 1) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Badge.count(
+                isLabelVisible: count != 0,
+                count: count,
+                child: IconButton(
+                  color: color,
+                  onPressed: () async {
+                    widget.onChangedTab(index);
+                    widget.controller!.animateTo(index);
+                  },
+                  icon: isSelected ? selectedIcon : icon,
+                ),
+              ),
+              SmallText(text: label, color: color),
+            ],
+          );
+        }
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Badge.count(
-              isLabelVisible: count != 0,
-              count: count,
-              child: IconButton(
-                color: color,
-                onPressed: () async {
-                  widget.onChangedTab(index);
-                  widget.controller!.animateTo(index);
-                },
-                icon: isSelected ? selectedIcon : icon,
-              ),
+            IconButton(
+              color: color,
+              onPressed: () async {
+                widget.onChangedTab(index);
+                widget.controller!.animateTo(index);
+              },
+              icon: isSelected ? selectedIcon : icon,
             ),
             SmallText(text: label, color: color),
           ],

@@ -7,7 +7,6 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_item.dart';
 import 'package:uplift/utils/widgets/button.dart';
-import 'package:uplift/utils/widgets/header_text.dart';
 
 import '../../../data/model/user_approved_mutual.dart';
 import '../friend_suggestion/contacts.dart';
@@ -92,14 +91,10 @@ class _FriendListViewState extends State<FriendListView> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Search',
-                  suffixIcon: TextButton.icon(
-                    label: const HeaderText(
-                      text: 'IMPORT',
-                      color: secondaryColor,
-                      size: 12,
-                    ),
+                  suffixIcon: IconButton(
                     onPressed: _importContacts,
-                    icon: const Icon(Icons.contact_mail, size: 18),
+                    icon: const Icon(Icons.contact_mail,
+                        size: 18, color: primaryColor),
                   ),
                 ),
               ),
@@ -119,7 +114,6 @@ class _FriendListViewState extends State<FriendListView> {
                           itemBuilder: (context, index) {
                             final userFriendship =
                                 filteredFriends[index].userFriendshipModel;
-
                             return FriendsItem(
                               mutualFriends:
                                   filteredFriends[index].mutualFriends,

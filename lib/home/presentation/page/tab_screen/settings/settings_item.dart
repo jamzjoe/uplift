@@ -23,7 +23,7 @@ class SettingsItem extends StatelessWidget {
       title: DefaultText(text: label, color: darkColor),
       leading: Icon(
         icon,
-        color: darkColor.withOpacity(0.6),
+        color: darkColor.withOpacity(0.4),
       ),
     );
   }

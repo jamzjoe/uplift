@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen>
           BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
               FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
         } else {
+     
           setState(() {
             index = 0;
           });

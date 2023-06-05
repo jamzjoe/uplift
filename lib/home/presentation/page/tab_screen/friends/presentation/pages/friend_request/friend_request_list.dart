@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
+import 'package:uplift/utils/widgets/default_loading.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 
 import '../../../../../../../../constant/constant.dart';
@@ -45,11 +46,8 @@ class FriendRequestListView extends StatelessWidget {
           if (state.users.isEmpty) {
             return Column(
               children: [
-                SizedBox(
-                  height: 20,
-                  child: FriendRequestHeader(
-                    friendRequestCount: state.users.length,
-                  ),
+                FriendRequestHeader(
+                  friendRequestCount: state.users.length,
                 ),
                 Expanded(
                   child: Container(
@@ -72,9 +70,9 @@ class FriendRequestListView extends StatelessWidget {
                   physics: const ClampingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return FriendRequestItem(
-                      user: state.users[index],
-                      currentUser: currentUser,
-                    );
+                        user: state.users[index].userFriendshipModel,
+                        currentUser: currentUser,
+                        mutualFriends: state.users[index].mutualFriends);
                   },
                   separatorBuilder: (context, index) {
                     return Divider(
@@ -84,8 +82,8 @@ class FriendRequestListView extends StatelessWidget {
             ],
           );
         }
-        return const Text(
-          'Error',
+        return const Center(
+          child: DefaultLoading(),
         );
       },
     );

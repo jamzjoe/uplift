@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
+import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostListView extends StatefulWidget {
@@ -19,6 +21,7 @@ class PostListView extends StatefulWidget {
 class _PostListViewState extends State<PostListView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
   List<PostModel> filteredPostList = [];
   bool _isDisposed = false;
   List<String> tabTitle = [
@@ -100,19 +103,27 @@ class _PostListViewState extends State<PostListView>
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            onChanged: (value) async {
-              if (value.isEmpty) {
-                _tabController.animateTo(0);
-              } else {
-                searchPosts(value);
-                _tabController.animateTo(11);
-              }
-            },
-            decoration: const InputDecoration(
-              hintText: 'Search prayer intentions, emails, and etc.',
-              prefixIcon: Icon(Icons.search),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: CustomContainer(
+            color: Colors.grey.shade100,
+            widget: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                if (value.isEmpty) {
+                  _tabController.animateTo(0);
+                } else {
+                  searchPosts(value);
+                  _tabController.animateTo(11);
+                }
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Search for Topics',
+                suffixIcon: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(CupertinoIcons.search),
+                ),
+              ),
             ),
           ),
         ),

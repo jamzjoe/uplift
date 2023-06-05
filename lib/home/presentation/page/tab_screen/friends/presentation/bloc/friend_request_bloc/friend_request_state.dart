@@ -12,7 +12,7 @@ class FriendRequestInitial extends FriendRequestState {}
 class FriendRequestLoading extends FriendRequestState {}
 
 class FriendRequestLoadingSuccess extends FriendRequestState {
-  final List<UserFriendshipModel> users;
+  final List<UserApprovedMutualFriends> users;
 
   const FriendRequestLoadingSuccess(this.users);
   @override

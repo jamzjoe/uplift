@@ -65,8 +65,11 @@ class GetPrayerRequestBloc
         limit: event.limit ?? 10,
         userID: event.userID,
       );
-
-      emit(LoadingPrayerRequesListSuccess(data));
+      final int prayerCount = data
+          .where((prayer) => prayer.prayerRequestPostModel.userId == userID)
+          .toList()
+          .length;
+      emit(LoadingPrayerRequesListSuccess(data, length: prayerCount));
     } catch (_) {
       emit(LoadingPrayerRequesListError());
     }
@@ -105,12 +108,16 @@ class GetPrayerRequestBloc
     RefreshPostRequestList event,
     Emitter<GetPrayerRequestState> emit,
   ) async {
-    emit(LoadingPrayerRequesList());
     try {
       final data = await prayerRequestRepository.getPrayerRequestList(
         userID: event.userID,
       );
-      emit(LoadingPrayerRequesListSuccess(data));
+      final int prayerCount = data
+          .where((prayer) => prayer.prayerRequestPostModel.userId == userID)
+          .toList()
+          .length;
+
+      emit(LoadingPrayerRequesListSuccess(data, length: prayerCount));
     } on FirebaseException {
       emit(LoadingPrayerRequesListError());
     }

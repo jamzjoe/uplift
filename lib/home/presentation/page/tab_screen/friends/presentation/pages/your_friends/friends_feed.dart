@@ -138,7 +138,7 @@ class _FriendsFeedState extends State<FriendsFeed>
                     onTap: () =>
                         context.pushNamed('photo_view', extra: user.photoUrl),
                     child: ProfilePhoto(
-                      user: user,
+                      user: user!,
                       radius: 60,
                       size: 90,
                     ),
@@ -147,16 +147,16 @@ class _FriendsFeedState extends State<FriendsFeed>
                   HeaderText(text: user.displayName ?? '', color: darkColor),
                   SmallText(text: user.emailAddress ?? '', color: lightColor),
                   defaultSpace,
-                  user.bio!.isNotEmpty
+                  user.bio != null && user.bio!.isNotEmpty
                       ? SmallText(
-                          text: user.bio?.isEmpty ?? true
-                              ? 'User Bio'
-                              : user.bio ?? '',
+                          text: user.bio!.isEmpty ? 'User Bio' : user.bio!,
                           color: darkColor,
                         )
                       : const SizedBox(),
                   CheckFriendsStatusWidget(
-                      user: user, currentUser: currentUser),
+                    user: user,
+                    currentUser: currentUser!,
+                  ),
                 ],
               ),
             ),

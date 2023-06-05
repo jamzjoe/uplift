@@ -65,7 +65,6 @@ class AuthenticationBloc
     on<GoogleSignInRequested>((event, emit) async {
       event.context.loaderOverlay.show();
       try {
-       
         final User? user = await AuthServices.signInWithGoogle();
 
         if (user == null) {

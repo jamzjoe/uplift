@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -11,14 +10,16 @@ import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class IntroductionScreen extends StatefulWidget {
-  const IntroductionScreen({super.key});
+  const IntroductionScreen({Key? key}) : super(key: key);
+
+  static GlobalKey<IntroductionScreenState> screenKey =
+      GlobalKey<IntroductionScreenState>();
 
   @override
-  State<IntroductionScreen> createState() => _IntroductionScreenState();
+  IntroductionScreenState createState() => IntroductionScreenState();
 }
 
-class _IntroductionScreenState extends State<IntroductionScreen> {
-  bool _isBottomSheetVisible = false;
+class IntroductionScreenState extends State<IntroductionScreen> {
   List<String> images = [
     'assets/bg1.png',
     'assets/bg2.jpg',
@@ -26,6 +27,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
   ];
   int currentIndex = 0;
   Timer? timer;
+  double _bottomSheetHeight = 0.5;
 
   @override
   void initState() {
@@ -38,7 +40,9 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
 
     // Show the bottom sheet automatically when the page is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showBottomSheet(context);
+      setState(() {
+        _bottomSheetHeight = MediaQuery.of(context).size.height / 2;
+      });
     });
   }
 
@@ -48,56 +52,54 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
     super.dispose();
   }
 
-  void _showBottomSheet(BuildContext context) {
-    if (_isBottomSheetVisible) {
-      return;
-    }
-    setState(() {
-      _isBottomSheetVisible = true;
-    });
-    showFlexibleBottomSheet(
-      bottomSheetColor: Colors.transparent,
-      initHeight: .50,
-      maxHeight: 1,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-      ),
-      barrierColor: Colors.transparent,
-      duration: const Duration(seconds: 1),
-      context: context,
-      builder: (context, scrollController, bottomSheetOffset) {
-        return const BottomSheetContent();
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return LoaderOverlay(
       child: Scaffold(
+        key: IntroductionScreen.screenKey,
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: AnimatedSwitcher(
-            duration: const Duration(seconds: 2),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            child: Container(
-              key: ValueKey<String>(images[currentIndex]),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(images[currentIndex]),
-                  fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            SafeArea(
+              child: AnimatedSwitcher(
+                duration: const Duration(seconds: 1),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  key: ValueKey<String>(images[currentIndex]),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    image: DecorationImage(
+                      image: AssetImage(images[currentIndex]),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: _bottomSheetHeight,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: const BottomSheetContent(),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -106,8 +108,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<BottomSheetContent> createState() => _BottomSheetContentState();
@@ -117,6 +119,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.none,
       width: double.infinity,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -175,7 +178,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                 Center(
                     child: TextButton(
                         onPressed: () {
-                          IntroductionRepository().goToLogin();
+                          IntroductionRepository().goToLogin(context);
                         },
                         child: const SmallText(
                             text: "Continue another way",

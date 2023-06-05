@@ -56,26 +56,7 @@ class FriendsItem extends StatelessWidget {
                               size: 18,
                             ),
                             const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                ...mutualFriends
-                                    .take(2)
-                                    .map((e) => ProfilePhoto(
-                                          user: e.userModel,
-                                          radius: 60,
-                                          size: 15,
-                                        ))
-                                    .toList(),
-                                if (mutualFriends.length > 2)
-                                  Text(
-                                    " + ${mutualFriends.length - 2} ${mutualFriends.length - 2 == 1 ? 'mutual friend' : 'mutual friends'}",
-                                  ),
-                                if (mutualFriends.length <= 2)
-                                  Text(
-                                    " ${mutualFriends.length} ${mutualFriends.length == 1 ? 'mutual friend' : 'mutual friends'}${mutualFriends.isEmpty ? '' : (mutualFriends.length == 1 ? '' : 's')}",
-                                  ),
-                              ],
-                            )
+                            MutualFriendWidget(mutualFriends: mutualFriends)
                           ],
                         ),
                       ),
@@ -111,6 +92,39 @@ class FriendsItem extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MutualFriendWidget extends StatelessWidget {
+  const MutualFriendWidget({
+    Key? key,
+    required this.mutualFriends,
+  }) : super(key: key);
+
+  final List<UserFriendshipModel> mutualFriends;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ...mutualFriends
+            .take(2)
+            .map((e) => ProfilePhoto(
+                  user: e.userModel,
+                  radius: 60,
+                  size: 15,
+                ))
+            .toList(),
+        if (mutualFriends.length > 2)
+          Text(
+            " + ${mutualFriends.length - 2} ${mutualFriends.length - 2 == 1 ? 'mutual friend' : 'mutual friend'}",
+          ),
+        if (mutualFriends.length <= 2)
+          Text(
+            " ${mutualFriends.length} ${mutualFriends.length == 1 ? 'mutual friend' : 'mutual friend'}${mutualFriends.isEmpty ? '' : 's'}",
+          ),
+      ],
     );
   }
 }

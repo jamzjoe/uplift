@@ -23,7 +23,7 @@ class HeaderText extends StatelessWidget {
         style: TextStyle(
             color: color,
             fontWeight: FontWeight.w800,
-            fontSize: size ?? 24,
+            fontSize: size ?? 20,
             overflow: TextOverflow.ellipsis),
       ),
     );

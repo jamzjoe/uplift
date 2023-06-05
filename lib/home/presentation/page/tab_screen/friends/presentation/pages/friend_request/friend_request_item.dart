@@ -7,6 +7,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_item.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
@@ -17,9 +18,11 @@ class FriendRequestItem extends StatelessWidget {
     super.key,
     required this.user,
     required this.currentUser,
+    required this.mutualFriends,
   });
   final UserFriendshipModel user;
   final UserModel currentUser;
+  final List<UserFriendshipModel> mutualFriends;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class FriendRequestItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProfilePhoto(user: userModel, radius: 15),
             const SizedBox(width: 15),
@@ -47,6 +51,8 @@ class FriendRequestItem extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 5),
+                  MutualFriendWidget(mutualFriends: mutualFriends),
                   const SizedBox(height: 5),
                   Row(
                     children: [

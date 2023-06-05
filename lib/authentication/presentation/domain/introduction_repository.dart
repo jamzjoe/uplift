@@ -9,7 +9,7 @@ class IntroductionRepository {
         .add(GoogleSignInRequested('', context, false));
   }
 
-  void goToLogin() {
+  void goToLogin(BuildContext context) {
     router.pushNamed('login');
   }
 }
