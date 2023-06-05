@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 
 class TextDateWidget extends StatelessWidget {
   final DateTime date;
@@ -13,6 +13,8 @@ class TextDateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final formattedDate = DateFormat('MMMM dd, yyyy').format(date);
 
-    return SmallText(text: "${fillers ?? ''} $formattedDate", color: lighter);
+    return DefaultText(
+        text: "${fillers ?? ''} $formattedDate",
+        color: whiteColor.withOpacity(0.8));
   }
 }

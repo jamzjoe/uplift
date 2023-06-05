@@ -27,7 +27,6 @@ class _PostFieldState extends State<PostField> {
       onTap: () => enterPrayerField(context, widget.userJoinModel),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         decoration: BoxDecoration(
             color: const Color(0xffF6F6F6),
             border:

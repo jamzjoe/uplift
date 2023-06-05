@@ -158,13 +158,24 @@ class _CommentPageState extends State<CommentPage> {
           }
           return Column(
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: HeaderText(
-                      text: '${encourages.length} Encourages',
-                      color: darkColor),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: HeaderText(
+                        text: '${encourages.length} Encourages',
+                        color: darkColor),
+                  ),
+                  IconButton(
+                      autofocus: true,
+                      focusColor: primaryColor,
+                      splashColor: primaryColor,
+                      onPressed: () {
+                        context.pop();
+                      },
+                      icon: const Icon(Icons.close)),
+                ],
               ),
               Expanded(
                   child: ListView.separated(
@@ -230,7 +241,7 @@ class CommentItem extends StatelessWidget {
           children: [
             HeaderText(
                 text: encourages[index].userModel.displayName!,
-                color: secondaryColor,
+                color: darkColor,
                 size: 16),
             SmallText(
                 text: DateFeature().formatDateTime(

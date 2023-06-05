@@ -7,20 +7,17 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_list_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
-import 'package:uplift/utils/services/ui_services.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostTabView extends StatefulWidget {
   const PostTabView({
@@ -119,12 +116,18 @@ class _PostTabViewState extends State<PostTabView>
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Image.asset(
+                  'assets/header_bg.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 120,
+              toolbarHeight: 130,
               backgroundColor: Colors.white,
               title: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Column(
                   children: [
                     Row(
@@ -141,12 +144,14 @@ class _PostTabViewState extends State<PostTabView>
                               children: [
                                 Row(
                                   children: [
-                                    const SmallText(
-                                        text: 'Hello ', color: darkColor),
+                                    const HeaderText(
+                                        text: 'Hello ',
+                                        color: whiteColor,
+                                        size: 16),
                                     HeaderText(
                                       text:
-                                          "${Tools().splitName(capitalizeFirstLetter('${widget.userModel.displayName}'))},",
-                                      color: secondaryColor,
+                                          "${capitalizeFirstLetter('${widget.userModel.displayName}')},",
+                                      color: whiteColor,
                                       size: 20,
                                     )
                                   ],
@@ -180,10 +185,10 @@ class _PostTabViewState extends State<PostTabView>
                                         context,
                                         widget.userModel);
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Ionicons.notifications,
                                     size: 28,
-                                    color: lighter,
+                                    color: whiteColor,
                                   ),
                                 ),
                               );
@@ -214,8 +219,12 @@ class _PostTabViewState extends State<PostTabView>
               ),
               bottom: TabBar(
                 controller: tabController,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 indicatorColor: primaryColor,
-                labelColor: primaryColor,
+                unselectedLabelColor: innerBoxIsScrolled
+                    ? lighter.withOpacity(0.5)
+                    : whiteColor.withOpacity(0.8),
+                labelColor: innerBoxIsScrolled ? lighter : whiteColor,
                 automaticIndicatorColorAdjustment: true,
                 onTap: (value) {
                   if (value == 0) {
@@ -242,7 +251,6 @@ class _PostTabViewState extends State<PostTabView>
                   .add(RefreshPostRequestList(widget.userModel.userId!));
             },
             child: ListView(
-              padding: const EdgeInsets.only(top: 10),
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -256,12 +264,10 @@ class _PostTabViewState extends State<PostTabView>
                   padding: const EdgeInsets.only(bottom: 120),
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: filteredPosts.length + 2,
+                  itemCount: filteredPosts.length,
                   itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return const PostStatusWidget();
-                    } else if (index <= filteredPosts.length) {
-                      final e = filteredPosts[index - 1];
+                    if (index <= filteredPosts.length) {
+                      final e = filteredPosts[index];
                       return PostItem(
                         allPost: filteredPosts,
                         postModel: e,
