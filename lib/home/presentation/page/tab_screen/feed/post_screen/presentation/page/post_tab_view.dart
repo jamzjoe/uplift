@@ -252,13 +252,12 @@ class _PostTabViewState extends State<PostTabView>
             },
             child: ListView(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      FriendSuggestionHorizontal(currentUser: widget.userModel),
-                    ],
-                  ),
+                Column(
+                  children: [
+                    FriendSuggestionHorizontal(
+                        currentUser: widget.userModel,
+                        userJoinedModel: widget.widget.userJoinedModel),
+                  ],
                 ),
                 ListView.builder(
                   padding: const EdgeInsets.only(bottom: 120),

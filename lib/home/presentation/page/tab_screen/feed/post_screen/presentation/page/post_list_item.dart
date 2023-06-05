@@ -35,7 +35,7 @@ class _PostListItemState extends State<PostListItem> {
           if (posts.isEmpty) {
             return Expanded(
               child: Container(
-                color: primaryColor,
+                color: whiteColor,
                 child: Center(
                   child: EndOfPostWidget(
                     isEmpty: true,
@@ -110,9 +110,9 @@ class EndOfPostWidget extends StatelessWidget {
             onPressed: () {
               context.pushNamed('friend_suggest', extra: user.userModel);
             },
-            icon:
-                const Icon(CupertinoIcons.person_add_solid, color: whiteColor),
-            label: const DefaultText(text: 'Find friends', color: whiteColor),
+            icon: const Icon(CupertinoIcons.person_add_solid,
+                color: primaryColor),
+            label: const DefaultText(text: 'Find friends', color: primaryColor),
           ),
         ),
       ],

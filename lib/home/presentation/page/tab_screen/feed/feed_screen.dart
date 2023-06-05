@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,11 +40,10 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = widget.user.user;
     final UserJoinedModel userJoinedModel = widget.user;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey.shade100.withOpacity(0.8),
+        backgroundColor: Colors.grey.shade100,
         extendBody: true,
         body: PostListItem(userJoinedModel: userJoinedModel),
         floatingActionButton: FloatingActionButton(

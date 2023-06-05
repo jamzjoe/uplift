@@ -157,7 +157,8 @@ class PostHeader extends StatelessWidget {
                                   'This will delete this prayer request.',
                                   'Delete Confirmation', () async {
                                 context.pop();
-                                if (prayerRequest.userId == userID) {
+                                if (prayerRequest.userId ==
+                                    currentUser.userId) {
                                   BlocProvider.of<GetPrayerRequestBloc>(context)
                                       .add(DeletePost(
                                           userID,

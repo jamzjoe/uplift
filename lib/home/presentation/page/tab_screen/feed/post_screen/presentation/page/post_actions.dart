@@ -138,7 +138,7 @@ class _PostActionsState extends State<PostActions> {
                 children: [
                   const Icon(
                     CupertinoIcons.chat_bubble,
-                    size: 22,
+                    size: 20,
                     color: primaryColor,
                   ),
                   const SizedBox(width: 10),
@@ -155,8 +155,8 @@ class _PostActionsState extends State<PostActions> {
                 color: primaryColor.withOpacity(0.1),
                 borderRadius: const BorderRadius.all(Radius.circular(12))),
             child: const Icon(
-              Ionicons.share_social,
-              size: 22,
+              Ionicons.share_social_outline,
+              size: 20,
               color: primaryColor,
             ),
           ),

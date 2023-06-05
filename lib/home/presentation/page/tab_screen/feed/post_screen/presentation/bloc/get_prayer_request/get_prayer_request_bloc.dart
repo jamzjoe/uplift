@@ -147,10 +147,14 @@ class GetPrayerRequestBloc
           .where((element) =>
               element.prayerRequestPostModel.postId! != event.postID)
           .toList();
+
+      emit(LoadingPrayerRequesListSuccess(data));
+
+      await prayerRequestRepository.deletePost(event.postID, event.userID);
+
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(
           content: SmallText(text: 'Deleted', color: whiteColor)));
-      emit(LoadingPrayerRequesListSuccess(data));
-      await prayerRequestRepository.deletePost(event.postID, event.userID);
     } catch (e) {
       log(e.toString());
     }
