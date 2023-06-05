@@ -58,11 +58,11 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
             GestureDetector(
               onTap: () => context.pushNamed('qr_reader', extra: widget.user),
               child: CircleAvatar(
-                backgroundColor: primaryColor.withOpacity(0.1),
+                backgroundColor: primaryColor.withOpacity(0.9),
                 radius: 23,
                 child: const Icon(
                   CupertinoIcons.qrcode,
-                  color: primaryColor,
+                  color: whiteColor,
                 ),
               ),
             ),
