@@ -7,8 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 part 'get_prayer_request_event.dart';
 part 'get_prayer_request_state.dart';
@@ -145,6 +147,8 @@ class GetPrayerRequestBloc
           .where((element) =>
               element.prayerRequestPostModel.postId! != event.postID)
           .toList();
+      ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(
+          content: SmallText(text: 'Deleted', color: whiteColor)));
       emit(LoadingPrayerRequesListSuccess(data));
       await prayerRequestRepository.deletePost(event.postID, event.userID);
     } catch (e) {

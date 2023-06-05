@@ -53,12 +53,13 @@ class _FeedScreenState extends State<FeedScreen> {
         extendBody: true,
         body: PostListItem(userJoinedModel: userJoinedModel),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: primaryColor,
           onPressed: () {
             context.pushNamed('post_field', extra: userJoinedModel);
           },
           child: const Icon(
             CupertinoIcons.add,
-            color: primaryColor,
+            color: whiteColor,
           ),
         ),
       ),

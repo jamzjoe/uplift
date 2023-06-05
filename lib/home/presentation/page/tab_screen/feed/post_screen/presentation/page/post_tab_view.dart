@@ -38,16 +38,20 @@ class PostTabView extends StatefulWidget {
   _PostTabViewState createState() => _PostTabViewState();
 }
 
-class _PostTabViewState extends State<PostTabView> {
+class _PostTabViewState extends State<PostTabView>
+    with SingleTickerProviderStateMixin {
   late List<PostModel> filteredPosts;
+  late TabController tabController;
 
   @override
   void initState() {
+    tabController = TabController(length: 2, vsync: this);
     super.initState();
     filteredPosts = List.from(widget.posts);
   }
 
   void filterPosts(String query) {
+    tabController.animateTo(0);
     setState(() {
       if (query.isEmpty) {
         filteredPosts = List.from(widget.posts);
@@ -117,7 +121,7 @@ class _PostTabViewState extends State<PostTabView> {
               pinned: true,
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 120, // Adjust the height as needed
+              toolbarHeight: 120,
               backgroundColor: Colors.white,
               title: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
@@ -209,6 +213,7 @@ class _PostTabViewState extends State<PostTabView> {
                 ),
               ),
               bottom: TabBar(
+                controller: tabController,
                 indicatorColor: primaryColor,
                 labelColor: primaryColor,
                 automaticIndicatorColorAdjustment: true,
@@ -228,6 +233,11 @@ class _PostTabViewState extends State<PostTabView> {
           ],
           body: RefreshIndicator(
             onRefresh: () async {
+              if (DefaultTabController.of(context).index == 0) {
+                community();
+              } else if (DefaultTabController.of(context).index == 1) {
+                myPost();
+              }
               BlocProvider.of<GetPrayerRequestBloc>(context)
                   .add(RefreshPostRequestList(widget.userModel.userId!));
             },
