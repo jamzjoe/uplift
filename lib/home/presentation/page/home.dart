@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
@@ -20,7 +19,7 @@ import 'notifications/presentation/bloc/notification_bloc/notification_bloc.dart
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,13 +30,9 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   int index = 0;
-  @override
-  bool get wantKeepAlive => true;
 
   @override
-  void dispose() {
-    super.dispose();
-  }
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +41,6 @@ class _HomeScreenState extends State<HomeScreen>
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
         if (state is UserIsIn) {
-          if (context.canPop()) {
-            context.pop();
-          }
           BlocProvider.of<GetPrayerRequestBloc>(context)
               .add(GetPostRequestList(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<NotificationBloc>(context).add(
@@ -62,10 +54,9 @@ class _HomeScreenState extends State<HomeScreen>
                   state.userJoinedModel.userModel.userId!));
           BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
               FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
-        } else {
-          setState(() {
-            index = 0;
-          });
+        } else if (state is UserIsOut) {
+          // Handle user logged out state
+          // You can navigate to a login screen or show a different UI
         }
       },
       builder: (context, state) {
@@ -77,7 +68,9 @@ class _HomeScreenState extends State<HomeScreen>
             body: IndexedStack(
               index: index,
               children: [
-                KeepAlivePage(child: FeedScreen(user: userJoinedModel)),
+                KeepAlivePage(
+                  child: FeedScreen(user: userJoinedModel),
+                ),
                 KeepAlivePage(
                   child: FriendsScreen(currentUser: userJoinedModel.userModel),
                 ),

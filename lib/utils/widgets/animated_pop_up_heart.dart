@@ -12,10 +12,12 @@ class AnimatedHeartButton extends StatefulWidget {
   final UserModel currentUser;
   final UserModel userModel;
 
-  const AnimatedHeartButton({super.key, 
+  const AnimatedHeartButton({
+    super.key,
     required this.isReacted,
     required this.postID,
-    required this.currentUser, required this.userModel,
+    required this.currentUser,
+    required this.userModel,
   });
 
   @override
@@ -36,7 +38,7 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
       duration: const Duration(milliseconds: 200),
     );
 
-    _scaleAnimation = Tween<double>(begin: 1, end: 1).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 1.5).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -57,7 +59,9 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
       unreact(widget.postID, widget.currentUser);
     }
 
-    _animationController.forward(from: 0);
+    _animationController.forward(from: 0).whenComplete(() {
+      _animationController.reverse();
+    });
   }
 
   @override
@@ -70,40 +74,37 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              decoration: const BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
+          return Container(
+            decoration: const BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Transform.scale(
+                  scale: _scaleAnimation.value,
+                  child: Icon(
                     !widget.isReacted
                         ? CupertinoIcons.heart_fill
                         : CupertinoIcons.heart,
                     color: whiteColor,
                     size: 20,
                   ),
-                  const SizedBox(width: 5),
-                  SmallText(
-                    text: widget.isReacted ? 'Pray' : 'Prayed',
-                    color: whiteColor,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 5),
+                SmallText(
+                  text: widget.isReacted ? 'Pray' : 'Prayed',
+                  color: whiteColor,
+                ),
+              ],
             ),
           );
         },
       ),
     );
   }
-  
-  
+
   Future<bool> addReact(String postID, UserModel currentUser) {
     return PrayerRequestRepository().addReaction(
         postID, currentUser.userId!, widget.userModel, currentUser);

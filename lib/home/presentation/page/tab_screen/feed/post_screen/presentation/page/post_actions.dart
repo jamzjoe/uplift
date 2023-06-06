@@ -14,6 +14,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
+import 'package:uplift/utils/widgets/animated_pop_up_heart.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -88,21 +89,11 @@ class _PostActionsState extends State<PostActions> {
                             color: primaryColor,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(12))),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                                !isReacted
-                                    ? CupertinoIcons.heart_fill
-                                    : CupertinoIcons.heart,
-                                color: whiteColor,
-                                size: 20),
-                            const SizedBox(width: 5),
-                            SmallText(
-                                text: isReacted ? 'Pray' : 'Prayed',
-                                color: whiteColor)
-                          ],
-                        ),
+                        child: AnimatedHeartButton(
+                            isReacted: isReacted,
+                            currentUser: currentUser,
+                            userModel: widget.userModel,
+                            postID: postID),
                       ),
                     ),
 
