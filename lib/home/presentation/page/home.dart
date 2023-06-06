@@ -96,14 +96,14 @@ class _HomeScreenState extends State<HomeScreen>
         } else if (state is UserIsOut) {
           return const IntroductionScreen();
         } else if (state is Loading) {
-          return Scaffold(
+          return const Scaffold(
             backgroundColor: primaryColor,
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Stack(
-                  children: const [
+                  children: [
                     SpinKitRipple(
                       color: whiteColor,
                       size: 200,

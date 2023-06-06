@@ -9,16 +9,13 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_list_item.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/tab_list_view.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostTabView extends StatefulWidget {
   const PostTabView({
@@ -39,13 +36,33 @@ class PostTabView extends StatefulWidget {
 class _PostTabViewState extends State<PostTabView>
     with SingleTickerProviderStateMixin {
   late List<PostModel> filteredPosts;
+  List<PostModel> community = [];
+  List<PostModel> myPost = [];
   late TabController tabController;
+
+  final ScrollController _scrollController = ScrollController();
+  bool _innerBoxIsScrolled = false;
 
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
-    super.initState();
     filteredPosts = List.from(widget.posts);
+    _scrollController.addListener(_updateScrollPosition);
+
+    fetchMyPost(filteredPosts);
+    fetchCommunity(filteredPosts);
+    super.initState();
+  }
+
+  void fetchMyPost(List<PostModel> updatedPost) {
+    myPost = updatedPost
+        .where((element) =>
+            element.prayerRequestPostModel.userId == widget.userModel.userId)
+        .toList();
+  }
+
+  void fetchCommunity(List<PostModel> updatedPost) {
+    community = updatedPost;
   }
 
   void filterPosts(String query) {
@@ -55,47 +72,38 @@ class _PostTabViewState extends State<PostTabView>
         filteredPosts = List.from(widget.posts);
       } else {
         filteredPosts = widget.posts.where((post) {
-          return post.prayerRequestPostModel.text
+          final prayerRequestPostModel = post.prayerRequestPostModel;
+          final userModel = post.userModel;
+
+          return (prayerRequestPostModel.text
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true ||
-              post.prayerRequestPostModel.title
+                  true) ||
+              (prayerRequestPostModel.title
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true ||
-              post.prayerRequestPostModel.name
+                  true) ||
+              (prayerRequestPostModel.name
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true ||
-              post.userModel.displayName
+                  true) ||
+              (userModel.displayName
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true ||
-              post.userModel.phoneNumber
+                  true) ||
+              (userModel.phoneNumber
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true ||
-              post.userModel.emailAddress
+                  true) ||
+              (userModel.emailAddress
                       ?.toLowerCase()
                       .contains(query.toLowerCase()) ==
-                  true;
+                  true);
         }).toList();
+        setState(() {
+          community = filteredPosts;
+        });
       }
-    });
-  }
-
-  void myPost() {
-    setState(() {
-      filteredPosts = widget.posts
-          .where((element) =>
-              element.prayerRequestPostModel.userId == widget.userModel.userId)
-          .toList();
-    });
-  }
-
-  void community() {
-    setState(() {
-      filteredPosts = widget.posts;
     });
   }
 
@@ -108,12 +116,15 @@ class _PostTabViewState extends State<PostTabView>
         if (state is LoadingPrayerRequesListSuccess) {
           setState(() {
             filteredPosts = state.prayerRequestPostModel;
+            fetchCommunity(state.prayerRequestPostModel);
+            fetchMyPost(state.prayerRequestPostModel);
           });
         }
       },
       child: DefaultTabController(
         length: 2,
         child: NestedScrollView(
+          controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               pinned: true,
@@ -125,7 +136,7 @@ class _PostTabViewState extends State<PostTabView>
               ),
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 130,
+              toolbarHeight: 120,
               backgroundColor: Colors.white,
               title: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
@@ -146,12 +157,13 @@ class _PostTabViewState extends State<PostTabView>
                                 Row(
                                   children: [
                                     const HeaderText(
-                                        text: 'Hello ',
-                                        color: whiteColor,
-                                        size: 16),
+                                      text: 'Hello ',
+                                      color: whiteColor,
+                                      size: 16,
+                                    ),
                                     HeaderText(
                                       text:
-                                          "${capitalizeFirstLetter('${widget.userModel.displayName}')},",
+                                          '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
                                       color: whiteColor,
                                       size: 20,
                                     )
@@ -182,9 +194,10 @@ class _PostTabViewState extends State<PostTabView>
                                 child: IconButton(
                                   onPressed: () {
                                     goToNotificationScreen(
-                                        widget.userModel.userId!,
-                                        context,
-                                        widget.userModel);
+                                      widget.userModel.userId!,
+                                      context,
+                                      widget.userModel,
+                                    );
                                   },
                                   icon: const Icon(
                                     Ionicons.notifications,
@@ -201,16 +214,20 @@ class _PostTabViewState extends State<PostTabView>
                     ),
                     const SizedBox(height: 5),
                     CustomContainer(
-                      color: Colors.grey.shade100,
+                      color: Colors.black.withOpacity(0.2),
                       widget: TextField(
+                        style: const TextStyle(color: Colors.white),
                         controller: controller,
                         onChanged: filterPosts,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Search for Topics',
+                          hintStyle:
+                              TextStyle(color: whiteColor.withOpacity(0.5)),
                           suffixIcon: IconButton(
                             onPressed: () {},
-                            icon: const Icon(CupertinoIcons.search),
+                            icon: const Icon(CupertinoIcons.search,
+                                color: whiteColor),
                           ),
                         ),
                       ),
@@ -222,17 +239,13 @@ class _PostTabViewState extends State<PostTabView>
                 controller: tabController,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 indicatorColor: primaryColor,
-                unselectedLabelColor: innerBoxIsScrolled
+                unselectedLabelColor: _innerBoxIsScrolled
                     ? lighter.withOpacity(0.5)
                     : whiteColor.withOpacity(0.8),
-                labelColor: innerBoxIsScrolled ? lighter : whiteColor,
+                labelColor: _innerBoxIsScrolled ? lighter : whiteColor,
                 automaticIndicatorColorAdjustment: true,
                 onTap: (value) {
-                  if (value == 0) {
-                    community();
-                  } else if (value == 1) {
-                    myPost();
-                  }
+// Handle tab selection
                 },
                 tabs: const [
                   Tab(text: 'Community'),
@@ -241,67 +254,12 @@ class _PostTabViewState extends State<PostTabView>
               ),
             ),
           ],
-          body: RefreshIndicator(
-            onRefresh: () async {
-              if (DefaultTabController.of(context).index == 0) {
-                community();
-              } else if (DefaultTabController.of(context).index == 1) {
-                myPost();
-              }
-              BlocProvider.of<GetPrayerRequestBloc>(context)
-                  .add(RefreshPostRequestList(widget.userModel.userId!));
-            },
-            child: ListView(
-              children: [
-                Column(
-                  children: [
-                    FriendSuggestionHorizontal(
-                        currentUser: widget.userModel,
-                        userJoinedModel: widget.widget.userJoinedModel),
-                  ],
-                ),
-                ListView.builder(
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount:
-                      filteredPosts.isNotEmpty ? filteredPosts.length + 1 : 1,
-                  itemBuilder: (context, index) {
-                    if (filteredPosts.isEmpty) {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height - 300,
-                        child: const Center(
-                          child:
-                              NoDataMessage(text: 'No prayer intention found.'),
-                        ),
-                      );
-                    }
-                    if (filteredPosts.isNotEmpty &&
-                        index < filteredPosts.length) {
-                      final e = filteredPosts[index];
-                      return PostItem(
-                        allPost: filteredPosts,
-                        postModel: e,
-                        user: widget.userModel,
-                        fullView: false,
-                      );
-                    } else {}
-                    return null;
-                  },
-                ),
-                if (filteredPosts.isNotEmpty)
-                  // Widget to indicate the end of the list
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SmallText(
-                          textAlign: TextAlign.center,
-                          text:
-                              "You've covered all the prayer intentions.\nContinue seeking inspiration and upliftment.",
-                          color: lighter),
-                    ),
-                  ),
-              ],
-            ),
+          body: TabBarView(
+            controller: tabController,
+            children: [
+              TabListView(widget: widget, filteredPosts: community),
+              TabListView(widget: widget, filteredPosts: myPost),
+            ],
           ),
         ),
       ),
@@ -313,4 +271,19 @@ class _PostTabViewState extends State<PostTabView>
     BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
     context.pushNamed('notification', extra: userModel);
   }
+
+  void _updateScrollPosition() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels <= 0) {
+        setState(() {
+          _innerBoxIsScrolled = false;
+        });
+      } else {
+        setState(() {
+          _innerBoxIsScrolled = true;
+        });
+      }
+    }
+  }
 }
+

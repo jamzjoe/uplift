@@ -44,54 +44,59 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
               clipBehavior: Clip.none,
               padding: const EdgeInsets.all(40),
               decoration: BoxDecoration(
-                  color: whiteColor, borderRadius: BorderRadius.circular(20)),
+                color: whiteColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Stack(
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
                   Positioned(
-                      top: -80,
-                      child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              color: whiteColor,
-                              borderRadius: BorderRadius.circular(1000)),
-                          child:
-                              ProfilePhoto(user: user, radius: 100, size: 80))),
+                    top: -80,
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      child: ProfilePhoto(user: user, radius: 100, size: 80),
+                    ),
+                  ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       defaultSpace,
                       HeaderText(
-                          text: user.displayName ?? 'Anonymous User',
-                          color: secondaryColor,
-                          size: 18),
+                        text: user.displayName ?? 'Anonymous User',
+                        color: secondaryColor,
+                        size: 18,
+                      ),
                       defaultSpace,
                       defaultSpace,
-                      QrImage(
-                          foregroundColor: secondaryColor,
-                          data: user.userId!,
-                          version: QrVersions.auto,
-                          size: 220),
+                      QrImageView(data: user.userId!),
+
                       defaultSpace,
                       const SmallText(
-                          text: 'Share QR code so others can follow you',
-                          color: secondaryColor),
+                        text: 'Share QR code so others can follow you',
+                        color: secondaryColor,
+                      ),
                       defaultSpace,
                       Image.asset('assets/uplift-logo-violet.png', width: 60),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
           ),
           defaultSpace,
           TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.share, color: whiteColor),
-              label: const DefaultText(text: 'Share to', color: whiteColor)),
+            onPressed: () {},
+            icon: const Icon(Icons.share, color: whiteColor),
+            label: const DefaultText(text: 'Share to', color: whiteColor),
+          ),
         ],
       ),
+
     );
   }
 }

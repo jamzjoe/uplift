@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
@@ -46,16 +47,34 @@ class _FeedScreenState extends State<FeedScreen> {
         backgroundColor: Colors.grey.shade100,
         extendBody: true,
         body: PostListItem(userJoinedModel: userJoinedModel),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: primaryColor,
-          onPressed: () {
-            context.pushNamed('post_field', extra: userJoinedModel);
-          },
-          child: const Icon(
-            CupertinoIcons.add,
-            color: whiteColor,
+        floatingActionButton: SpeedDial(
+        spaceBetweenChildren: 10,
+        backgroundColor: primaryColor,
+        foregroundColor: whiteColor,
+        animatedIcon: AnimatedIcons.add_event,
+        children: [
+          SpeedDialChild(
+            child: const Icon(CupertinoIcons.paperplane, color: whiteColor),
+            backgroundColor: Colors.blue,
+            label: 'Create Prayer Intentions',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () {
+              context.pushNamed('post_field', extra: widget.user);
+            },
           ),
-        ),
+          SpeedDialChild(
+            child: const Icon(CupertinoIcons.person_2, color: whiteColor),
+            backgroundColor: Colors.orange,
+            label: 'Find Friends',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () {
+              context.pushNamed('friend_suggest', extra: widget.user.userModel);
+            },
+          ),
+        ],
+      ),
+
+
       ),
     );
   }

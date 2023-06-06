@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
+
 
 class PostItemShimmerLoading extends StatefulWidget {
   const PostItemShimmerLoading({super.key});
@@ -15,141 +16,159 @@ class PostItemShimmerLoading extends StatefulWidget {
 class _PostItemShimmerLoadingState extends State<PostItemShimmerLoading> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-      color: whiteColor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15),
       child: Shimmer.fromColors(
           highlightColor: Colors.white.withOpacity(.8),
           baseColor: secondaryColor.withOpacity(0.2),
-          child: Column(
+          child: 
+            Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Profile, Name and Action Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          CustomContainer(
-                              width: 100,
-                              widget: SizedBox(),
-                              color: lightColor),
-                          SizedBox(height: 5),
-                          CustomContainer(
-                              width: 45, widget: SizedBox(), color: lightColor),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      PopupMenuButton(
-                        icon: const Icon(Icons.more_horiz),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                              child: ListTile(
-                            onTap: () {},
-                            dense: true,
-                            leading: const Icon(CupertinoIcons.bookmark_fill),
-                            title: Container(),
-                          ))
-                        ],
-                      ),
-                      IconButton(
-                          onPressed: () {}, icon: const Icon(Icons.close))
-                    ],
-                  )
-                ],
-              ),
-              defaultSpace,
-              //Description
-              const CustomContainer(
-                  width: double.infinity,
-                  widget: SizedBox(),
-                  color: lightColor),
-              const SizedBox(height: 5),
-              //Description
-              const CustomContainer(
-                  width: double.infinity,
-                  widget: SizedBox(),
-                  color: lightColor),
-              //Description
-              const SizedBox(height: 5),
-              const CustomContainer(
-                  width: 90, widget: SizedBox(), color: lightColor),
-              defaultSpace,
-
-              //Likes and Views Count
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: const [
-                      CircleAvatar(
-                        radius: 10,
-                        backgroundImage: AssetImage('assets/default.png'),
-                      ),
-                      SizedBox(width: 5),
-                      CustomContainer(
-                          width: 50, widget: SizedBox(), color: lightColor),
-                    ],
-                  ),
-                  const CustomContainer(
-                      width: 50, widget: SizedBox(), color: lightColor),
-                ],
-              ),
-
-              const Divider(),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton.icon(
-                      onPressed: () {},
-                      icon: const Image(
-                        image: AssetImage('assets/prayed.png'),
-                        width: 30,
-                      ),
-                      label: SmallText(
-                        text: '0',
-                        color: secondaryColor.withOpacity(0.8),
-                      )),
-                  TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(
-                        CupertinoIcons.chat_bubble,
-                        size: 22,
-                        color: secondaryColor,
-                      ),
-                      label: const SmallText(
-                          text: 'Encourage', color: secondaryColor)),
-                  TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(
-                        CupertinoIcons.arrowshape_turn_up_right,
-                        size: 22,
-                        color: secondaryColor,
-                      ),
-                      label: SmallText(
-                        text: 'Share',
-                        color: secondaryColor.withOpacity(0.8),
-                      ))
-                ],
-              )
+                const Header(),
+                const ContentShimmer(),
+                const Space(),
+                Row(
+                  children: [
+                    Container(
+                      height: 30,
+                      width: 70,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: primaryColor),
+                    ),
+                    const SizedBox(width: 10),
+                     Container(
+                      height: 30,
+                      width: 120,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: primaryColor.withOpacity(0.4)),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: primaryColor.withOpacity(0.4)),
+                    ),
+                  ],
+                )
+      
             ],
+          )
+          
+          ),
+    );
+  }
+}
+
+class ContentShimmer extends StatelessWidget {
+  const ContentShimmer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomContainer(widget: SizedBox(), color: primaryColor, width: double.infinity),
+        Space(),
+        CustomContainer(widget: SizedBox(), color: primaryColor, width: double.infinity),
+        Space(),
+        CustomContainer(widget: SizedBox(), color: primaryColor, width: 150)
+      ],
+    );
+  }
+}
+
+class Space extends StatelessWidget {
+  const Space({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 10);
+  }
+}
+
+class Header extends StatelessWidget {
+  const Header({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const CircleAvatar(
+      radius: 18,
+      backgroundImage: AssetImage('assets/default.png'),
+    ),
+          
+        const SizedBox(width: 10),
+        const Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+   CustomContainer(widget: SizedBox(), color: primaryColor, width: 100),
+   Space(),
+   CustomContainer(widget: SizedBox(), color: primaryColor, width: 80),
+    
+            ],
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PopupMenuButton(
+    padding: EdgeInsets.zero,
+    icon: const Icon(
+      CupertinoIcons.ellipsis,
+      size: 15,
+      color: darkColor,
+    ),
+    itemBuilder: (context) => [
+      PopupMenuItem(
+          onTap: () async {
+            
+          },
+          child: ListTile(
+            dense: true,
+            leading: Icon(CupertinoIcons.exclamationmark_bubble_fill,
+                color: Colors.red[300]),
+            title: const DefaultText(
+                text: 'Report Post', color: darkColor),
           )),
+      PopupMenuItem(
+          onTap: () async {
+       
+          },
+          child: ListTile(
+            dense: true,
+            leading: Icon(CupertinoIcons.bell_circle_fill,
+                color: Colors.red[300]),
+            title: const DefaultText(
+                text: 'Set reminder for this post', color: darkColor),
+          )),
+      PopupMenuItem(
+          onTap: () async {
+            Future.delayed(
+                const Duration(milliseconds: 300),
+                () {});
+          },
+          child: ListTile(
+            dense: true,
+            leading: Icon(CupertinoIcons.delete_left_fill,
+                color: Colors.red[300]),
+            title: const DefaultText(
+                text: 'Delete Post', color: darkColor),
+          ))
+    ],
+            ),
+          ],
+        )
+      ],
     );
   }
 }
