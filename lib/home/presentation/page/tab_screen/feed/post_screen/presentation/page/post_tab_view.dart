@@ -40,15 +40,10 @@ class _PostTabViewState extends State<PostTabView>
   List<PostModel> myPost = [];
   late TabController tabController;
 
-  final ScrollController _scrollController = ScrollController();
-  bool _innerBoxIsScrolled = false;
-
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
     filteredPosts = List.from(widget.posts);
-    _scrollController.addListener(_updateScrollPosition);
-
     fetchMyPost(filteredPosts);
     fetchCommunity(filteredPosts);
     super.initState();
@@ -100,14 +95,10 @@ class _PostTabViewState extends State<PostTabView>
                       .contains(query.toLowerCase()) ==
                   true);
         }).toList();
-        setState(() {
-          community = filteredPosts;
-        });
+        community = filteredPosts;
       }
     });
   }
-
-  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +115,6 @@ class _PostTabViewState extends State<PostTabView>
       child: DefaultTabController(
         length: 2,
         child: NestedScrollView(
-          controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               pinned: true,
@@ -196,7 +186,6 @@ class _PostTabViewState extends State<PostTabView>
                                     goToNotificationScreen(
                                       widget.userModel.userId!,
                                       context,
-                                      widget.userModel,
                                     );
                                   },
                                   icon: const Icon(
@@ -217,7 +206,6 @@ class _PostTabViewState extends State<PostTabView>
                       color: Colors.black.withOpacity(0.2),
                       widget: TextField(
                         style: const TextStyle(color: Colors.white),
-                        controller: controller,
                         onChanged: filterPosts,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -239,13 +227,13 @@ class _PostTabViewState extends State<PostTabView>
                 controller: tabController,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 indicatorColor: primaryColor,
-                unselectedLabelColor: _innerBoxIsScrolled
+                unselectedLabelColor: innerBoxIsScrolled
                     ? lighter.withOpacity(0.5)
                     : whiteColor.withOpacity(0.8),
-                labelColor: _innerBoxIsScrolled ? lighter : whiteColor,
+                labelColor: innerBoxIsScrolled ? lighter : whiteColor,
                 automaticIndicatorColorAdjustment: true,
                 onTap: (value) {
-// Handle tab selection
+                  // Handle tab selection
                 },
                 tabs: const [
                   Tab(text: 'Community'),
@@ -266,24 +254,8 @@ class _PostTabViewState extends State<PostTabView>
     );
   }
 
-  void goToNotificationScreen(
-      String userID, BuildContext context, UserModel userModel) {
+  void goToNotificationScreen(String userID, BuildContext context) {
     BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
-    context.pushNamed('notification', extra: userModel);
-  }
-
-  void _updateScrollPosition() {
-    if (_scrollController.position.atEdge) {
-      if (_scrollController.position.pixels <= 0) {
-        setState(() {
-          _innerBoxIsScrolled = false;
-        });
-      } else {
-        setState(() {
-          _innerBoxIsScrolled = true;
-        });
-      }
-    }
+    context.pushNamed('notification', extra: widget.userModel);
   }
 }
-

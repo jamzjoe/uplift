@@ -21,8 +21,8 @@ class IntroductionScreen extends StatefulWidget {
 
 class IntroductionScreenState extends State<IntroductionScreen> {
   List<String> images = [
-    'assets/bg1.png',
     'assets/bg2.jpg',
+    'assets/bg1.png',
     'assets/bg3.jpg',
   ];
   int currentIndex = 0;
@@ -62,7 +62,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
           children: [
             SafeArea(
               child: AnimatedSwitcher(
-                duration: const Duration(seconds: 1),
+                duration: const Duration(milliseconds: 300),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return FadeTransition(
                     opacity: animation,

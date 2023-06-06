@@ -11,7 +11,8 @@ class PrayerIntentionPage extends StatefulWidget {
   const PrayerIntentionPage({
     super.key,
     required this.user,
-    this.isSelf, required this.currentUser,
+    this.isSelf,
+    required this.currentUser,
   });
 
   final UserModel user;
@@ -35,6 +36,7 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
           final data = result.data;
           if (result.connectionState == ConnectionState.waiting) {
             return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               itemCount: 10,
               itemBuilder: (context, index) {
                 return const PostItemShimmerLoading();

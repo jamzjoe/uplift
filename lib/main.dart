@@ -154,6 +154,8 @@ class MyApp extends StatelessWidget {
                       ZoomPageTransitionsBuilder(), // Apply this to every platforms you need.
                 }),
             fontFamily: 'Varela',
+            tabBarTheme: const TabBarTheme(
+                indicatorColor: primaryColor, labelColor: primaryColor),
             dialogTheme: const DialogTheme(surfaceTintColor: whiteColor),
             elevatedButtonTheme: ElevatedButtonThemeData(
                 style: ButtonStyle(
