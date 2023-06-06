@@ -18,6 +18,7 @@ import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostTabView extends StatefulWidget {
   const PostTabView({
@@ -260,20 +261,12 @@ class _PostTabViewState extends State<PostTabView>
                   ],
                 ),
                 ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 120),
                   physics: const ClampingScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: filteredPosts.length,
+                  itemCount:
+                      filteredPosts.isNotEmpty ? filteredPosts.length + 1 : 1,
                   itemBuilder: (context, index) {
-                    if (index <= filteredPosts.length) {
-                      final e = filteredPosts[index];
-                      return PostItem(
-                        allPost: filteredPosts,
-                        postModel: e,
-                        user: widget.userModel,
-                        fullView: false,
-                      );
-                    } else {
+                    if (filteredPosts.isEmpty) {
                       return SizedBox(
                         height: MediaQuery.of(context).size.height - 300,
                         child: const Center(
@@ -282,8 +275,31 @@ class _PostTabViewState extends State<PostTabView>
                         ),
                       );
                     }
+                    if (filteredPosts.isNotEmpty &&
+                        index < filteredPosts.length) {
+                      final e = filteredPosts[index];
+                      return PostItem(
+                        allPost: filteredPosts,
+                        postModel: e,
+                        user: widget.userModel,
+                        fullView: false,
+                      );
+                    } else {}
+                    return null;
                   },
                 ),
+                if (filteredPosts.isNotEmpty)
+                  // Widget to indicate the end of the list
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SmallText(
+                          textAlign: TextAlign.center,
+                          text:
+                              "You've covered all the prayer intentions.\nContinue seeking inspiration and upliftment.",
+                          color: lighter),
+                    ),
+                  ),
               ],
             ),
           ),

@@ -84,10 +84,10 @@ class _PostActionsState extends State<PostActions> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 15),
-                        decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.9),
+                        decoration: const BoxDecoration(
+                            color: primaryColor,
                             borderRadius:
-                                const BorderRadius.all(Radius.circular(12))),
+                                BorderRadius.all(Radius.circular(12))),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [

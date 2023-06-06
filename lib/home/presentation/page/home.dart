@@ -63,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen>
           BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
               FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
         } else {
-     
           setState(() {
             index = 0;
           });
@@ -99,22 +98,31 @@ class _HomeScreenState extends State<HomeScreen>
         } else if (state is Loading) {
           return Scaffold(
             backgroundColor: primaryColor,
-            body: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Image(
-                    image: AssetImage('assets/uplift-logo-white.png'),
-                    width: 80,
-                  ),
-                  defaultSpace,
-                  SpinKitFadingGrid(
-                    color: whiteColor,
-                    size: 45,
-                  ),
-                ],
-              ),
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  children: const [
+                    SpinKitRipple(
+                      color: whiteColor,
+                      size: 200,
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      left: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: Image(
+                          image: AssetImage('assets/uplift-logo-white.png'),
+                          width: 80,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         } else {
