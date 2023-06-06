@@ -48,33 +48,35 @@ class _FeedScreenState extends State<FeedScreen> {
         extendBody: true,
         body: PostListItem(userJoinedModel: userJoinedModel),
         floatingActionButton: SpeedDial(
-        spaceBetweenChildren: 10,
-        backgroundColor: primaryColor,
-        foregroundColor: whiteColor,
-        animatedIcon: AnimatedIcons.add_event,
-        children: [
-          SpeedDialChild(
-            child: const Icon(CupertinoIcons.paperplane, color: whiteColor),
-            backgroundColor: Colors.blue,
-            label: 'Create Prayer Intentions',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () {
-              context.pushNamed('post_field', extra: widget.user);
-            },
-          ),
-          SpeedDialChild(
-            child: const Icon(CupertinoIcons.person_2, color: whiteColor),
-            backgroundColor: Colors.orange,
-            label: 'Find Friends',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () {
-              context.pushNamed('friend_suggest', extra: widget.user.userModel);
-            },
-          ),
-        ],
-      ),
-
-
+          spaceBetweenChildren: 10,
+          overlayOpacity: 0.5,
+          overlayColor: darkColor,
+          backgroundColor: primaryColor,
+          foregroundColor: whiteColor,
+          animatedIcon: AnimatedIcons.add_event,
+          isOpenOnStart: true,
+          children: [
+            SpeedDialChild(
+              child: const Icon(CupertinoIcons.paperplane, color: whiteColor),
+              backgroundColor: Colors.blue,
+              label: 'New Prayer Intentions',
+              labelStyle: const TextStyle(fontSize: 14),
+              onTap: () {
+                context.pushNamed('post_field', extra: widget.user);
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(CupertinoIcons.person_2, color: whiteColor),
+              backgroundColor: Colors.orange,
+              label: 'Find Friends',
+              labelStyle: const TextStyle(fontSize: 14),
+              onTap: () {
+                context.pushNamed('friend_suggest',
+                    extra: widget.user.userModel);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

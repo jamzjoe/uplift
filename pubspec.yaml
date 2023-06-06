@@ -79,8 +79,8 @@ flutter_native_splash:
   android: true
   ios: true
   web: false
-  color: "#6351A2"
-  icon_background_color: "#6351A2"
+  color: "#4a3687"
+  icon_background_color: "#000000"
   image: assets/uplift-logo-white.png
 
   android_12:

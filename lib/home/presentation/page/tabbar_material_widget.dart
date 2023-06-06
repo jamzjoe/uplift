@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -93,26 +92,6 @@ class _TabBarMaterialWidgetState extends State<TabBarMaterialWidget> {
   }) {
     final isSelected = index == widget.index;
     final color = isSelected ? primaryColor : lighter.withOpacity(0.5);
-
-    if (index == 2) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-            color: color,
-            onPressed: () async {
-              BlocProvider.of<ExploreBloc>(context)
-                  .add(GetExplorePrayerRequestList(userID));
-              widget.onChangedTab(index);
-              widget.controller!.animateTo(index);
-            },
-            icon: isSelected ? selectedIcon : icon,
-          ),
-          SmallText(text: label, color: color),
-        ],
-      );
-    }
 
     final friendRequestBloc = BlocProvider.of<FriendRequestBloc>(context);
     return BlocBuilder<FriendRequestBloc, FriendRequestState>(

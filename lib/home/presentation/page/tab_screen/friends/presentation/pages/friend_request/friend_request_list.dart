@@ -33,9 +33,10 @@ class _FriendRequestListState extends State<FriendRequestList> {
 
 class FriendRequestListView extends StatelessWidget {
   const FriendRequestListView({
-    super.key,
+    Key? key,
     required this.currentUser,
-  });
+  }) : super(key: key);
+
   final UserModel currentUser;
 
   @override
@@ -59,26 +60,29 @@ class FriendRequestListView extends StatelessWidget {
             );
           }
           return ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             children: [
               FriendRequestHeader(
                 friendRequestCount: state.users.length,
               ),
               ListView.separated(
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return FriendRequestItem(
-                        user: state.users[index].userFriendshipModel,
-                        currentUser: currentUser,
-                        mutualFriends: state.users[index].mutualFriends);
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                        thickness: .5, color: secondaryColor.withOpacity(0.2));
-                  },
-                  itemCount: state.users.length),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return FriendRequestItem(
+                    user: state.users[index].userFriendshipModel,
+                    currentUser: currentUser,
+                    mutualFriends: state.users[index].mutualFriends,
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return Divider(
+                    thickness: .5,
+                    color: secondaryColor.withOpacity(0.2),
+                  );
+                },
+                itemCount: state.users.length,
+              ),
             ],
           );
         }

@@ -118,7 +118,7 @@ class _PostListViewState extends State<PostListView>
               },
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Search for Topics',
+                hintText: 'Search prayer intentions, names, email, and etc.',
                 suffixIcon: IconButton(
                   onPressed: () {},
                   icon: const Icon(CupertinoIcons.search),

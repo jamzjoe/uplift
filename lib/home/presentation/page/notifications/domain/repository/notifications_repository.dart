@@ -10,6 +10,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain
 import 'package:uplift/utils/services/auth_services.dart';
 
 class NotificationRepository {
+  static Set<String> sentNotifications = <String>{};
   static final _notification = FlutterLocalNotificationsPlugin();
 
   static Future _notificationDetails() async {
@@ -39,14 +40,14 @@ class NotificationRepository {
   static Future initialize(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
     var androidInitialize =
-        const AndroidInitializationSettings('mipmap/ic_launcher');
+        const AndroidInitializationSettings('@drawable/ic_notification');
     var iosInitialize = const DarwinInitializationSettings();
     var initializeSettings =
         InitializationSettings(android: androidInitialize, iOS: iosInitialize);
     flutterLocalNotificationsPlugin.initialize(initializeSettings);
   }
 
-  static sendPushMessage(
+  static Future<void> sendPushMessage(
       String token, String body, String title, String type) async {
     final data = {
       "notification": {"body": body, "title": title},
@@ -59,15 +60,29 @@ class NotificationRepository {
       },
       "to": token
     };
+
     try {
-      await http.post(Uri.parse("https://fcm.googleapis.com/fcm/send"),
-          headers: <String, String>{
-            'content-type': "application/json",
-            'authorization':
-                "key=AAAAI2vmS6A:APA91bFSQvC1qa-V1Av1joilMCC6KaHYb7gfFKly6ZysUBJ5WopswRVVLQxx12ceJJ6qdpf8SdYkj7PwaBctV4Rxm1zF-0-2YBC1WG2ugQpHZCQbftp6DZaTTDt7qeGhJiML9T_j3JJe"
-          },
-          body: jsonEncode(data));
-      log("Successfully send");
+      // Check if the notification has already been sent
+      final notificationKey = jsonEncode(data);
+      if (NotificationRepository.sentNotifications.contains(notificationKey)) {
+        log("Notification already sent. Skipping...");
+        return;
+      }
+
+      await http.post(
+        Uri.parse("https://fcm.googleapis.com/fcm/send"),
+        headers: <String, String>{
+          'content-type': "application/json",
+          'authorization':
+              "key=AAAAI2vmS6A:APA91bFSQvC1qa-V1Av1joilMCC6KaHYb7gfFKly6ZysUBJ5WopswRVVLQxx12ceJJ6qdpf8SdYkj7PwaBctV4Rxm1zF-0-2YBC1WG2ugQpHZCQbftp6DZaTTDt7qeGhJiML9T_j3JJe"
+        },
+        body: jsonEncode(data),
+      );
+
+      // Store the sent notification in the history
+      NotificationRepository.sentNotifications.add(notificationKey);
+
+      log("Successfully sent notification");
     } catch (e) {
       log(e.toString());
     }

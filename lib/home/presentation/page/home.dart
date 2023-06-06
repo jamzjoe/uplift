@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
@@ -54,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen>
                   state.userJoinedModel.userModel.userId!));
           BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
               FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
+          BlocProvider.of<ExploreBloc>(context).add(GetExplorePrayerRequestList(
+              state.userJoinedModel.userModel.userId!));
         } else if (state is UserIsOut) {
           // Handle user logged out state
           // You can navigate to a login screen or show a different UI

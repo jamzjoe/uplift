@@ -209,7 +209,8 @@ class _PostTabViewState extends State<PostTabView>
                         onChanged: filterPosts,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Search for Topics',
+                          hintText:
+                              'Search prayer intentions, names, email, and etc.',
                           hintStyle:
                               TextStyle(color: whiteColor.withOpacity(0.5)),
                           suffixIcon: IconButton(

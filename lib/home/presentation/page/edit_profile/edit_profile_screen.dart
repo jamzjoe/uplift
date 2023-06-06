@@ -96,10 +96,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   label: 'Display name',
                   controller: nameController,
                 ),
-                CustomField(
-                    controller: emailAddressController,
-                    label: 'Email address',
-                    hintText: 'Add email address'),
+                Tooltip(
+                  message: "Email address cannot be change.",
+                  child: CustomField(
+                      readOnly: true,
+                      controller: emailAddressController,
+                      label: 'Email address ⓘ',
+                      hintText: 'Add email address'),
+                ),
                 CustomField(
                   hintText: '+63900-000-0000',
                   label: 'Contact no.',
