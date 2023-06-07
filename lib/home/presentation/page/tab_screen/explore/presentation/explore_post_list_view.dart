@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
@@ -10,9 +11,11 @@ class PostListView extends StatefulWidget {
   const PostListView({
     Key? key,
     required this.postList,
+    required this.currentUser,
   }) : super(key: key);
 
   final List<PostModel> postList;
+  final UserModel currentUser;
 
   @override
   _PostListViewState createState() => _PostListViewState();
@@ -186,8 +189,9 @@ class _PostListViewState extends State<PostListView>
                   itemBuilder: (context, index) => PostItem(
                     allPost: widget.postList,
                     postModel: filteredPostList[index],
-                    user: filteredPostList[index].userModel,
+                    user: widget.currentUser,
                     fullView: false,
+                    isFriendsFeed: true,
                   ),
                 ),
         ),

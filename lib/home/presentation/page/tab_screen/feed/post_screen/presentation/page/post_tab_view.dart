@@ -16,6 +16,7 @@ import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostTabView extends StatefulWidget {
   const PostTabView({
@@ -118,20 +119,37 @@ class _PostTabViewState extends State<PostTabView>
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Image.asset(
-                  'assets/header_bg.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
+              flexibleSpace: const FlexibleSpaceBar(),
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 120,
-              backgroundColor: Colors.white,
+              toolbarHeight: 170,
+              backgroundColor: whiteColor,
               title: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.only(top: 20, bottom: 15),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image(
+                            image: AssetImage('assets/uplift_colored_logo.png'),
+                            width: 60),
+                        Row(
+                          children: [
+                            SmallText(
+                                text: 'In partnership with ', color: darkColor),
+                            Image(
+                                image: AssetImage(
+                                    'assets/live_the_faith_logo.png'),
+                                width: 40),
+                          ],
+                        )
+                      ],
+                    ),
+                    defaultSpace,
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,13 +166,13 @@ class _PostTabViewState extends State<PostTabView>
                                   children: [
                                     const HeaderText(
                                       text: 'Hello ',
-                                      color: whiteColor,
+                                      color: darkColor,
                                       size: 16,
                                     ),
                                     HeaderText(
                                       text:
                                           '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
-                                      color: whiteColor,
+                                      color: primaryColor,
                                       size: 20,
                                     )
                                   ],
@@ -180,18 +198,19 @@ class _PostTabViewState extends State<PostTabView>
                               return Badge.count(
                                 isLabelVisible: count != 0,
                                 count: count,
-                                alignment: AlignmentDirectional.bottomStart,
+                                alignment: AlignmentDirectional.topEnd,
                                 child: IconButton(
+                                  padding: EdgeInsets.zero,
                                   onPressed: () {
                                     goToNotificationScreen(
                                       widget.userModel.userId!,
                                       context,
                                     );
                                   },
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Ionicons.notifications,
                                     size: 28,
-                                    color: whiteColor,
+                                    color: darkColor.withOpacity(0.7),
                                   ),
                                 ),
                               );
@@ -201,9 +220,9 @@ class _PostTabViewState extends State<PostTabView>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    defaultSpace,
                     CustomContainer(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withOpacity(0.1),
                       widget: TextField(
                         style: const TextStyle(color: Colors.white),
                         onChanged: filterPosts,
@@ -212,11 +231,11 @@ class _PostTabViewState extends State<PostTabView>
                           hintText:
                               'Search prayer intentions, names, email, and etc.',
                           hintStyle:
-                              TextStyle(color: whiteColor.withOpacity(0.5)),
+                              TextStyle(color: darkColor.withOpacity(0.5)),
                           suffixIcon: IconButton(
                             onPressed: () {},
                             icon: const Icon(CupertinoIcons.search,
-                                color: whiteColor),
+                                color: darkColor),
                           ),
                         ),
                       ),
@@ -228,10 +247,8 @@ class _PostTabViewState extends State<PostTabView>
                 controller: tabController,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 indicatorColor: primaryColor,
-                unselectedLabelColor: innerBoxIsScrolled
-                    ? lighter.withOpacity(0.5)
-                    : whiteColor.withOpacity(0.8),
-                labelColor: innerBoxIsScrolled ? lighter : whiteColor,
+                unselectedLabelColor: darkColor.withOpacity(0.5),
+                labelColor: darkColor,
                 automaticIndicatorColorAdjustment: true,
                 onTap: (value) {
                   // Handle tab selection

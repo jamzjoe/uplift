@@ -268,11 +268,11 @@ class PrayerRequestRepository {
       await reference.doc(postID).set(prayerRequest);
       for (var each in friends) {
         log('Running notif');
-        NotificationRepository.sendPushMessage(
-            each.userModel.deviceToken!,
-            '${user.displayName} post a prayer intention.',
-            'Uplift Notification',
-            'post');
+        final message = '${user.displayName} post a prayer intention.';
+        NotificationRepository.sendPushMessage(each.userModel.deviceToken!,
+            message, 'Uplift Notification', 'post');
+        NotificationRepository.addNotification(
+            each.userModel.userId!, title, 'post a prayer intention.');
       }
       return true;
     } catch (e) {
@@ -332,6 +332,8 @@ class PrayerRequestRepository {
             '${currentUser.displayName} prayed your prayer intentions.',
             'Uplift notification',
             'react');
+        NotificationRepository.addNotification(userModel.userId!,
+            'Uplift notification', 'prayed your prayer intentions.');
       }
       return true;
     } catch (e) {
@@ -392,18 +394,15 @@ class PrayerRequestRepository {
 
   Future<bool> deletePost(String postID, String userID) async {
     bool canDelete = false;
-    String currentUserID = await AuthServices.userID();
 
-    if (userID == currentUserID) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('Prayers')
-            .doc(postID)
-            .delete();
-        canDelete = true;
-      } catch (e) {
-        canDelete = false;
-      }
+    try {
+      await FirebaseFirestore.instance
+          .collection('Prayers')
+          .doc(postID)
+          .delete();
+      canDelete = true;
+    } catch (e) {
+      canDelete = false;
     }
 
     return canDelete;

@@ -2,19 +2,17 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/follower_page.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/following_page.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/prayer_intention_page.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/widget/check_friend_status.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -138,7 +136,7 @@ class _FriendsFeedState extends State<FriendsFeed>
                     onTap: () =>
                         context.pushNamed('photo_view', extra: user.photoUrl),
                     child: ProfilePhoto(
-                      user: user!,
+                      user: user,
                       radius: 60,
                       size: 90,
                     ),
@@ -155,7 +153,7 @@ class _FriendsFeedState extends State<FriendsFeed>
                       : const SizedBox(),
                   CheckFriendsStatusWidget(
                     user: user,
-                    currentUser: currentUser!,
+                    currentUser: currentUser,
                   ),
                 ],
               ),
@@ -163,120 +161,6 @@ class _FriendsFeedState extends State<FriendsFeed>
           ),
           Tabs(user: user, currentUser: currentUser),
         ],
-      ),
-    );
-  }
-}
-
-class CheckFriendsStatusWidget extends StatefulWidget {
-  const CheckFriendsStatusWidget({
-    super.key,
-    required this.user,
-    required this.currentUser,
-  });
-
-  final UserModel user;
-  final UserModel currentUser;
-
-  @override
-  State<CheckFriendsStatusWidget> createState() =>
-      _CheckFriendsStatusWidgetState();
-}
-
-class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
-  bool refreshFlag = false;
-
-  void refreshScreen() {
-    setState(() {
-      refreshFlag = !refreshFlag;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-      visible: widget.user.userId != userID,
-      child: FutureBuilder<NewUserFriendshipModel?>(
-        future: FriendsRepository().checkFriendsStatus(widget.user.userId!),
-        builder: (BuildContext context,
-            AsyncSnapshot<NewUserFriendshipModel?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Show a loading indicator while fetching the data
-            return Shimmer.fromColors(
-              baseColor: secondaryColor.withOpacity(0.2),
-              highlightColor: Colors.grey.shade100.withOpacity(0.5),
-              child: TextButton.icon(
-                label: const SmallText(
-                  text: 'Processing',
-                  color: primaryColor,
-                ),
-                onPressed: () {},
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            // Show an error message if an error occurred
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final friendshipStatus = snapshot.data;
-
-            if (friendshipStatus != null) {
-              // User is a friend
-              if (friendshipStatus.status.status == 'pending') {
-                return TextButton.icon(
-                  icon: const Icon(
-                    CupertinoIcons.clock_solid,
-                    color: primaryColor,
-                  ),
-                  label: const SmallText(
-                    text: 'Request Pending',
-                    color: primaryColor,
-                  ),
-                  onPressed: () {
-                    FriendsRepository()
-                        .unfriend(friendshipStatus.friendshipID.friendshipId!);
-                    refreshScreen();
-                  },
-                );
-              }
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Unfollow',
-                  color: primaryColor,
-                ),
-                onPressed: () {
-                  FriendsRepository()
-                      .unfriend(friendshipStatus.friendshipID.friendshipId!);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              );
-            } else {
-              // User is not a friend
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Follow',
-                  color: darkColor,
-                ),
-                onPressed: () {
-                  FriendsRepository().addFriend(
-                      widget.currentUser.userId!, widget.user.userId);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              );
-            }
-          }
-        },
       ),
     );
   }

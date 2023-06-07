@@ -29,12 +29,13 @@ class PostItem extends StatefulWidget {
     required this.user,
     this.fullView,
     required this.allPost,
+    this.isFriendsFeed,
   });
   final PostModel postModel;
   final List<PostModel> allPost;
   final UserModel user;
   final bool? fullView;
-
+  final bool? isFriendsFeed;
   @override
   State<PostItem> createState() => _PostItemState();
 }
@@ -76,6 +77,7 @@ class _PostItemState extends State<PostItem> {
               children: [
                 //Profile, Name and Action Buttons
                 PostHeader(
+                    isFriendsFeed: widget.isFriendsFeed,
                     user: user,
                     prayerRequest: prayerRequest,
                     currentUser: currentUser,

@@ -25,12 +25,14 @@ class PostHeader extends StatelessWidget {
     required this.prayerRequest,
     required this.currentUser,
     required this.postModel,
+    this.isFriendsFeed,
   });
 
   final UserModel user;
   final UserModel currentUser;
   final PrayerRequestPostModel prayerRequest;
   final List<PostModel> postModel;
+  final bool? isFriendsFeed;
 
   @override
   Widget build(BuildContext context) {
@@ -106,86 +108,92 @@ class PostHeader extends StatelessWidget {
             ],
           ),
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PopupMenuButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(
-                CupertinoIcons.ellipsis,
-                size: 15,
-                color: darkColor,
-              ),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                    onTap: () async {
-                      Future.delayed(const Duration(milliseconds: 300), () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const ReportPrayerRequestDialog());
-                      });
-                    },
-                    child: ListTile(
-                      dense: true,
-                      leading: Icon(CupertinoIcons.exclamationmark_bubble_fill,
-                          color: Colors.red[300]),
-                      title: const DefaultText(
-                          text: 'Report Post', color: darkColor),
-                    )),
-                PopupMenuItem(
-                    onTap: () async {
-                      Future.delayed(const Duration(milliseconds: 300), () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => SetReminderDialog());
-                      });
-                    },
-                    child: ListTile(
-                      dense: true,
-                      leading: Icon(CupertinoIcons.bell_circle_fill,
-                          color: Colors.red[300]),
-                      title: const DefaultText(
-                          text: 'Set reminder for this post', color: darkColor),
-                    )),
-                PopupMenuItem(
-                    onTap: () async {
-                      Future.delayed(
-                          const Duration(milliseconds: 300),
-                          () => CustomDialog.showDeleteConfirmation(
-                                  context,
-                                  'This will delete this prayer request.',
-                                  'Delete Confirmation', () async {
-                                context.pop();
-                                if (prayerRequest.userId ==
-                                    currentUser.userId) {
-                                  BlocProvider.of<GetPrayerRequestBloc>(context)
-                                      .add(DeletePost(
-                                          userID,
-                                          prayerRequest.postId!,
-                                          postModel,
-                                          context));
-                                } else {
-                                  if (context.mounted) {
-                                    CustomDialog.showErrorDialog(
-                                        context,
-                                        "You can't delete someone's prayer request.",
-                                        'Request Denied',
-                                        'Confirm');
+        Visibility(
+          visible: isFriendsFeed == true ? false : true,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PopupMenuButton(
+                padding: EdgeInsets.zero,
+                icon: const Icon(
+                  CupertinoIcons.ellipsis,
+                  size: 15,
+                  color: darkColor,
+                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                      onTap: () async {
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  const ReportPrayerRequestDialog());
+                        });
+                      },
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(
+                            CupertinoIcons.exclamationmark_bubble_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
+                            text: 'Report Post', color: darkColor),
+                      )),
+                  PopupMenuItem(
+                      onTap: () async {
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => SetReminderDialog());
+                        });
+                      },
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(CupertinoIcons.bell_circle_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
+                            text: 'Set reminder for this post',
+                            color: darkColor),
+                      )),
+                  PopupMenuItem(
+                      onTap: () async {
+                        Future.delayed(
+                            const Duration(milliseconds: 300),
+                            () => CustomDialog.showDeleteConfirmation(
+                                    context,
+                                    'This will delete this prayer request.',
+                                    'Delete Confirmation', () async {
+                                  context.pop();
+                                  if (prayerRequest.userId ==
+                                      currentUser.userId) {
+                                    BlocProvider.of<GetPrayerRequestBloc>(
+                                            context)
+                                        .add(DeletePost(
+                                            userID,
+                                            prayerRequest.postId!,
+                                            postModel,
+                                            context));
+                                  } else {
+                                    if (context.mounted) {
+                                      CustomDialog.showErrorDialog(
+                                          context,
+                                          "You can't delete someone's prayer request.",
+                                          'Request Denied',
+                                          'Confirm');
+                                    }
                                   }
-                                }
-                              }, 'Delete'));
-                    },
-                    child: ListTile(
-                      dense: true,
-                      leading: Icon(CupertinoIcons.delete_left_fill,
-                          color: Colors.red[300]),
-                      title: const DefaultText(
-                          text: 'Delete Post', color: darkColor),
-                    ))
-              ],
-            ),
-          ],
+                                }, 'Delete'));
+                      },
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(CupertinoIcons.delete_left_fill,
+                            color: Colors.red[300]),
+                        title: const DefaultText(
+                            text: 'Delete Post', color: darkColor),
+                      ))
+                ],
+              ),
+            ],
+          ),
         )
       ],
     );

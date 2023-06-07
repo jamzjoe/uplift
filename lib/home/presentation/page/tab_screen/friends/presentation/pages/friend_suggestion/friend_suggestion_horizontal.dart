@@ -168,7 +168,7 @@ class CirclePhoto extends StatelessWidget {
                         child: CustomPaint(
                           painter: GradientBorderPainter(
                             gradient: const LinearGradient(
-                              colors: [Colors.blue, Colors.purple],
+                              colors: [primaryColor, Colors.blue],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),

@@ -6,6 +6,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/presentation/domain/introduction_repository.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -21,27 +22,19 @@ class IntroductionScreen extends StatefulWidget {
 
 class IntroductionScreenState extends State<IntroductionScreen> {
   List<String> images = [
+    'assets/bg1.jpg',
     'assets/bg2.jpg',
-    'assets/bg1.png',
     'assets/bg3.jpg',
   ];
   int currentIndex = 0;
   Timer? timer;
-  double _bottomSheetHeight = 0.5;
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       setState(() {
         currentIndex = (currentIndex + 1) % images.length;
-      });
-    });
-
-    // Show the bottom sheet automatically when the page is loaded
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _bottomSheetHeight = MediaQuery.of(context).size.height / 2;
       });
     });
   }
@@ -62,7 +55,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
           children: [
             SafeArea(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(seconds: 1),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return FadeTransition(
                     opacity: animation,
@@ -87,7 +80,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
               bottom: 0,
               left: 0,
               right: 0,
-              height: _bottomSheetHeight,
+              height: MediaQuery.of(context).size.height / 2,
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.transparent,
@@ -156,7 +149,8 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                         text: 'Spreading Light,\nOne Prayer at a Time',
                         color: lighter),
                     defaultSpace,
-                    SmallText(
+                    DefaultText(
+                        overflow: TextOverflow.fade,
                         text:
                             'The "Uplift" app is a transformative mobile platform designed to create a sacred space for the members of the Missionary Families of Christ community.',
                         color: lighter),

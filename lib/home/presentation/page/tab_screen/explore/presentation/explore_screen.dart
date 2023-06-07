@@ -30,6 +30,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             if (state is LoadingPrayerRequesListSuccess) {
               return PostListView(
                 postList: state.prayerRequestPostModel,
+                currentUser: widget.user,
               );
             } else {
               return const Center(

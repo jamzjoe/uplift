@@ -58,6 +58,7 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
                     postModel: e,
                     user: widget.currentUser,
                     fullView: false,
+                    isFriendsFeed: true
                   ),
                 )
               ],

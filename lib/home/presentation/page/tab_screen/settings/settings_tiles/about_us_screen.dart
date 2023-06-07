@@ -17,7 +17,8 @@ class AboutUsScreen extends StatelessWidget {
         child: ListView(
           children: [
             const Image(
-                image: AssetImage('assets/uplift-logo-violet.png'), height: 40),
+                image: AssetImage('assets/uplift_colored_logo.png'),
+                height: 40),
             defaultSpace,
             SmallText(
                 text:

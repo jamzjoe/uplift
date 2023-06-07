@@ -60,6 +60,9 @@ class _HomeScreenState extends State<HomeScreen>
         } else if (state is UserIsOut) {
           // Handle user logged out state
           // You can navigate to a login screen or show a different UI
+          setState(() {
+            index = 0;
+          });
         }
       },
       builder: (context, state) {

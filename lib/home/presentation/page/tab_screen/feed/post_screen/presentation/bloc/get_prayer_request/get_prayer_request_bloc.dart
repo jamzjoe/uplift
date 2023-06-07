@@ -150,11 +150,21 @@ class GetPrayerRequestBloc
 
       emit(LoadingPrayerRequesListSuccess(data));
 
+      // Call the prayerRequestRepository's deletePost method to delete the post from the backend
       await prayerRequestRepository.deletePost(event.postID, event.userID);
 
+      // Create a copy of the posts list with the specified postID removed
+      List<PostModel> updatedPosts = List<PostModel>.from(event.posts)
+          .where((element) =>
+              element.prayerRequestPostModel.postId! != event.postID)
+          .toList();
+
+      emit(LoadingPrayerRequesListSuccess(updatedPosts));
+
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(
-          content: SmallText(text: 'Deleted', color: whiteColor)));
+      ScaffoldMessenger.of(event.context).showSnackBar(
+        const SnackBar(content: SmallText(text: 'Deleted', color: whiteColor)),
+      );
     } catch (e) {
       log(e.toString());
     }

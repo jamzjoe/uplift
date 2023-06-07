@@ -32,17 +32,11 @@ class _PostListItemState extends State<PostListItem> {
       builder: (context, state) {
         if (state is LoadingPrayerRequesListSuccess) {
           final posts = state.prayerRequestPostModel;
-          
           if (posts.isEmpty) {
-            return Expanded(
-              child: Container(
-                color: whiteColor,
-                child: Center(
-                  child: EndOfPostWidget(
-                    isEmpty: true,
-                    user: widget.userJoinedModel,
-                  ),
-                ),
+            return Center(
+              child: EndOfPostWidget(
+                isEmpty: true,
+                user: widget.userJoinedModel,
               ),
             );
           }

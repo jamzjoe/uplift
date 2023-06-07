@@ -81,7 +81,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                         color: secondaryColor,
                       ),
                       defaultSpace,
-                      Image.asset('assets/uplift-logo-violet.png', width: 60),
+                      Image.asset('assets/uplift_colored_logo.png', width: 60),
                     ],
                   ),
                 ],

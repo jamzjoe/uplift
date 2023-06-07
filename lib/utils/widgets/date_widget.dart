@@ -15,6 +15,6 @@ class TextDateWidget extends StatelessWidget {
 
     return DefaultText(
         text: "${fillers ?? ''} $formattedDate",
-        color: whiteColor.withOpacity(0.8));
+        color: darkColor.withOpacity(0.8));
   }
 }
