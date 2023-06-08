@@ -153,12 +153,13 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                           defaultSpace,
                           GestureDetector(
                             onTap: () async {
-                              context.pushNamed('qr_generator2',
+                              context.pop();
+                              context.pushNamed('qr_generator',
                                   extra: widget.userJoinedModel);
                               context.loaderOverlay.hide();
                             },
-                            child: Column(
-                              children: const [
+                            child: const Column(
+                              children: [
                                 Icon(
                                   CupertinoIcons.qrcode_viewfinder,
                                   size: 50,

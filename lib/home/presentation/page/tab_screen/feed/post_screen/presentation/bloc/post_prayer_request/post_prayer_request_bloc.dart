@@ -33,9 +33,6 @@ class PostPrayerRequestBloc
           BlocProvider.of<SameIntentionsSuggestionBloc>(event.context)
               .add(FetchSameIntentionEvent(event.user.uid));
         });
-
-        emit(Posted());
-
         emit(PostPrayerRequestSuccess());
       } catch (e) {
         emit(PostPrayerRequestError());

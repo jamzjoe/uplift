@@ -31,7 +31,7 @@ class PostHeader extends StatelessWidget {
   final UserModel user;
   final UserModel currentUser;
   final PrayerRequestPostModel prayerRequest;
-  final List<PostModel> postModel;
+  final List<PostModel>? postModel;
   final bool? isFriendsFeed;
 
   @override
@@ -170,7 +170,7 @@ class PostHeader extends StatelessWidget {
                                         .add(DeletePost(
                                             userID,
                                             prayerRequest.postId!,
-                                            postModel,
+                                            postModel ?? [],
                                             context));
                                   } else {
                                     if (context.mounted) {

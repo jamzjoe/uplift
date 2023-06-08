@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
@@ -38,10 +39,10 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Ensure the state is kept alive
-
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
         if (state is UserIsIn) {
+          FlutterNativeSplash.remove();
           BlocProvider.of<GetPrayerRequestBloc>(context)
               .add(GetPostRequestList(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<NotificationBloc>(context).add(

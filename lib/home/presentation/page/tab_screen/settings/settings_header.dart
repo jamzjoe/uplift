@@ -64,7 +64,7 @@ class SettingsProfileHeader extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           GestureDetector(
-                            onTap: () => context.pushNamed('qr_generator2',
+                            onTap: () => context.pushNamed('qr_generator',
                                 extra: userModel),
                             child: const Icon(Ionicons.qr_code,
                                 size: 15, color: lightColor),

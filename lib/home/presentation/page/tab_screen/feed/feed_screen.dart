@@ -54,7 +54,6 @@ class _FeedScreenState extends State<FeedScreen> {
           backgroundColor: primaryColor,
           foregroundColor: whiteColor,
           animatedIcon: AnimatedIcons.add_event,
-          isOpenOnStart: true,
           children: [
             SpeedDialChild(
               child: const Icon(CupertinoIcons.paperplane, color: whiteColor),

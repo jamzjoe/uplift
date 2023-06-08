@@ -22,6 +22,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/about_us_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/switch_account.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
+import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/photo_view.dart';
 
 final GoRouter router = GoRouter(
@@ -35,7 +36,7 @@ final GoRouter router = GoRouter(
           path: '/introduction_screen',
           name: "introduction_screen",
           pageBuilder: (context, state) =>
-              const MaterialPage(child: HomeScreen()),
+              const MaterialPage(child: KeepAlivePage(child: HomeScreen())),
           routes: [
             GoRoute(
               name: "login",
@@ -130,8 +131,8 @@ final GoRouter router = GoRouter(
                     )),
                 routes: [
                   GoRoute(
-                    path: 'qr_generator2',
-                    name: 'qr_generator2',
+                    path: 'qr_generator',
+                    name: 'qr_generator',
                     pageBuilder: (context, state) => MaterialPage(
                         child: QRGeneratorScreen(
                       user: state.extra as UserModel,

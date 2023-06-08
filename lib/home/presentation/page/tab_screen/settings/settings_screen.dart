@@ -74,7 +74,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 onTap: () => context.pushNamed('account'),
                                 label: 'Account',
                                 icon: CupertinoIcons.person_fill),
-                            const SettingsItem(
+                            SettingsItem(
+                                onTap: () => context.pushNamed('qr_generator',
+                                    extra: userJoinedModel.userModel),
                                 label: 'Share Profile',
                                 icon: CupertinoIcons
                                     .arrowshape_turn_up_right_fill)
