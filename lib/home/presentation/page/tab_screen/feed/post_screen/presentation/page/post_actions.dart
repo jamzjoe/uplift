@@ -19,14 +19,16 @@ import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostActions extends StatefulWidget {
-  const PostActions(
-      {super.key,
-      required this.prayerRequest,
-      required this.currentUser,
-      required this.screenshotController,
-      required this.userModel,
-      required this.postModel,
-      required this.isFullView});
+  const PostActions({
+    Key? key,
+    required this.prayerRequest,
+    required this.currentUser,
+    required this.screenshotController,
+    required this.userModel,
+    required this.postModel,
+    required this.isFullView,
+  }) : super(key: key);
+
   final PrayerRequestPostModel prayerRequest;
   final UserModel currentUser;
   final ScreenshotController screenshotController;
@@ -40,6 +42,7 @@ class PostActions extends StatefulWidget {
 
 class _PostActionsState extends State<PostActions> {
   bool isReacted = false;
+
   @override
   void initState() {
     checkReaction(widget.prayerRequest, widget.currentUser);
@@ -52,7 +55,7 @@ class _PostActionsState extends State<PostActions> {
   Widget build(BuildContext context) {
     final currentUser = widget.currentUser;
     final postID = widget.prayerRequest.postId;
-    int length = widget.prayerRequest.reactions!.users!.length;
+    int? length = widget.prayerRequest.reactions?.users?.length;
     final ScrollController scrollController = ScrollController();
 
     return Row(
@@ -86,14 +89,15 @@ class _PostActionsState extends State<PostActions> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 15),
                         decoration: const BoxDecoration(
-                            color: primaryColor,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
+                          color: primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
                         child: AnimatedHeartButton(
-                            isReacted: isReacted,
-                            currentUser: currentUser,
-                            userModel: widget.userModel,
-                            postID: postID),
+                          isReacted: isReacted,
+                          currentUser: currentUser,
+                          userModel: widget.userModel,
+                          postID: postID,
+                        ),
                       ),
                     ),
 
@@ -113,29 +117,32 @@ class _PostActionsState extends State<PostActions> {
               BlocProvider.of<EncourageBloc>(context)
                   .add(FetchEncourageEvent(widget.prayerRequest.postId!));
               CustomDialog().showComment(
-                  context,
-                  currentUser,
-                  widget.postModel.userModel,
-                  widget.prayerRequest,
-                  widget.postModel);
+                context,
+                currentUser,
+                widget.postModel.userModel,
+                widget.prayerRequest,
+                widget.postModel,
+              );
             }
           },
           child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-              decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(12))),
-              child: Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.chat_bubble,
-                    size: 20,
-                    color: primaryColor,
-                  ),
-                  const SizedBox(width: 10),
-                  SmallText(text: 'Encourages', color: lighter)
-                ],
-              )),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  CupertinoIcons.chat_bubble,
+                  size: 20,
+                  color: primaryColor,
+                ),
+                const SizedBox(width: 10),
+                SmallText(text: 'Encourages', color: lighter),
+              ],
+            ),
+          ),
         ),
         const SizedBox(width: 10),
         InkWell(
@@ -143,22 +150,27 @@ class _PostActionsState extends State<PostActions> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
             decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                borderRadius: const BorderRadius.all(Radius.circular(12))),
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+            ),
             child: const Icon(
               Ionicons.share_social_outline,
               size: 20,
               color: primaryColor,
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
   Future<bool> addReact(String postID, UserModel currentUser) {
     return PrayerRequestRepository().addReaction(
-        postID, currentUser.userId!, widget.userModel, currentUser);
+      postID,
+      currentUser.userId!,
+      widget.userModel,
+      currentUser,
+    );
   }
 
   Future<bool> unreact(String postID, UserModel currentUser) {
@@ -175,7 +187,9 @@ class _PostActionsState extends State<PostActions> {
   }
 
   void checkReaction(
-      PrayerRequestPostModel prayerRequest, UserModel currentUser) async {
+    PrayerRequestPostModel prayerRequest,
+    UserModel currentUser,
+  ) async {
     Future.delayed(const Duration(microseconds: 1), () {
       PrayerRequestRepository()
           .isReacted(prayerRequest.postId!, currentUser.userId!)

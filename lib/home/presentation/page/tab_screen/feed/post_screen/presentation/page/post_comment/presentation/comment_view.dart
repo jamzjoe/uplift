@@ -177,10 +177,11 @@ class _CommentPageState extends State<CommentPage> {
                       icon: const Icon(Icons.close)),
                 ],
               ),
-              Expanded(
-                  child: ListView.separated(
+              ListView.separated(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 100),
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 100,
+                    right: 20,
+                    left: 20),
                 separatorBuilder: (context, index) => Divider(
                   color: lightColor.withOpacity(0.2),
                   thickness: 0.5,
@@ -192,7 +193,7 @@ class _CommentPageState extends State<CommentPage> {
                 itemBuilder: (context, index) {
                   return CommentItem(encourages: encourages, index: index);
                 },
-              )),
+              ),
             ],
           );
         } else if (state is LoadingEncourages) {
@@ -226,37 +227,69 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: ListTile(
-        dense: true,
-        contentPadding: const EdgeInsets.symmetric(vertical: 5),
-        minVerticalPadding: 0,
-        leading: ProfilePhoto(
-          user: encourages[index].userModel,
-          radius: 60,
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            HeaderText(
-                text: encourages[index].userModel.displayName!,
-                color: darkColor,
-                size: 16),
-            SmallText(
-                text: DateFeature().formatDateTime(
-                    encourages[index].commentModel.createdAt!.toDate()),
-                color: lightColor)
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SmallText(
-                text: encourages[index].commentModel.commentText!,
-                color: lighter),
-          ],
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProfilePhoto(user: encourages[index].userModel),
+          const SizedBox(width: 15),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    HeaderText(
+                        text: encourages[index].userModel.displayName!,
+                        color: darkColor,
+                        size: 16),
+                    SmallText(
+                        textAlign: TextAlign.start,
+                        text: DateFeature().formatDateTime(
+                            encourages[index].commentModel.createdAt!.toDate()),
+                        color: lightColor)
+                  ],
+                ),
+                SmallText(
+                    text: encourages[index].commentModel.commentText!,
+                    color: lighter),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+    return ListTile(
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(vertical: 5),
+      minVerticalPadding: 0,
+      leading: ProfilePhoto(
+        user: encourages[index].userModel,
+        radius: 60,
+      ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          HeaderText(
+              text: encourages[index].userModel.displayName!,
+              color: darkColor,
+              size: 16),
+          SmallText(
+              text: DateFeature().formatDateTime(
+                  encourages[index].commentModel.createdAt!.toDate()),
+              color: lightColor)
+        ],
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SmallText(
+              text: encourages[index].commentModel.commentText!,
+              color: lighter),
+        ],
       ),
     );
   }

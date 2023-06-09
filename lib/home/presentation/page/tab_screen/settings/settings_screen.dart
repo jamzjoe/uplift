@@ -94,7 +94,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children:
                                 ListTile.divideTiles(context: context, tiles: [
                               SettingsItem(
-                                  onTap: () => context.pushNamed('donate'),
+                                  onTap: () => CustomDialog()
+                                      .showDonation(context, [10, 50, 100]),
                                   label: 'Donate and Support Us',
                                   icon: CupertinoIcons.heart_fill),
                               SettingsItem(
@@ -118,20 +119,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Column(
                           children:
                               ListTile.divideTiles(context: context, tiles: [
-                            SettingsItem(
-                                onTap: () =>
-                                    CustomDialog.showDeleteConfirmation(
-                                        context,
-                                        'Are you sure you want to delete your account?',
-                                        'Delete Confirmation', () {
-                                      BlocProvider.of<AuthenticationBloc>(
-                                              context)
-                                          .add(DeleteAccount(
-                                              state.userJoinedModel.user));
-                                      context.pop();
-                                    }, 'Delete Account'),
-                                label: 'Delete Account',
-                                icon: CupertinoIcons.delete_left_fill),
                             SettingsItem(
                                 onTap: () =>
                                     CustomDialog.showLogoutConfirmation(

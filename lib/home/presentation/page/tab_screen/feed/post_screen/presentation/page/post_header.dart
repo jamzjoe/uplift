@@ -20,7 +20,7 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 class PostHeader extends StatelessWidget {
   const PostHeader({
-    super.key,
+    Key? key,
     required this.user,
     required this.prayerRequest,
     required this.currentUser,
@@ -40,14 +40,14 @@ class PostHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        user.photoUrl == null || prayerRequest.name == 'Uplift User'
+        (user.photoUrl == null || prayerRequest.name == 'Uplift User')
             ? const CircleAvatar(
                 radius: 18,
                 backgroundImage: AssetImage('assets/default.png'),
               )
             : GestureDetector(
                 onTap: () =>
-                    context.pushNamed('photo_view', extra: user.photoUrl ?? ''),
+                    context.pushNamed('photo_view', extra: user.photoUrl!),
                 child: ProfilePhoto(
                   user: user,
                   radius: 10,

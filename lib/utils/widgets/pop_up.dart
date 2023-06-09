@@ -5,6 +5,7 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
+import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -72,11 +73,11 @@ class CustomDialog {
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors.red,
                               ),
-                              child: Center(
+                              child: const Center(
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.delete_outline,
                                       color: whiteColor,
@@ -167,11 +168,11 @@ class CustomDialog {
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors.red,
                               ),
-                              child: Center(
+                              child: const Center(
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.exit_to_app,
                                       color: whiteColor,
@@ -311,35 +312,96 @@ class CustomDialog {
     );
   }
 
-  Future<dynamic> showComment(BuildContext context, UserModel currentUser, UserModel userModel, PrayerRequestPostModel prayerRequestPostModel, PostModel postModel){
+  Future<dynamic> showComment(
+      BuildContext context,
+      UserModel currentUser,
+      UserModel userModel,
+      PrayerRequestPostModel prayerRequestPostModel,
+      PostModel postModel) {
     return showFlexibleBottomSheet(
-                          minHeight: 0,
-                          isExpand: true,
-                          isDismissible: true,
-                          isCollapsible: true,
-                          isModal: true,
-                          initHeight: 0.92,
-                          maxHeight: 1,
-                          context: context,
-                          builder:
-                              (context, scrollController, bottomSheetOffset) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
-                              ),
-                              child: CommentView(
-                                currentUser: currentUser,
-                                prayerRequestPostModel: prayerRequestPostModel,
-                                postOwner: userModel,
-                                postModel: postModel,
-                                scrollController: scrollController,
-                              ),
-                            );
-                          },
-                          anchors: [0, 0.5, 1],
-                          isSafeArea: true,
-                        );
+      minHeight: 0,
+      isExpand: true,
+      isDismissible: true,
+      isCollapsible: true,
+      isModal: true,
+      initHeight: 0.92,
+      maxHeight: 1,
+      context: context,
+      builder: (context, scrollController, bottomSheetOffset) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [], // Remove the shadow by using an empty list of BoxShadow
+          ),
+          child: CommentView(
+            currentUser: currentUser,
+            prayerRequestPostModel: prayerRequestPostModel,
+            postOwner: userModel,
+            postModel: postModel,
+            scrollController: scrollController,
+          ),
+        );
+      },
+      anchors: [0, 0.5, 1],
+      isSafeArea: true,
+    );
+  }
+
+  Future<dynamic> showDonation(BuildContext context, List<int> amount) {
+    return showModalBottomSheet(
+      isDismissible: true,
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+              color: whiteColor,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+          padding: EdgeInsets.only(
+              right: 30,
+              left: 30,
+              top: 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const HeaderText(
+                  text: 'How much wanna donate?', color: darkColor),
+              defaultSpace,
+              ...amount.map(
+                (e) => CustomContainer(
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
+                    widget: SmallText(
+                      text: "${e.toString()} pesos",
+                      color: darkColor,
+                      textAlign: TextAlign.center,
+                    ),
+                    color: primaryColor.withOpacity(0.1)),
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                    label: SmallText(text: 'Input manually', color: darkColor)),
+              ),
+              defaultSpace,
+              const CustomContainer(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  widget: SmallText(
+                    text: 'Continue',
+                    color: whiteColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  color: primaryColor)
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<dynamic> showProfile(

@@ -157,8 +157,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
                                     ? lighter.withOpacity(0.4)
                                     : lighter,
                                 borderRadius: BorderRadius.circular(60)),
-                            child: Row(
-                              children: const [
+                            child: const Row(
+                              children: [
                                 Image(
                                   image: AssetImage('assets/incognito.png'),
                                   width: 20,

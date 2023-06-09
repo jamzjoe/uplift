@@ -245,12 +245,12 @@ class AuthenticationBloc
       try {
         await user.delete();
         await GoogleSignIn().disconnect();
-        await AuthServices().deleteUser(event.user.uid);
+        await AuthServices().deleteUser(user.uid);
         emit(const UserIsOut('Deleted', ''));
       } catch (e) {
         final userModel = await PrayerRequestRepository()
             .getUserRecord(await AuthServices.userID());
-        emit(UserIsIn(UserJoinedModel(userModel!, event.user)));
+        emit(UserIsIn(UserJoinedModel(userModel!, user)));
       }
     });
 

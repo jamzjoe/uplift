@@ -38,7 +38,36 @@ class _FriendSuggestionHorizontalState
             final suggestions = state.intentionsAndUser;
 
             if (suggestions.isEmpty) {
-              return const SizedBox();
+              return Container(
+                width: double.infinity,
+                color: whiteColor,
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 80,
+                      child: ListView.builder(
+                        itemCount: 1,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: CirclePhoto(
+                              firstIndex: true,
+                              user: widget.currentUser,
+                              widget: widget,
+                              text: 'Add +', // Adjust the radius as desired
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
             }
             return Container(
               width: double.infinity,

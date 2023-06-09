@@ -224,7 +224,7 @@ class _PostTabViewState extends State<PostTabView>
                     CustomContainer(
                       color: Colors.black.withOpacity(0.1),
                       widget: TextField(
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: lighter),
                         onChanged: filterPosts,
                         decoration: InputDecoration(
                           border: InputBorder.none,
