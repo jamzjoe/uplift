@@ -2,7 +2,9 @@ import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
@@ -15,12 +17,14 @@ import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/report_dialog.dart';
-import 'package:uplift/utils/widgets/set_reminders_dialog.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_form.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+
+import '../../../../../notifications/domain/repository/notification_manager.dart';
 
 class PostHeader extends StatelessWidget {
   const PostHeader({
-    Key? key,
+    super.key,
     required this.user,
     required this.prayerRequest,
     required this.currentUser,
@@ -140,10 +144,28 @@ class PostHeader extends StatelessWidget {
                       )),
                   PopupMenuItem(
                       onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => SetReminderDialog());
+                        Future.delayed(const Duration(milliseconds: 300),
+                            () async {
+                          final flutterLocalNotificationsPlugin =
+                              FlutterLocalNotificationsPlugin();
+                          final sharedPreferences =
+                              await SharedPreferences.getInstance();
+                          final scheduledNotificationManager =
+                              ScheduledNotificationManager(
+                                  flutterLocalNotificationsPlugin,
+                                  sharedPreferences);
+
+                          // ignore: use_build_context_synchronously
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return NotificationForm(onSchedule: (value) {
+                                scheduledNotificationManager
+                                    .addNotification(value);
+                              });
+                            },
+                          );
                         });
                       },
                       child: ListTile(

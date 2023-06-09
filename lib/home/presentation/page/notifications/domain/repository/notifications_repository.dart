@@ -45,6 +45,7 @@ class NotificationRepository {
     var initializeSettings =
         InitializationSettings(android: androidInitialize, iOS: iosInitialize);
     flutterLocalNotificationsPlugin.initialize(initializeSettings);
+    
   }
 
   static Future<void> sendPushMessage(
