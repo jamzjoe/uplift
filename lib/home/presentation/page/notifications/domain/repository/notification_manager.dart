@@ -112,7 +112,7 @@ class ScheduledNotificationManager {
     }
   }
 
-  void _scheduleAllNotifications() {
+  void scheduleAllNotifications() {
     final notifications = getNotifications();
     for (final notification in notifications) {
       _scheduleNotification(notification);

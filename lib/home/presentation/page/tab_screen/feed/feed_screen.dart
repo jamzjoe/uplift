@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,7 @@ class _FeedScreenState extends State<FeedScreen> {
               label: 'Find Friends',
               labelStyle: const TextStyle(fontSize: 14),
               onTap: () {
+                log('Tap');
                 context.pushNamed('friend_suggest',
                     extra: widget.user.userModel);
               },

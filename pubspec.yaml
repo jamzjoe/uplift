@@ -73,6 +73,9 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   shared_preferences: ^2.1.1
   flutter_speed_dial: ^7.0.0
+  flutter_background_service: ^2.4.6
+  
+  
 
 flutter_native_splash:
   android: true

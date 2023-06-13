@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
@@ -24,6 +26,8 @@ import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timezone/data/latest.dart' as tz;
+
+import 'home/presentation/page/notifications/domain/repository/notification_manager.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -58,8 +62,25 @@ void main() async {
   }).onError((handleError) {
     log(handleError);
   });
+  SharedPreferences.getInstance().then((sharedPreferences) {
+    final scheduledNotificationManager = ScheduledNotificationManager(
+      flutterLocalNotificationsPlugin,
+      sharedPreferences,
+    );
+    scheduledNotificationManager.scheduleAllNotifications();
+  });
 
+  // Start the background service
+  startBackgroundService();
   runApp(const MyApp());
+}
+
+void startBackgroundService() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
+  final service = FlutterBackgroundService();
+
+  service.startService();
 }
 
 Future<String?> getFCMToken() async {
