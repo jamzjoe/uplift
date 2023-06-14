@@ -11,6 +11,7 @@ import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/comment_view.dart';
 import '../../home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
+import '../services/payment.dart';
 
 class CustomDialog {
   static void showDeleteConfirmation(BuildContext context, String message,
@@ -362,8 +363,8 @@ class CustomDialog {
           padding: EdgeInsets.only(
               right: 30,
               left: 30,
-              top: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom),
+              top: 30,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 30),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -384,14 +385,18 @@ class CustomDialog {
                     color: primaryColor.withOpacity(0.1)),
               ),
               TextFormField(
+                onChanged: (value) {},
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                     label: SmallText(text: 'Input manually', color: darkColor)),
               ),
               defaultSpace,
-              const CustomContainer(
+              CustomContainer(
+                  onTap: () => PayMongoService().createPaymentIntent(),
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                  widget: SmallText(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  widget: const SmallText(
                     text: 'Continue',
                     color: whiteColor,
                     textAlign: TextAlign.center,

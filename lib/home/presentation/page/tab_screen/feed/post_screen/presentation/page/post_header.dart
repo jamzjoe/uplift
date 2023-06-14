@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/post_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
@@ -40,6 +41,9 @@ class PostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String privacyName = prayerRequest.privacy == PostPrivacy.public.name
+        ? PostPrivacy.private.name
+        : PostPrivacy.public.name;
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,6 +148,36 @@ class PostHeader extends StatelessWidget {
                       )),
                   PopupMenuItem(
                       onTap: () async {
+                        Future.delayed(const Duration(milliseconds: 1),
+                            () async {
+                          if (prayerRequest.userId != userID) {
+                            CustomDialog.showErrorDialog(
+                                context,
+                                "You can't set privacy to someone's post.",
+                                'Request Error',
+                                'Understood');
+                          } else {
+                            PostRepository.setPrivacy(
+                                prayerRequest.postId!,
+                                privacyName == 'public'
+                                    ? PostPrivacy.public
+                                    : PostPrivacy.private);
+                            BlocProvider.of<GetPrayerRequestBloc>(context).add(
+                                UpdatePrivacy(postModel!, prayerRequest.postId!,
+                                    context));
+                          }
+                        });
+                      },
+                      child: ListTile(
+                        dense: true,
+                        leading: const Icon(CupertinoIcons.lock_circle_fill,
+                            color: primaryColor),
+                        title: DefaultText(
+                            text: 'Set this post to $privacyName',
+                            color: darkColor),
+                      )),
+                  PopupMenuItem(
+                      onTap: () async {
                         Future.delayed(const Duration(milliseconds: 300),
                             () async {
                           final flutterLocalNotificationsPlugin =
@@ -157,22 +191,26 @@ class PostHeader extends StatelessWidget {
 
                           // ignore: use_build_context_synchronously
                           showModalBottomSheet(
+                            backgroundColor: Colors.transparent,
                             isScrollControlled: true,
                             context: context,
                             builder: (context) {
-                              return NotificationForm(onSchedule: (value) {
-                                scheduledNotificationManager
-                                    .addNotification(value);
-                              });
+                              return NotificationForm(
+                                onSchedule: (value) {
+                                  scheduledNotificationManager
+                                      .addNotification(value);
+                                },
+                                userModel: user,
+                              );
                             },
                           );
                         });
                       },
-                      child: ListTile(
+                      child: const ListTile(
                         dense: true,
                         leading: Icon(CupertinoIcons.bell_circle_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
+                            color: Colors.blue),
+                        title: DefaultText(
                             text: 'Set reminder for this post',
                             color: darkColor),
                       )),

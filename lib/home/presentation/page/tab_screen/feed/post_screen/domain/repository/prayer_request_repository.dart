@@ -261,7 +261,8 @@ class PrayerRequestRepository {
       "post_id": postID,
       "image_url": imageUrls,
       "custom_name": name,
-      "title": title
+      "title": title,
+      'privacy': PostPrivacy.public.name
     };
 
     try {

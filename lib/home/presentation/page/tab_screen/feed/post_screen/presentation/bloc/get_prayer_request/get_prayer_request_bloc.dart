@@ -50,6 +50,8 @@ class GetPrayerRequestBloc
     on<AddReaction>(_handleAddReaction);
 
     on<DeletePost>(_handleDeletePost);
+
+    on<UpdatePrivacy>(_handleUpdatePrivacy);
   }
 
   @override
@@ -164,6 +166,19 @@ class GetPrayerRequestBloc
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(event.context).showSnackBar(
         const SnackBar(content: SmallText(text: 'Deleted', color: whiteColor)),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  FutureOr<void> _handleUpdatePrivacy(
+      UpdatePrivacy event, Emitter<GetPrayerRequestState> emit) async {
+    try {
+      add(RefreshPostRequestList(userID));
+      ScaffoldMessenger.of(event.context).showSnackBar(
+        const SnackBar(
+            content: SmallText(text: 'Privacy updated', color: whiteColor)),
       );
     } catch (e) {
       log(e.toString());

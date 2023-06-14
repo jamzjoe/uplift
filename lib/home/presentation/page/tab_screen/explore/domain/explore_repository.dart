@@ -11,6 +11,7 @@ class ExploreRepository {
     final response = await FirebaseFirestore.instance
         .collection('Prayers')
         .orderBy('date', descending: true)
+        .where(PostPrivacy.public.name)
         .get();
 
     final data = response.docs

@@ -39,6 +39,16 @@ class DeletePost extends GetPrayerRequestEvent {
   List<Object?> get props => [userID, postID];
 }
 
+class UpdatePrivacy extends GetPrayerRequestEvent {
+  final List<PostModel> posts;
+  final String postID;
+  final BuildContext context;
+  const UpdatePrivacy(this.posts, this.postID, this.context);
+
+  @override
+  List<Object?> get props => [];
+}
+
 class GetPrayerRequestByPopularity extends GetPrayerRequestEvent {
   @override
   List<Object?> get props => [];

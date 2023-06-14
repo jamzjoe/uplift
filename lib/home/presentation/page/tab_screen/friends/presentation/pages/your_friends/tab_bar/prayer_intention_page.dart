@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
@@ -53,12 +54,18 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
             child: ListView(
               children: [
                 ...data!.map(
-                  (e) => PostItem(
-                    allPost: data,
-                    postModel: e,
-                    user: widget.currentUser,
-                    fullView: false,
-                    isFriendsFeed: true
+                  (e) => Visibility(
+                    visible: e.prayerRequestPostModel.privacy == null
+                        ? true
+                        // ignore: unrelated_type_equality_checks
+                        : e.prayerRequestPostModel.privacy ==
+                            PostPrivacy.public,
+                    child: PostItem(
+                        allPost: data,
+                        postModel: e,
+                        user: widget.currentUser,
+                        fullView: false,
+                        isFriendsFeed: true),
                   ),
                 )
               ],

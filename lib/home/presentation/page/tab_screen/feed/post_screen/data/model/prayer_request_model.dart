@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum PostPrivacy { public, private }
+
 class PrayerRequestPostModel {
   String? text;
   String? userId;
@@ -8,6 +10,7 @@ class PrayerRequestPostModel {
   String? postId;
   List<String>? imageUrls; // Changed type to List<String>
   String? name;
+  String? privacy;
   String? title;
 
   PrayerRequestPostModel(
@@ -30,6 +33,7 @@ class PrayerRequestPostModel {
         ? Reactions.fromJson(json['reactions'])
         : null;
     postId = json['post_id'];
+    privacy = json['privacy'];
     imageUrls = List<String>.from(json['image_url']); // Updated field name
   }
 
@@ -45,6 +49,7 @@ class PrayerRequestPostModel {
       data['reactions'] = reactions!.toJson();
     }
     data['post_id'] = postId;
+    data['privacy'] = privacy;
     return data;
   }
 }
@@ -87,5 +92,3 @@ class Users {
     return data;
   }
 }
-
-

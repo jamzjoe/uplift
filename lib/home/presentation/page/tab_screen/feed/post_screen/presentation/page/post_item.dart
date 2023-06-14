@@ -9,7 +9,9 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/full_post_view/full_post_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_actions.dart';
@@ -64,224 +66,232 @@ class _PostItemState extends State<PostItem> {
     final prayerRequest = widget.postModel.prayerRequestPostModel;
     final length = prayerRequest.imageUrls!.length;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FullPostView(
-              postModel: widget.postModel,
-              currentUser: currentUser,
-              allPost: widget.allPost,
-            ),
-          ),
-        );
-        BlocProvider.of<EncourageBloc>(context)
-            .add(FetchEncourageEvent(prayerRequest.postId!));
-      },
-      child: Screenshot(
-        controller: screenshotController,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: widget.fullView! ? 0 : 2.5),
-          child: Container(
-            decoration: BoxDecoration(
-              color: whiteColor,
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: lightColor.withOpacity(0.2),
-                ),
+    return Visibility(
+      visible: prayerRequest.privacy == null ||
+          prayerRequest.userId == userID ||
+          prayerRequest.privacy == PostPrivacy.public.name,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FullPostView(
+                postModel: widget.postModel,
+                currentUser: currentUser,
+                allPost: widget.allPost,
               ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 8),
+          );
+          BlocProvider.of<EncourageBloc>(context)
+              .add(FetchEncourageEvent(prayerRequest.postId!));
+        },
+        child: Screenshot(
+          controller: screenshotController,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(vertical: widget.fullView! ? 0 : 2.5),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //Profile, Name and Action Buttons
-                  PostHeader(
-                    isFriendsFeed: widget.isFriendsFeed,
-                    user: user,
-                    prayerRequest: prayerRequest,
-                    currentUser: currentUser,
-                    postModel: widget.allPost,
+              decoration: BoxDecoration(
+                color: whiteColor,
+                border: Border(
+                  bottom: BorderSide(
+                    width: 0.5,
+                    color: lightColor.withOpacity(0.2),
                   ),
-                  prayerRequest.imageUrls!.isEmpty
-                      ? const SizedBox()
-                      : prayerRequest.imageUrls!.length == 1
-                          ? PostPhotoViewer(
-                              path: prayerRequest.imageUrls!.first,
-                              radius: 0,
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    CarouselSlider(
-                                      items: [
-                                        ...prayerRequest.imageUrls!.map(
-                                          (e) => PostPhotoViewer(path: e),
-                                        ),
-                                      ],
-                                      options: CarouselOptions(
-                                        height: 400,
-                                        pauseAutoPlayOnTouch: true,
-                                        aspectRatio: 16 / 9,
-                                        viewportFraction: 0.8,
-                                        onPageChanged: (index, reason) {
-                                          setState(() {
-                                            imageIndex = index;
-                                          });
-                                        },
-                                        initialPage: 0,
-                                        enableInfiniteScroll: true,
-                                        reverse: false,
-                                        autoPlay: false,
-                                        autoPlayInterval:
-                                            const Duration(seconds: 8),
-                                        autoPlayAnimationDuration:
-                                            const Duration(milliseconds: 800),
-                                        autoPlayCurve: Curves.fastOutSlowIn,
-                                        enlargeCenterPage: true,
-                                        enlargeFactor: 0.13,
-                                        scrollDirection: Axis.horizontal,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 15,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(60),
-                                          color:
-                                              secondaryColor.withOpacity(0.7),
-                                        ),
-                                        child: SmallText(
-                                          text: '${imageIndex + 1}/$length',
-                                          color: whiteColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Wrap(
-                                  children: List.generate(
-                                    prayerRequest.imageUrls!.length,
-                                    (index) => Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: CircleAvatar(
-                                        radius: 3,
-                                        backgroundColor: index == imageIndex
-                                            ? primaryColor
-                                            : lightColor,
-                                      ),
-                                    ),
-                                  ).toList(),
-                                ),
-                              ],
-                            ),
-                  PostText(prayerRequest: prayerRequest),
-                  //Likes and Views Count
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      StreamBuilder<Map<String, dynamic>>(
-                        stream: PrayerRequestRepository().getReactionInfo(
-                          prayerRequest.postId!,
-                          currentUser.userId!,
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final bool isReacted = snapshot.data!['isReacted'];
-                            final int reactionCount =
-                                snapshot.data!['reactionCount'];
-                            return Visibility(
-                              visible: reactionCount != 0,
-                              child: Row(
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //Profile, Name and Action Buttons
+                    PostHeader(
+                      isFriendsFeed: widget.isFriendsFeed,
+                      user: user,
+                      prayerRequest: prayerRequest,
+                      currentUser: currentUser,
+                      postModel: widget.allPost,
+                    ),
+                    prayerRequest.imageUrls!.isEmpty
+                        ? const SizedBox()
+                        : prayerRequest.imageUrls!.length == 1
+                            ? PostPhotoViewer(
+                                path: prayerRequest.imageUrls!.first,
+                                radius: 0,
+                              )
+                            : Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Image(
-                                    image: AssetImage('assets/prayed.png'),
-                                    width: 20,
+                                  Stack(
+                                    alignment: Alignment.topRight,
+                                    children: [
+                                      CarouselSlider(
+                                        items: [
+                                          ...prayerRequest.imageUrls!.map(
+                                            (e) => PostPhotoViewer(path: e),
+                                          ),
+                                        ],
+                                        options: CarouselOptions(
+                                          height: 400,
+                                          pauseAutoPlayOnTouch: true,
+                                          aspectRatio: 16 / 9,
+                                          viewportFraction: 0.8,
+                                          onPageChanged: (index, reason) {
+                                            setState(() {
+                                              imageIndex = index;
+                                            });
+                                          },
+                                          initialPage: 0,
+                                          enableInfiniteScroll: true,
+                                          reverse: false,
+                                          autoPlay: false,
+                                          autoPlayInterval:
+                                              const Duration(seconds: 8),
+                                          autoPlayAnimationDuration:
+                                              const Duration(milliseconds: 800),
+                                          autoPlayCurve: Curves.fastOutSlowIn,
+                                          enlargeCenterPage: true,
+                                          enlargeFactor: 0.13,
+                                          scrollDirection: Axis.horizontal,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        right: 15,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(60),
+                                            color:
+                                                secondaryColor.withOpacity(0.7),
+                                          ),
+                                          child: SmallText(
+                                            text: '${imageIndex + 1}/$length',
+                                            color: whiteColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SmallText(
-                                    text: getReactionText(
-                                      isReacted,
-                                      reactionCount,
-                                    ),
-                                    color: lighter,
+                                  const SizedBox(height: 10),
+                                  Wrap(
+                                    children: List.generate(
+                                      prayerRequest.imageUrls!.length,
+                                      (index) => Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: CircleAvatar(
+                                          radius: 3,
+                                          backgroundColor: index == imageIndex
+                                              ? primaryColor
+                                              : lightColor,
+                                        ),
+                                      ),
+                                    ).toList(),
                                   ),
                                 ],
                               ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          BlocProvider.of<EncourageBloc>(context).add(
-                            FetchEncourageEvent(prayerRequest.postId!),
-                          );
-                          CustomDialog().showComment(
-                            context,
-                            currentUser,
-                            user,
-                            prayerRequest,
-                            widget.postModel,
-                          );
-                        },
-                        child:
-                            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                          stream: FirebaseFirestore.instance
-                              .collection('Comments')
-                              .where('post_id', isEqualTo: prayerRequest.postId)
-                              .snapshots(),
+                    PostText(prayerRequest: prayerRequest),
+                    //Likes and Views Count
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        StreamBuilder<Map<String, dynamic>>(
+                          stream: PrayerRequestRepository().getReactionInfo(
+                            prayerRequest.postId!,
+                            currentUser.userId!,
+                          ),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              return Row(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.chat_bubble,
-                                    color: lighter,
-                                    size: 15,
-                                  ),
-                                  SmallText(
-                                    text: snapshot.data!.size <= 1
-                                        ? ' ${snapshot.data!.size} encourage'
-                                        : ' ${snapshot.data!.size} encourages',
-                                    color: lighter,
-                                  ),
-                                ],
+                              final bool isReacted =
+                                  snapshot.data!['isReacted'];
+                              final int reactionCount =
+                                  snapshot.data!['reactionCount'];
+                              return Visibility(
+                                visible: reactionCount != 0,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Image(
+                                      image: AssetImage('assets/prayed.png'),
+                                      width: 20,
+                                    ),
+                                    SmallText(
+                                      text: getReactionText(
+                                        isReacted,
+                                        reactionCount,
+                                      ),
+                                      color: lighter,
+                                    ),
+                                  ],
+                                ),
                               );
                             }
                             return const SizedBox();
                           },
                         ),
-                      ),
-                    ],
-                  ),
-                  const Divider(
-                    thickness: 0.5,
-                  ),
-                  PostActions(
-                    isFullView: widget.fullView!,
-                    prayerRequest: prayerRequest,
-                    currentUser: currentUser,
-                    screenshotController: screenshotController,
-                    userModel: user,
-                    postModel: widget.postModel,
-                  ),
-                ],
+                        GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<EncourageBloc>(context).add(
+                              FetchEncourageEvent(prayerRequest.postId!),
+                            );
+                            CustomDialog().showComment(
+                              context,
+                              currentUser,
+                              user,
+                              prayerRequest,
+                              widget.postModel,
+                            );
+                          },
+                          child: StreamBuilder<
+                              QuerySnapshot<Map<String, dynamic>>>(
+                            stream: FirebaseFirestore.instance
+                                .collection('Comments')
+                                .where('post_id',
+                                    isEqualTo: prayerRequest.postId)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Row(
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.chat_bubble,
+                                      color: lighter,
+                                      size: 15,
+                                    ),
+                                    SmallText(
+                                      text: snapshot.data!.size <= 1
+                                          ? ' ${snapshot.data!.size} encourage'
+                                          : ' ${snapshot.data!.size} encourages',
+                                      color: lighter,
+                                    ),
+                                  ],
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(
+                      thickness: 0.5,
+                    ),
+                    PostActions(
+                      isFullView: widget.fullView!,
+                      prayerRequest: prayerRequest,
+                      currentUser: currentUser,
+                      screenshotController: screenshotController,
+                      userModel: user,
+                      postModel: widget.postModel,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

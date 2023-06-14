@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
+import '../../../../../../utils/widgets/default_text.dart';
 import '../../data/model/scheduled_notification_model.dart';
 
 class NotificationForm extends StatefulWidget {
   final Function(ScheduledNotificationModel) onSchedule;
+  final UserModel userModel;
 
-  const NotificationForm({super.key, required this.onSchedule});
+  const NotificationForm(
+      {super.key, required this.onSchedule, required this.userModel});
 
   @override
   _NotificationFormState createState() => _NotificationFormState();
@@ -18,15 +22,11 @@ class NotificationForm extends StatefulWidget {
 
 class _NotificationFormState extends State<NotificationForm> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _bodyController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _bodyController.dispose();
     super.dispose();
   }
 
@@ -59,12 +59,11 @@ class _NotificationFormState extends State<NotificationForm> {
   }
 
   void _scheduleNotification() {
-    if (_formKey.currentState!.validate() &&
-        _selectedDate != null &&
-        _selectedTime != null) {
+    if (_selectedDate != null && _selectedTime != null) {
       final id = DateTime.now().millisecondsSinceEpoch;
-      final title = _titleController.text;
-      final body = _bodyController.text;
+      const title = 'Prayer Intention Reminder';
+      const body =
+          "Please take a moment to reflect on your prayer intentions and offer them up to the Divine. Remember to stay focused and open-hearted during your prayer time. May your intentions be heard and answered with grace.";
       final dateTime = DateTime(
         _selectedDate!.year,
         _selectedDate!.month,
@@ -83,8 +82,6 @@ class _NotificationFormState extends State<NotificationForm> {
       widget.onSchedule(notification);
 
       setState(() {
-        _titleController.text = '';
-        _bodyController.text = '';
         _selectedDate = null;
         _selectedTime = null;
       });
@@ -93,81 +90,63 @@ class _NotificationFormState extends State<NotificationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 30,
           left: 30,
-          top: 15,
+          top: 30,
           right: 30),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Reminder Title'),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a reminder title';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _bodyController,
-              decoration: const InputDecoration(labelText: 'Description'),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a reminder description';
-                }
-                return null;
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Date:'),
-                const SizedBox(width: 8),
-                Text(_selectedDate != null
-                    ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                    : 'Not selected'),
-                const SizedBox(width: 8),
-                TextButton.icon(
-                    label:
-                        const SmallText(text: 'Select Date', color: darkColor),
-                    onPressed: _showDatePicker,
-                    icon: const Icon(Ionicons.calendar)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Time:'),
-                const SizedBox(width: 8),
-                Text(_selectedTime != null
-                    ? _selectedTime!.format(context)
-                    : 'Not selected'),
-                const SizedBox(width: 8),
-                TextButton.icon(
-                    label:
-                        const SmallText(text: 'Select time', color: darkColor),
-                    onPressed: _showTimePicker,
-                    icon: const Icon(Ionicons.time)),
-              ],
-            ),
-            CustomContainer(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                onTap: _scheduleNotification,
-                widget: const SmallText(
-                    textAlign: TextAlign.center,
-                    text: 'Schedule Reminder',
-                    color: whiteColor),
-                color: primaryColor)
-          ],
-        ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20), color: whiteColor),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DefaultText(
+              overflow: TextOverflow.clip,
+              text:
+                  "Set a reminder for ${widget.userModel.displayName}'s prayer intention.",
+              color: darkColor),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Date:'),
+              const SizedBox(width: 8),
+              Text(_selectedDate != null
+                  ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                  : 'Not selected'),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                  label: const SmallText(text: 'Select Date', color: darkColor),
+                  onPressed: _showDatePicker,
+                  icon: const Icon(Ionicons.calendar)),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Time:'),
+              const SizedBox(width: 8),
+              Text(_selectedTime != null
+                  ? _selectedTime!.format(context)
+                  : 'Not selected'),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                  label: const SmallText(text: 'Select time', color: darkColor),
+                  onPressed: _showTimePicker,
+                  icon: const Icon(Ionicons.time)),
+            ],
+          ),
+          defaultSpace,
+          CustomContainer(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              onTap: _scheduleNotification,
+              widget: const SmallText(
+                  textAlign: TextAlign.center,
+                  text: 'Schedule Reminder',
+                  color: whiteColor),
+              color: primaryColor)
+        ],
       ),
     );
   }
