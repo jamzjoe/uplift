@@ -79,6 +79,13 @@ void startBackgroundService() async {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   final service = FlutterBackgroundService();
+  service.on('update').listen((event) {
+    log('received data message in feed: $event');
+  }, onError: (e, s) {
+    log('error listening for updates: $e, $s');
+  }, onDone: () {
+    log('background listen closed');
+  });
 
   service.startService();
 }

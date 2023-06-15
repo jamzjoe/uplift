@@ -43,7 +43,7 @@ class PrayerRequestRepository {
   Future<List<PostModel>> getPrayerRequestList(
       {int? limit, required String userID}) async {
     final friendsRepository = FriendsRepository();
-    final listOfPost = <PostModel>[];
+    List<PostModel> listOfPost = <PostModel>[];
 
     try {
       final fetchingUserID =
@@ -86,7 +86,12 @@ class PrayerRequestRepository {
       log('Error in get prayer: $error');
     }
 
-    return listOfPost;
+    return listOfPost
+        .where((element) =>
+            element.prayerRequestPostModel.privacy == null ||
+            element.prayerRequestPostModel.userId == userID ||
+            element.prayerRequestPostModel.privacy == PostPrivacy.public.name)
+        .toList();
   }
 
   List<List<T>> _splitListIntoChunks<T>(List<T> list, int chunkSize) {
@@ -442,11 +447,23 @@ class PrayerRequestRepository {
       // Handle any potential errors or exceptions
       log('Error in getPrayerRequestList: $error');
     }
-    if (isSelf == true) {
-      return listOfPost;
+
+    if (isSelf != true) {
+      return listOfPost
+          .where((element) =>
+              element.prayerRequestPostModel.privacy == null ||
+              element.prayerRequestPostModel.userId == userID ||
+              element.prayerRequestPostModel.privacy ==
+                  PostPrivacy.public.name ||
+              element.prayerRequestPostModel.privacy ==
+                  PostPrivacy.private.name)
+          .toList();
     } else {
       return listOfPost
-          .where((element) => element.prayerRequestPostModel.name!.isEmpty)
+          .where((element) =>
+              element.prayerRequestPostModel.privacy == null ||
+              element.prayerRequestPostModel.userId != userID ||
+              element.prayerRequestPostModel.privacy == PostPrivacy.public.name)
           .toList();
     }
   }

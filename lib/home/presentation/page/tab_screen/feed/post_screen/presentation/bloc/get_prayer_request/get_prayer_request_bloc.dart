@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -65,7 +66,7 @@ class GetPrayerRequestBloc
     Emitter<GetPrayerRequestState> emit,
   ) async {
     try {
-      final data = await prayerRequestRepository.getPrayerRequestList(
+      List<PostModel> data = await prayerRequestRepository.getPrayerRequestList(
         limit: event.limit ?? 10,
         userID: event.userID,
       );
