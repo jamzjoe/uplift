@@ -75,7 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ListTile.divideTiles(context: context, tiles: [
                               SettingsItem(
                                   onTap: () => CustomDialog()
-                                      .showDonation(context, [10, 50, 100]),
+                                      .showDonation(context),
                                   label: 'Donate and Support Us',
                                   icon: CupertinoIcons.heart_fill),
                               SettingsItem(
