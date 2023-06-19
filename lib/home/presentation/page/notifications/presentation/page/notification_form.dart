@@ -4,9 +4,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
-import '../../../../../../utils/widgets/default_text.dart';
 import '../../data/model/scheduled_notification_model.dart';
 
 class NotificationForm extends StatefulWidget {
@@ -24,7 +24,8 @@ class _NotificationFormState extends State<NotificationForm> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   @override
   void dispose() {
     super.dispose();
@@ -40,7 +41,7 @@ class _NotificationFormState extends State<NotificationForm> {
 
     if (date != null) {
       setState(() {
-        _selectedDate = date;
+        _dateController.text = DateFormat('yyyy-MM-dd').format(date);
       });
     }
   }
@@ -53,7 +54,7 @@ class _NotificationFormState extends State<NotificationForm> {
 
     if (time != null) {
       setState(() {
-        _selectedTime = time;
+        _timeController.text = time.format(context);
       });
     }
   }
@@ -82,8 +83,8 @@ class _NotificationFormState extends State<NotificationForm> {
       widget.onSchedule(notification);
 
       setState(() {
-        _selectedDate = null;
-        _selectedTime = null;
+        _dateController.clear();
+        _timeController.clear();
       });
     }
   }
@@ -96,45 +97,50 @@ class _NotificationFormState extends State<NotificationForm> {
           left: 30,
           top: 30,
           right: 30),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20), color: whiteColor),
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          color: whiteColor),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           DefaultText(
-              overflow: TextOverflow.clip,
               text:
                   "Set a reminder for ${widget.userModel.displayName}'s prayer intention.",
               color: darkColor),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Date:'),
-              const SizedBox(width: 8),
-              Text(_selectedDate != null
-                  ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                  : 'Not selected'),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                  label: const SmallText(text: 'Select Date', color: darkColor),
-                  onPressed: _showDatePicker,
-                  icon: const Icon(Ionicons.calendar)),
-            ],
+          defaultSpace,
+          Container(
+            decoration: BoxDecoration(
+                color: lighter.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(5)),
+            child: TextFormField(
+              onTap: _showDatePicker,
+              readOnly: true,
+              controller: _dateController,
+              decoration: InputDecoration(
+                  hintText: 'Set date',
+                  border: InputBorder.none,
+                  icon: IconButton(
+                      onPressed: _showDatePicker,
+                      icon: const Icon(Ionicons.calendar))),
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Time:'),
-              const SizedBox(width: 8),
-              Text(_selectedTime != null
-                  ? _selectedTime!.format(context)
-                  : 'Not selected'),
-              const SizedBox(width: 8),
-              TextButton.icon(
-                  label: const SmallText(text: 'Select time', color: darkColor),
-                  onPressed: _showTimePicker,
-                  icon: const Icon(Ionicons.time)),
-            ],
+          defaultSpace,
+          Container(
+            decoration: BoxDecoration(
+                color: lighter.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(5)),
+            child: TextFormField(
+              onTap: _showTimePicker,
+              readOnly: true,
+              controller: _timeController,
+              decoration: InputDecoration(
+                  hintText: 'Set time',
+                  border: InputBorder.none,
+                  icon: IconButton(
+                      onPressed: _showTimePicker,
+                      icon: const Icon(Ionicons.time))),
+            ),
           ),
           defaultSpace,
           CustomContainer(

@@ -17,6 +17,7 @@ import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class PostTabView extends StatefulWidget {
   const PostTabView({
@@ -40,6 +41,7 @@ class _PostTabViewState extends State<PostTabView>
   List<PostModel> community = [];
   List<PostModel> myPost = [];
   late TabController tabController;
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -122,7 +124,7 @@ class _PostTabViewState extends State<PostTabView>
               flexibleSpace: const FlexibleSpaceBar(),
               floating: true,
               forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 170,
+              toolbarHeight: 190,
               backgroundColor: whiteColor,
               title: Padding(
                 padding: const EdgeInsets.only(top: 20, bottom: 15),
@@ -222,14 +224,29 @@ class _PostTabViewState extends State<PostTabView>
                     ),
                     defaultSpace,
                     CustomContainer(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       color: Colors.black.withOpacity(0.1),
                       widget: TextField(
+                        controller: searchController,
                         style: TextStyle(color: lighter),
                         onChanged: filterPosts,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText:
-                              'Search prayer intentions, names, email, and etc.',
+                          label: AnimatedTextKit(
+                              pause: const Duration(seconds: 1),
+                              repeatForever: true,
+                              onNext: (p0, p1) {},
+                              isRepeatingAnimation: true,
+                              animatedTexts: [
+                                TyperAnimatedText('Prayers'),
+                                TyperAnimatedText('Community'),
+                                TyperAnimatedText('Personal'),
+                                TyperAnimatedText('Family'),
+                                TyperAnimatedText('Gratitude'),
+                                TyperAnimatedText('Healing'),
+                                TyperAnimatedText('Vocational'),
+                                TyperAnimatedText('Special'),
+                              ]),
                           hintStyle:
                               TextStyle(color: darkColor.withOpacity(0.5)),
                           suffixIcon: IconButton(

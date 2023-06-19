@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/donation/presentation/gcash_qr.dart';
 import 'package:uplift/utils/services/payment.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -36,6 +37,8 @@ class _DonationFormState extends State<DonationForm> {
           top: 30,
           bottom: MediaQuery.of(context).viewInsets.bottom + 30),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           const HeaderText(text: 'How much wanna donate?', color: darkColor),
@@ -65,8 +68,21 @@ class _DonationFormState extends State<DonationForm> {
             },
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
+                hintText: 'Php',
                 label: SmallText(text: 'Input manually', color: darkColor)),
           ),
+          defaultSpace,
+          TextButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const GcashQR()));
+              },
+              child: const SmallText(
+                  decoration: TextDecoration.underline,
+                  textAlign: TextAlign.center,
+                  text:
+                      ' Alternatively, you can donate any amount by scanning the provided QR code.',
+                  color: secondaryColor)),
           defaultSpace,
           CustomContainer(
             onTap: () async {

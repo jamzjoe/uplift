@@ -6,7 +6,6 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
@@ -43,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen>
       listener: (context, state) async {
         if (state is UserIsIn) {
           FlutterNativeSplash.remove();
-          BlocProvider.of<GetPrayerRequestBloc>(context)
-              .add(GetPostRequestList(state.userJoinedModel.userModel.userId!));
+
           BlocProvider.of<NotificationBloc>(context).add(
               FetchListOfNotification(state.userJoinedModel.userModel.userId!));
           BlocProvider.of<FriendRequestBloc>(context).add(

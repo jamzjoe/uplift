@@ -44,7 +44,7 @@ class PrayerRequestRepository {
       {int? limit, required String userID}) async {
     final friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = <PostModel>[];
-
+    log('${limit}Joe');
     try {
       final fetchingUserID =
           await friendsRepository.fetchApprovedFriendRequest(userID);
@@ -58,11 +58,21 @@ class PrayerRequestRepository {
       final data = <PrayerRequestPostModel>[];
 
       for (var chunk in chunks) {
-        final response = await FirebaseFirestore.instance
-            .collection('Prayers')
-            .where('user_id', whereIn: chunk)
-            .orderBy('date', descending: true)
-            .get();
+        QuerySnapshot<Map<String, dynamic>> response;
+        if (limit != null) {
+          response = await FirebaseFirestore.instance
+              .collection('Prayers')
+              .where('user_id', whereIn: chunk)
+              .orderBy('date', descending: true)
+              .limit(limit)
+              .get();
+        } else {
+          response = await FirebaseFirestore.instance
+              .collection('Prayers')
+              .where('user_id', whereIn: chunk)
+              .orderBy('date', descending: true)
+              .get();
+        }
 
         final chunkData = response.docs
             .map((e) => PrayerRequestPostModel.fromJson(e.data()))
@@ -79,7 +89,7 @@ class PrayerRequestRepository {
           listOfPost.add(PostModel(user, each));
         }
       }
-
+      log(limit!.toString());
       listOfPost.sort((a, b) => b.prayerRequestPostModel.date!
           .compareTo(a.prayerRequestPostModel.date!));
     } catch (error) {
