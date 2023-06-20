@@ -136,6 +136,7 @@ class GetPrayerRequestBloc
         event.userID,
         event.userModel,
         event.currentUser,
+        event.postModel
       );
     } catch (e) {
       log(e.toString());

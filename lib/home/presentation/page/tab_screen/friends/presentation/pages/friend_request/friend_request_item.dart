@@ -13,6 +13,8 @@ import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 
+import '../../bloc/approved_friends_bloc/approved_friends_bloc.dart';
+
 class FriendRequestItem extends StatelessWidget {
   const FriendRequestItem({
     super.key,
@@ -84,10 +86,10 @@ class FriendRequestItem extends StatelessWidget {
                                 'Uplift Notification',
                                 'friend-request');
                             await NotificationRepository.addNotification(
-                              userModel.userId!,
-                              'Uplift Notification',
-                              ' accepted your friend request.',
-                            );
+                                userModel.userId!,
+                                'Uplift Notification',
+                                ' accepted your friend request.',
+                                type: 'accept');
                             if (context.mounted) {
                               BlocProvider.of<FriendRequestBloc>(context).add(
                                   FetchFriendRequestEvent(currentUser.userId!));
@@ -98,6 +100,9 @@ class FriendRequestItem extends StatelessWidget {
                                 BlocProvider.of<FriendsSuggestionsBlocBloc>(
                                         context)
                                     .add(FetchUsersEvent(currentUser.userId!));
+                                BlocProvider.of<ApprovedFriendsBloc>(context)
+                                    .add(FetchApprovedFriendRequest(
+                                        currentUser.userId!));
                               });
                             }
                           },

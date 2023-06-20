@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../authentication/data/model/user_model.dart';
@@ -11,6 +12,7 @@ class AnimatedHeartButton extends StatefulWidget {
   final String postID;
   final UserModel currentUser;
   final UserModel userModel;
+  final PostModel postModel;
 
   const AnimatedHeartButton({
     super.key,
@@ -18,6 +20,7 @@ class AnimatedHeartButton extends StatefulWidget {
     required this.postID,
     required this.currentUser,
     required this.userModel,
+    required this.postModel,
   });
 
   @override
@@ -106,8 +109,8 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
   }
 
   Future<bool> addReact(String postID, UserModel currentUser) {
-    return PrayerRequestRepository().addReaction(
-        postID, currentUser.userId!, widget.userModel, currentUser);
+    return PrayerRequestRepository().addReaction(postID, currentUser.userId!,
+        widget.userModel, currentUser, widget.postModel);
   }
 
   Future<bool> unreact(String postID, UserModel currentUser) {

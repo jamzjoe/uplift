@@ -7,6 +7,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class GcashQR extends StatefulWidget {
@@ -26,6 +27,7 @@ class _GcashQRState extends State<GcashQR> {
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
+        title: const HeaderText(text: 'Uplift Gcash QR', color: whiteColor),
         iconTheme: const IconThemeData(color: whiteColor),
         backgroundColor: const Color(0xff025CE6),
       ),

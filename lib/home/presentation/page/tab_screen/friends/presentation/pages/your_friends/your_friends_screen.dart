@@ -22,12 +22,15 @@ class _YourFriendsScreenState extends State<YourFriendsScreen> {
       appBar: AppBar(
         title: const HeaderText(text: 'All friends', color: darkColor),
         actions: [
-          TextButton(
-              onPressed: () {
-                BlocProvider.of<ApprovedFriendsBloc>(context)
-                    .add(RefreshApprovedFriend(widget.user.userId!));
-              },
-              child: const SmallText(text: 'Refresh', color: linkColor)),
+          Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: TextButton(
+                onPressed: () {
+                  BlocProvider.of<ApprovedFriendsBloc>(context)
+                      .add(RefreshApprovedFriend(widget.user.userId!));
+                },
+                child: const SmallText(text: 'Refresh', color: linkColor)),
+          ),
         ],
       ),
       body: FriendsList(currentUser: widget.user),

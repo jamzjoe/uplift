@@ -46,36 +46,41 @@ class _ContactsState extends State<Contacts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const HeaderText(text: 'My Contacts', color: darkColor),
-      ),
-      body: isLoading
-          ? const DefaultLoading()
-          : ListView(
-              children: [
-                ...contacts.map((e) => ListTile(
-                      onTap: () =>
-                          Navigator.pop(context, e.phones!.first.value ?? ''),
-                      splashColor: primaryColor,
-                      leading: CircleAvatar(
-                        backgroundColor: secondaryColor,
-                        child: HeaderText(
-                            text: e.displayName!.substring(0, 2) ?? '',
-                            color: whiteColor),
-                      ),
-                      trailing: IconButton(
-                          onPressed: () => Navigator.pop(
-                              context, e.phones!.first.value ?? ''),
-                          icon: const Icon(CupertinoIcons.add_circled_solid,
-                              size: 30)),
-                      subtitle: SmallText(
-                          text: e.displayName ?? '', color: darkColor),
-                      title: SmallText(
-                          text: e.phones!.first.value ?? '', color: darkColor),
-                    ))
-              ],
-            ),
-    );
+        appBar: AppBar(
+          title: const HeaderText(text: 'My Contacts', color: darkColor),
+        ),
+        body: isLoading
+            ? const DefaultLoading()
+            : ListView.separated(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                    onTap: () => Navigator.pop(
+                        context, contacts[index].phones!.first.value ?? ''),
+                    splashColor: primaryColor,
+                    leading: CircleAvatar(
+                      backgroundColor: secondaryColor,
+                      child: HeaderText(
+                          text: contacts[index].displayName!.substring(0, 2) ??
+                              '',
+                          color: whiteColor),
+                    ),
+                    trailing: IconButton(
+                        onPressed: () => Navigator.pop(
+                            context, contacts[index].phones!.first.value ?? ''),
+                        icon: const Icon(CupertinoIcons.add_circled_solid,
+                            size: 30)),
+                    subtitle: SmallText(
+                        text: contacts[index].displayName ?? '',
+                        color: darkColor),
+                    title: SmallText(
+                        text: contacts[index].phones!.first.value ?? '',
+                        color: darkColor),
+                  );
+                },
+                separatorBuilder: (context, index) => const Divider(),
+                itemCount: contacts.length));
   }
 
   void _fetchContacts() async {

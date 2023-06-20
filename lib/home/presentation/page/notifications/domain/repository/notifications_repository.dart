@@ -56,7 +56,7 @@ class NotificationRepository {
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "id": "1",
         "status": "done",
-        "type": type
+        "type": type,
       },
       "to": token
     };
@@ -89,7 +89,8 @@ class NotificationRepository {
   }
 
   static Future<void> addNotification(
-      String receiverID, String title, String message) async {
+      String receiverID, String title, String message,
+      {String? payload, String? type}) async {
     CollectionReference notificationsCollection =
         FirebaseFirestore.instance.collection('Notifications');
     final currentUserID = await AuthServices.userID();
@@ -103,7 +104,9 @@ class NotificationRepository {
           receiverID: receiverID,
           title: title,
           read: false,
+          type: type,
           message: message,
+          payload: payload,
           timestamp: Timestamp.now());
       // Create the notification document
       await notificationsCollection

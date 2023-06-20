@@ -262,35 +262,5 @@ class CommentItem extends StatelessWidget {
         ],
       ),
     );
-    return ListTile(
-      dense: true,
-      contentPadding: const EdgeInsets.symmetric(vertical: 5),
-      minVerticalPadding: 0,
-      leading: ProfilePhoto(
-        user: encourages[index].userModel,
-        radius: 60,
-      ),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          HeaderText(
-              text: encourages[index].userModel.displayName!,
-              color: darkColor,
-              size: 16),
-          SmallText(
-              text: DateFeature().formatDateTime(
-                  encourages[index].commentModel.createdAt!.toDate()),
-              color: lightColor)
-        ],
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SmallText(
-              text: encourages[index].commentModel.commentText!,
-              color: lighter),
-        ],
-      ),
-    );
   }
 }

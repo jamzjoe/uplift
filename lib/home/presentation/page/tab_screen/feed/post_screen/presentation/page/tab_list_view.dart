@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/donation/presentation/gcash_qr.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_tab_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../bloc/get_prayer_request/get_prayer_request_bloc.dart';
@@ -24,6 +27,7 @@ class TabListView extends StatefulWidget {
   @override
   State<TabListView> createState() => _TabListViewState();
 }
+
 
 class _TabListViewState extends State<TabListView> {
   int pageIndex = 10;
@@ -61,6 +65,9 @@ class _TabListViewState extends State<TabListView> {
             itemBuilder: (context, index) {
               if (index < widget.filteredPosts.length) {
                 final e = widget.filteredPosts[index];
+
+               
+
                 return PostItem(
                   allPost: widget.filteredPosts,
                   postModel: e,

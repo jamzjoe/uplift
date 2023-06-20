@@ -25,9 +25,11 @@ class AddReaction extends ExploreEvent {
   final String userID, postID;
   final UserModel userModel;
   final UserModel currentUser;
-  const AddReaction(this.userID, this.postID, this.userModel, this.currentUser);
+  final PostModel postModel;
+  const AddReaction(this.userID, this.postID, this.userModel, this.currentUser,
+      this.postModel);
   @override
-  List<Object?> get props => [userID, postID];
+  List<Object?> get props => [userID, postID, postModel];
 }
 
 class DeletePost extends ExploreEvent {

@@ -41,6 +41,13 @@ class _PostTabViewState extends State<PostTabView>
   List<PostModel> community = [];
   List<PostModel> myPost = [];
   late TabController tabController;
+  final List<TyperAnimatedText> typerList = [
+    TyperAnimatedText('Peace and Unity'),
+    TyperAnimatedText('Strength and Guidance'),
+    TyperAnimatedText('Comfort and Hope'),
+    TyperAnimatedText('Guidance in Decision-Making'),
+    TyperAnimatedText('Gratitude and Thanksgiving'),
+  ];
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -233,20 +240,11 @@ class _PostTabViewState extends State<PostTabView>
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           label: AnimatedTextKit(
-                              pause: const Duration(seconds: 1),
+                              pause: const Duration(seconds: 4),
                               repeatForever: true,
                               onNext: (p0, p1) {},
                               isRepeatingAnimation: true,
-                              animatedTexts: [
-                                TyperAnimatedText('Prayers'),
-                                TyperAnimatedText('Community'),
-                                TyperAnimatedText('Personal'),
-                                TyperAnimatedText('Family'),
-                                TyperAnimatedText('Gratitude'),
-                                TyperAnimatedText('Healing'),
-                                TyperAnimatedText('Vocational'),
-                                TyperAnimatedText('Special'),
-                              ]),
+                              animatedTexts: typerList),
                           hintStyle:
                               TextStyle(color: darkColor.withOpacity(0.5)),
                           suffixIcon: IconButton(

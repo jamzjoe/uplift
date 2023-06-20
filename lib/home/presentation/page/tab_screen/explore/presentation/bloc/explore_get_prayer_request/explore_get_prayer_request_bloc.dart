@@ -84,7 +84,7 @@ class ExploreBloc extends Bloc<ExploreEvent, ExploreState> {
       log('Running');
       try {
         await prayerRequestRepository.addReaction(
-            event.postID, event.userID, event.userModel, event.currentUser);
+            event.postID, event.userID, event.userModel, event.currentUser, event.postModel);
       } catch (e) {
         log(e.toString());
       }

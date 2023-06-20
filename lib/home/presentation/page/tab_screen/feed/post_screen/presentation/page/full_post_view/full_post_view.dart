@@ -14,21 +14,20 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presen
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_header.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
 import 'package:uplift/utils/widgets/default_loading.dart';
-import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+
+import '../post_reactions_counter.dart';
 
 class FullPostView extends StatefulWidget {
   const FullPostView({
     Key? key,
     required this.postModel,
     required this.currentUser,
-    required this.allPost,
   }) : super(key: key);
 
   final PostModel postModel;
   final UserModel currentUser;
-  final List<PostModel> allPost;
 
   @override
   _FullPostViewState createState() => _FullPostViewState();
@@ -73,7 +72,6 @@ class _FullPostViewState extends State<FullPostView> {
     final currentUser = widget.currentUser;
     final postModel = widget.postModel;
     final user = widget.postModel.userModel;
-    final allPost = widget.allPost;
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -87,9 +85,17 @@ class _FullPostViewState extends State<FullPostView> {
                   user: user,
                   prayerRequest: prayerRequest,
                   currentUser: currentUser,
-                  postModel: allPost,
+                  postModel: const [],
                 ),
                 PostText(prayerRequest: prayerRequest),
+                PostReactionsCounter(
+                    prayerRequest: prayerRequest,
+                    currentUser: currentUser,
+                    user: user,
+                    postModel: widget.postModel),
+                const SizedBox(height: 10),
+                const Divider(),
+                const SizedBox(height: 10),
                 PostActions(
                   prayerRequest: prayerRequest,
                   currentUser: currentUser,
@@ -111,6 +117,9 @@ class _FullPostViewState extends State<FullPostView> {
                         );
                       }
                       return ListView.builder(
+                        padding: EdgeInsets.only(
+                            bottom:
+                                MediaQuery.of(context).viewInsets.bottom + 100),
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
                         itemCount: state.encourages.length + 1,
@@ -118,7 +127,7 @@ class _FullPostViewState extends State<FullPostView> {
                           if (index == 0) {
                             return Container(
                               margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: HeaderText(
+                              child: SmallText(
                                   text: '${state.encourages.length} encourages',
                                   color: darkColor),
                             );

@@ -99,6 +99,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   itemCount: state.notifications.length,
                   itemBuilder: (context, index) => NotificationItem(
                         notificationModel: data[index],
+                        currentUser: widget.currentUser,
                       )),
             );
           }

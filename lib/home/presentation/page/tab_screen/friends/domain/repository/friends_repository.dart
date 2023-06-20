@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_approved_mutual.dart';
@@ -653,8 +654,13 @@ class FriendsRepository {
           .collection('Friendships')
           .doc(friendshipId)
           .set(input.toJson())
-          .then((value) => log("Request send"))
-          .catchError((error) => log("Failed to add friend: $error"));
+          .then((value) {
+        log("Request send");
+        NotificationRepository.addNotification(
+            receiverID, 'Friend Request', 'sent you a friend request.',
+            type: 'request');
+      }).catchError((error) => log("Failed to add friend: $error"));
+
       return true;
     } catch (e) {
       return false;

@@ -55,8 +55,6 @@ class _PostActionsState extends State<PostActions> {
   Widget build(BuildContext context) {
     final currentUser = widget.currentUser;
     final postID = widget.prayerRequest.postId;
-    int? length = widget.prayerRequest.reactions?.users?.length;
-    final ScrollController scrollController = ScrollController();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -70,7 +68,6 @@ class _PostActionsState extends State<PostActions> {
               return const SizedBox();
             }
             final bool isReacted = snapshot.data!['isReacted'];
-            final int reactionCount = snapshot.data!['reactionCount'];
             return Column(
               children: [
                 Row(
@@ -97,6 +94,7 @@ class _PostActionsState extends State<PostActions> {
                           currentUser: currentUser,
                           userModel: widget.userModel,
                           postID: postID,
+                          postModel: widget.postModel,
                         ),
                       ),
                     ),
@@ -165,12 +163,8 @@ class _PostActionsState extends State<PostActions> {
   }
 
   Future<bool> addReact(String postID, UserModel currentUser) {
-    return PrayerRequestRepository().addReaction(
-      postID,
-      currentUser.userId!,
-      widget.userModel,
-      currentUser,
-    );
+    return PrayerRequestRepository().addReaction(postID, currentUser.userId!,
+        widget.userModel, currentUser, widget.postModel);
   }
 
   Future<bool> unreact(String postID, UserModel currentUser) {

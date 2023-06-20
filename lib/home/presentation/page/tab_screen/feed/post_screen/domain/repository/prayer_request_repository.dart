@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -312,7 +313,7 @@ class PrayerRequestRepository {
   }
 
   Future<bool> addReaction(String postID, String userID, UserModel userModel,
-      UserModel currentUser) async {
+      UserModel currentUser, PostModel postModel) async {
     bool userExist = false;
     try {
       DocumentSnapshot<Map<String, dynamic>> response = await FirebaseFirestore
@@ -344,12 +345,26 @@ class PrayerRequestRepository {
 
       if (currentUser.userId != userModel.userId) {
         NotificationRepository.sendPushMessage(
-            userModel.deviceToken!,
-            '${currentUser.displayName} prayed your prayer intentions.',
-            'Uplift notification',
-            'react');
-        NotificationRepository.addNotification(userModel.userId!,
-            'Uplift notification', 'prayed your prayer intentions.');
+          userModel.deviceToken!,
+          '${currentUser.displayName} prayed your prayer intentions.',
+          'Uplift notification',
+          'react',
+        );
+
+        Map<String, dynamic> jsonData =
+            postModel.prayerRequestPostModel.toJson();
+        DateTime dateTime =
+            postModel.prayerRequestPostModel.date!.toDate(); // Assuming `date` is a `Timestamp` object
+        jsonData['date'] = dateTime.toUtc().toIso8601String();
+        String data = jsonEncode(jsonData);
+
+        NotificationRepository.addNotification(
+          userModel.userId!,
+          'Uplift notification',
+          'prayed your prayer intentions.',
+          payload: data,
+          type: 'react',
+        );
       }
       return true;
     } catch (e) {

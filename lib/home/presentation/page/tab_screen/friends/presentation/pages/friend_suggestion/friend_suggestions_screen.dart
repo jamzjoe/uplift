@@ -39,12 +39,15 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
               size: 18,
             ),
             actions: [
-              TextButton(
-                  onPressed: () {
-                    BlocProvider.of<FriendsSuggestionsBlocBloc>(context).add(
-                        RefreshFriendSuggestion(widget.currentUser.userId!));
-                  },
-                  child: const SmallText(text: 'Refresh', color: linkColor))
+              Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: TextButton(
+                    onPressed: () {
+                      BlocProvider.of<FriendsSuggestionsBlocBloc>(context).add(
+                          RefreshFriendSuggestion(widget.currentUser.userId!));
+                    },
+                    child: const SmallText(text: 'Refresh', color: linkColor)),
+              )
             ],
           ),
           body: BlocBuilder<FriendsSuggestionsBlocBloc,

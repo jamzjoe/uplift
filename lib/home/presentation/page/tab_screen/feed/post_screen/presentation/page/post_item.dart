@@ -13,6 +13,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/full_post_view/full_post_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_actions.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_reactions_counter.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
@@ -72,7 +73,6 @@ class _PostItemState extends State<PostItem> {
             builder: (context) => FullPostView(
               postModel: widget.postModel,
               currentUser: currentUser,
-              allPost: widget.allPost,
             ),
           ),
         );
@@ -190,6 +190,7 @@ class _PostItemState extends State<PostItem> {
                               ],
                             ),
                   PostText(prayerRequest: prayerRequest),
+                 
                   //Likes and Views Count
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
