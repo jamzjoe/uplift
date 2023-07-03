@@ -60,12 +60,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 defaultSpace,
-                Padding(
-                  padding:
-                      const EdgeInsets.only(right: 30, left: 30, bottom: 30),
+                const Padding(
+                  padding: EdgeInsets.only(right: 30, left: 30, bottom: 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       HeaderText(
                         text: 'Create UpLift\nNew Account',
                         color: whiteColor,
@@ -182,9 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   line(),
                                 ],
                               ),
-                              const SizedBox(
-                                height: 30,
-                              ),
+                              defaultSpace,
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -221,31 +218,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               text: 'Google', color: lighter),
                                         ],
                                       ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 25),
-                                    decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                            color:
-                                                lightColor.withOpacity(0.2))),
-                                    child: Row(
-                                      children: [
-                                        const Image(
-                                          image: AssetImage(
-                                              "assets/facebook-logo.png"),
-                                          width: 25,
-                                          height: 30,
-                                        ),
-                                        const SizedBox(
-                                          width: 15,
-                                        ),
-                                        DefaultText(
-                                            text: 'Facebook', color: lighter),
-                                      ],
                                     ),
                                   ),
                                 ],

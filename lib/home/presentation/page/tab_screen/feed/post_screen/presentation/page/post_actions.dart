@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -144,7 +140,9 @@ class _PostActionsState extends State<PostActions> {
         ),
         const SizedBox(width: 10),
         InkWell(
-          onTap: saveAndShare,
+          onTap: () {
+            saveAndShare(widget.prayerRequest.text ?? '');
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
             decoration: BoxDecoration(
@@ -171,13 +169,8 @@ class _PostActionsState extends State<PostActions> {
     return PrayerRequestRepository().unReact(postID, currentUser.userId!);
   }
 
-  Future saveAndShare() async {
-    final Uint8List? imageBytes = await widget.screenshotController.capture();
-    final directory = await getApplicationDocumentsDirectory();
-    final image = File('${directory.path}/uplift.png');
-    image.writeAsBytes(imageBytes!);
-
-    await Share.shareFiles([image.path]);
+  Future saveAndShare(String text) async {
+    await Share.share(text);
   }
 
   void checkReaction(

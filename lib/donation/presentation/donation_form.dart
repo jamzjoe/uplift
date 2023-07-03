@@ -74,8 +74,7 @@ class _DonationFormState extends State<DonationForm> {
           defaultSpace,
           TextButton(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const GcashQR()));
+                scanQR(context);
               },
               child: const SmallText(
                   decoration: TextDecoration.underline,
@@ -86,8 +85,12 @@ class _DonationFormState extends State<DonationForm> {
           defaultSpace,
           CustomContainer(
             onTap: () async {
-              await PayMongoService()
-                  .createGCashLink(selectedAmount, 'Uplift Donation');
+              if (int.parse(selectedAmount) < 100) {
+                scanQR(context);
+              } else {
+                await PayMongoService()
+                    .createGCashLink(selectedAmount, 'Uplift Donation');
+              }
             },
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -101,5 +104,10 @@ class _DonationFormState extends State<DonationForm> {
         ],
       ),
     );
+  }
+
+  void scanQR(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const GcashQR()));
   }
 }

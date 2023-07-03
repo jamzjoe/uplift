@@ -35,6 +35,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'uplift'
+            keyPassword 'godesq2021!'
+            storeFile file(rootProject.file('keystore.jks'))
+            storePassword 'godesq2021!'
+        }
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -59,7 +68,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
