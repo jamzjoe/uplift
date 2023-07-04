@@ -2,25 +2,25 @@
 class Assets {
   Assets._();
 
-  static const String assetsAngel = 'assets/angel.png';
-  static const String assetsBackground = 'assets/background.png';
+  static const String assetsBg1 = 'assets/bg1.jpg';
+  static const String assetsBg2 = 'assets/bg2.jpg';
+  static const String assetsBg3 = 'assets/bg3.jpg';
   static const String assetsDefault = 'assets/default.png';
   static const String assetsError = 'assets/error.png';
   static const String assetsFacebookLogo = 'assets/facebook-logo.png';
-  static const String assetsQuicksand = 'assets/Quicksand.ttf';
-  static const String assetsGallery = 'assets/gallery.png';
   static const String assetsGoogleLogo = 'assets/google-logo.png';
   static const String assetsIncognito = 'assets/incognito.png';
-  static const String assetsLauncherIcon = 'assets/launcher-icon.png';
-  static const String assetsLoginBg = 'assets/login-bg.png';
+  static const String assetsLiveTheFaithLogo = 'assets/live_the_faith_logo.png';
   static const String assetsNoData = 'assets/no-data.json';
   static const String assetsNoUser = 'assets/no-user.json';
+  static const String assetsPeso = 'assets/peso.png';
   static const String assetsPrayed = 'assets/prayed.png';
+  static const String assetsQuicksand = 'assets/Quicksand.ttf';
   static const String assetsShare = 'assets/share.png';
-  static const String assetsSplashBg = 'assets/splash_bg.png';
-  static const String assetsSplashIcon = 'assets/splash_icon.png';
   static const String assetsSuccess = 'assets/success.png';
-  static const String assetsThinking = 'assets/thinking.json';
   static const String assetsUnprayed = 'assets/unprayed.png';
-  static const String assetsUpliftLogo = 'assets/uplift-logo-white.png';
+  static const String assetsUpliftColoredLogo = 'assets/uplift_colored_logo.png';
+  static const String assetsUpliftLogoWhite = 'assets/uplift-logo-white.png';
+  static const String assetsVarela = 'assets/varela.ttf';
+
 }

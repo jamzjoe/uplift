@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
@@ -6,6 +7,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/explore_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/feed_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
@@ -38,31 +40,14 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Ensure the state is kept alive
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) async {
-        if (state is UserIsIn) {
-          FlutterNativeSplash.remove();
-
-          BlocProvider.of<NotificationBloc>(context).add(
-              FetchListOfNotification(state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<FriendRequestBloc>(context).add(
-              FetchFriendRequestEvent(state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
-              .add(FetchUsersEvent(state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<ApprovedFriendsBloc>(context).add(
-              FetchApprovedFriendRequest(
-                  state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<SameIntentionsSuggestionBloc>(context).add(
-              FetchSameIntentionEvent(state.userJoinedModel.userModel.userId!));
-          BlocProvider.of<ExploreBloc>(context).add(GetExplorePrayerRequestList(
-              state.userJoinedModel.userModel.userId!));
-        } else if (state is UserIsOut) {
-          // Handle user logged out state
-          // You can navigate to a login screen or show a different UI
-          setState(() {
-            index = 0;
-          });
-        }
+        userStatus(state, context);
       },
       builder: (context, state) {
         if (state is UserIsIn) {
@@ -128,6 +113,33 @@ class _HomeScreenState extends State<HomeScreen>
         }
       },
     );
+  }
+
+  void userStatus(AuthenticationState state, BuildContext context) {
+    if (state is UserIsIn) {
+      final String currentUserID = state.userJoinedModel.userModel.userId!;
+      FlutterNativeSplash.remove();
+      BlocProvider.of<GetPrayerRequestBloc>(context)
+          .add(GetPostRequestList(currentUserID));
+      BlocProvider.of<NotificationBloc>(context)
+          .add(FetchListOfNotification(currentUserID));
+      BlocProvider.of<FriendRequestBloc>(context)
+          .add(FetchFriendRequestEvent(currentUserID));
+      BlocProvider.of<FriendsSuggestionsBlocBloc>(context)
+          .add(FetchUsersEvent(currentUserID));
+      BlocProvider.of<ApprovedFriendsBloc>(context)
+          .add(FetchApprovedFriendRequest(currentUserID));
+      BlocProvider.of<SameIntentionsSuggestionBloc>(context)
+          .add(FetchSameIntentionEvent(currentUserID));
+      BlocProvider.of<ExploreBloc>(context)
+          .add(GetExplorePrayerRequestList(currentUserID));
+    } else if (state is UserIsOut) {
+      // Handle user logged out state
+      // You can navigate to a login screen or show a different UI
+      setState(() {
+        index = 0;
+      });
+    }
   }
 
   void onChangedTab(int value) {

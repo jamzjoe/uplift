@@ -23,8 +23,8 @@ class IntroductionScreen extends StatefulWidget {
 class IntroductionScreenState extends State<IntroductionScreen> {
   List<String> images = [
     'assets/bg1.jpg',
-    'assets/bg2.jpg',
-    'assets/bg3.jpg',
+    'assets/bg2.png',
+    'assets/bg3.png',
   ];
   int currentIndex = 0;
   Timer? timer;
@@ -65,10 +65,11 @@ class IntroductionScreenState extends State<IntroductionScreen> {
                 child: Container(
                   key: ValueKey<String>(images[currentIndex]),
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
+                    color: primaryColor,
                     image: DecorationImage(
+                      alignment: AlignmentDirectional.topCenter,
                       image: AssetImage(images[currentIndex]),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),

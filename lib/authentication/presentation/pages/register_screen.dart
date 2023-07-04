@@ -59,21 +59,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ],
                   ),
                 ),
-                defaultSpace,
-                const Padding(
-                  padding: EdgeInsets.only(right: 30, left: 30, bottom: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      HeaderText(
-                        text: 'Create UpLift\nNew Account',
-                        color: whiteColor,
-                        size: 30,
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: MediaQuery.of(context).size.width < 768
+                              ? const EdgeInsets.all(15)
+                              : const EdgeInsets.all(30),
+                          child: const Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              HeaderText(
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.clip,
+                                text: 'Create Account',
+                                color: whiteColor,
+                                size: 30,
+                              ),
+                              SizedBox(height: 5),
+                              DefaultText(
+                                  overflow: TextOverflow.clip,
+                                  text:
+                                      'Connect with a community of faith and uplift one another.',
+                                  color: whiteColor)
+                            ],
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 5),
-                      DefaultText(
-                          text: 'Create new uplift new account.',
-                          color: whiteColor)
+                      const Expanded(
+                          flex: 1,
+                          child: Image(image: AssetImage('assets/auth_bg.png')))
                     ],
                   ),
                 ),

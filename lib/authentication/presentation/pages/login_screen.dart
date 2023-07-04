@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -30,6 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   @override
   Widget build(BuildContext _) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
     return LoaderOverlay(
       child: Scaffold(
         backgroundColor: primaryColor,
@@ -56,21 +62,41 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
-                defaultSpace,
-                Padding(
-                  padding:
-                      const EdgeInsets.only(right: 30, left: 30, bottom: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      HeaderText(
-                        text: 'Sign in to your\nAccount',
-                        color: whiteColor,
-                        size: 30,
+                SizedBox(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: MediaQuery.of(context).size.width < 768
+                              ? const EdgeInsets.all(15)
+                              : const EdgeInsets.all(30),
+                          child: const Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              HeaderText(
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.clip,
+                                text: 'Login Account',
+                                color: whiteColor,
+                                size: 30,
+                              ),
+                              SizedBox(height: 5),
+                              DefaultText(
+                                  overflow: TextOverflow.clip,
+                                  text:
+                                      'Connect with a community of faith and uplift one another.',
+                                  color: whiteColor)
+                            ],
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 5),
-                      DefaultText(
-                          text: 'Sign in to your account.', color: whiteColor)
+                      const Expanded(
+                          flex: 1,
+                          child: Image(image: AssetImage('assets/auth_bg.png')))
                     ],
                   ),
                 ),

@@ -13,13 +13,17 @@ class DefaultText extends StatelessWidget {
   final TextOverflow? overflow;
   @override
   Widget build(BuildContext context) {
+    double fontSize = 16;
+    if (MediaQuery.of(context).size.shortestSide >= 600) {
+      fontSize += 2;
+    }
     return Text(
       text,
       textAlign: textAlign,
       style: TextStyle(
           color: color,
           fontWeight: FontWeight.normal,
-          fontSize: 16,
+          fontSize: fontSize,
           overflow: overflow ?? TextOverflow.ellipsis),
     );
   }

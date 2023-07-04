@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,16 +77,16 @@ void main() async {
 void startBackgroundService() async {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
-  final service = FlutterBackgroundService();
-  service.on('update').listen((event) {
-    log('received data message in feed: $event');
-  }, onError: (e, s) {
-    log('error listening for updates: $e, $s');
-  }, onDone: () {
-    log('background listen closed');
-  });
+  // final service = FlutterBackgroundService();
+  // service.on('update').listen((event) {
+  //   log('received data message in feed: $event');
+  // }, onError: (e, s) {
+  //   log('error listening for updates: $e, $s');
+  // }, onDone: () {
+  //   log('background listen closed');
+  // });
 
-  service.startService();
+  // service.startService();
 }
 
 Future<String?> getFCMToken() async {
@@ -210,4 +209,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

@@ -1,25 +1,44 @@
 {
     "configurations": [
+
+
+
+
+
         {
             "name": "Infinix Note 10 Pro",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "07809251A8101300"
+            "deviceId": "emulator-5554"
         },
         {
-            "name": "Emulator",
+            "name": "Responsive Test",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "emulator-5556"
+            "deviceId": "emulator-5554"
+        },
+        {
+            "name": "Physical Device",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "Infinix X695D"
         },
         {
             "name": "Tablet",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "emulator-5554"
+            "deviceId": "emulator-5556"
+        },
+        {
+            "name": "Modern Device",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5558"
         }
 
     ],

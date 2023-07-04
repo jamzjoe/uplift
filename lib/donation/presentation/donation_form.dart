@@ -17,7 +17,7 @@ class DonationForm extends StatefulWidget {
 
 class _DonationFormState extends State<DonationForm> {
   List<String> amount = ['100', '200', '300'];
-  String selectedAmount = '100';
+  String selectedAmount = '';
   final TextEditingController amountController = TextEditingController();
   @override
   void initState() {
@@ -85,7 +85,9 @@ class _DonationFormState extends State<DonationForm> {
           defaultSpace,
           CustomContainer(
             onTap: () async {
-              if (int.parse(selectedAmount) < 100) {
+              if (selectedAmount.isEmpty ||
+                  int.tryParse(selectedAmount) == null ||
+                  int.parse(selectedAmount) < 100) {
                 scanQR(context);
               } else {
                 await PayMongoService()

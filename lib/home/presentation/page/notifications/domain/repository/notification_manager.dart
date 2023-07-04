@@ -77,9 +77,10 @@ class ScheduledNotificationManager {
   void _scheduleNotification(ScheduledNotificationModel notification) async {
     try {
       const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'channel_id',
-        'channel_name',
-        channelDescription: 'channel_description',
+        '1',
+        'Uplift Notification',
+        channelDescription:
+            'This notification is used for scheduling prayer intention.',
         importance: Importance.max,
         priority: Priority.high,
       );

@@ -31,8 +31,9 @@ class _ReminderPageState extends State<ReminderPage> {
   Future<void> _scheduleReminder(
       String repeatFrequency, TimeOfDay notificationTime) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your_channel_id', 'Channel Name',
-            channelDescription: 'Channel Description');
+        AndroidNotificationDetails('2', 'Uplift Notification',
+            channelDescription:
+                'This notification is use for scheduling remiders.');
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 

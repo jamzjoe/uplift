@@ -82,13 +82,12 @@ flutter_native_splash:
   ios: true
   web: false
   color: "#3A5311"
-  icon_background_color: "#000000"
+  icon_background_color: "#3A5311"
   image: assets/uplift-logo-white.png
 
-  android_12:
-    color: "#3A5311"
-    icon_background_color: "#ffffff"
+  android_mdpi: # Adjust this configuration for lower screen densities
     image: assets/uplift-logo-white.png
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

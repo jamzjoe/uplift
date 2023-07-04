@@ -15,8 +15,8 @@ class NotificationRepository {
 
   static Future _notificationDetails() async {
     return const NotificationDetails(
-        android: AndroidNotificationDetails('channel id', 'channel name',
-            channelDescription: 'channel description',
+        android: AndroidNotificationDetails('channel id', 'Uplift Notification',
+            channelDescription: 'This notification is used for sending notif.',
             importance: Importance.max),
         iOS: DarwinNotificationDetails());
   }
