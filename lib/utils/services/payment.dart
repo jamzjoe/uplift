@@ -88,9 +88,8 @@ class PayMongoService {
       Map<String, dynamic> responseData = json.decode(response.body);
       String gcashLink =
           await responseData['data']['attributes']['checkout_url'];
-     
-      await _launchUrl(
-          gcashLink);
+
+      await _launchUrl(gcashLink);
       return gcashLink;
     } else {
       log(response.body);
@@ -99,7 +98,7 @@ class PayMongoService {
   }
 
   Future<void> _launchUrl(String gCashLink) async {
-    if (!await launchUrl(Uri.parse(gCashLink))) {
+    if (!await launchUrl(Uri.parse(gCashLink), mode: LaunchMode.inAppWebView)) {
       throw Exception('Could not launch $gCashLink');
     }
   }
