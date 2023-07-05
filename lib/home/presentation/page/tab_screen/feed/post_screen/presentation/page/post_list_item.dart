@@ -15,11 +15,11 @@ import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
 class PostListItem extends StatefulWidget {
   const PostListItem({
     Key? key,
-    required this.userJoinedModel,
+    required this.userJoinedModel, required this.controller,
   }) : super(key: key);
 
   final UserJoinedModel userJoinedModel;
-
+  final ScrollController controller;
   @override
   State<PostListItem> createState() => _PostListItemState();
 }
@@ -41,6 +41,7 @@ class _PostListItemState extends State<PostListItem> {
             );
           }
           return PostTabView(
+              scrollController: widget.controller,
               posts: posts, userModel: userModel, widget: widget);
         } else if (state is LoadingPrayerRequesList ||
             state is NoInternetConnnection) {

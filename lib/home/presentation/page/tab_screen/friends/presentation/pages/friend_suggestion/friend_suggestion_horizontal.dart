@@ -78,7 +78,7 @@ class _FriendSuggestionHorizontalState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 80,
+                    height: 90,
                     child: ListView.builder(
                       itemCount: suggestions.length + 1,
                       scrollDirection: Axis.horizontal,
@@ -96,14 +96,15 @@ class _FriendSuggestionHorizontalState
                           );
                         } else {
                           final user = suggestions[index - 1].userModel;
-                          final text = suggestions[index - 1].text;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
+                          return Container(
+                            width: 60,
+                            margin: const EdgeInsets.all(2),
                             child: CirclePhoto(
                               firstIndex: false,
                               user: user,
                               widget: widget,
-                              text: text, // Adjust the radius as desired
+                              text: user!
+                                  .displayName, // Adjust the radius as desired
                             ),
                           );
                         }
@@ -222,13 +223,11 @@ class CirclePhoto extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 5),
-          Flexible(
-            child: Text(
-              capitalizeFirstLetter(text ?? ''),
-              style: const TextStyle(
-                fontSize: 10,
-                overflow: TextOverflow.ellipsis,
-              ),
+          Text(
+            capitalizeFirstLetter(text ?? ''),
+            style: const TextStyle(
+              fontSize: 10,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

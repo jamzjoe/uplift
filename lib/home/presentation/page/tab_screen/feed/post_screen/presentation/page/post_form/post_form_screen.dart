@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +6,6 @@ import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
@@ -33,7 +29,6 @@ class _PostFormScreenState extends State<PostFormScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
-  List<File> file = [];
   Color buttonColor = secondaryColor.withOpacity(0.5);
   String postType = "unanonymous";
   String selectedPrayerIntention = 'Personal';
@@ -54,9 +49,6 @@ class _PostFormScreenState extends State<PostFormScreen> {
 
   @override
   void initState() {
-    if (widget.isPickImage ?? false) {
-      pickImage();
-    }
     super.initState();
   }
 
@@ -86,7 +78,6 @@ class _PostFormScreenState extends State<PostFormScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: CustomContainer(
                     onTap: () async {
-                      final List<File> files = file;
                       if (_key.currentState!.validate()) {
                         List<UserFriendshipModel> friends = [];
                         final bloc =
@@ -101,8 +92,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                             PostPrayerRequestActivity(
                                 user,
                                 controller.text,
-                                files,
-                                postType == 'anonymous' ? 'Uplift User' : '',
+                                postType == 'anonymous' ? 'Anonymous' : '',
                                 friends,
                                 selectedPrayerIntention,
                                 context));
@@ -221,69 +211,11 @@ class _PostFormScreenState extends State<PostFormScreen> {
                     keyboardType: TextInputType.multiline,
                   ),
                 ),
-                file.isEmpty
-                    ? const SizedBox()
-                    : Wrap(
-                        runSpacing: 10,
-                        direction: Axis.horizontal,
-                        spacing: 10,
-                        children: [
-                          ...file.map((e) => GestureDetector(
-                                onHorizontalDragUpdate: (details) {
-                                  setState(() {
-                                    file.remove(e);
-                                  });
-                                },
-                                child: Container(
-                                  width: file.length > 3 ? 60 : 100,
-                                  height: file.length > 3 ? 60 : 100,
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Image.file(
-                                    e,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ))
-                        ],
-                      ),
-                const SizedBox(height: 50)
-              ],
-            ),
-          ),
-          bottomSheet: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: pickImage,
-                    icon: const Icon(
-                      CupertinoIcons.photo,
-                      color: linkColor,
-                    )),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      CupertinoIcons.ellipsis_circle_fill,
-                      color: secondaryColor,
-                    ))
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  void pickImage() async {
-    await PrayerRequestRepository().imagePicker().then((value) async {
-      final picked = await PrayerRequestRepository().xFileToFile(value!);
-      setState(() {
-        file.add(picked);
-      });
-    });
   }
 }

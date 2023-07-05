@@ -176,7 +176,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                           IntroductionRepository().goToLogin(context);
                         },
                         child: const SmallText(
-                            text: "Continue another way",
+                            text: "Continue with Email and Password",
                             color: primaryColor))),
               ],
             ),

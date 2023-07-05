@@ -8,8 +8,8 @@ import '../../../../../../../../../authentication/data/model/user_model.dart';
 import '../../../../data/model/new_friendship_model.dart';
 import '../../../../domain/repository/friends_repository.dart';
 
-class CheckFriendsStatusWidget extends StatefulWidget {
-  const CheckFriendsStatusWidget({
+class CheckFriendsStatusWidget2 extends StatefulWidget {
+  const CheckFriendsStatusWidget2({
     super.key,
     required this.user,
     required this.currentUser,
@@ -19,11 +19,11 @@ class CheckFriendsStatusWidget extends StatefulWidget {
   final UserModel currentUser;
 
   @override
-  State<CheckFriendsStatusWidget> createState() =>
-      _CheckFriendsStatusWidgetState();
+  State<CheckFriendsStatusWidget2> createState() =>
+      _CheckFriendsStatusWidget2State();
 }
 
-class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
+class _CheckFriendsStatusWidget2State extends State<CheckFriendsStatusWidget2> {
   bool refreshFlag = false;
 
   void refreshScreen() {
@@ -66,52 +66,70 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
             if (friendshipStatus != null) {
               // User is a friend
               if (friendshipStatus.status.status == 'pending') {
-                return TextButton.icon(
-                  icon: const Icon(
-                    CupertinoIcons.clock_solid,
-                    color: primaryColor,
-                  ),
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      color: primaryColor,
+                      child: TextButton.icon(
+                        icon: const Icon(
+                          CupertinoIcons.clock_solid,
+                          color: whiteColor,
+                        ),
+                        label: const SmallText(
+                          text: 'Request Pending',
+                          color: whiteColor,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          FriendsRepository().unfriend(
+                              friendshipStatus.friendshipID.friendshipId!);
+                          refreshScreen();
+                        },
+                        child:
+                            const SmallText(text: 'Cancel', color: Colors.red))
+                  ],
+                );
+              }
+              return Container(
+                color: primaryColor,
+                child: TextButton.icon(
                   label: const SmallText(
-                    text: 'Request Pending',
-                    color: primaryColor,
+                    text: 'Added already',
+                    color: whiteColor,
                   ),
                   onPressed: () {
                     FriendsRepository()
                         .unfriend(friendshipStatus.friendshipID.friendshipId!);
                     refreshScreen();
                   },
-                );
-              }
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Unfollow',
-                  color: primaryColor,
-                ),
-                onPressed: () {
-                  FriendsRepository()
-                      .unfriend(friendshipStatus.friendshipID.friendshipId!);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
+                  icon: const Icon(
+                    CupertinoIcons.add_circled_solid,
+                    color: whiteColor,
+                  ),
                 ),
               );
             } else {
               // User is not a friend
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Follow',
-                  color: darkColor,
-                ),
-                onPressed: () {
-                  FriendsRepository().addFriend(
-                      widget.currentUser.userId!, widget.user.userId);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
+              return Container(
+                color: primaryColor,
+                child: TextButton.icon(
+                  label: const SmallText(
+                    text: 'Add friend',
+                    color: whiteColor,
+                  ),
+                  onPressed: () {
+                    FriendsRepository().addFriend(
+                        widget.currentUser.userId!, widget.user.userId);
+                    refreshScreen();
+                  },
+                  icon: const Icon(
+                    CupertinoIcons.add_circled_solid,
+                    color: whiteColor,
+                  ),
                 ),
               );
             }

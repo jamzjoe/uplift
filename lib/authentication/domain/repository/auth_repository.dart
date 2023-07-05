@@ -56,26 +56,32 @@ class AuthRepository {
   }
 
   Future<String> uploadProfilePicture(File imageFile, String userID) async {
-    // Generate a unique filename for the image
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    try {
+      // Generate a unique filename for the image
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
-    // Create a reference to the Firebase Storage location
-    final Reference storageReference =
-        FirebaseStorage.instance.ref().child('profilePictures/$fileName.jpg');
+      // Create a reference to the Firebase Storage location
+      final Reference storageReference =
+          FirebaseStorage.instance.ref().child('profilePictures/$fileName.jpg');
 
-    // Upload the file to Firebase Storage
-    final UploadTask uploadTask = storageReference.putFile(imageFile);
-    final TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() {});
+      // Upload the file to Firebase Storage
+      final UploadTask uploadTask = storageReference.putFile(imageFile);
+      final TaskSnapshot storageSnapshot = await uploadTask.whenComplete(() {});
 
-    // Get the download URL of the uploaded image
-    final String imageUrl = await storageSnapshot.ref.getDownloadURL();
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userID)
-        .update({'photo_url': imageUrl})
-        .then((value) => log('Profile photo uploaded successfully!'))
-        .catchError((error) => log('Error updating: $error'));
-    // Return the image URL
-    return imageUrl;
+      // Get the download URL of the uploaded image
+      final String imageUrl = await storageSnapshot.ref.getDownloadURL();
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userID)
+          .update({'photo_url': imageUrl})
+          .then((value) => log('Profile photo uploaded successfully!'))
+          .catchError((error) => log('Error updating: $error'));
+      // Return the image URL
+      log(imageUrl);
+      return imageUrl;
+    } catch (e) {
+      log(e.toString());
+      return e.toString();
+    }
   }
 }

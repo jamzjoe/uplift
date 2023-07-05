@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
@@ -246,27 +245,12 @@ class PrayerRequestRepository {
     }
   }
 
-  Future<bool> postPrayerRequest(User user, String text, List<File> imageFiles,
-      String name, List<UserFriendshipModel> friends, String title) async {
+  Future<bool> postPrayerRequest(User user, String text, String name,
+      List<UserFriendshipModel> friends, String title) async {
     log(friends.toString());
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
     final postID = reference.doc().id;
-
-    // Create a list to store the image URLs
-    List<String> imageUrls = [];
-
-    // Upload each image to Firebase Storage and get the download URLs
-    for (int i = 0; i < imageFiles.length; i++) {
-      final imageFile = imageFiles[i];
-      final storageReference = FirebaseStorage.instance
-          .ref()
-          .child('prayer_request_images/$postID-$i');
-      final uploadTask = storageReference.putFile(imageFile);
-      final snapshot = await uploadTask.whenComplete(() => null);
-      final imageUrl = await snapshot.ref.getDownloadURL();
-      imageUrls.add(imageUrl);
-    }
 
     // Create the prayerRequest object
     final prayerRequest = {
@@ -275,7 +259,6 @@ class PrayerRequestRepository {
       "date": DateTime.now(),
       "reactions": {"users": []},
       "post_id": postID,
-      "image_url": imageUrls,
       "custom_name": name,
       "title": title,
       'privacy': PostPrivacy.public.name
@@ -285,11 +268,11 @@ class PrayerRequestRepository {
       await reference.doc(postID).set(prayerRequest);
       for (var each in friends) {
         log('Running notif');
-        final message = '${user.displayName} post a prayer intention.';
+        final message = '${user.displayName} sent a prayer intention.';
         NotificationRepository.sendPushMessage(each.userModel.deviceToken!,
             message, 'Uplift Notification', 'post');
         NotificationRepository.addNotification(
-            each.userModel.userId!, title, 'post a prayer intention.');
+            each.userModel.userId!, title, 'sent a prayer intention.');
       }
       return true;
     } catch (e) {
@@ -353,8 +336,8 @@ class PrayerRequestRepository {
 
         Map<String, dynamic> jsonData =
             postModel.prayerRequestPostModel.toJson();
-        DateTime dateTime =
-            postModel.prayerRequestPostModel.date!.toDate(); // Assuming `date` is a `Timestamp` object
+        DateTime dateTime = postModel.prayerRequestPostModel.date!
+            .toDate(); // Assuming `date` is a `Timestamp` object
         jsonData['date'] = dateTime.toUtc().toIso8601String();
         String data = jsonEncode(jsonData);
 

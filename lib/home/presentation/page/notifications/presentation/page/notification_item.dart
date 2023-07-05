@@ -48,8 +48,6 @@ class NotificationItem extends StatelessWidget {
             final text = decodedPayload['text'];
             final userId = decodedPayload['user_id'];
             final postId = decodedPayload['post_id'];
-            final imageUrlList = decodedPayload['image_url'] as List?;
-            final imageUrls = imageUrlList?.cast<String>();
             final customName = decodedPayload['custom_name'];
             final title = decodedPayload['title'];
 
@@ -57,7 +55,6 @@ class NotificationItem extends StatelessWidget {
               date: timestamp,
               text: text,
               userId: userId,
-              imageUrls: imageUrls,
               postId: postId,
               name: customName,
               title: title,

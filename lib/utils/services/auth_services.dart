@@ -83,7 +83,7 @@ class AuthServices {
       createdAt: Timestamp.now(),
       searchKey: userName?.toLowerCase() ?? '',
       provider: 'email_and_password',
-      displayName: userName ?? 'Uplift User',
+      displayName: userName ?? 'Anonymous',
     );
     final token = await FirebaseMessaging.instance.getToken();
     userModel.deviceToken = token;

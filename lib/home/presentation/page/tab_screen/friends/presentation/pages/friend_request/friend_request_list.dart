@@ -13,8 +13,10 @@ class FriendRequestList extends StatefulWidget {
   const FriendRequestList({
     super.key,
     required this.currentUser,
+    required this.mainFriendScreenContext,
   });
   final UserModel currentUser;
+  final BuildContext mainFriendScreenContext;
 
   @override
   State<FriendRequestList> createState() => _FriendRequestListState();
@@ -26,8 +28,8 @@ class _FriendRequestListState extends State<FriendRequestList> {
   @override
   Widget build(BuildContext context) {
     return FriendRequestListView(
-      currentUser: widget.currentUser,
-    );
+        currentUser: widget.currentUser,
+        mainFriendsScreenContext: widget.mainFriendScreenContext);
   }
 }
 
@@ -35,9 +37,11 @@ class FriendRequestListView extends StatelessWidget {
   const FriendRequestListView({
     Key? key,
     required this.currentUser,
+    required this.mainFriendsScreenContext,
   }) : super(key: key);
 
   final UserModel currentUser;
+  final BuildContext mainFriendsScreenContext;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +74,7 @@ class FriendRequestListView extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return FriendRequestItem(
+                    mainFriendsScreenContext: mainFriendsScreenContext,
                     user: state.users[index].userFriendshipModel,
                     currentUser: currentUser,
                     mutualFriends: state.users[index].mutualFriends,

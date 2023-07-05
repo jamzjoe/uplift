@@ -8,7 +8,6 @@ class PrayerRequestPostModel {
   Timestamp? date;
   Reactions? reactions;
   String? postId;
-  List<String>? imageUrls; // Changed type to List<String>
   String? name;
   String? privacy;
   String? title;
@@ -19,7 +18,6 @@ class PrayerRequestPostModel {
       this.date,
       this.reactions,
       this.postId,
-      this.imageUrls, // Updated field name
       this.name,
       this.title});
 
@@ -34,7 +32,6 @@ class PrayerRequestPostModel {
         : null;
     postId = json['post_id'];
     privacy = json['privacy'];
-    imageUrls = List<String>.from(json['image_url']); // Updated field name
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +39,6 @@ class PrayerRequestPostModel {
     data['text'] = text;
     data['user_id'] = userId;
     data['date'] = date;
-    data['image_url'] = imageUrls; // Updated field name
     data['custom_name'] = name;
     data['title'] = title;
     if (reactions != null) {

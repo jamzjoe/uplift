@@ -12,13 +12,12 @@ class PostPrayerRequestActivity extends PostPrayerRequestEvent {
   final String text;
   final String title;
   final String name;
-  final List<File> image;
   final List<UserFriendshipModel> approvedFriendsList;
   final BuildContext context;
 
-  const PostPrayerRequestActivity(this.user, this.text, this.image, this.name,
+  const PostPrayerRequestActivity(this.user, this.text, this.name,
       this.approvedFriendsList, this.title, this.context);
   @override
   List<Object> get props =>
-      [user, text, image, name, approvedFriendsList, title];
+      [user, text, name, approvedFriendsList, title];
 }

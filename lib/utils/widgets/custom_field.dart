@@ -11,7 +11,9 @@ class CustomField extends StatefulWidget {
     this.isPassword,
     this.suffixIcon,
     this.tapSuffix,
-    this.hintText, this.readOnly,
+    this.hintText,
+    this.readOnly,
+    this.limit,
   });
   final String? label;
   final TextEditingController? controller;
@@ -21,6 +23,7 @@ class CustomField extends StatefulWidget {
   final IconData? suffixIcon;
   final VoidCallback? tapSuffix;
   final bool? readOnly;
+  final int? limit;
 
   @override
   State<CustomField> createState() => _CustomFieldState();
@@ -35,6 +38,10 @@ class _CustomFieldState extends State<CustomField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            maxLength: widget.limit,
+            keyboardType: widget.label == 'Contact no.'
+                ? TextInputType.phone
+                : TextInputType.text,
             readOnly: widget.readOnly ?? false,
             obscureText: widget.isPassword ?? false,
             autovalidateMode: AutovalidateMode.onUserInteraction,

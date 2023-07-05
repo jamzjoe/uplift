@@ -24,12 +24,13 @@ class PostTabView extends StatefulWidget {
     Key? key,
     required this.posts,
     required this.userModel,
-    required this.widget,
+    required this.widget, required this.scrollController,
   }) : super(key: key);
 
   final List<PostModel> posts;
   final UserModel userModel;
   final PostListItem widget;
+  final ScrollController scrollController;
 
   @override
   _PostTabViewState createState() => _PostTabViewState();
@@ -278,8 +279,8 @@ class _PostTabViewState extends State<PostTabView>
           body: TabBarView(
             controller: tabController,
             children: [
-              TabListView(widget: widget, filteredPosts: community),
-              TabListView(widget: widget, filteredPosts: myPost),
+              TabListView(widget: widget, filteredPosts: community, scrollController: widget.scrollController,),
+              TabListView(widget: widget, filteredPosts: myPost, scrollController: widget.scrollController,),
             ],
           ),
         ),

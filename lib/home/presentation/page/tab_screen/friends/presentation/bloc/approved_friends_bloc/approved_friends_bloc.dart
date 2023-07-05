@@ -20,13 +20,6 @@ class ApprovedFriendsBloc
     extends Bloc<ApprovedFriendsEvent, ApprovedFriendsState> {
   ApprovedFriendsBloc() : super(ApprovedFriendsInitial()) {
     on<ApprovedFriendsEvent>((event, emit) {});
-    // streamSubscription = FirebaseFirestore.instance
-    //     .collection('Friendships')
-    //     .snapshots()
-    //     .listen((event) async {
-    //   final userID = await AuthServices.userID();
-    //   add(RefreshApprovedFriend(userID));
-    // });
 
     on<FetchApprovedFriendRequest>((event, emit) async {
       emit(ApprovedFriendsLoading());
@@ -50,20 +43,6 @@ class ApprovedFriendsBloc
         emit(ApprovedFriendsError());
       }
     });
-
-    // on<SearchApprovedFriend>((event, emit) async {
-    //   try {
-    //     final data =
-    //         await friendsRepository.searchApprovedFriendRequest(event.query);
-    //     if (data.isEmpty) {
-    //       emit(EmptySearchResult());
-    //     } else {
-    //       emit(ApprovedFriendsSuccess2(data));
-    //     }
-    //   } catch (e) {
-    //     emit(ApprovedFriendsError());
-    //   }
-    // });
 
     on<UnfriendEvent>((event, emit) async {
       try {

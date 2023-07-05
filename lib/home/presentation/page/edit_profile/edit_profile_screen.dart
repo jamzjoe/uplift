@@ -37,7 +37,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     contactController.text = user.phoneNumber ?? '';
     bioController.text = (user.bio ?? '');
     emailAddressController.text = user.emailAddress!;
-
+    contactController.text = '+63';
     super.initState();
   }
 
@@ -107,9 +107,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 CustomField(
                   hintText: '+63900-000-0000',
                   label: 'Contact no.',
+                  limit: 13,
                   controller: contactController,
                 ),
                 CustomField(
+                  limit: 150,
                   hintText: 'Write your bio here...',
                   label: 'Bio',
                   controller: bioController,

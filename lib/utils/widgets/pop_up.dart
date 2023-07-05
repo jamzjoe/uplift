@@ -383,12 +383,19 @@ class CustomDialog {
     );
   }
 
-  static void showCustomDialog(BuildContext context, Widget widget) {
-    showDialog(
+  static Future showCustomDialog(BuildContext context, Widget widget,
+      {bool? dismissable}) {
+   return showDialog(
+      barrierDismissible: dismissable ?? true,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Container(color: whiteColor, child: widget),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(color: whiteColor, child: widget),
+            ],
+          ),
         );
       },
     );

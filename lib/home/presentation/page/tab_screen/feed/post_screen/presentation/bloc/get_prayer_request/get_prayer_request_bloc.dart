@@ -25,20 +25,6 @@ class GetPrayerRequestBloc
       streamSubscription;
 
   GetPrayerRequestBloc() : super(GetPrayerRequestInitial()) {
-    streamSubscription = FirebaseFirestore.instance
-        .collection('Prayers')
-        .snapshots()
-        .listen((QuerySnapshot event) {
-      for (var change in event.docChanges) {
-        if (change.type == DocumentChangeType.added) {
-          // This code will be executed only for new documents added
-
-          // Perform operations on the new document
-          add(GetPostRequestList(userID));
-        }
-      }
-    });
-
     on<GetPostRequestList>(_handleGetPostRequestList);
 
     on<SearchPrayerRequest>(_handleSearchPrayerRequest);
@@ -131,13 +117,8 @@ class GetPrayerRequestBloc
       AddReaction event, Emitter<GetPrayerRequestState> emit) async {
     log('Running');
     try {
-      await prayerRequestRepository.addReaction(
-        event.postID,
-        event.userID,
-        event.userModel,
-        event.currentUser,
-        event.postModel
-      );
+      await prayerRequestRepository.addReaction(event.postID, event.userID,
+          event.userModel, event.currentUser, event.postModel);
     } catch (e) {
       log(e.toString());
     }

@@ -23,7 +23,7 @@ class PostPrayerRequestBloc
       emit(PostPrayerRequestLoading());
       try {
         await prayerRequestRepository
-            .postPrayerRequest(event.user, event.text, event.image, event.name,
+            .postPrayerRequest(event.user, event.text, event.name,
                 event.approvedFriendsList, event.title)
             .then((value) {
           ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(

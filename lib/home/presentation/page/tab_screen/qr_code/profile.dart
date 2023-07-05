@@ -3,16 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/widget/check_friend_status2.dart';
 import 'package:uplift/utils/services/auth_services.dart';
-import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class UserProfile extends StatelessWidget {
-  const UserProfile({super.key, required this.user});
+  const UserProfile({super.key, required this.user, required this.currentUser});
   final UserModel user;
+  final UserModel currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +64,13 @@ class UserProfile extends StatelessWidget {
             }
           },
           child: Container(
-            height: 45,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: primaryColor,
+              color: whiteColor,
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                Icon(Icons.person_add, color: whiteColor),
-                DefaultText(text: "Sent friend request", color: whiteColor),
-              ],
-            ),
+            child:
+                CheckFriendsStatusWidget2(user: user, currentUser: currentUser),
           ),
         )
       ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
@@ -21,10 +21,12 @@ class FriendRequestItem extends StatelessWidget {
     required this.user,
     required this.currentUser,
     required this.mutualFriends,
+    required this.mainFriendsScreenContext,
   });
   final UserFriendshipModel user;
   final UserModel currentUser;
   final List<UserFriendshipModel> mutualFriends;
+  final BuildContext mainFriendsScreenContext;
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +62,17 @@ class FriendRequestItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => FriendsRepository()
-                              .ignore(user.friendshipID.friendshipId!),
+                          onTap: () async {
+                            mainFriendsScreenContext.loaderOverlay.show();
+                            await FriendsRepository()
+                                .ignore(user.friendshipID.friendshipId!)
+                                .whenComplete(() => mainFriendsScreenContext
+                                    .loaderOverlay
+                                    .hide())
+                                .then((value) => mainFriendsScreenContext
+                                    .loaderOverlay
+                                    .hide());
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 7, horizontal: 15),
@@ -80,22 +91,17 @@ class FriendRequestItem extends StatelessWidget {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            await NotificationRepository.sendPushMessage(
-                                userModel.deviceToken!,
-                                '${currentUser.displayName} accepted your friend request.',
-                                'Uplift Notification',
-                                'friend-request');
-                            await NotificationRepository.addNotification(
-                                userModel.userId!,
-                                'Uplift Notification',
-                                ' accepted your friend request.',
-                                type: 'accept');
+                            mainFriendsScreenContext.loaderOverlay.show();
+
                             if (context.mounted) {
                               BlocProvider.of<FriendRequestBloc>(context).add(
                                   FetchFriendRequestEvent(currentUser.userId!));
                               FriendsRepository()
                                   .acceptFriendshipRequest(
-                                      userModel.userId!, currentUser.userId!)
+                                      userModel.userId!,
+                                      currentUser.userId!,
+                                      currentUser,
+                                      userModel)
                                   .then((value) {
                                 BlocProvider.of<FriendsSuggestionsBlocBloc>(
                                         context)
@@ -103,6 +109,8 @@ class FriendRequestItem extends StatelessWidget {
                                 BlocProvider.of<ApprovedFriendsBloc>(context)
                                     .add(FetchApprovedFriendRequest(
                                         currentUser.userId!));
+
+                                mainFriendsScreenContext.loaderOverlay.hide();
                               });
                             }
                           },

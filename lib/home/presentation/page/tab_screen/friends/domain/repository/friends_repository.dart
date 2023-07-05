@@ -113,13 +113,23 @@ class FriendsRepository {
   }
 
   // Accept a friendship request by updating the friendship document status to accepted
-  Future acceptFriendshipRequest(String senderID, String receiverID) async {
+  Future acceptFriendshipRequest(String senderID, String receiverID,
+      UserModel currentUser, UserModel userModel) async {
     FirebaseFirestore.instance
         .collection('Friendships')
         .doc('$senderID$receiverID')
         .update({
       'status': 'approved',
     });
+
+    await NotificationRepository.sendPushMessage(
+        userModel.deviceToken!,
+        '${currentUser.displayName} accepted your friend request.',
+        'Uplift Notification',
+        'friend-request');
+    await NotificationRepository.addNotification(userModel.userId!,
+        'Uplift Notification', ' accepted your friend request.',
+        type: 'accept');
   }
 
   Future<NewUserFriendshipModel?> checkFriendsStatus(String userID) async {
@@ -766,23 +776,15 @@ class FriendsRepository {
       return [];
     }
 
-    // Split userIDS into chunks of 10 (or the desired limit)
-    const chunkSize = 10;
-    final chunks = _splitListIntoChunks(userIDS, chunkSize);
+    // Fetch all users in a single query
+    QuerySnapshot<Map<String, dynamic>> userResponse = await FirebaseFirestore
+        .instance
+        .collection('Users')
+        .where('user_id', whereIn: userIDS)
+        .get();
 
-    List<UserModel> users = [];
-    for (var chunk in chunks) {
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Users')
-          .where('user_id', whereIn: chunk)
-          .get();
-
-      List<UserModel> chunkUsers =
-          response.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
-
-      users.addAll(chunkUsers);
-    }
+    List<UserModel> users =
+        userResponse.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
 
     List<UserFriendshipModel> data = [];
 
@@ -792,12 +794,14 @@ class FriendsRepository {
       UserModel? user = users.firstWhere((u) => u.userId == userIDS[i]);
       data.add(UserFriendshipModel(FriendshipID(friendshipId: friendID), user));
     }
-    final List<UserApprovedMutualFriends> mutualFriends = [];
-    for (var each in data) {
+
+    final List<UserApprovedMutualFriends> mutualFriends =
+        await Future.wait(data.map((each) async {
       final commonFriends =
           await fetchMutualFriendsWithFriend(userID, each.userModel.userId!);
-      mutualFriends.add(UserApprovedMutualFriends(each, commonFriends));
-    }
+      return UserApprovedMutualFriends(each, commonFriends);
+    }));
+
     return mutualFriends
         .where(
             (element) => element.userFriendshipModel.userModel.userId != userID)

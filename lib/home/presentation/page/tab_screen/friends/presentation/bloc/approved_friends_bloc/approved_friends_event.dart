@@ -27,13 +27,6 @@ class RefreshApprovedFriend extends ApprovedFriendsEvent {
   List<Object> get props => [];
 }
 
-// class SearchApprovedFriend extends ApprovedFriendsEvent {
-//   final String query;
-//   const SearchApprovedFriend(this.query);
-//   @override
-//   List<Object> get props => [query];
-// }
-
 class UnfriendEvent extends ApprovedFriendsEvent {
   final String friendShipID;
   final List<UserApprovedMutualFriends> users;

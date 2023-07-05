@@ -7,8 +7,12 @@ class SeeMoreText extends StatefulWidget {
   final int maxLines;
   final Color? color;
 
-  const SeeMoreText(
-      {super.key, required this.text, required this.maxLines, this.color});
+  const SeeMoreText({
+    Key? key,
+    required this.text,
+    required this.maxLines,
+    this.color,
+  }) : super(key: key);
 
   @override
   _SeeMoreTextState createState() => _SeeMoreTextState();
@@ -22,14 +26,16 @@ class _SeeMoreTextState extends State<SeeMoreText> {
     final textSpan = TextSpan(
       text: widget.text,
       style: TextStyle(
-          color: widget.color!.withOpacity(0.85),
-          height: 1.4,
-          fontSize: 14,
-          fontFamily: 'Varela'),
+        color: widget.color!.withOpacity(0.85),
+        height: 1.4,
+        fontSize: 14,
+        fontFamily: 'Varela',
+      ),
     );
 
     final textPainter = TextPainter(
       text: textSpan,
+      textAlign: TextAlign.start,
       textDirection: TextDirection.ltr,
       maxLines: isExpanded ? null : widget.maxLines,
     );
@@ -46,14 +52,12 @@ class _SeeMoreTextState extends State<SeeMoreText> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: RichText(
-              textAlign: TextAlign.justify,
-              text: textSpan,
-              maxLines: isExpanded ? null : widget.maxLines,
-              overflow:
-                  isTextOverflowed ? TextOverflow.ellipsis : TextOverflow.clip,
-            ),
+          RichText(
+            textAlign: TextAlign.start,
+            text: textSpan,
+            maxLines: isExpanded ? null : widget.maxLines,
+            overflow:
+                isTextOverflowed ? TextOverflow.ellipsis : TextOverflow.clip,
           ),
           if (isTextOverflowed)
             GestureDetector(
@@ -63,9 +67,10 @@ class _SeeMoreTextState extends State<SeeMoreText> {
                 });
               },
               child: SmallText(
-                  fontStyle: FontStyle.italic,
-                  text: isExpanded ? 'See less' : 'See more',
-                  color: linkColor),
+                fontStyle: FontStyle.italic,
+                text: isExpanded ? 'See less' : 'See more',
+                color: linkColor,
+              ),
             ),
         ],
       ),

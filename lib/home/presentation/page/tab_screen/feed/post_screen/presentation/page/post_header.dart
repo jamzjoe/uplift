@@ -48,7 +48,7 @@ class PostHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        (user.photoUrl == null || prayerRequest.name == 'Uplift User')
+        (user.photoUrl == null || prayerRequest.name == 'Anonymous')
             ? const CircleAvatar(
                 radius: 18,
                 backgroundImage: AssetImage('assets/default.png'),

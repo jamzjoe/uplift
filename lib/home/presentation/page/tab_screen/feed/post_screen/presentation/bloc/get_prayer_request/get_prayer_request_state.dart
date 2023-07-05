@@ -18,7 +18,8 @@ class LoadingPrayerRequesListSuccess extends GetPrayerRequestState {
   final List<PostModel> prayerRequestPostModel;
   final int? length;
 
-  const LoadingPrayerRequesListSuccess(this.prayerRequestPostModel, {this.length});
+  const LoadingPrayerRequesListSuccess(this.prayerRequestPostModel,
+      {this.length});
   @override
   List<Object> get props => [prayerRequestPostModel];
 }
@@ -26,6 +27,11 @@ class LoadingPrayerRequesListSuccess extends GetPrayerRequestState {
 class LoadingPrayerRequesListError extends GetPrayerRequestState {
   @override
   List<Object> get props => [];
+}
+
+class FetchMoreState extends GetPrayerRequestState {
+  @override
+  List<Object?> get props => [];
 }
 
 class NoInternetConnnection extends GetPrayerRequestState {

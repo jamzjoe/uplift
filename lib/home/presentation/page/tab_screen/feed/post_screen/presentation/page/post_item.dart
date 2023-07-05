@@ -13,14 +13,11 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/full_post_view/full_post_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_actions.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_reactions_counter.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
-import 'package:uplift/utils/widgets/post_photo_viewer.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import '../../../../../../../../constant/constant.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'post_header.dart';
 
@@ -63,7 +60,6 @@ class _PostItemState extends State<PostItem> {
     final user = widget.postModel.userModel;
     final currentUser = widget.user;
     final prayerRequest = widget.postModel.prayerRequestPostModel;
-    final length = prayerRequest.imageUrls!.length;
 
     return GestureDetector(
       onTap: () {
@@ -108,89 +104,7 @@ class _PostItemState extends State<PostItem> {
                     currentUser: currentUser,
                     postModel: widget.allPost,
                   ),
-                  prayerRequest.imageUrls!.isEmpty
-                      ? const SizedBox()
-                      : prayerRequest.imageUrls!.length == 1
-                          ? PostPhotoViewer(
-                              path: prayerRequest.imageUrls!.first,
-                              radius: 0,
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    CarouselSlider(
-                                      items: [
-                                        ...prayerRequest.imageUrls!.map(
-                                          (e) => PostPhotoViewer(path: e),
-                                        ),
-                                      ],
-                                      options: CarouselOptions(
-                                        height: 400,
-                                        pauseAutoPlayOnTouch: true,
-                                        aspectRatio: 16 / 9,
-                                        viewportFraction: 0.8,
-                                        onPageChanged: (index, reason) {
-                                          setState(() {
-                                            imageIndex = index;
-                                          });
-                                        },
-                                        initialPage: 0,
-                                        enableInfiniteScroll: true,
-                                        reverse: false,
-                                        autoPlay: false,
-                                        autoPlayInterval:
-                                            const Duration(seconds: 8),
-                                        autoPlayAnimationDuration:
-                                            const Duration(milliseconds: 800),
-                                        autoPlayCurve: Curves.fastOutSlowIn,
-                                        enlargeCenterPage: true,
-                                        enlargeFactor: 0.13,
-                                        scrollDirection: Axis.horizontal,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 15,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(60),
-                                          color:
-                                              secondaryColor.withOpacity(0.7),
-                                        ),
-                                        child: SmallText(
-                                          text: '${imageIndex + 1}/$length',
-                                          color: whiteColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Wrap(
-                                  children: List.generate(
-                                    prayerRequest.imageUrls!.length,
-                                    (index) => Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: CircleAvatar(
-                                        radius: 3,
-                                        backgroundColor: index == imageIndex
-                                            ? primaryColor
-                                            : lightColor,
-                                      ),
-                                    ),
-                                  ).toList(),
-                                ),
-                              ],
-                            ),
                   PostText(prayerRequest: prayerRequest),
-                 
                   //Likes and Views Count
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

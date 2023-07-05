@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
@@ -21,62 +22,66 @@ String isSelected = 'Suggestions';
 class _FriendsScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: whiteColor,
-      appBar: AppBar(
+    return LoaderOverlay(
+      closeOnBackButton: true,
+      child: Scaffold(
         backgroundColor: whiteColor,
-        title: const HeaderText(text: 'Friends', color: darkColor),
-      ),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-          height: MediaQuery.of(context).size.height - 150,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 80,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CustomContainer(
-                          // Navigate to 'friend_suggest' route
-                          onTap: () {
-                            context.pushNamed('friend_suggest',
-                                extra: widget.currentUser);
-                          },
-                          widget:
-                              DefaultText(text: 'Suggestions', color: lighter),
-                          color: lightColor.withOpacity(0.3),
-                        ),
-                        const SizedBox(width: 15),
-                        CustomContainer(
-                          // Navigate to 'friends-list' route
-                          onTap: () {
-                            context.pushNamed("friends-list",
-                                extra: widget.currentUser);
-                          },
-                          widget:
-                              DefaultText(text: 'Your Friends', color: lighter),
-                          color: lightColor.withOpacity(0.3),
-                        ),
-                      ],
-                    ),
-                    defaultSpace,
-                    const Divider(),
-                    defaultSpace,
-                  ],
-                ),
-              ),
-              Expanded(
-                child: KeepAlivePage(
-                  child: FriendRequestList(
-                    currentUser: widget.currentUser,
+        appBar: AppBar(
+          backgroundColor: whiteColor,
+          title: const HeaderText(text: 'Friends', color: darkColor),
+        ),
+        body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+            height: MediaQuery.of(context).size.height - 150,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 80,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomContainer(
+                            // Navigate to 'friend_suggest' route
+                            onTap: () {
+                              context.pushNamed('friend_suggest',
+                                  extra: widget.currentUser);
+                            },
+                            widget: DefaultText(
+                                text: 'Suggestions', color: lighter),
+                            color: lightColor.withOpacity(0.3),
+                          ),
+                          const SizedBox(width: 15),
+                          CustomContainer(
+                            // Navigate to 'friends-list' route
+                            onTap: () {
+                              context.pushNamed("friends-list",
+                                  extra: widget.currentUser);
+                            },
+                            widget: DefaultText(
+                                text: 'Your Friends', color: lighter),
+                            color: lightColor.withOpacity(0.3),
+                          ),
+                        ],
+                      ),
+                      defaultSpace,
+                      const Divider(),
+                      defaultSpace,
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: KeepAlivePage(
+                    child: FriendRequestList(
+                      mainFriendScreenContext: context,
+                      currentUser: widget.currentUser,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

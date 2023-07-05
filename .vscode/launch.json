@@ -1,5 +1,8 @@
 {
     "configurations": [
+        
+
+
 
 
 
@@ -27,11 +30,11 @@
             "deviceId": "Infinix X695D"
         },
         {
-            "name": "Tablet",
+            "name": "554",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "emulator-5556"
+            "deviceId": "emulator-5554"
         },
         {
             "name": "Modern Device",

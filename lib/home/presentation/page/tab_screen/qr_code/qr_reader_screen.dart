@@ -1,5 +1,5 @@
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,7 +15,8 @@ import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 class QRReaderScreen extends StatefulWidget {
-  const QRReaderScreen({super.key, required this.userJoinedModel});
+  const QRReaderScreen({Key? key, required this.userJoinedModel})
+      : super(key: key);
   final UserModel userJoinedModel;
 
   @override
@@ -26,6 +27,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+  bool popUpIsShown = false;
 
   @override
   void reassemble() {
@@ -39,7 +41,9 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel user = widget.userJoinedModel;
+    if (result != null && !popUpIsShown) {
+      showPopUpProfile(context);
+    }
 
     return LoaderOverlay(
       overlayColor: secondaryColor,
@@ -53,14 +57,15 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
           actions: [
             Tooltip(
               message:
-                  'This QR code scanner help to find your friend in an easy way.',
+                  'This QR code scanner helps find your friend in an easy way.',
               child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    CupertinoIcons.info_circle_fill,
-                    color: whiteColor,
-                  )),
-            )
+                onPressed: () {},
+                icon: const Icon(
+                  CupertinoIcons.info_circle_fill,
+                  color: whiteColor,
+                ),
+              ),
+            ),
           ],
         ),
         body: Column(
@@ -70,108 +75,55 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
                 children: [
                   QRView(
                     overlay: QrScannerOverlayShape(
-                        borderColor: primaryColor,
-                        overlayColor: Colors.black.withOpacity(0.9)),
+                      borderColor: primaryColor,
+                      overlayColor: Colors.black.withOpacity(0.9),
+                    ),
                     key: qrKey,
                     onQRViewCreated: _onQRViewCreated,
                   ),
                   const Positioned(
-                      top: 50,
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: DefaultText(
-                            text: "Make sure the QR code is within the frame.",
-                            color: whiteColor),
-                      )),
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: DefaultText(
+                        text: "Make sure the QR code is within the frame.",
+                        color: whiteColor,
+                      ),
+                    ),
+                  ),
                   Positioned(
-                      bottom: 80,
-                      left: 0,
-                      right: 0,
-                      child: Column(
-                        children: [
-                          Center(
-                            child: (result != null)
-                                ? ElevatedButton.icon(
-                                    icon: const Icon(
-                                      CupertinoIcons.person_add_solid,
-                                      color: whiteColor,
-                                    ),
-                                    onPressed: () async {
-                                      context.loaderOverlay.show();
-                                      final UserModel? userModel;
-                                      if (result!.code! !=
-                                          await AuthServices.userID()) {
-                                        try {
-                                          userModel = await AuthServices()
-                                              .getUserRecord(
-                                                  result!.code.toString());
-                                          if (context.mounted) {
-                                            context.loaderOverlay.hide();
-                                            CustomDialog.showCustomDialog(
-                                                context,
-                                                UserProfile(user: userModel));
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            context.loaderOverlay.hide();
-                                            CustomDialog.showErrorDialog(
-                                                context,
-                                                'User not found or please check your internet connection!',
-                                                "Request failed",
-                                                'Confirm');
-                                          }
-                                        }
-                                      } else {
-                                        if (context.mounted) {
-                                          context.loaderOverlay.hide();
-                                          CustomDialog.showErrorDialog(
-                                              context,
-                                              'You cannot add yourself!',
-                                              "Request failed",
-                                              'Confirm');
-                                        }
-                                      }
-                                    },
-                                    label: const DefaultText(
-                                        text: 'Confirm Add', color: whiteColor))
-                                : ElevatedButton.icon(
-                                    icon: Icon(
-                                      CupertinoIcons.person_add_solid,
-                                      color: whiteColor.withOpacity(0.5),
-                                    ),
-                                    onPressed: null,
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                secondaryColor
-                                                    .withOpacity(0.8))),
-                                    label: DefaultText(
-                                        text: 'Confirm Add',
-                                        color: whiteColor.withOpacity(0.5))),
+                    bottom: 80,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            context.pop();
+                            context.pushNamed(
+                              'qr_generator',
+                              extra: widget.userJoinedModel,
+                            );
+                            context.loaderOverlay.hide();
+                          },
+                          child: const Column(
+                            children: [
+                              Icon(
+                                CupertinoIcons.qrcode_viewfinder,
+                                size: 50,
+                                color: whiteColor,
+                              ),
+                              SmallText(
+                                text: 'Generate QR Code',
+                                color: whiteColor,
+                              ),
+                            ],
                           ),
-                          defaultSpace,
-                          GestureDetector(
-                            onTap: () async {
-                              context.pop();
-                              context.pushNamed('qr_generator',
-                                  extra: widget.userJoinedModel);
-                              context.loaderOverlay.hide();
-                            },
-                            child: const Column(
-                              children: [
-                                Icon(
-                                  CupertinoIcons.qrcode_viewfinder,
-                                  size: 50,
-                                  color: whiteColor,
-                                ),
-                                SmallText(
-                                    text: 'Generate QR Code', color: whiteColor)
-                              ],
-                            ),
-                          ),
-                        ],
-                      ))
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -181,13 +133,57 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
     );
   }
 
+  Future<void> showPopUpProfile(BuildContext context) async {
+    context.loaderOverlay.show();
+    setState(() {
+      popUpIsShown = true;
+    });
+    final UserModel? userModel;
+    if (result!.code! != await AuthServices.userID()) {
+      try {
+        userModel = await AuthServices().getUserRecord(result!.code.toString());
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+          CustomDialog.showCustomDialog(context,
+              UserProfile(user: userModel, currentUser: widget.userJoinedModel),
+              dismissable: true);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+            context,
+            'User not found or please check your internet connection!',
+            'Request failed',
+            'Confirm',
+          );
+        }
+      }
+      return;
+    } else {
+      if (context.mounted) {
+        context.loaderOverlay.hide();
+        CustomDialog.showErrorDialog(
+          context,
+          'You cannot add yourself!',
+          'Request failed',
+          'Confirm',
+        );
+      }
+      return;
+    }
+  }
+
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
 
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+      log('listening');
+      if (popUpIsShown == false) {
+        setState(() {
+          result = scanData;
+        });
+      }
     });
   }
 

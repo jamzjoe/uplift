@@ -47,7 +47,7 @@ class _FeedScreenState extends State<FeedScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
         extendBody: true,
-        body: PostListItem(userJoinedModel: userJoinedModel),
+        body: PostListItem(userJoinedModel: userJoinedModel, controller: scrollController),
         floatingActionButton: SpeedDial(
           spaceBetweenChildren: 10,
           overlayOpacity: 0.5,

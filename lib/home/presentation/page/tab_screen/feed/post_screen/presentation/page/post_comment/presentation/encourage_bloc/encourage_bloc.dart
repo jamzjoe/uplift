@@ -63,13 +63,13 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
         if (event.currentUser.userId != event.postUserModel.userId) {
           NotificationRepository.sendPushMessage(
               event.postUserModel.deviceToken!,
-              '${event.currentUser.displayName} gives you encouragement in your prayer intention.',
+              '${event.currentUser.displayName} sent encouragement to your prayer intention.',
               'Uplift notification',
               'comment');
           NotificationRepository.addNotification(
               event.postUserModel.userId!,
               'Uplift notification',
-              'gives you encouragement in your prayer intention.');
+              'sent encouragement to your prayer intention.');
         }
 
         // ignore: use_build_context_synchronously

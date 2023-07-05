@@ -11,7 +11,6 @@ import 'package:uplift/home/presentation/page/notifications/presentation/page/no
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
-import 'package:uplift/home/presentation/page/tab_screen/qr_code/profile.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_reader_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/account_screen.dart';
@@ -72,15 +71,6 @@ final GoRouter router = GoRouter(
                         FadeTransition(opacity: animation, child: child),
               ),
           routes: [
-            GoRoute(
-                path: 'profile',
-                name: 'profile',
-                pageBuilder: (context, state) {
-                  return MaterialPage(
-                      child: UserProfile(
-                    user: state.extra as UserModel,
-                  ));
-                }),
             GoRoute(
                 path: 'friend_suggest',
                 name: 'friend_suggest',

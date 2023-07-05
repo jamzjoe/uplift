@@ -229,15 +229,10 @@ class AuthenticationBloc
         'You are redirected to login screen.', 'Logout Success')));
 
     on<UpdateBio>((event, emit) async {
-      try {
-        await AuthRepository.updateBio(event.bio, event.userID);
-        final FirebaseAuth auth = FirebaseAuth.instance;
-        await auth.currentUser!.reload();
-        final user = auth.currentUser!;
-        log(user.displayName!);
-      } catch (e) {
-        emit(UserIsOut(e.toString(), ''));
-      }
+      await AuthRepository.updateBio(event.bio, event.userID);
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final user = auth.currentUser!;
+      log(user.displayName!);
     });
 
     on<DeleteAccount>((event, emit) async {
