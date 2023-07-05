@@ -15,12 +15,10 @@ class TabListView extends StatefulWidget {
     Key? key,
     required this.widget,
     required this.filteredPosts,
-    required this.scrollController,
   }) : super(key: key);
 
   final List<PostModel> filteredPosts;
   final PostTabView widget;
-  final ScrollController scrollController;
 
   @override
   State<TabListView> createState() => _TabListViewState();
@@ -44,7 +42,7 @@ class _TabListViewState extends State<TabListView> {
         );
       },
       child: ListView(
-        controller: widget.scrollController,
+        shrinkWrap: true,
         children: [
           Column(
             children: [

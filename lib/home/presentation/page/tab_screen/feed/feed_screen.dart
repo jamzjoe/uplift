@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/user_notif_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'post_screen/presentation/page/post_list_item.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -21,7 +19,6 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   bool isPosting = false;
   int badgeCount = 0;
-  int paginationLimit = 10;
   bool showPopUp = true;
   List<UserNotifModel> notifications = [];
 
@@ -30,13 +27,10 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   void initState() {
     super.initState();
-    scrollController.addListener(_scrollListener);
   }
 
   @override
   void dispose() {
-    scrollController.removeListener(_scrollListener);
-    scrollController.dispose();
     super.dispose();
   }
 
@@ -47,7 +41,8 @@ class _FeedScreenState extends State<FeedScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
         extendBody: true,
-        body: PostListItem(userJoinedModel: userJoinedModel, controller: scrollController),
+        body: PostListItem(
+            userJoinedModel: userJoinedModel, controller: scrollController),
         floatingActionButton: SpeedDial(
           spaceBetweenChildren: 10,
           overlayOpacity: 0.5,
@@ -80,27 +75,5 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
     );
-  }
-
-  void _scrollListener() {
-    if (scrollController.keepScrollOffset) {
-      setState(() {
-        showPopUp = false;
-      });
-    }
-    if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent) {
-      loadMoreData();
-    }
-  }
-
-  void loadMoreData() {
-    setState(() {
-      paginationLimit += 10;
-    });
-    BlocProvider.of<GetPrayerRequestBloc>(context).add(GetPostRequestList(
-      limit: paginationLimit,
-      widget.user.user.uid,
-    ));
   }
 }

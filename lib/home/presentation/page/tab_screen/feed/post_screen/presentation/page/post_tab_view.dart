@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +26,8 @@ class PostTabView extends StatefulWidget {
     Key? key,
     required this.posts,
     required this.userModel,
-    required this.widget, required this.scrollController,
+    required this.widget,
+    required this.scrollController,
   }) : super(key: key);
 
   final List<PostModel> posts;
@@ -42,6 +45,7 @@ class _PostTabViewState extends State<PostTabView>
   List<PostModel> community = [];
   List<PostModel> myPost = [];
   late TabController tabController;
+  int paginationLimit = 10;
   final List<TyperAnimatedText> typerList = [
     TyperAnimatedText('Peace and Unity'),
     TyperAnimatedText('Strength and Guidance'),
@@ -50,11 +54,12 @@ class _PostTabViewState extends State<PostTabView>
     TyperAnimatedText('Gratitude and Thanksgiving'),
   ];
   final TextEditingController searchController = TextEditingController();
-
+  late final ScrollController scrollController = ScrollController();
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
     filteredPosts = List.from(widget.posts);
+    scrollController.addListener(_scrollListener);
     fetchMyPost(filteredPosts);
     fetchCommunity(filteredPosts);
     super.initState();
@@ -126,170 +131,197 @@ class _PostTabViewState extends State<PostTabView>
       child: DefaultTabController(
         length: 2,
         child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBar(
-              pinned: true,
-              flexibleSpace: const FlexibleSpaceBar(),
-              floating: true,
-              forceElevated: innerBoxIsScrolled,
-              toolbarHeight: 190,
-              backgroundColor: whiteColor,
-              title: Padding(
-                padding: const EdgeInsets.only(top: 20, bottom: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Image(
-                            image: AssetImage('assets/uplift_colored_logo.png'),
-                            width: 60),
-                        Row(
-                          children: [
-                            SmallText(
-                                text: 'In partnership with ', color: darkColor),
-                            Image(
-                                image: AssetImage(
-                                    'assets/live_the_faith_logo.png'),
-                                width: 40),
-                          ],
-                        )
-                      ],
-                    ),
-                    defaultSpace,
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            ProfilePhoto(user: widget.userModel),
-                            const SizedBox(width: 15),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const HeaderText(
-                                      text: 'Hello ',
-                                      color: darkColor,
-                                      size: 16,
-                                    ),
-                                    HeaderText(
-                                      text:
-                                          '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
-                                      color: primaryColor,
-                                      size: 20,
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    TextDateWidget(
-                                      date: DateTime.now(),
-                                      fillers: 'Today is',
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        StreamBuilder<Map<String, dynamic>>(
-                          stream: NotificationRepository()
-                              .notificationListener(widget.userModel.userId!),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              final count = snapshot.data!['length'];
-                              return Badge.count(
-                                isLabelVisible: count != 0,
-                                count: count,
-                                alignment: AlignmentDirectional.topEnd,
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    goToNotificationScreen(
-                                      widget.userModel.userId!,
-                                      context,
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Ionicons.notifications,
-                                    size: 28,
-                                    color: darkColor.withOpacity(0.7),
-                                  ),
-                                ),
-                              );
-                            }
-                            return const SizedBox();
-                          },
-                        ),
-                      ],
-                    ),
-                    defaultSpace,
-                    CustomContainer(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      color: Colors.black.withOpacity(0.1),
-                      widget: TextField(
-                        controller: searchController,
-                        style: TextStyle(color: lighter),
-                        onChanged: filterPosts,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          label: AnimatedTextKit(
-                              pause: const Duration(seconds: 4),
-                              repeatForever: true,
-                              onNext: (p0, p1) {},
-                              isRepeatingAnimation: true,
-                              animatedTexts: typerList),
-                          hintStyle:
-                              TextStyle(color: darkColor.withOpacity(0.5)),
-                          suffixIcon: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(CupertinoIcons.search,
-                                color: darkColor),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              bottom: TabBar(
-                controller: tabController,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                indicatorColor: primaryColor,
-                unselectedLabelColor: darkColor.withOpacity(0.5),
-                labelColor: darkColor,
-                automaticIndicatorColorAdjustment: true,
-                onTap: (value) {
-                  // Handle tab selection
-                },
-                tabs: const [
-                  Tab(text: 'Community'),
-                  Tab(text: 'My Prayer Intentions'),
-                ],
-              ),
-            ),
-          ],
-          body: TabBarView(
-            controller: tabController,
-            children: [
-              TabListView(widget: widget, filteredPosts: community, scrollController: widget.scrollController,),
-              TabListView(widget: widget, filteredPosts: myPost, scrollController: widget.scrollController,),
-            ],
-          ),
+          controller: scrollController,
+          headerSliverBuilder: sliverAppBar,
+          body: buildTabBarView(),
         ),
       ),
     );
   }
 
+  TabBarView buildTabBarView() {
+    return TabBarView(
+      controller: tabController,
+      children: [
+        TabListView(
+          widget: widget,
+          filteredPosts: community,
+        ),
+        TabListView(
+          widget: widget,
+          filteredPosts: myPost,
+        ),
+      ],
+    );
+  }
+
+  List<Widget> sliverAppBar(context, innerBoxIsScrolled) => [
+        SliverAppBar(
+          pinned: true,
+          flexibleSpace: const FlexibleSpaceBar(),
+          floating: true,
+          forceElevated: innerBoxIsScrolled,
+          toolbarHeight: 190,
+          backgroundColor: whiteColor,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image(
+                        image: AssetImage('assets/uplift_colored_logo.png'),
+                        width: 60),
+                    Row(
+                      children: [
+                        SmallText(
+                            text: 'In partnership with ', color: darkColor),
+                        Image(
+                            image: AssetImage('assets/live_the_faith_logo.png'),
+                            width: 40),
+                      ],
+                    )
+                  ],
+                ),
+                defaultSpace,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        ProfilePhoto(user: widget.userModel),
+                        const SizedBox(width: 15),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const HeaderText(
+                                  text: 'Hello ',
+                                  color: darkColor,
+                                  size: 16,
+                                ),
+                                HeaderText(
+                                  text:
+                                      '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
+                                  color: primaryColor,
+                                  size: 20,
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                TextDateWidget(
+                                  date: DateTime.now(),
+                                  fillers: 'Today is',
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    StreamBuilder<Map<String, dynamic>>(
+                      stream: NotificationRepository()
+                          .notificationListener(widget.userModel.userId!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final count = snapshot.data!['length'];
+                          return Badge.count(
+                            isLabelVisible: count != 0,
+                            count: count,
+                            alignment: AlignmentDirectional.topEnd,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                goToNotificationScreen(
+                                  widget.userModel.userId!,
+                                  context,
+                                );
+                              },
+                              icon: Icon(
+                                Ionicons.notifications,
+                                size: 28,
+                                color: darkColor.withOpacity(0.7),
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
+                ),
+                defaultSpace,
+                CustomContainer(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  color: Colors.black.withOpacity(0.1),
+                  widget: TextField(
+                    controller: searchController,
+                    style: TextStyle(color: lighter),
+                    onChanged: filterPosts,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      label: AnimatedTextKit(
+                          pause: const Duration(seconds: 4),
+                          repeatForever: true,
+                          onNext: (p0, p1) {},
+                          isRepeatingAnimation: true,
+                          animatedTexts: typerList),
+                      hintStyle: TextStyle(color: darkColor.withOpacity(0.5)),
+                      suffixIcon: IconButton(
+                        onPressed: () {},
+                        icon:
+                            const Icon(CupertinoIcons.search, color: darkColor),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          bottom: TabBar(
+            controller: tabController,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            indicatorColor: primaryColor,
+            unselectedLabelColor: darkColor.withOpacity(0.5),
+            labelColor: darkColor,
+            automaticIndicatorColorAdjustment: true,
+            onTap: (value) {
+              // Handle tab selection
+            },
+            tabs: const [
+              Tab(text: 'Community'),
+              Tab(text: 'My Prayer Intentions'),
+            ],
+          ),
+        ),
+      ];
+
   void goToNotificationScreen(String userID, BuildContext context) {
     BlocProvider.of<NotificationBloc>(context).add(MarkAllAsRead(userID));
     context.pushNamed('notification', extra: widget.userModel);
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.maxScrollExtent ==
+        scrollController.position.pixels) {
+      loadMoreData(widget.userModel.userId!);
+    }
+  }
+
+  void loadMoreData(String userID) {
+    log('Fetching');
+    setState(() {
+      paginationLimit += 10;
+    });
+    BlocProvider.of<GetPrayerRequestBloc>(context)
+        .add(GetPostRequestList(limit: paginationLimit, userID));
   }
 }
