@@ -30,7 +30,7 @@ class SettingsProfileHeader extends StatefulWidget {
 }
 
 class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
-  bool editMode = false;
+  bool editMode = true;
   @override
   Widget build(BuildContext context) {
     final user = widget.userJoinedModel.user;
@@ -152,21 +152,29 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
             ),
             defaultSpace,
             editMode
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SmallText(text: bioController.text, color: darkColor),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              editMode = !editMode;
-                            });
-                          },
-                          icon: const Icon(CupertinoIcons.pencil))
-                    ],
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 45),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        bioController.text.isEmpty
+                            ? const SmallText(
+                                text: 'Write your bio here', color: darkColor)
+                            : SmallText(
+                                text: bioController.text, color: darkColor),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                editMode = !editMode;
+                              });
+                            },
+                            icon: const Icon(CupertinoIcons.pencil))
+                      ],
+                    ),
                   )
                 : TextFormField(
+                    autofocus: false,
                     maxLength: 150,
                     onEditingComplete: () {
                       uploadBio(bioController, context, user);
@@ -177,6 +185,8 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                       });
                       uploadBio(bioController, context, user);
                     },
+                    decoration: const InputDecoration(
+                        hintText: 'Type here...', helperText: 'Bio'),
                     textAlign: TextAlign.center,
                     controller: bioController,
                     style: const TextStyle(fontSize: 14),

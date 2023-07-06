@@ -28,6 +28,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
   Barcode? result;
   QRViewController? controller;
   bool popUpIsShown = false;
+  final GlobalKey _toolTipKey = GlobalKey();
 
   @override
   void reassemble() {
@@ -55,17 +56,23 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
           backgroundColor: primaryColor,
           title: const HeaderText(text: 'QR Reader', color: whiteColor),
           actions: [
-            Tooltip(
-              message:
-                  'This QR code scanner helps find your friend in an easy way.',
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  CupertinoIcons.info_circle_fill,
-                  color: whiteColor,
-                ),
-              ),
-            ),
+            GestureDetector(
+                onTap: () {
+                  final dynamic toolTip = _toolTipKey.currentState;
+                  toolTip.ensureTooltipVisible();
+                },
+                child: Tooltip(
+                  key: _toolTipKey,
+                  message:
+                      "This QR code scanner helps find your friend in an easy way.",
+                  child: const IconButton(
+                    onPressed: null,
+                    icon: Icon(
+                      CupertinoIcons.info_circle_fill,
+                      color: whiteColor,
+                    ),
+                  ),
+                ))
           ],
         ),
         body: Column(

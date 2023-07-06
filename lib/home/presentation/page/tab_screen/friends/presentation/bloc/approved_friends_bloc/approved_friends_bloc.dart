@@ -26,7 +26,9 @@ class ApprovedFriendsBloc
       try {
         final data = await friendsRepository
             .fetchApprovedFriendRequestWithMutual(event.userID);
-        emit(ApprovedFriendsSuccess2(data));
+        List<UserApprovedMutualFriends> mutualFriends =
+            data[0]; // Access the mutualFriends list
+        emit(ApprovedFriendsSuccess2(mutualFriends));
       } catch (e) {
         log(e.toString());
         emit(ApprovedFriendsError());
@@ -37,7 +39,9 @@ class ApprovedFriendsBloc
       try {
         final data = await friendsRepository
             .fetchApprovedFriendRequestWithMutual(event.userID);
-        emit(ApprovedFriendsSuccess2(data));
+        List<UserApprovedMutualFriends> mutualFriends =
+            data[0]; // Access the mutualFriends list
+        emit(ApprovedFriendsSuccess2(mutualFriends));
       } catch (e) {
         log(e.toString());
         emit(ApprovedFriendsError());

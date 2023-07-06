@@ -15,6 +15,7 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/explore/presentation/bloc/explore_get_prayer_request/explore_get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/loading_cubit/loading_cubit.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
@@ -170,7 +171,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<EncourageBloc>(create: (context) => EncourageBloc()),
         BlocProvider<ExploreBloc>(create: (context) => ExploreBloc()),
         BlocProvider<SameIntentionsSuggestionBloc>(
-            create: (context) => SameIntentionsSuggestionBloc())
+            create: (context) => SameIntentionsSuggestionBloc()),
+        BlocProvider(create: (context) => FetchingLoadingCubit())
       ],
       child: MaterialApp.router(
         routerConfig: router,

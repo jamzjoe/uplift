@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../authentication/data/model/user_model.dart';
@@ -31,6 +32,7 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  int clickCount = 0;
 
   @override
   void initState() {
@@ -56,10 +58,22 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
   }
 
   void _handleTap() {
-    if (widget.isReacted) {
-      addReact(widget.postID, widget.currentUser);
+    setState(() {
+      clickCount++;
+    });
+
+    if (clickCount >= 3) {
+      CustomDialog.showErrorDialog(
+          context,
+          'Due to concerns about potential data leaks, we have implemented restrictions on your ability to react to this prayer intention.',
+          'Warning',
+          'Understood');
     } else {
-      unreact(widget.postID, widget.currentUser);
+      if (widget.isReacted) {
+        addReact(widget.postID, widget.currentUser);
+      } else {
+        unreact(widget.postID, widget.currentUser);
+      }
     }
 
     _animationController.forward(from: 0).whenComplete(() {
@@ -72,7 +86,7 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
     return InkWell(
       onTap: _handleTap,
       focusColor: primaryColor,
-      radius: 100,
+      radius: 200,
       splashColor: primaryColor,
       child: AnimatedBuilder(
         animation: _scaleAnimation,

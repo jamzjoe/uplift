@@ -183,8 +183,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     child: const Padding(
                                       padding: EdgeInsets.all(15.0),
                                       child: DefaultText(
-                                          text: 'Creating UpLift Account',
-                                          color: whiteColor),
+                                          text: 'Start', color: whiteColor),
                                     )),
                               ),
                               const SizedBox(

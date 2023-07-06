@@ -10,7 +10,6 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/intentions_user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 
@@ -33,6 +32,7 @@ class PrayerRequestRepository {
       return {
         'isReacted': !userExist,
         'reactionCount': reactionCount,
+        'users': currentReactions
       };
     }).handleError((error) {
       // Handle error if necessary
@@ -245,9 +245,21 @@ class PrayerRequestRepository {
     }
   }
 
+  Future<UserModel?> findUserByEmail(String emailAddress) async {
+    QuerySnapshot<Map<String, dynamic>> users = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('email_address', isEqualTo: emailAddress)
+        .get();
+
+    if (users.docs.isNotEmpty) {
+      return UserModel.fromJson(users.docs.first.data());
+    } else {
+      return null;
+    }
+  }
+
   Future<bool> postPrayerRequest(User user, String text, String name,
-      List<UserFriendshipModel> friends, String title) async {
-    log(friends.toString());
+      List<UserModel> friends, String title) async {
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
     final postID = reference.doc().id;
@@ -256,7 +268,18 @@ class PrayerRequestRepository {
     final prayerRequest = {
       "text": text,
       "user_id": user.uid,
-      "date": DateTime.now(),
+      "date": DateTime.now(), // Convert DateTime to a string
+      "reactions": {"users": []},
+      "post_id": postID,
+      "custom_name": name,
+      "title": title,
+      'privacy': PostPrivacy.public.name
+    };
+
+    final payload = {
+      "text": text,
+      "user_id": user.uid,
+      "date": DateTime.now().toIso8601String(), // Convert DateTime to a string
       "reactions": {"users": []},
       "post_id": postID,
       "custom_name": name,
@@ -269,13 +292,15 @@ class PrayerRequestRepository {
       for (var each in friends) {
         log('Running notif');
         final message = '${user.displayName} sent a prayer intention.';
-        NotificationRepository.sendPushMessage(each.userModel.deviceToken!,
-            message, 'Uplift Notification', 'post');
+        NotificationRepository.sendPushMessage(
+            each.deviceToken!, message, 'Uplift Notification', 'post');
         NotificationRepository.addNotification(
-            each.userModel.userId!, title, 'sent a prayer intention.');
+            each.userId!, title, 'sent a prayer intention.',
+            type: 'post', payload: jsonEncode(payload).toString());
       }
       return true;
     } catch (e) {
+      log(e.toString());
       return false;
     }
   }

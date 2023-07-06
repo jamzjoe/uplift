@@ -40,7 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
-                  children: [ 
+                  children: [
                     SettingsSection(
                       title: 'Account',
                       widget: Container(
@@ -51,7 +51,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children:
                               ListTile.divideTiles(context: context, tiles: [
                             SettingsItem(
-                                onTap: () => context.pushNamed('account'),
+                                onTap: () => context.pushNamed('account',
+                                    extra: userJoinedModel.userModel),
                                 label: 'Account',
                                 icon: CupertinoIcons.person_fill),
                             SettingsItem(
@@ -74,8 +75,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children:
                                 ListTile.divideTiles(context: context, tiles: [
                               SettingsItem(
-                                  onTap: () => CustomDialog()
-                                      .showDonation(context),
+                                  onTap: () =>
+                                      CustomDialog().showDonation(context),
                                   label: 'Donate and Support Us',
                                   icon: CupertinoIcons.heart_fill),
                               SettingsItem(

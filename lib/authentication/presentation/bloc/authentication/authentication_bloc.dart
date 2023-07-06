@@ -103,64 +103,81 @@ class AuthenticationBloc
 
     on<SignInWithEmailAndPassword>((event, emit) async {
       event.context.loaderOverlay.show();
-
-      try {
-        emit(Loading());
-
-        final User? user = await AuthServices.signInWithEmailAndPassword(
-          event.email.text,
-          event.password.text,
-        );
-
-        if (user != null) {
-          final userModel = await PrayerRequestRepository()
-              .getUserRecord(await AuthServices.userID());
-          final token = await FirebaseMessaging.instance.getToken();
-
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(user.uid)
-              .update({"device_token": token}).then(
-                  (value) => event.context.pop());
-
-          if (userModel != null) {
-            emit(UserIsIn(UserJoinedModel(userModel, user)));
-            event.email.clear();
-            event.password.clear();
-          } else {
-            emit(const UserIsOut(
-                "Failed to get user record.", 'Authentication Error'));
-          }
-        } else {
-          emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
-        }
-      } on FirebaseAuthException catch (e) {
-        log(e.code);
-        if (e.code == 'NOT_FOUND') {
-          emit(const UserIsOut(
-              "No user found for that credentials.", 'Authentication Error'));
+      final findUser =
+          await PrayerRequestRepository().findUserByEmail(event.email.text);
+      if (findUser!.provider == 'google_sign_in') {
+        event.context.loaderOverlay.hide();
+        if (event.context.mounted) {
+          // ignore: use_build_context_synchronously
           CustomDialog.showErrorDialog(
               event.context,
-              'No user found for that email.',
+              "Your current sign-in method is Google. Please continue signing in using the Google Sign-In option",
               'Authentication Error',
-              'Confirm');
-        } else if (e.code == 'wrong-password') {
-          CustomDialog.showErrorDialog(
-              event.context, e.message!, 'Authentication Error', 'Confirm');
-          emit(const UserIsOut("Wrong password provided for that user.",
-              'Authentication Error'));
-        } else {
-          UserIsOut(e.toString(), 'Error');
-          CustomDialog.showErrorDialog(
-              event.context, e.message!, 'Authentication Error', 'Confirm');
+              'Understood');
         }
-      } catch (e) {
-        event.context.loaderOverlay.hide();
-        CustomDialog.showErrorDialog(
-            event.context, e.toString(), 'Authentication Error', 'Confirm');
-        UserIsOut(e.toString(), 'Error');
-      } finally {
-        event.context.loaderOverlay.hide();
+        emit(const UserIsOut(
+            "Your current sign-in method is Google. Please continue signing in using the Google Sign-In option",
+            'Authentication Error'));
+      } else {
+        try {
+          emit(Loading());
+
+          final User? user = await AuthServices.signInWithEmailAndPassword(
+            event.email.text,
+            event.password.text,
+          );
+          if (user != null) {
+            final userModel = await PrayerRequestRepository()
+                .getUserRecord(await AuthServices.userID());
+            final token = await FirebaseMessaging.instance.getToken();
+
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({"device_token": token}).then(
+                    (value) => event.context.pop());
+
+            if (userModel != null) {
+              emit(UserIsIn(UserJoinedModel(userModel, user)));
+              event.email.clear();
+              event.password.clear();
+            } else {
+              emit(const UserIsOut(
+                  "Failed to get user record.", 'Authentication Error'));
+            }
+          } else {
+            emit(const UserIsOut("Failed to sign in.", 'Authentication Error'));
+          }
+        } on FirebaseAuthException catch (e) {
+          log(e.code);
+          if (e.code == 'NOT_FOUND') {
+            emit(const UserIsOut(
+                "No user found for that credentials.", 'Authentication Error'));
+            // ignore: use_build_context_synchronously
+            CustomDialog.showErrorDialog(
+                event.context,
+                'No user found for that email.',
+                'Authentication Error',
+                'Confirm');
+          } else if (e.code == 'wrong-password') {
+            // ignore: use_build_context_synchronously
+            CustomDialog.showErrorDialog(
+                event.context, e.message!, 'Authentication Error', 'Confirm');
+            emit(const UserIsOut("Wrong password provided for that user.",
+                'Authentication Error'));
+          } else {
+            UserIsOut(e.toString(), 'Error');
+            CustomDialog.showErrorDialog(
+                event.context, e.message!, 'Authentication Error', 'Confirm');
+          }
+        } catch (e) {
+          event.context.loaderOverlay.hide();
+          CustomDialog.showErrorDialog(
+              event.context, e.toString(), 'Authentication Error', 'Confirm');
+          UserIsOut(e.toString(), 'Error');
+        } finally {
+          event.context.loaderOverlay.hide();
+        }
       }
     });
 
@@ -168,7 +185,7 @@ class AuthenticationBloc
       event.context.loaderOverlay.show();
       try {
         emit(Loading());
-        final User? user = await AuthServices.registerWithEmailAndPassword(
+        final User? user = await AuthServices().registerWithEmailAndPassword(
             event.email.text, event.password.text);
         AuthServices.addUserFromEmailAndPassword(
             user!, event.bio, event.userName.text);
@@ -250,20 +267,26 @@ class AuthenticationBloc
     });
 
     on<UpdateProfile>((event, emit) async {
-      event.context.loaderOverlay.show();
       try {
-        await AuthRepository.updateProfile(event.displayName,
-                event.emailAddress, event.contactNo, event.bio, event.userID)
-            .then((value) {
-          CustomDialog.showCustomSnackBar(
-              event.context, 'Changes updated successfully!');
-
-          event.context.loaderOverlay.hide();
-        });
+        event.context.loaderOverlay
+            .show(); // Show the loader overlay before the asynchronous update
+        await AuthRepository.updateProfile(
+          event.displayName,
+          event.emailAddress,
+          event.contactNo,
+          event.bio,
+          event.userID,
+        );
+        // ignore: use_build_context_synchronously
+        CustomDialog.showCustomSnackBar(
+          event.context,
+          'Changes updated successfully!',
+        );
       } catch (e) {
         emit(const UserIsOut('Update failed', 'Error'));
       } finally {
-        event.context.loaderOverlay.hide();
+        event.context.loaderOverlay
+            .hide(); // Hide the loader overlay after the update is completed or an error occurs
       }
     });
   }

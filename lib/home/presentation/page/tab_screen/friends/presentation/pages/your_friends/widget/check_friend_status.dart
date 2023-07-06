@@ -35,7 +35,6 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: widget.user != widget.currentUser.userId,
       child: FutureBuilder<NewUserFriendshipModel?>(
         future: FriendsRepository().checkFriendsStatus(widget.user.userId!),
         builder: (BuildContext context,
@@ -67,20 +66,15 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
               // User is a friend
               if (friendshipStatus.status.status == 'pending') {
                 return TextButton.icon(
-                  icon: const Icon(
-                    CupertinoIcons.clock_solid,
-                    color: primaryColor,
-                  ),
-                  label: const SmallText(
-                    text: 'Request Pending',
-                    color: primaryColor,
-                  ),
-                  onPressed: () {
-                    FriendsRepository()
-                        .unfriend(friendshipStatus.friendshipID.friendshipId!);
-                    refreshScreen();
-                  },
-                );
+                    onPressed: () {
+                      FriendsRepository().unfriend(
+                          friendshipStatus.friendshipID.friendshipId!);
+                      refreshScreen();
+                    },
+                    icon: const Icon(CupertinoIcons.clear_circled_solid,
+                        color: Colors.red),
+                    label: const SmallText(
+                        text: 'Cancel request', color: Colors.red));
               }
               return TextButton.icon(
                 label: const SmallText(

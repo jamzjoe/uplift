@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/loading_cubit/loading_cubit.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_tab_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_horizontal.dart';
@@ -69,7 +70,6 @@ class _TabListViewState extends State<TabListView> {
             itemBuilder: (context, index) {
               if (index < widget.filteredPosts.length) {
                 final e = widget.filteredPosts[index];
-
                 return PostItem(
                   allPost: widget.filteredPosts,
                   postModel: e,
@@ -80,8 +80,17 @@ class _TabListViewState extends State<TabListView> {
               return null;
             },
           ),
-          if (widget.filteredPosts.isNotEmpty)
-            const SpinKitChasingDots(color: primaryColor),
+          BlocBuilder<FetchingLoadingCubit, LoadingStatus>(
+            builder: (context, state) {
+              if (state == LoadingStatus.loading) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: SpinKitThreeBounce(color: primaryColor, size: 30),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
         ],
       ),
     );

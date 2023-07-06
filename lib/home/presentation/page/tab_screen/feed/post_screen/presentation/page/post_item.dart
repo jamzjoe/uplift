@@ -14,6 +14,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/full_post_view/full_post_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_actions.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/reactors_list.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -121,21 +122,38 @@ class _PostItemState extends State<PostItem> {
                                 snapshot.data!['reactionCount'];
                             return Visibility(
                               visible: reactionCount != 0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Image(
-                                    image: AssetImage('assets/prayed.png'),
-                                    width: 20,
-                                  ),
-                                  SmallText(
-                                    text: getReactionText(
-                                      isReacted,
-                                      reactionCount,
+                              child: GestureDetector(
+                                onTap: () {
+                                  final array = snapshot.data!['users'];
+                                  List<dynamic> userID = array
+                                      .map((obj) => obj.keys.first)
+                                      .toList()
+                                      .cast<
+                                          dynamic>(); // Add the cast method to explicitly convert to List<dynamic>
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ReactorsList(
+                                              userID: userID,
+                                              currentUser: currentUser)));
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Image(
+                                      image: AssetImage('assets/prayed.png'),
+                                      width: 20,
                                     ),
-                                    color: lighter,
-                                  ),
-                                ],
+                                    SmallText(
+                                      text: getReactionText(
+                                        isReacted,
+                                        reactionCount,
+                                      ),
+                                      color: lighter,
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           }

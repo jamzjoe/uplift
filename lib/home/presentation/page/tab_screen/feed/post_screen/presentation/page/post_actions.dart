@@ -51,7 +51,7 @@ class _PostActionsState extends State<PostActions> {
   Widget build(BuildContext context) {
     final currentUser = widget.currentUser;
     final postID = widget.prayerRequest.postId;
-
+    int clickCount = 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,29 +69,19 @@ class _PostActionsState extends State<PostActions> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        isReacted
-                            ? addReact(postID, currentUser)
-                            : unreact(postID, currentUser);
-                      },
-                      focusColor: primaryColor,
-                      radius: 100,
-                      splashColor: primaryColor,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 15),
-                        decoration: const BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        child: AnimatedHeartButton(
-                          isReacted: isReacted,
-                          currentUser: currentUser,
-                          userModel: widget.userModel,
-                          postID: postID,
-                          postModel: widget.postModel,
-                        ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 15),
+                      decoration: const BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      child: AnimatedHeartButton(
+                        isReacted: isReacted,
+                        currentUser: currentUser,
+                        userModel: widget.userModel,
+                        postID: postID,
+                        postModel: widget.postModel,
                       ),
                     ),
 

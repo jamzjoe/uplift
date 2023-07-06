@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,6 +41,7 @@ class NotificationItem extends StatelessWidget {
       },
       child: InkWell(
         onTap: () {
+          log(type.toString());
           if (type == 'react' && payload != null) {
             final decodedPayload = jsonDecode(payload);
             final timestampString = decodedPayload['date'];
@@ -75,6 +77,27 @@ class NotificationItem extends StatelessWidget {
                 builder: (context) => YourFriendsScreen(user: currentUser),
               ),
             );
+          } else if (type == null || type == 'post') {
+            final decodedPayload = jsonDecode(payload!);
+            final timestampString = decodedPayload['date'];
+            final timestamp =
+                Timestamp.fromDate(DateTime.parse(timestampString));
+            final text = decodedPayload['text'];
+            final userId = decodedPayload['user_id'];
+            final postId = decodedPayload['post_id'];
+            final customName = decodedPayload['custom_name'];
+            final title = decodedPayload['title'];
+
+            final data = PrayerRequestPostModel(
+              date: timestamp,
+              text: text,
+              userId: userId,
+              postId: postId,
+              name: customName,
+              title: title,
+            );
+
+            openPrayerIntention(context, user, data);
           }
         },
         child: Padding(

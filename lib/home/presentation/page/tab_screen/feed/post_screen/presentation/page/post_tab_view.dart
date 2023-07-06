@@ -11,6 +11,7 @@ import 'package:uplift/home/presentation/page/notifications/domain/repository/no
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/loading_cubit/loading_cubit.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_list_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/tab_list_view.dart';
 import 'package:uplift/utils/widgets/button.dart';
@@ -312,12 +313,18 @@ class _PostTabViewState extends State<PostTabView>
   void _scrollListener() {
     if (scrollController.position.maxScrollExtent ==
         scrollController.position.pixels) {
+      final loadingCubit = context.read<FetchingLoadingCubit>();
+      loadingCubit.setLoading();
+      Future.delayed(const Duration(seconds: 5), () {
+        loadingCubit.setLoaded();
+      });
       loadMoreData(widget.userModel.userId!);
     }
   }
 
   void loadMoreData(String userID) {
     log('Fetching');
+
     setState(() {
       paginationLimit += 10;
     });

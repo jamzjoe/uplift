@@ -29,7 +29,7 @@ class _PostTextState extends State<PostText> {
       padding: const EdgeInsets.all(10),
       child: SeeMoreText(
           text: widget.prayerRequest.text!.trim(),
-          maxLines: 10,
+          maxLines: 5,
           color: darkColor),
     );
   }

@@ -28,6 +28,7 @@ class AuthServices {
       String email, password) async {
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
+    
     return userCredential.user;
   }
 
@@ -99,11 +100,13 @@ class AuthServices {
     }
   }
 
-  static Future<User?> registerWithEmailAndPassword(
-      String email, password) async {
+  Future<User?> registerWithEmailAndPassword(
+      String email, String password) async {
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    return userCredential.user;
+    User? user = userCredential.user;
+
+    return user;
   }
 
   static signOut() {

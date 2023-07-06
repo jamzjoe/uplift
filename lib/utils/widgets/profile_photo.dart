@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/constant/constant.dart';
 
 class ProfilePhoto extends StatelessWidget {
   final double? size;
@@ -27,8 +28,10 @@ class ProfilePhoto extends StatelessWidget {
                 const SizedBox(),
             errorWidget: (context, url, error) => Container(
                 clipBehavior: Clip.hardEdge,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(15)),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: primaryColor,
+                ),
                 child: const Image(
                   image: AssetImage('assets/default.png'),
                   fit: BoxFit.cover,

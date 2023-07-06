@@ -25,8 +25,8 @@ class ApprovedFriendsSuccess extends ApprovedFriendsState {
 
 class ApprovedFriendsSuccess2 extends ApprovedFriendsState {
   final List<UserApprovedMutualFriends> approvedFriendList;
-
-  const ApprovedFriendsSuccess2(this.approvedFriendList);
+  final List<UserModel>? followers;
+  const ApprovedFriendsSuccess2(this.approvedFriendList, {this.followers});
   @override
   List<Object> get props => [approvedFriendList];
 }

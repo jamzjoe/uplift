@@ -28,6 +28,7 @@ final TextEditingController bioController = TextEditingController();
 final TextEditingController emailAddressController = TextEditingController();
 File? file;
 String? imageURL;
+final _formKey = GlobalKey<FormState>();
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
@@ -53,71 +54,80 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           padding: const EdgeInsets.only(bottom: 100),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-            child: Column(
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(seconds: 3),
-                  child: file != null
-                      ? GestureDetector(
-                          onTap: () {
-                            pickProfilePhoto()
-                                .imagePicker()
-                                .then((value) async {
-                              final picked = await PrayerRequestRepository()
-                                  .xFileToFile(value!);
-                              setState(() {
-                                file = picked;
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  AnimatedSwitcher(
+                    duration: const Duration(seconds: 3),
+                    child: file != null
+                        ? GestureDetector(
+                            onTap: () {
+                              pickProfilePhoto()
+                                  .imagePicker()
+                                  .then((value) async {
+                                final picked = await PrayerRequestRepository()
+                                    .xFileToFile(value!);
+                                setState(() {
+                                  file = picked;
+                                });
                               });
-                            });
-                          },
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundImage: FileImage(file!),
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            pickProfilePhoto()
-                                .imagePicker()
-                                .then((value) async {
-                              final picked = await PrayerRequestRepository()
-                                  .xFileToFile(value!);
-                              setState(() {
-                                file = picked;
+                            },
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundImage: FileImage(file!),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              pickProfilePhoto()
+                                  .imagePicker()
+                                  .then((value) async {
+                                final picked = await PrayerRequestRepository()
+                                    .xFileToFile(value!);
+                                setState(() {
+                                  file = picked;
+                                });
                               });
-                            });
-                          },
-                          child:
-                              ProfilePhoto(user: user, size: 80, radius: 60)),
-                ),
-                defaultSpace,
-                CustomField(
-                  hintText: 'Enter your display name',
-                  label: 'Display name',
-                  controller: nameController,
-                ),
-                Tooltip(
-                  message: "Email address cannot be change.",
-                  child: CustomField(
-                      readOnly: true,
-                      controller: emailAddressController,
-                      label: 'Email address ⓘ',
-                      hintText: 'Add email address'),
-                ),
-                CustomField(
-                  hintText: '+63900-000-0000',
-                  label: 'Contact no.',
-                  limit: 13,
-                  controller: contactController,
-                ),
-                CustomField(
-                  limit: 150,
-                  hintText: 'Write your bio here...',
-                  label: 'Bio',
-                  controller: bioController,
-                ),
-                defaultSpace,
-              ],
+                            },
+                            child:
+                                ProfilePhoto(user: user, size: 80, radius: 60)),
+                  ),
+                  defaultSpace,
+                  CustomField(
+                    hintText: 'Enter your display name',
+                    validator: (p0) =>
+                        p0!.isEmpty ? "Please do not leave it blank." : null,
+                    label: 'Display name',
+                    controller: nameController,
+                  ),
+                  Tooltip(
+                    message: "Email address cannot be change.",
+                    child: CustomField(
+                        readOnly: true,
+                        controller: emailAddressController,
+                        label: 'Email address ⓘ',
+                        hintText: 'Add email address'),
+                  ),
+                  CustomField(
+                    validator: (p0) =>
+                        p0!.isEmpty ? "Please do not leave it blank." : null,
+                    hintText: '+63900-000-0000',
+                    label: 'Contact no.',
+                    limit: 13,
+                    controller: contactController,
+                  ),
+                  CustomField(
+                    limit: 150,
+                    validator: (p0) =>
+                        p0!.isEmpty ? "Please do not leave it blank." : null,
+                    hintText: 'Write your bio here...',
+                    label: 'Bio',
+                    controller: bioController,
+                  ),
+                  defaultSpace,
+                ],
+              ),
             ),
           ),
         ),
@@ -127,39 +137,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Center(
             child: CustomContainer(
                 onTap: () async {
-                  context.loaderOverlay.show();
-                  UserJoinedModel userJoinedModel = widget.userJoinedModel;
-                  if (file != null) {
-                    imageURL = await AuthRepository()
-                        .uploadProfilePicture(file!, user.userId!)
-                        .then((value) {
-                      userJoinedModel.userModel.photoUrl = value;
-                    }).whenComplete(() {
-                      setState(() {
-                        file = null;
+                  if (_formKey.currentState!.validate()) {
+                    context.loaderOverlay.show();
+                    UserJoinedModel userJoinedModel = widget.userJoinedModel;
+                    if (file != null) {
+                      imageURL = await AuthRepository()
+                          .uploadProfilePicture(file!, user.userId!)
+                          .then((value) {
+                        userJoinedModel.userModel.photoUrl = value;
+                      }).whenComplete(() {
+                        setState(() {
+                          file = null;
+                        });
                       });
-                    });
-                  }
+                    }
 
-                  userJoinedModel.userModel.displayName = nameController.text;
-                  userJoinedModel.userModel.bio = bioController.text;
-                  userJoinedModel.userModel.emailAddress =
-                      emailAddressController.text;
-                  userJoinedModel.userModel.phoneNumber =
-                      contactController.text;
+                    userJoinedModel.userModel.displayName = nameController.text;
+                    userJoinedModel.userModel.bio = bioController.text;
+                    userJoinedModel.userModel.emailAddress =
+                        emailAddressController.text;
+                    userJoinedModel.userModel.phoneNumber =
+                        contactController.text;
 
-                  if (context.mounted) {
-                    BlocProvider.of<AuthenticationBloc>(context).add(
-                        UpdateProfile(
-                            displayName: nameController.text,
-                            emailAddress: emailAddressController.text,
-                            contactNo: contactController.text,
-                            bio: bioController.text,
-                            userID: user.userId!,
-                            context: context));
+                    if (context.mounted) {
+                      BlocProvider.of<AuthenticationBloc>(context).add(
+                          UpdateProfile(
+                              displayName: nameController.text,
+                              emailAddress: emailAddressController.text,
+                              contactNo: contactController.text,
+                              bio: bioController.text,
+                              userID: user.userId!,
+                              context: context));
 
-                    BlocProvider.of<AuthenticationBloc>(context)
-                        .add(SignIn(userJoinedModel));
+                      BlocProvider.of<AuthenticationBloc>(context)
+                          .add(SignIn(userJoinedModel));
+                    }
                   }
                 },
                 widget: const Center(

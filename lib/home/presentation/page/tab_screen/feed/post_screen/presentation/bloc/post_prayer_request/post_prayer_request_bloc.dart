@@ -10,6 +10,8 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
+import '../../../../../../../../../authentication/data/model/user_model.dart';
+
 part 'post_prayer_request_event.dart';
 part 'post_prayer_request_state.dart';
 
@@ -24,14 +26,13 @@ class PostPrayerRequestBloc
       try {
         await prayerRequestRepository
             .postPrayerRequest(event.user, event.text, event.name,
-                event.approvedFriendsList, event.title)
+                event.followers, event.title)
             .then((value) {
           ScaffoldMessenger.of(event.context).showSnackBar(const SnackBar(
               backgroundColor: primaryColor,
               content:
                   SmallText(text: 'Posted successfully', color: whiteColor)));
-          BlocProvider.of<SameIntentionsSuggestionBloc>(event.context)
-              .add(FetchSameIntentionEvent(event.user.uid));
+        
         });
         emit(PostPrayerRequestSuccess());
       } catch (e) {

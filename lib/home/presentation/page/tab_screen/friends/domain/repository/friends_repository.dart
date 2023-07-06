@@ -525,92 +525,6 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserFriendshipModel>> searchApprovedFriendRequest(
-      String query) async {
-    List<UserFriendshipModel> data = [];
-    final userID = await AuthServices.userID();
-    String status = 'approved';
-
-    //get all userID that you had send friend request - you are the sender and also the one that you received
-    QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
-        await FirebaseFirestore.instance
-            .collection('Friendships')
-            .where('status', isEqualTo: status)
-            .where('receiver', isEqualTo: userID)
-            .get();
-    QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
-        await FirebaseFirestore.instance
-            .collection('Friendships')
-            .where('status', isEqualTo: status)
-            .where('sender', isEqualTo: userID)
-            .get();
-
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
-        fetchingSenderID.docs + fetchingReceiverID.docs;
-
-    List<String> userIDS = [];
-    List<String> friendshipID = [];
-
-    for (var doc in allID) {
-      String receiver = doc.data()['receiver'];
-      String sender = doc.data()['sender'];
-      String friendID = doc.data()['friendship_id'];
-
-      if (receiver == userID) {
-        userIDS.add(sender);
-        friendshipID.add(friendID);
-      } else if (sender == userID) {
-        userIDS.add(receiver);
-        friendshipID.add(friendID);
-      }
-    }
-
-    if (userIDS.isEmpty) {
-      return [];
-    } else {
-      List<UserModel> users = [];
-      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-          .instance
-          .collection('Users')
-          .where('user_id', isNotEqualTo: userID)
-          .get();
-
-      for (var doc in response.docs) {
-        String docID = doc.data()['user_id'];
-
-        if (userIDS.contains(docID)) {
-          users.add(UserModel.fromJson(doc.data()));
-        }
-      }
-
-      final result = users.toList();
-
-      for (var i = 0; i < result.length; i++) {
-        data.add(UserFriendshipModel(
-            FriendshipID(friendshipId: friendshipID[i]), result[i]));
-      }
-    }
-
-    return data
-        .where((element) =>
-            (element.userModel.searchKey != null &&
-                element.userModel.searchKey!
-                    .contains(query.toLowerCase().trim())) ||
-            (element.userModel.emailAddress != null &&
-                element.userModel.emailAddress!
-                    .toLowerCase()
-                    .contains(query.toLowerCase().trim())) ||
-            (element.userModel.phoneNumber != null &&
-                element.userModel.phoneNumber!
-                    .toLowerCase()
-                    .contains(query.toLowerCase().trim())) ||
-            element.userModel.displayName != null &&
-                element.userModel.displayName!
-                    .toLowerCase()
-                    .contains(query.toLowerCase().trim()))
-        .toList();
-  }
-
   Future addFriendshipRequest(FriendShipModel friendShipModel) async {
     String friendshipId = generateFriendshipId(friendShipModel.sender!,
         friendShipModel.receiver!); // Generate a unique friendship ID
@@ -677,7 +591,7 @@ class FriendsRepository {
     }
   }
 
-  Future<List<UserApprovedMutualFriends>> fetchApprovedFriendRequestWithMutual(
+  Future<List<dynamic>> fetchApprovedFriendRequestWithMutual(
       String userID) async {
     String status = 'approved';
     List<String> userIDS = [];
@@ -713,7 +627,7 @@ class FriendsRepository {
     }
 
     if (userIDS.isEmpty) {
-      return [];
+      return [[], []]; // Return empty lists for followers and mutual friends
     }
 
     // Split userIDS into chunks of 10 (or the desired limit)
@@ -735,20 +649,21 @@ class FriendsRepository {
     }
 
     List<UserFriendshipModel> data = [];
+    List<UserApprovedMutualFriends> mutualFriends = [];
 
     for (int i = 0; i < friendshipID.length; i++) {
       String friendID = friendshipID[i];
 
       UserModel? user = users.firstWhere((u) => u.userId == userIDS[i]);
       data.add(UserFriendshipModel(FriendshipID(friendshipId: friendID), user));
-    }
-    final List<UserApprovedMutualFriends> mutualFriends = [];
-    for (var each in data) {
+
       final commonFriends =
-          await fetchMutualFriendsWithFriend(userID, each.userModel.userId!);
-      mutualFriends.add(UserApprovedMutualFriends(each, commonFriends));
+          await fetchMutualFriendsWithFriend(userID, userIDS[i]);
+      mutualFriends.add(UserApprovedMutualFriends(
+          UserFriendshipModel(FriendshipID(friendshipId: friendID), user),
+          commonFriends));
     }
-    return mutualFriends;
+    return [mutualFriends]; // Return both followers and mutual friends
   }
 
   Future<List<UserApprovedMutualFriends>> fetchFriendRequest(

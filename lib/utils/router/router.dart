@@ -9,6 +9,7 @@ import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.d
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_form/post_form_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/reactors_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestions_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/qr_code/qr_generator_screen.dart';
@@ -52,7 +53,7 @@ final GoRouter router = GoRouter(
                 path: 'forgot-password',
                 name: 'forgotPassword',
                 pageBuilder: (context, state) =>
-                    const MaterialPage(child: ForgrotPasswordScreen())),
+                     MaterialPage(child: ForgrotPasswordScreen(currentUser: state.extra as UserModel))),
             GoRoute(
               name: "register",
               path: 'register',
@@ -99,6 +100,17 @@ final GoRouter router = GoRouter(
                   ));
                 }),
             GoRoute(
+                path: 'reactors-list',
+                name: 'reactors-list',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: ReactorsList(
+                    userID: state.extra as List<dynamic>,
+                    currentUser:
+                        state.queryParametersAll['currentUser'] as UserModel,
+                  ));
+                }),
+            GoRoute(
                 path: 'edit-profile',
                 name: 'edit-profile',
                 pageBuilder: (context, state) => MaterialPage(
@@ -140,7 +152,7 @@ final GoRouter router = GoRouter(
               path: 'account',
               name: 'account',
               pageBuilder: (context, state) =>
-                  const MaterialPage(child: AccountScreen()),
+                   MaterialPage(child: AccountScreen(currentUser: state.extra as UserModel,)),
             ),
             GoRoute(
               path: 'privacy',

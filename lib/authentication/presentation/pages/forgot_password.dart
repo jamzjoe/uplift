@@ -3,15 +3,18 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../../utils/widgets/small_text.dart';
 
 class ForgrotPasswordScreen extends StatefulWidget {
-  const ForgrotPasswordScreen({super.key});
+  const ForgrotPasswordScreen({super.key, required this.currentUser});
+  final UserModel currentUser;
 
   @override
   State<ForgrotPasswordScreen> createState() => _ForgrotPasswordScreenState();
@@ -19,6 +22,12 @@ class ForgrotPasswordScreen extends StatefulWidget {
 
 class _ForgrotPasswordScreenState extends State<ForgrotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
+  @override
+  void initState() {
+    emailController.text = widget.currentUser.emailAddress ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +50,16 @@ class _ForgrotPasswordScreenState extends State<ForgrotPasswordScreen> {
             ),
             CustomContainer(
                 onTap: () {
-                  _sendPasswordResetRequest();
+                  final currentUser = widget.currentUser;
+                  if (currentUser.provider == 'google_sign_in') {
+                    CustomDialog.showErrorDialog(
+                        context,
+                        "We apologize for the inconvenience, but we are unable to reset the password for your Google account. Please proceed to the Google password reset page to change it.",
+                        'Request error',
+                        'Understood');
+                  } else {
+                    _sendPasswordResetRequest();
+                  }
                 },
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,

@@ -5,10 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/post_prayer_request/post_prayer_request_bloc.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
@@ -79,26 +78,27 @@ class _PostFormScreenState extends State<PostFormScreen> {
                 child: CustomContainer(
                     onTap: () async {
                       if (_key.currentState!.validate()) {
-                        List<UserFriendshipModel> friends = [];
-                        final bloc =
-                            BlocProvider.of<ApprovedFriendsBloc>(context);
-                        final state = bloc.state;
-                        if (state is ApprovedFriendsSuccess2) {
-                          friends = state.approvedFriendList
-                              .map((e) => e.userFriendshipModel)
-                              .toList();
+                        final getFollowers = await FriendsRepository()
+                            .fetchApprovedFollowerFriendRequest(user.uid);
+                        List<UserModel> followers = getFollowers
+                            .map(
+                                (e) => UserModel.fromJson(e.userModel.toJson()))
+                            .toList();
+                        if (context.mounted) {
+                          BlocProvider.of<PostPrayerRequestBloc>(context).add(
+                              PostPrayerRequestActivity(
+                                  user,
+                                  controller.text,
+                                  postType == 'anonymous' ? 'Anonymous' : '',
+                                  followers,
+                                  selectedPrayerIntention,
+                                  context));
+                          BlocProvider.of<GetPrayerRequestBloc>(context)
+                              .add(GetPostRequestList(user.uid, limit: 10));
+                          BlocProvider.of<SameIntentionsSuggestionBloc>(context)
+                              .add(FetchSameIntentionEvent(user.uid));
+                          context.pop();
                         }
-                        BlocProvider.of<PostPrayerRequestBloc>(context).add(
-                            PostPrayerRequestActivity(
-                                user,
-                                controller.text,
-                                postType == 'anonymous' ? 'Anonymous' : '',
-                                friends,
-                                selectedPrayerIntention,
-                                context));
-                        BlocProvider.of<SameIntentionsSuggestionBloc>(context)
-                            .add(FetchSameIntentionEvent(userID));
-                        context.pop();
                       }
                     },
                     widget: const DefaultText(text: 'Post', color: whiteColor),

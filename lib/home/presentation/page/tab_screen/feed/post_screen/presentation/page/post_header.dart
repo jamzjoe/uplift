@@ -44,13 +44,145 @@ class PostHeader extends StatelessWidget {
     String privacyName = prayerRequest.privacy == PostPrivacy.public.name
         ? PostPrivacy.private.name
         : PostPrivacy.public.name;
+    var userPopUp = [
+      PopupMenuButton(
+        padding: EdgeInsets.zero,
+        icon: const Icon(
+          CupertinoIcons.ellipsis,
+          size: 15,
+          color: darkColor,
+        ),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+              onTap: () async {
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => const ReportPrayerRequestDialog());
+                });
+              },
+              child: ListTile(
+                dense: true,
+                leading: Icon(CupertinoIcons.exclamationmark_bubble_fill,
+                    color: Colors.red[300]),
+                title: const DefaultText(text: 'Report Post', color: darkColor),
+              )),
+          PopupMenuItem(
+              onTap: () async {
+                Future.delayed(const Duration(milliseconds: 300), () async {
+                  final flutterLocalNotificationsPlugin =
+                      FlutterLocalNotificationsPlugin();
+                  final sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  final scheduledNotificationManager =
+                      ScheduledNotificationManager(
+                          flutterLocalNotificationsPlugin, sharedPreferences);
+
+                  // ignore: use_build_context_synchronously
+                  showModalBottomSheet(
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return NotificationForm(
+                        onSchedule: (value) {
+                          scheduledNotificationManager.addNotification(value);
+                        },
+                        userModel: user,
+                      );
+                    },
+                  );
+                });
+              },
+              child: const ListTile(
+                dense: true,
+                leading:
+                    Icon(CupertinoIcons.bell_circle_fill, color: Colors.blue),
+                title: DefaultText(
+                    text: 'Set reminder for this post', color: darkColor),
+              )),
+        ],
+      ),
+    ];
+
+    var currentUserPopUp = [
+      PopupMenuButton(
+        padding: EdgeInsets.zero,
+        icon: const Icon(
+          CupertinoIcons.ellipsis,
+          size: 15,
+          color: darkColor,
+        ),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+              onTap: () async {
+                Future.delayed(const Duration(milliseconds: 1), () async {
+                  if (prayerRequest.userId != userID) {
+                    CustomDialog.showErrorDialog(
+                        context,
+                        "You can't set privacy to someone's post.",
+                        'Request Error',
+                        'Understood');
+                  } else {
+                    PostRepository.setPrivacy(
+                        prayerRequest.postId!,
+                        privacyName == 'public'
+                            ? PostPrivacy.public
+                            : PostPrivacy.private);
+                    BlocProvider.of<GetPrayerRequestBloc>(context).add(
+                        UpdatePrivacy(
+                            postModel!, prayerRequest.postId!, context));
+                  }
+                });
+              },
+              child: ListTile(
+                dense: true,
+                leading: const Icon(CupertinoIcons.lock_circle_fill,
+                    color: primaryColor),
+                title: DefaultText(
+                    text: 'Set this post to $privacyName', color: darkColor),
+              )),
+          PopupMenuItem(
+              onTap: () async {
+                Future.delayed(
+                    const Duration(milliseconds: 300),
+                    () => CustomDialog.showDeleteConfirmation(
+                            context,
+                            'This will delete this prayer request.',
+                            'Delete Confirmation', () async {
+                          context.pop();
+                          if (prayerRequest.userId == currentUser.userId) {
+                            BlocProvider.of<GetPrayerRequestBloc>(context).add(
+                                DeletePost(userID, prayerRequest.postId!,
+                                    postModel ?? [], context));
+                          } else {
+                            if (context.mounted) {
+                              CustomDialog.showErrorDialog(
+                                  context,
+                                  "You can't delete someone's prayer request.",
+                                  'Request Denied',
+                                  'Confirm');
+                            }
+                          }
+                        }, 'Delete'));
+              },
+              child: ListTile(
+                dense: true,
+                leading: Icon(CupertinoIcons.delete_left_fill,
+                    color: Colors.red[300]),
+                title: const DefaultText(text: 'Delete Post', color: darkColor),
+              ))
+        ],
+      ),
+    ];
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        (user.photoUrl == null || prayerRequest.name == 'Anonymous')
+        (user.photoUrl == null || prayerRequest.name == 'Uplift User')
             ? const CircleAvatar(
-                radius: 18,
+                radius: 24,
+                backgroundColor: primaryColor,
                 backgroundImage: AssetImage('assets/default.png'),
               )
             : GestureDetector(
@@ -105,7 +237,7 @@ class PostHeader extends StatelessWidget {
                 },
                 text: prayerRequest.name!.isEmpty
                     ? user.displayName!
-                    : prayerRequest.name!,
+                    : 'Anonymous',
                 color: darkColor,
                 size: 18,
               ),
@@ -120,139 +252,9 @@ class PostHeader extends StatelessWidget {
           visible: isFriendsFeed == true ? false : true,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton(
-                padding: EdgeInsets.zero,
-                icon: const Icon(
-                  CupertinoIcons.ellipsis,
-                  size: 15,
-                  color: darkColor,
-                ),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 300), () {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const ReportPrayerRequestDialog());
-                        });
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(
-                            CupertinoIcons.exclamationmark_bubble_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
-                            text: 'Report Post', color: darkColor),
-                      )),
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 1),
-                            () async {
-                          if (prayerRequest.userId != userID) {
-                            CustomDialog.showErrorDialog(
-                                context,
-                                "You can't set privacy to someone's post.",
-                                'Request Error',
-                                'Understood');
-                          } else {
-                            PostRepository.setPrivacy(
-                                prayerRequest.postId!,
-                                privacyName == 'public'
-                                    ? PostPrivacy.public
-                                    : PostPrivacy.private);
-                            BlocProvider.of<GetPrayerRequestBloc>(context).add(
-                                UpdatePrivacy(postModel!, prayerRequest.postId!,
-                                    context));
-                          }
-                        });
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: const Icon(CupertinoIcons.lock_circle_fill,
-                            color: primaryColor),
-                        title: DefaultText(
-                            text: 'Set this post to $privacyName',
-                            color: darkColor),
-                      )),
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(const Duration(milliseconds: 300),
-                            () async {
-                          final flutterLocalNotificationsPlugin =
-                              FlutterLocalNotificationsPlugin();
-                          final sharedPreferences =
-                              await SharedPreferences.getInstance();
-                          final scheduledNotificationManager =
-                              ScheduledNotificationManager(
-                                  flutterLocalNotificationsPlugin,
-                                  sharedPreferences);
-
-                          // ignore: use_build_context_synchronously
-                          showModalBottomSheet(
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return NotificationForm(
-                                onSchedule: (value) {
-                                  scheduledNotificationManager
-                                      .addNotification(value);
-                                },
-                                userModel: user,
-                              );
-                            },
-                          );
-                        });
-                      },
-                      child: const ListTile(
-                        dense: true,
-                        leading: Icon(CupertinoIcons.bell_circle_fill,
-                            color: Colors.blue),
-                        title: DefaultText(
-                            text: 'Set reminder for this post',
-                            color: darkColor),
-                      )),
-                  PopupMenuItem(
-                      onTap: () async {
-                        Future.delayed(
-                            const Duration(milliseconds: 300),
-                            () => CustomDialog.showDeleteConfirmation(
-                                    context,
-                                    'This will delete this prayer request.',
-                                    'Delete Confirmation', () async {
-                                  context.pop();
-                                  if (prayerRequest.userId ==
-                                      currentUser.userId) {
-                                    BlocProvider.of<GetPrayerRequestBloc>(
-                                            context)
-                                        .add(DeletePost(
-                                            userID,
-                                            prayerRequest.postId!,
-                                            postModel ?? [],
-                                            context));
-                                  } else {
-                                    if (context.mounted) {
-                                      CustomDialog.showErrorDialog(
-                                          context,
-                                          "You can't delete someone's prayer request.",
-                                          'Request Denied',
-                                          'Confirm');
-                                    }
-                                  }
-                                }, 'Delete'));
-                      },
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(CupertinoIcons.delete_left_fill,
-                            color: Colors.red[300]),
-                        title: const DefaultText(
-                            text: 'Delete Post', color: darkColor),
-                      ))
-                ],
-              ),
-            ],
+            children: user.userId == currentUser.userId
+                ? currentUserPopUp
+                : userPopUp,
           ),
         )
       ],

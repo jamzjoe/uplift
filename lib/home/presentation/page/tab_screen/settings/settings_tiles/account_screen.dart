@@ -8,8 +8,11 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_item.
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
+import '../../../../../../authentication/data/model/user_model.dart';
+
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+  const AccountScreen({super.key, required this.currentUser});
+  final UserModel currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +34,9 @@ class AccountScreen extends StatelessWidget {
               label: 'Delete Account',
               icon: Ionicons.trash_bin),
           SettingsItem(
-              onTap: () => context.pushNamed('forgotPassword'),
-              label: 'Forgot Password',
+              onTap: () =>
+                  context.pushNamed('forgotPassword', extra: currentUser),
+              label: 'Reset Password',
               icon: Ionicons.lock_closed),
         ],
       ),
