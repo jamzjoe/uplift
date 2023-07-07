@@ -7,13 +7,11 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/data/user_comment_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/comment_item.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/just_now.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 class CommentView extends StatefulWidget {
   const CommentView(
@@ -100,6 +98,7 @@ class _CommentViewState extends State<CommentView> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: CommentPage(
+            currentUser: widget.currentUser,
             scrollController: widget.scrollController,
             postModel: widget.postModel,
             postOwner: widget.postOwner),
@@ -115,11 +114,13 @@ class CommentPage extends StatefulWidget {
     required this.postModel,
     required this.postOwner,
     required this.scrollController,
+    required this.currentUser,
   });
 
   final ScrollController scrollController;
   final PostModel postModel;
   final UserModel postOwner;
+  final UserModel currentUser;
 
   @override
   State<CommentPage> createState() => _CommentPageState();
@@ -191,7 +192,11 @@ class _CommentPageState extends State<CommentPage> {
                 controller: widget.scrollController,
                 itemCount: encourages.length,
                 itemBuilder: (context, index) {
-                  return CommentItem(encourages: encourages, index: index);
+                  return CommentItem(
+                      encourages: encourages,
+                      index: index,
+                      currentUser: widget.currentUser,
+                      encourager: encourages[index].userModel);
                 },
               ),
             ],
@@ -211,56 +216,6 @@ class _CommentPageState extends State<CommentPage> {
           ),
         );
       },
-    );
-  }
-}
-
-class CommentItem extends StatelessWidget {
-  const CommentItem({
-    super.key,
-    required this.encourages,
-    required this.index,
-  });
-
-  final List<UserCommentModel> encourages;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ProfilePhoto(user: encourages[index].userModel),
-          const SizedBox(width: 15),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HeaderText(
-                        text: encourages[index].userModel.displayName!,
-                        color: darkColor,
-                        size: 16),
-                    SmallText(
-                        textAlign: TextAlign.start,
-                        text: DateFeature().formatDateTime(
-                            encourages[index].commentModel.createdAt!.toDate()),
-                        color: lightColor)
-                  ],
-                ),
-                SmallText(
-                    text: encourages[index].commentModel.commentText!,
-                    color: lighter),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 }

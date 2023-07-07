@@ -9,7 +9,6 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_actions.dart';
-import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/comment_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_header.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_text.dart';
@@ -17,6 +16,7 @@ import 'package:uplift/utils/widgets/default_loading.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
+import '../post_comment/presentation/comment_item.dart';
 import '../post_reactions_counter.dart';
 
 class FullPostView extends StatefulWidget {
@@ -133,7 +133,10 @@ class _FullPostViewState extends State<FullPostView> {
                             );
                           }
                           return CommentItem(
-                              encourages: state.encourages, index: index - 1);
+                              encourages: state.encourages,
+                              index: index - 1,
+                              currentUser: widget.currentUser,
+                              encourager: widget.postModel.userModel);
                         },
                       );
                     } else {

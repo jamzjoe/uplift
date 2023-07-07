@@ -18,6 +18,7 @@ import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/capitalize.dart';
 import 'package:uplift/utils/widgets/date_widget.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -189,75 +190,83 @@ class _PostTabViewState extends State<PostTabView>
                   ],
                 ),
                 defaultSpace,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        ProfilePhoto(user: widget.userModel),
-                        const SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const HeaderText(
-                                  text: 'Hello ',
-                                  color: darkColor,
-                                  size: 16,
-                                ),
-                                HeaderText(
-                                  text:
-                                      '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
-                                  color: primaryColor,
-                                  size: 20,
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                TextDateWidget(
-                                  date: DateTime.now(),
-                                  fillers: 'Today is',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    StreamBuilder<Map<String, dynamic>>(
-                      stream: NotificationRepository()
-                          .notificationListener(widget.userModel.userId!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final count = snapshot.data!['length'];
-                          return Badge.count(
-                            isLabelVisible: count != 0,
-                            count: count,
-                            alignment: AlignmentDirectional.topEnd,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                goToNotificationScreen(
-                                  widget.userModel.userId!,
-                                  context,
-                                );
-                              },
-                              icon: Icon(
-                                Ionicons.notifications,
-                                size: 28,
-                                color: darkColor.withOpacity(0.7),
+                GestureDetector(
+                  onTap: () {
+                    CustomDialog().showProfile(
+                        context,
+                        widget.widget.userJoinedModel.userModel,
+                        widget.widget.userJoinedModel.userModel);
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          ProfilePhoto(user: widget.userModel),
+                          const SizedBox(width: 15),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const HeaderText(
+                                    text: 'Hello ',
+                                    color: darkColor,
+                                    size: 16,
+                                  ),
+                                  HeaderText(
+                                    text:
+                                        '${capitalizeFirstLetter('${widget.userModel.displayName}')},',
+                                    color: primaryColor,
+                                    size: 20,
+                                  )
+                                ],
                               ),
-                            ),
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
-                  ],
+                              Row(
+                                children: [
+                                  TextDateWidget(
+                                    date: DateTime.now(),
+                                    fillers: 'Today is',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      StreamBuilder<Map<String, dynamic>>(
+                        stream: NotificationRepository()
+                            .notificationListener(widget.userModel.userId!),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final count = snapshot.data!['length'];
+                            return Badge.count(
+                              isLabelVisible: count != 0,
+                              count: count,
+                              alignment: AlignmentDirectional.topEnd,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  goToNotificationScreen(
+                                    widget.userModel.userId!,
+                                    context,
+                                  );
+                                },
+                                icon: Icon(
+                                  Ionicons.notifications,
+                                  size: 28,
+                                  color: darkColor.withOpacity(0.7),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 defaultSpace,
                 CustomContainer(

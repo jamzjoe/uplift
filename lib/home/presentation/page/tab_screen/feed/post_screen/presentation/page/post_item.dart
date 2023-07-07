@@ -146,6 +146,7 @@ class _PostItemState extends State<PostItem> {
                                       width: 20,
                                     ),
                                     SmallText(
+                                      fontSize: 12,
                                       text: getReactionText(
                                         isReacted,
                                         reactionCount,
@@ -189,6 +190,7 @@ class _PostItemState extends State<PostItem> {
                                     size: 15,
                                   ),
                                   SmallText(
+                                    fontSize: 12,
                                     text: snapshot.data!.size <= 1
                                         ? ' ${snapshot.data!.size} encourage'
                                         : ' ${snapshot.data!.size} encourages',

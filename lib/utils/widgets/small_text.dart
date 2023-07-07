@@ -7,18 +7,16 @@ class SmallText extends StatelessWidget {
       required this.color,
       this.textAlign,
       this.fontStyle,
-      this.decoration});
+      this.decoration,
+      this.fontSize});
   final String text;
+  final double? fontSize;
   final TextDecoration? decoration;
   final Color color;
   final TextAlign? textAlign;
   final FontStyle? fontStyle;
   @override
   Widget build(BuildContext context) {
-    double fontSize = 14;
-    if (MediaQuery.of(context).size.shortestSide >= 600) {
-      fontSize += 2;
-    }
     return Text(
       text,
       textAlign: textAlign ?? TextAlign.start,
@@ -27,7 +25,7 @@ class SmallText extends StatelessWidget {
         fontStyle: fontStyle ?? FontStyle.normal,
         color: color,
         fontWeight: FontWeight.normal,
-        fontSize: fontSize,
+        fontSize: fontSize ?? 14,
       ),
     );
   }
