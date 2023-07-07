@@ -45,7 +45,7 @@ class PostHeader extends StatelessWidget {
         ? PostPrivacy.private.name
         : PostPrivacy.public.name;
     var userPopUp = [
-      PopupMenuButton(
+      PopupMenuButton( 
         padding: EdgeInsets.zero,
         icon: const Icon(
           CupertinoIcons.ellipsis,

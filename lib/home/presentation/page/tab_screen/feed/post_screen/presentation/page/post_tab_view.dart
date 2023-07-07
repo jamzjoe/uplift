@@ -262,7 +262,7 @@ class _PostTabViewState extends State<PostTabView>
                 defaultSpace,
                 CustomContainer(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  color: Colors.black.withOpacity(0.1),
+                  color: whiteColor,
                   widget: TextField(
                     controller: searchController,
                     style: TextStyle(color: lighter),
@@ -315,7 +315,7 @@ class _PostTabViewState extends State<PostTabView>
         scrollController.position.pixels) {
       final loadingCubit = context.read<FetchingLoadingCubit>();
       loadingCubit.setLoading();
-      Future.delayed(const Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 15), () {
         loadingCubit.setLoaded();
       });
       loadMoreData(widget.userModel.userId!);

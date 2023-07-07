@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
@@ -22,12 +21,11 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/search_friends/search_friend_bloc.dart';
 import 'package:uplift/utils/router/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timezone/data/latest.dart' as tz;
-
-import 'home/presentation/page/notifications/domain/repository/notification_manager.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -48,7 +46,7 @@ void main() async {
 
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   requestPermission();
-  FirebaseMessaging.onMessageOpenedApp.listen((event) {});
+
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     log('Got a message whilst in the foreground!');
     log('Message data: ${message.data}');
@@ -62,32 +60,16 @@ void main() async {
   }).onError((handleError) {
     log(handleError);
   });
-  SharedPreferences.getInstance().then((sharedPreferences) {
-    final scheduledNotificationManager = ScheduledNotificationManager(
-      flutterLocalNotificationsPlugin,
-      sharedPreferences,
-    );
-    scheduledNotificationManager.scheduleAllNotifications();
-  });
 
-  // Start the background service
-  startBackgroundService();
+  // // Start the background service
+  // startBackgroundService();
+
   runApp(const MyApp());
 }
 
 void startBackgroundService() async {
   WidgetsFlutterBinding.ensureInitialized();
   NotificationRepository.initialize(flutterLocalNotificationsPlugin);
-  // final service = FlutterBackgroundService();
-  // service.on('update').listen((event) {
-  //   log('received data message in feed: $event');
-  // }, onError: (e, s) {
-  //   log('error listening for updates: $e, $s');
-  // }, onDone: () {
-  //   log('background listen closed');
-  // });
-
-  // service.startService();
 }
 
 Future<String?> getFCMToken() async {
@@ -172,7 +154,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<ExploreBloc>(create: (context) => ExploreBloc()),
         BlocProvider<SameIntentionsSuggestionBloc>(
             create: (context) => SameIntentionsSuggestionBloc()),
-        BlocProvider(create: (context) => FetchingLoadingCubit())
+        BlocProvider(create: (context) => FetchingLoadingCubit()),
+        BlocProvider(create: (context) => SearchFriendBloc())
       ],
       child: MaterialApp.router(
         routerConfig: router,

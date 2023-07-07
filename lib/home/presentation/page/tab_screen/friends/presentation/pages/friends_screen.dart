@@ -51,7 +51,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             },
                             widget: DefaultText(
                                 text: 'Suggestions', color: lighter),
-                            color: lightColor.withOpacity(0.3),
+                            color: whiteColor,
                           ),
                           const SizedBox(width: 15),
                           CustomContainer(
@@ -62,7 +62,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             },
                             widget: DefaultText(
                                 text: 'Your Friends', color: lighter),
-                            color: lightColor.withOpacity(0.3),
+                            color: whiteColor,
                           ),
                         ],
                       ),

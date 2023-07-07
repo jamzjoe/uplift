@@ -1,5 +1,6 @@
 {
     "configurations": [
+
         
 
 
@@ -35,6 +36,13 @@
             "request": "launch",
             "program": "lib/main.dart",
             "deviceId": "emulator-5554"
+        },
+        {
+            "name": "556",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5556"
         },
         {
             "name": "Modern Device",

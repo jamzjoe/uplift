@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
 import '../../../../../../../../../authentication/data/model/user_model.dart';
@@ -42,20 +42,16 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while fetching the data
             return Shimmer.fromColors(
-              baseColor: secondaryColor.withOpacity(0.2),
-              highlightColor: Colors.grey.shade100.withOpacity(0.5),
-              child: TextButton.icon(
-                label: const SmallText(
-                  text: 'Processing',
-                  color: primaryColor,
-                ),
-                onPressed: () {},
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              ),
-            );
+                baseColor: primaryColor.withOpacity(0.1),
+                highlightColor: Colors.grey.shade100.withOpacity(0.2),
+                child: CustomContainer(
+                    width: 130,
+                    onTap: () {},
+                    widget: const SmallText(
+                        textAlign: TextAlign.center,
+                        text: 'Processing',
+                        color: whiteColor),
+                    color: Colors.red));
           } else if (snapshot.hasError) {
             // Show an error message if an error occurred
             return Text('Error: ${snapshot.error}');
@@ -65,49 +61,52 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
             if (friendshipStatus != null) {
               // User is a friend
               if (friendshipStatus.status.status == 'pending') {
-                return TextButton.icon(
-                    onPressed: () {
+                return CustomContainer(
+                    borderColor: Colors.red,
+                    width: 130,
+                    borderWidth: .5,
+                    onTap: () {
                       FriendsRepository().unfriend(
                           friendshipStatus.friendshipID.friendshipId!);
                       refreshScreen();
                     },
-                    icon: const Icon(CupertinoIcons.clear_circled_solid,
+                    widget: const SmallText(
+                        textAlign: TextAlign.center,
+                        text: 'Cancel request',
                         color: Colors.red),
-                    label: const SmallText(
-                        text: 'Cancel request', color: Colors.red));
+                    color: whiteColor);
               }
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Unfollow',
-                  color: primaryColor,
-                ),
-                onPressed: () {
-                  FriendsRepository()
-                      .unfriend(friendshipStatus.friendshipID.friendshipId!);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              );
+              return CustomContainer(
+                  onTap: () {
+                    FriendsRepository()
+                        .unfriend(friendshipStatus.friendshipID.friendshipId!);
+                    refreshScreen();
+                  },
+                  borderWidth: .5,
+                  width: 130,
+                  borderColor: linkColor,
+                  widget: const SmallText(
+                    text: 'Unfollow',
+                    color: linkColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  color: whiteColor);
             } else {
               // User is not a friend
-              return TextButton.icon(
-                label: const SmallText(
-                  text: 'Follow',
-                  color: darkColor,
-                ),
-                onPressed: () {
-                  FriendsRepository().addFriend(
-                      widget.currentUser.userId!, widget.user.userId);
-                  refreshScreen();
-                },
-                icon: const Icon(
-                  CupertinoIcons.add_circled_solid,
-                  color: primaryColor,
-                ),
-              );
+              return CustomContainer(
+                  onTap: () {
+                    FriendsRepository().addFriend(
+                        widget.currentUser.userId!, widget.user.userId);
+                    refreshScreen();
+                  },
+                  borderColor: linkColor,
+                  width: 130,
+                  widget: const SmallText(
+                    text: 'Follow',
+                    color: whiteColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  color: linkColor);
             }
           }
         },

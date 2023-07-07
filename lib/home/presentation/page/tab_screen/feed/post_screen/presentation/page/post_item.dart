@@ -254,23 +254,23 @@ class _PostItemState extends State<PostItem> {
 
   String getReactionText(bool isReacted, int reactionCount) {
     if (!isReacted && reactionCount == 1) {
-      return 'You prayed this';
+      return 'You prayed this intention';
     } else if (!isReacted && reactionCount > 1) {
       if (reactionCount >= 1000) {
         // Convert count to "k" format
         final int countInK = (reactionCount / 1000).round();
-        return 'You and $countInK k other prayed this';
+        return 'You and $countInK k other prayed this intention';
       } else {
         final count = reactionCount - 1;
-        return 'You and $count ${count == 1 ? 'other' : 'others'} prayed this';
+        return 'You and $count ${count == 1 ? 'other' : 'others'} prayed this intention';
       }
     } else {
       if (reactionCount >= 1000) {
         // Convert count to "k" format
         final int countInK = (reactionCount / 1000).round();
-        return '$countInK k prayed this';
+        return '$countInK k prayed this intention';
       } else {
-        return '$reactionCount prayed this';
+        return '$reactionCount prayed this intention';
       }
     }
   }

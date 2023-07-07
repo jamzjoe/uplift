@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,8 +7,13 @@ import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_mutual_friends_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/search_friends/search_friend_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/contacts.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/widget/check_friend_status.dart';
 import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/header_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
+import 'package:uplift/utils/widgets/profile_photo.dart';
 
 import 'add_friend_item.dart';
 
@@ -37,19 +44,20 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
   }
 
   void _search(String query) {
-    setState(() {
-      filteredUsers = widget.users.where((user) {
-        final displayName = user.userFriendshipModel.displayName;
-        final emailAddress = user.userFriendshipModel.emailAddress;
-        final phoneNumber = user.userFriendshipModel.phoneNumber;
+    BlocProvider.of<SearchFriendBloc>(context).add(SearchUserEvent(query));
+    // setState(() {
+    //   filteredUsers = widget.users.where((user) {
+    //     final displayName = user.userFriendshipModel.displayName;
+    //     final emailAddress = user.userFriendshipModel.emailAddress;
+    //     final phoneNumber = user.userFriendshipModel.phoneNumber;
 
-        return (displayName != null &&
-                displayName.toLowerCase().contains(query.toLowerCase())) ||
-            (emailAddress != null &&
-                emailAddress.toLowerCase().contains(query.toLowerCase())) ||
-            (phoneNumber != null && phoneNumber.contains(query));
-      }).toList();
-    });
+    //     return (displayName != null &&
+    //             displayName.toLowerCase().contains(query.toLowerCase())) ||
+    //         (emailAddress != null &&
+    //             emailAddress.toLowerCase().contains(query.toLowerCase())) ||
+    //         (phoneNumber != null && phoneNumber.contains(query));
+    //   }).toList();
+    // });
   }
 
   Future<void> _importContacts() async {
@@ -82,7 +90,7 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomContainer(
               color: Colors.grey.shade100,
@@ -100,6 +108,54 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
                 ),
               ),
             ),
+            BlocBuilder<SearchFriendBloc, SearchFriendState>(
+              builder: (context, state) {
+                log(state.toString());
+                if (state is SearchFriendSuccess) {
+                  return Column(
+                    children: [
+                      ...state.users.map((UserModel user) => GestureDetector(
+                            onTap: () {
+                              CustomDialog().showProfile(
+                                  context, widget.currentUser, user);
+                            },
+                            child: Dismissible(
+                                key: Key(user.userId!),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          ProfilePhoto(user: user),
+                                          const SizedBox(width: 15),
+                                          HeaderText(
+                                              size: 16,
+                                              text: user.displayName ?? '',
+                                              color: darkColor),
+                                        ],
+                                      ),
+                                      CheckFriendsStatusWidget(
+                                          user: user,
+                                          currentUser: widget.currentUser)
+                                    ],
+                                  ),
+                                )),
+                          ))
+                    ],
+                  );
+                }
+                return const Column(
+                  children: [],
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            const HeaderText(
+                text: 'Friends of friends', color: darkColor, size: 20),
             Expanded(
               child: filteredUsers.isNotEmpty
                   ? ListView.builder(

@@ -151,6 +151,7 @@ class _FriendsFeedState extends State<FriendsFeed>
                           color: darkColor,
                         )
                       : const SizedBox(),
+                  const SizedBox(height: 10),
                   Visibility(
                     visible: currentUser.userId != user.userId,
                     child: CheckFriendsStatusWidget(

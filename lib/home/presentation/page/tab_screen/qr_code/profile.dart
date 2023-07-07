@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/widget/check_friend_status2.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
+
+import '../friends/presentation/pages/your_friends/widget/check_friend_status.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key, required this.user, required this.currentUser});
@@ -70,7 +71,7 @@ class UserProfile extends StatelessWidget {
               color: whiteColor,
             ),
             child:
-                CheckFriendsStatusWidget2(user: user, currentUser: currentUser),
+                CheckFriendsStatusWidget(user: user, currentUser: currentUser),
           ),
         )
       ],

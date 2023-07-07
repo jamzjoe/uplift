@@ -354,7 +354,7 @@ class PrayerRequestRepository {
       if (currentUser.userId != userModel.userId) {
         NotificationRepository.sendPushMessage(
           userModel.deviceToken!,
-          '${currentUser.displayName} prayed your prayer intentions.',
+          '${currentUser.displayName} prayed for your intention.',
           'Uplift notification',
           'react',
         );
@@ -369,7 +369,7 @@ class PrayerRequestRepository {
         NotificationRepository.addNotification(
           userModel.userId!,
           'Uplift notification',
-          'prayed your prayer intentions.',
+          'prayed for your intention.',
           payload: data,
           type: 'react',
         );

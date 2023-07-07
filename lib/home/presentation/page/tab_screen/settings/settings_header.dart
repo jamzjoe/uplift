@@ -146,7 +146,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                   onTap: () => context.pushNamed('edit-profile',
                       extra: widget.userJoinedModel),
                   widget: SmallText(text: 'Edit profile', color: lighter),
-                  color: lighter.withOpacity(0.1),
+                  color: whiteColor,
                 ),
               ],
             ),
