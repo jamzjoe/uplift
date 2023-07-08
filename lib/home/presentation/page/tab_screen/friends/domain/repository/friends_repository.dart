@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/payload_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
@@ -122,11 +123,17 @@ class FriendsRepository {
       'status': 'approved',
     });
 
+    final data = {
+      "type": notificationType.friend_request.name,
+      "current_user": currentUser.userId
+    };
+
     await NotificationRepository.sendPushMessage(
         userModel.deviceToken!,
         '${currentUser.displayName} accepted your friend request.',
         'Uplift Notification',
-        'friend-request');
+        'friend-request',
+        jsonEncode(data).toString());
     await NotificationRepository.addNotification(userModel.userId!,
         'Uplift Notification', ' accepted your friend request.',
         type: 'accept');
@@ -564,7 +571,10 @@ class FriendsRepository {
     return '$userId1$userId2';
   }
 
-  Future<bool> addFriend(String senderID, receiverID) async {
+  Future<bool> addFriend(
+    String senderID,
+    receiverID,
+  ) async {
     try {
       String friendshipId = generateFriendshipId(
           senderID, receiverID); // Generate a unique friendship ID
@@ -578,8 +588,13 @@ class FriendsRepository {
           .collection('Friendships')
           .doc(friendshipId)
           .set(input.toJson())
-          .then((value) {
+          .then((value) async {
         log("Request send");
+        final data = {
+          "type": notificationType.friend_request.name,
+          "current_user": senderID
+        };
+
         NotificationRepository.addNotification(
             receiverID, 'Friend Request', 'sent you a friend request.',
             type: 'request');

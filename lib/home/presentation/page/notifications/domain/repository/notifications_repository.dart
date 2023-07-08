@@ -34,21 +34,12 @@ class NotificationRepository {
 
   static Future showNotification(
       {int id = 0, String? title, String? body, String? payload}) async {
-    return _notification.show(id, title, body, await _notificationDetails());
-  }
-
-  static Future initialize(
-      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-    var androidInitialize =
-        const AndroidInitializationSettings('@drawable/ic_notification');
-    var iosInitialize = const DarwinInitializationSettings();
-    var initializeSettings =
-        InitializationSettings(android: androidInitialize, iOS: iosInitialize);
-    flutterLocalNotificationsPlugin.initialize(initializeSettings);
+    return _notification.show(id, title, body, await _notificationDetails(),
+        payload: payload);
   }
 
   static Future<void> sendPushMessage(
-      String token, String body, String title, String type) async {
+      String token, String body, String title, String type, String notificationData) async {
     final data = {
       "notification": {"body": body, "title": title},
       "priority": "high",
@@ -57,6 +48,7 @@ class NotificationRepository {
         "id": "1",
         "status": "done",
         "type": type,
+        "data": notificationData
       },
       "to": token
     };

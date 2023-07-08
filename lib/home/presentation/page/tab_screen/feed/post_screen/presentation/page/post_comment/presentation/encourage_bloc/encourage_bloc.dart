@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -5,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/payload_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/data/user_comment_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/domain/comment_repository.dart';
@@ -61,11 +63,17 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
                   text: 'Comment sent successfully!', color: whiteColor)));
         });
         if (event.currentUser.userId != event.postUserModel.userId) {
+          final data = {
+            "type": notificationType.comment.name,
+            "post_id": event.postID,
+            "post_user_id": event.postUserModel.userId
+          };
           NotificationRepository.sendPushMessage(
               event.postUserModel.deviceToken!,
               '${event.currentUser.displayName} sent encouragement to your prayer intention.',
               'Uplift notification',
-              'comment');
+              'comment',
+              jsonEncode(data).toString());
           NotificationRepository.addNotification(
               event.postUserModel.userId!,
               'Uplift notification',
@@ -76,6 +84,7 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
         add(RefreshEncourageEvent(
             event.postID, event.context, event.scrollController));
       } catch (e) {
+        log(e.toString());
         emit(LoadingEncouragesError(e.toString()));
       }
     });

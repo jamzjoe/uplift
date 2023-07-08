@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
@@ -27,8 +26,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -44,15 +41,15 @@ void main() async {
   ]);
   tz.initializeTimeZones();
 
-  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   requestPermission();
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     log('Got a message whilst in the foreground!');
-    log('Message data: ${message.data}');
+    log('Message data: ${message.data['data']}');
 
     if (message.notification != null) {
       NotificationRepository.showNotification(
+          payload: message.data['data'],
           id: message.notification.hashCode,
           title: message.notification!.title,
           body: message.notification!.body);
@@ -61,15 +58,9 @@ void main() async {
     log(handleError);
   });
 
-  // // Start the background service
-  // startBackgroundService();
+
 
   runApp(const MyApp());
-}
-
-void startBackgroundService() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
 }
 
 Future<String?> getFCMToken() async {
@@ -131,7 +122,6 @@ void updateFCMTokenInBackground() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

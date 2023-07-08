@@ -24,6 +24,7 @@ import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_tiles/terms_and_policies.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/photo_view.dart';
+import 'package:uplift/utils/widgets/test.dart';
 
 final GoRouter router = GoRouter(
     // redirect: (context, state) {
@@ -52,8 +53,9 @@ final GoRouter router = GoRouter(
             GoRoute(
                 path: 'forgot-password',
                 name: 'forgotPassword',
-                pageBuilder: (context, state) =>
-                     MaterialPage(child: ForgrotPasswordScreen(currentUser: state.extra as UserModel))),
+                pageBuilder: (context, state) => MaterialPage(
+                    child: ForgrotPasswordScreen(
+                        currentUser: state.extra as UserModel))),
             GoRoute(
               name: "register",
               path: 'register',
@@ -72,6 +74,15 @@ final GoRouter router = GoRouter(
                         FadeTransition(opacity: animation, child: child),
               ),
           routes: [
+            GoRoute(
+                path: 'test',
+                name: 'test',
+                pageBuilder: (context, state) {
+                  return MaterialPage(
+                      child: Test(
+                    payloader: state.extra as String,
+                  ));
+                }),
             GoRoute(
                 path: 'friend_suggest',
                 name: 'friend_suggest',
@@ -151,8 +162,10 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: 'account',
               name: 'account',
-              pageBuilder: (context, state) =>
-                   MaterialPage(child: AccountScreen(currentUser: state.extra as UserModel,)),
+              pageBuilder: (context, state) => MaterialPage(
+                  child: AccountScreen(
+                currentUser: state.extra as UserModel,
+              )),
             ),
             GoRoute(
               path: 'privacy',

@@ -10,6 +10,7 @@ import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/m
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
+import 'package:uplift/utils/services/dynamic_links.dart';
 import 'package:uplift/utils/widgets/animated_pop_up_heart.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -131,7 +132,8 @@ class _PostActionsState extends State<PostActions> {
         const SizedBox(width: 10),
         InkWell(
           onTap: () {
-            saveAndShare(widget.prayerRequest.text ?? '');
+            saveAndShare(
+                widget.prayerRequest.postId!, widget.prayerRequest.userId!);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -159,8 +161,12 @@ class _PostActionsState extends State<PostActions> {
     return PrayerRequestRepository().unReact(postID, currentUser.userId!);
   }
 
-  Future saveAndShare(String text) async {
-    await Share.share(text);
+  Future saveAndShare(String postID, String postUser) async {
+    MyDynamicLink()
+        .generateDynamicLink(postID: postID, postUser: postUser)
+        .then((value) async {
+      await Share.share(value);
+    });
   }
 
   void checkReaction(

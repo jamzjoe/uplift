@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/notifications/data/model/payload_model.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/intentions_user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
@@ -284,7 +285,8 @@ class PrayerRequestRepository {
       "post_id": postID,
       "custom_name": name,
       "title": title,
-      'privacy': PostPrivacy.public.name
+      'privacy': PostPrivacy.public.name,
+      "type": notificationType.post.name
     };
 
     try {
@@ -292,8 +294,8 @@ class PrayerRequestRepository {
       for (var each in friends) {
         log('Running notif');
         final message = '${user.displayName} sent a prayer intention.';
-        NotificationRepository.sendPushMessage(
-            each.deviceToken!, message, 'Uplift Notification', 'post');
+        NotificationRepository.sendPushMessage(each.deviceToken!, message,
+            'Uplift Notification', 'post', jsonEncode(payload).toString());
         NotificationRepository.addNotification(
             each.userId!, title, 'sent a prayer intention.',
             type: 'post', payload: jsonEncode(payload).toString());
@@ -352,20 +354,19 @@ class PrayerRequestRepository {
       }
 
       if (currentUser.userId != userModel.userId) {
-        NotificationRepository.sendPushMessage(
-          userModel.deviceToken!,
-          '${currentUser.displayName} prayed for your intention.',
-          'Uplift notification',
-          'react',
-        );
-
         Map<String, dynamic> jsonData =
             postModel.prayerRequestPostModel.toJson();
+        jsonData['type'] = notificationType.react.name;
         DateTime dateTime = postModel.prayerRequestPostModel.date!
             .toDate(); // Assuming `date` is a `Timestamp` object
         jsonData['date'] = dateTime.toUtc().toIso8601String();
         String data = jsonEncode(jsonData);
-
+        NotificationRepository.sendPushMessage(
+            userModel.deviceToken!,
+            '${currentUser.displayName} prayed for your intention.',
+            'Uplift notification',
+            'react',
+            data.toString());
         NotificationRepository.addNotification(
           userModel.userId!,
           'Uplift notification',

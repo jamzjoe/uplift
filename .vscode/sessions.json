@@ -1,0 +1,119 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v6/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      [
+        {
+          "name": "docker:ros",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "docker:k8s",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "docker:nats",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "docker:fleet",
+          "commands": [
+            ""
+          ]
+        }
+      ],
+      [
+        {
+          "name": "db:postgre",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "db:redis",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "db:hyper",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "db:mysql",
+          "commands": [
+            ""
+          ]
+        }
+      ],
+      [
+        {
+          "name": "api:delivery",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "api:feedback",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "api:service",
+          "commands": [
+            ""
+          ]
+        }
+      ],
+      {
+        "name": "test",
+        "commands": [
+          ""
+        ]
+      },
+      {
+        "name": "debug",
+        "commands": [
+          ""
+        ]
+      }
+    ],
+    "saved-session-1": [
+      {
+        "name": "connect",
+        "commands": [
+          ""
+        ]
+      }
+    ],
+    "saved-session-2": [
+      [
+        {
+          "name": "api",
+          "commands": [
+            ""
+          ]
+        },
+        {
+          "name": "log",
+          "commands": [
+            ""
+          ]
+        }
+      ]
+    ]
+  }
+}
