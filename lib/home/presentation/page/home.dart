@@ -28,6 +28,7 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bl
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/same_intention_bloc/same_intentions_suggestion_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/settings/settings_screen.dart';
 import 'package:uplift/home/presentation/page/tabbar_material_widget.dart';
@@ -323,33 +324,73 @@ class _HomeScreenState extends State<HomeScreen>
         await FirebaseDynamicLinks.instance.getInitialLink();
 
     if (initialLink != null) {
+      final userID = FirebaseAuth.instance.currentUser!.uid;
+      final currentUser = await PrayerRequestRepository().getUserRecord(userID);
       final Uri deepLink = initialLink.link;
       // Example of using the dynamic link to push the user to a different screen
       final List<String> splittedData = deepLink.path.split('/');
-      final postId = splittedData[1];
-      final postUserID = splittedData[2];
-      final postModel =
-          await PostRepository().getEachPrayerIntention(postId, postUserID);
-      final userID = FirebaseAuth.instance.currentUser!.uid;
-      final currentUser = await PrayerRequestRepository().getUserRecord(userID);
-      openPrayerIntention(context, postModel!.userModel,
-          postModel.prayerRequestPostModel, currentUser!);
+      // context.pushNamed('test', extra: '$postId$postUserID');
+      if (splittedData[1] == 'profile') {
+        final scannedUserID = splittedData[2];
+        final scannedUser =
+            await PrayerRequestRepository().getUserRecord(scannedUserID);
+        final ScrollController scrollController = ScrollController();
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FriendsFeed(
+                  userModel: scannedUser!,
+                  currentUser: currentUser!,
+                  scrollController: scrollController),
+            ));
+      } else if (splittedData[1] == 'share') {
+        final postId = splittedData[2];
+        final postUserID = splittedData[3];
+        // context.pushNamed('test', extra: '$postId$postUserID');
+        final postModel =
+            await PostRepository().getEachPrayerIntention(postId, postUserID);
+
+        // ignore: use_build_context_synchronously
+        openPrayerIntention(context, postModel!.userModel,
+            postModel.prayerRequestPostModel, currentUser!);
+      }
     }
 
     FirebaseDynamicLinks.instance.onLink.listen(
       (pendingDynamicLinkData) async {
-        // Set up the `onLink` event listener next as it may be received here
-        final Uri deepLink = pendingDynamicLinkData.link;
-        final List<String> splittedData = deepLink.path.split('/');
-        final postId = splittedData[1];
-        final postUserID = splittedData[2];
-        final postModel =
-            await PostRepository().getEachPrayerIntention(postId, postUserID);
         final userID = FirebaseAuth.instance.currentUser!.uid;
         final currentUser =
             await PrayerRequestRepository().getUserRecord(userID);
-        openPrayerIntention(context, postModel!.userModel,
-            postModel.prayerRequestPostModel, currentUser!);
+        // Set up the `onLink` event listener next as it may be received here
+        final Uri deepLink = pendingDynamicLinkData.link;
+        final List<String> splittedData = deepLink.path.split('/');
+
+        if (splittedData[1] == 'profile') {
+          final scannedUserID = splittedData[2];
+          final scannedUser =
+              await PrayerRequestRepository().getUserRecord(scannedUserID);
+          final ScrollController scrollController = ScrollController();
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FriendsFeed(
+                    userModel: scannedUser!,
+                    currentUser: currentUser!,
+                    scrollController: scrollController),
+              ));
+        } else if (splittedData[1] == 'share') {
+          final postId = splittedData[2];
+          final postUserID = splittedData[3];
+          // context.pushNamed('test', extra: '$postId$postUserID');
+          final postModel =
+              await PostRepository().getEachPrayerIntention(postId, postUserID);
+
+          // ignore: use_build_context_synchronously
+          openPrayerIntention(context, postModel!.userModel,
+              postModel.prayerRequestPostModel, currentUser!);
+        }
       },
     );
   }

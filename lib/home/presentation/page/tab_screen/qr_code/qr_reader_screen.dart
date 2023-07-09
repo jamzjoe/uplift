@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -147,8 +148,12 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
     });
     final UserModel? userModel;
     if (result!.code! != await AuthServices.userID()) {
+      final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks
+          .instance
+          .getDynamicLink(Uri.parse(result!.code!));
+      final scannedUser = initialLink!.link.path.split('/')[2];
       try {
-        userModel = await AuthServices().getUserRecord(result!.code.toString());
+        userModel = await AuthServices().getUserRecord(scannedUser);
         if (context.mounted) {
           context.loaderOverlay.hide();
           CustomDialog.showCustomDialog(context,

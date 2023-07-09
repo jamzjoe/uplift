@@ -24,16 +24,14 @@ class FriendsFeed extends StatefulWidget {
     Key? key,
     required this.userModel,
     this.isSelf,
-    this.friendshipID,
     required this.currentUser,
     required this.scrollController,
   }) : super(key: key);
 
   final UserModel userModel;
   final UserModel currentUser;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
   final bool? isSelf;
-  final String? friendshipID;
 
   @override
   _FriendsFeedState createState() => _FriendsFeedState();
@@ -121,50 +119,52 @@ class _FriendsFeedState extends State<FriendsFeed>
     final UserModel currentUser = widget.currentUser;
 
     return Scaffold(
-      body: CustomScrollView(
-        controller: widget.scrollController,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GestureDetector(
-                    onTap: () =>
-                        context.pushNamed('photo_view', extra: user.photoUrl),
-                    child: ProfilePhoto(
-                      user: user,
-                      radius: 60,
-                      size: 90,
+      body: SafeArea(
+        child: CustomScrollView(
+          controller: widget.scrollController,
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () =>
+                          context.pushNamed('photo_view', extra: user.photoUrl),
+                      child: ProfilePhoto(
+                        user: user,
+                        radius: 60,
+                        size: 90,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  HeaderText(text: user.displayName ?? '', color: darkColor),
-                  SmallText(text: user.emailAddress ?? '', color: lightColor),
-                  defaultSpace,
-                  user.bio != null && user.bio!.isNotEmpty
-                      ? SmallText(
-                          text: user.bio!.isEmpty ? 'User Bio' : user.bio!,
-                          color: darkColor,
-                        )
-                      : const SizedBox(),
-                  const SizedBox(height: 10),
-                  Visibility(
-                    visible: currentUser.userId != user.userId,
-                    child: CheckFriendsStatusWidget(
-                      user: user,
-                      currentUser: currentUser,
+                    const SizedBox(height: 10),
+                    HeaderText(text: user.displayName ?? '', color: darkColor),
+                    SmallText(text: user.emailAddress ?? '', color: lightColor),
+                    defaultSpace,
+                    user.bio != null && user.bio!.isNotEmpty
+                        ? SmallText(
+                            text: user.bio!.isEmpty ? 'User Bio' : user.bio!,
+                            color: darkColor,
+                          )
+                        : const SizedBox(),
+                    const SizedBox(height: 10),
+                    Visibility(
+                      visible: currentUser.userId != user.userId,
+                      child: CheckFriendsStatusWidget(
+                        user: user,
+                        currentUser: currentUser,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Tabs(user: user, currentUser: currentUser),
-        ],
+            Tabs(user: user, currentUser: currentUser),
+          ],
+        ),
       ),
     );
   }

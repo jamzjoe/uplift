@@ -64,14 +64,17 @@ class UserProfile extends StatelessWidget {
               }
             }
           },
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: whiteColor,
+          child: Visibility(
+            visible: user.userId != currentUser.userId,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: whiteColor,
+              ),
+              child: CheckFriendsStatusWidget(
+                  user: user, currentUser: currentUser),
             ),
-            child:
-                CheckFriendsStatusWidget(user: user, currentUser: currentUser),
           ),
         )
       ],

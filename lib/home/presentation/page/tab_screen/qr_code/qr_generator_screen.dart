@@ -9,6 +9,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/utils/services/dynamic_links.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
@@ -27,6 +28,13 @@ final ScreenshotController screenshotController = ScreenshotController();
 
 class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
   bool isScreenShoting = false;
+  String profileLink = '';
+
+  @override
+  void initState() {
+    generateProfileLink();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +98,7 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
                           defaultSpace,
                           defaultSpace,
                           QrImageView(
-                            data: user.userId!,
+                            data: profileLink,
                             gapless: true,
                             version: QrVersions.auto,
                             size: 200,
@@ -149,5 +157,15 @@ class _QRGeneratorScreenState extends State<QRGeneratorScreen> {
     image.writeAsBytes(imageBytes!);
 
     await Share.shareFiles([image.path]);
+  }
+
+  void generateProfileLink() async {
+    MyDynamicLink()
+        .generateDynamicLinkForProfile(userID: widget.user.userId)
+        .then((value) {
+      setState(() {
+        profileLink = value;
+      });
+    });
   }
 }
