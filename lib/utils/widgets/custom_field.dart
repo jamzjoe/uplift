@@ -14,6 +14,8 @@ class CustomField extends StatefulWidget {
     this.hintText,
     this.readOnly,
     this.limit,
+    this.initialValue,
+    this.onChanged,
   });
   final String? label;
   final TextEditingController? controller;
@@ -24,7 +26,8 @@ class CustomField extends StatefulWidget {
   final VoidCallback? tapSuffix;
   final bool? readOnly;
   final int? limit;
-
+  final String? initialValue;
+  final Function(String)? onChanged;
   @override
   State<CustomField> createState() => _CustomFieldState();
 }
@@ -38,6 +41,8 @@ class _CustomFieldState extends State<CustomField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            onChanged: widget.onChanged,
+            initialValue: widget.initialValue,
             maxLength: widget.limit,
             keyboardType: widget.label == 'Contact no.'
                 ? TextInputType.phone

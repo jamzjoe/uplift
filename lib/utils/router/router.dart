@@ -122,8 +122,8 @@ final GoRouter router = GoRouter(
                   ));
                 }),
             GoRoute(
-                path: 'edit-profile',
-                name: 'edit-profile',
+                path: 'update-profile',
+                name: 'update-profile',
                 pageBuilder: (context, state) => MaterialPage(
                     child: EditProfileScreen(
                         userJoinedModel: state.extra as UserJoinedModel))),

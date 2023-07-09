@@ -48,7 +48,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
         child: Column(
           children: [
             GestureDetector(
-              onTap: () => context.pushNamed('edit-profile',
+              onTap: () => context.pushNamed('update-profile',
                   extra: widget.userJoinedModel),
               child: Row(
                 children: [
@@ -143,7 +143,7 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomContainer(
-                  onTap: () => context.pushNamed('edit-profile',
+                  onTap: () => context.pushNamed('update-profile',
                       extra: widget.userJoinedModel),
                   widget: SmallText(text: 'Edit profile', color: lighter),
                   color: whiteColor,

@@ -267,27 +267,17 @@ class AuthenticationBloc
     });
 
     on<UpdateProfile>((event, emit) async {
-      try {
-        event.context.loaderOverlay
-            .show(); // Show the loader overlay before the asynchronous update
-        await AuthRepository.updateProfile(
-          event.displayName,
-          event.emailAddress,
-          event.contactNo,
-          event.bio,
-          event.userID,
-        );
-        // ignore: use_build_context_synchronously
-        CustomDialog.showCustomSnackBar(
-          event.context,
-          'Changes updated successfully!',
-        );
-      } catch (e) {
-        emit(const UserIsOut('Update failed', 'Error'));
-      } finally {
-        event.context.loaderOverlay
-            .hide(); // Hide the loader overlay after the update is completed or an error occurs
-      }
+      event.context.loaderOverlay
+          .show(); // Show the loader overlay before the asynchronous update
+      await AuthRepository.updateProfile(
+        event.displayName,
+        event.emailAddress,
+        event.contactNo,
+        event.bio,
+        event.userID,
+      ).then((value) {
+        event.context.loaderOverlay.show();
+      });
     });
   }
 }
