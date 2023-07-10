@@ -1,4 +1,4 @@
-enum notificationType { friend_request, react, post, comment }
+enum notificationType { friend_request, react, post, comment, add_friend }
 
 class PayloadModel {
   String? data;

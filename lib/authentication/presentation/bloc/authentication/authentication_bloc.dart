@@ -9,7 +9,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
@@ -254,14 +253,35 @@ class AuthenticationBloc
 
     on<DeleteAccount>((event, emit) async {
       final User user = FirebaseAuth.instance.currentUser!;
+      log(user.providerData.toString());
+      String provider = user.providerData.map((e) => e.providerId).toString();
+      log(provider);
+      log(event.password);
       try {
-        await user.delete();
-        await GoogleSignIn().disconnect();
-        await AuthServices().deleteUser(user.uid);
-        emit(const UserIsOut('Deleted', ''));
-      } catch (e) {
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
+        if (provider.contains('password')) {
+          await user.reauthenticateWithCredential(
+            EmailAuthProvider.credential(
+              email: user.email!,
+              password: event.password,
+            ),
+          );
+          await user.delete();
+          emit(const UserIsOut('Deleted', ''));
+        } else if (provider.contains('google.com')) {
+          event.context!.pop();
+          CustomDialog.showCustomSnackBar(
+              event.context!, 'Google account cannot be deleted.');
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'wrong-password') {
+          event.context!.pop();
+          CustomDialog.showCustomSnackBar(event.context!, e.message.toString());
+        } else {
+          event.context!.pop();
+          CustomDialog.showCustomSnackBar(event.context!, e.message.toString());
+        }
+        final userModel =
+            await PrayerRequestRepository().getUserRecord(user.uid);
         emit(UserIsIn(UserJoinedModel(userModel!, user)));
       }
     });

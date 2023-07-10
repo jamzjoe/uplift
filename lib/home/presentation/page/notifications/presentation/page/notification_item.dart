@@ -9,6 +9,7 @@ import 'package:uplift/home/presentation/page/notifications/data/model/user_noti
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/post_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/full_post_view/full_post_view.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friends_screen.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/your_friends_screen.dart';
@@ -40,7 +41,7 @@ class NotificationItem extends StatelessWidget {
             .add(DeleteOneNotif(userID, notification.notificationId!));
       },
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           log(type.toString());
           if (type == 'react' && payload != null) {
             final decodedPayload = jsonDecode(payload);
@@ -98,6 +99,14 @@ class NotificationItem extends StatelessWidget {
             );
 
             openPrayerIntention(context, user, data);
+          } else if (type == 'comment') {
+            final decodedPayload = jsonDecode(payload!);
+            final postId = decodedPayload['post_id'];
+            final postUserID = decodedPayload['post_user_id'];
+            final postModel = await PostRepository()
+                .getEachPrayerIntention(postId, postUserID);
+            openPrayerIntention(context, postModel!.userModel,
+                postModel.prayerRequestPostModel);
           }
         },
         child: Padding(

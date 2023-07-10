@@ -77,7 +77,9 @@ class EncourageBloc extends Bloc<EncourageEvent, EncourageState> {
           NotificationRepository.addNotification(
               event.postUserModel.userId!,
               'Uplift notification',
-              'sent encouragement to your prayer intention.');
+              'sent encouragement to your prayer intention.',
+              type: 'comment',
+              payload: jsonEncode(data).toString());
         }
 
         // ignore: use_build_context_synchronously

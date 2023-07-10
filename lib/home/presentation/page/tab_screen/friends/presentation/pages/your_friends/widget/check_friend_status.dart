@@ -96,7 +96,10 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
               return CustomContainer(
                   onTap: () {
                     FriendsRepository().addFriend(
-                        widget.currentUser.userId!, widget.user.userId);
+                        widget.currentUser.userId!,
+                        widget.user.userId,
+                        widget.user.deviceToken!,
+                        widget.user.displayName!);
                     refreshScreen();
                   },
                   borderColor: linkColor,

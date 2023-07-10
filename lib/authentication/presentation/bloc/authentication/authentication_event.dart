@@ -67,9 +67,12 @@ class UpdateBio extends AuthenticationEvent {
 }
 
 class DeleteAccount extends AuthenticationEvent {
-  const DeleteAccount();
+  final BuildContext? context;
+  final String password;
+  const DeleteAccount(this.password, {this.context});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [password, context];
 }
 
 class UpdateProfile extends AuthenticationEvent {

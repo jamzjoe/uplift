@@ -13,6 +13,16 @@ class NotificationRepository {
   static Set<String> sentNotifications = <String>{};
   static final _notification = FlutterLocalNotificationsPlugin();
 
+  static Future initialize(
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    var androidInitialize =
+        const AndroidInitializationSettings('@drawable/ic_notification');
+    var iosInitialize = const DarwinInitializationSettings();
+    var initializeSettings =
+        InitializationSettings(android: androidInitialize, iOS: iosInitialize);
+    flutterLocalNotificationsPlugin.initialize(initializeSettings);
+  }
+
   static Future _notificationDetails() async {
     return const NotificationDetails(
         android: AndroidNotificationDetails('channel id', 'Uplift Notification',
@@ -38,8 +48,8 @@ class NotificationRepository {
         payload: payload);
   }
 
-  static Future<void> sendPushMessage(
-      String token, String body, String title, String type, String notificationData) async {
+  static Future<void> sendPushMessage(String token, String body, String title,
+      String type, String notificationData) async {
     final data = {
       "notification": {"body": body, "title": title},
       "priority": "high",
@@ -82,13 +92,17 @@ class NotificationRepository {
 
   static Future<void> addNotification(
       String receiverID, String title, String message,
-      {String? payload, String? type}) async {
+      {String? payload, String? type, String? postID}) async {
     CollectionReference notificationsCollection =
         FirebaseFirestore.instance.collection('Notifications');
     final currentUserID = await AuthServices.userID();
     try {
       // Generate a unique notification ID
       String notificationId = notificationsCollection.doc().id;
+
+      if (type == 'comment') {
+        notificationId = postID!;
+      }
 
       final NotificationModel notificationModel = NotificationModel(
           notificationId: notificationId,
@@ -97,6 +111,7 @@ class NotificationRepository {
           title: title,
           read: false,
           type: type,
+          postID: postID,
           message: message,
           payload: payload,
           timestamp: Timestamp.now());

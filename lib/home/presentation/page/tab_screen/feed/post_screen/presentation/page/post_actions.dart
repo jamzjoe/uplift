@@ -133,7 +133,10 @@ class _PostActionsState extends State<PostActions> {
         InkWell(
           onTap: () {
             saveAndShare(
-                widget.prayerRequest.postId!, widget.prayerRequest.userId!);
+                widget.prayerRequest.postId!,
+                widget.prayerRequest.userId!,
+                "${widget.currentUser.displayName} shares ${widget.userModel.displayName!}'s prayer intention with you. ",
+                widget.prayerRequest.text!);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -161,9 +164,14 @@ class _PostActionsState extends State<PostActions> {
     return PrayerRequestRepository().unReact(postID, currentUser.userId!);
   }
 
-  Future saveAndShare(String postID, String postUser) async {
+  Future saveAndShare(
+      String postID, String postUser, String title, String description) async {
     MyDynamicLink()
-        .generateDynamicLink(postID: postID, postUser: postUser)
+        .generateDynamicLink(
+            postID: postID,
+            postUser: postUser,
+            title: title,
+            description: description)
         .then((value) async {
       await Share.share(value);
     });

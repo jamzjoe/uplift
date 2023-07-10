@@ -572,9 +572,7 @@ class FriendsRepository {
   }
 
   Future<bool> addFriend(
-    String senderID,
-    receiverID,
-  ) async {
+      String senderID, receiverID, String token, String name) async {
     try {
       String friendshipId = generateFriendshipId(
           senderID, receiverID); // Generate a unique friendship ID
@@ -584,22 +582,27 @@ class FriendsRepository {
           status: 'pending',
           timestamp: Timestamp.now(),
           friendshipID: friendshipId);
+      final data = {
+        "type": notificationType.add_friend.name,
+        "current_user": senderID
+      };
       FirebaseFirestore.instance
           .collection('Friendships')
           .doc(friendshipId)
           .set(input.toJson())
           .then((value) async {
         log("Request send");
-        final data = {
-          "type": notificationType.friend_request.name,
-          "current_user": senderID
-        };
 
         NotificationRepository.addNotification(
             receiverID, 'Friend Request', 'sent you a friend request.',
             type: 'request');
       }).catchError((error) => log("Failed to add friend: $error"));
-
+      NotificationRepository.sendPushMessage(
+          token,
+          '$name sent you a friend request.',
+          'Friend Request',
+          notificationType.add_friend.name,
+          jsonEncode(data).toString());
       return true;
     } catch (e) {
       return false;

@@ -49,8 +49,11 @@ class UserProfile extends StatelessWidget {
                     'Confirm');
               }
             } else {
-              final addFriend = await FriendsRepository()
-                  .addFriend(currentUserID, user.userId);
+              final addFriend = await FriendsRepository().addFriend(
+                  currentUserID,
+                  user.userId,
+                  user.deviceToken!,
+                  user.displayName!);
               if (addFriend) {
                 if (context.mounted) {
                   // FriendsRepository().addFriendshipRequest(user);

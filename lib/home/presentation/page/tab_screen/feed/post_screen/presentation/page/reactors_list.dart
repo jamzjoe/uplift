@@ -34,7 +34,7 @@ class _ReactorsListState extends State<ReactorsList> {
       ),
       body: SafeArea(
         child: ListView(
-          itemExtent: 50,
+          itemExtent: 60,
           padding: const EdgeInsets.symmetric(horizontal: 30),
           shrinkWrap: true,
           children: [

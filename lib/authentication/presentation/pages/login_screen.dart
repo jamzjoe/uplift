@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     return LoaderOverlay(
+      closeOnBackButton: true,
       child: Scaffold(
         backgroundColor: primaryColor,
         resizeToAvoidBottomInset: false,

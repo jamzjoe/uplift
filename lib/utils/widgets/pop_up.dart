@@ -1,17 +1,33 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/donation/presentation/donation_form.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
+import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 import '../../home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/comment_view.dart';
 import '../../home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 
 class CustomDialog {
+  static void showDeleteAccountConfirmation(BuildContext context,
+      String message, String title, String successButtonText) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final formKey = GlobalKey<FormState>();
+        return AlertDialog(
+          content: AccountDeleteConfirmationForm(formKey: formKey),
+        );
+      },
+    );
+  }
+
   static void showDeleteConfirmation(BuildContext context, String message,
       String title, VoidCallback successFunction, String successButtonText) {
     showDialog(
@@ -84,6 +100,95 @@ class CustomDialog {
                                     ),
                                     SmallText(
                                         text: 'Delete', color: whiteColor),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void showResetConfirmation(BuildContext context, String message,
+      String title, VoidCallback successFunction, String successButtonText) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            color: whiteColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Image(
+                  image: AssetImage('assets/error.png'),
+                  width: 60,
+                ),
+                defaultSpace,
+                HeaderText(text: title, color: lighter),
+                SmallText(text: message, color: lighter),
+                defaultSpace,
+                defaultSpace,
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 45,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: .5, color: lighter),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.close,
+                                    color: lighter,
+                                    size: 18,
+                                  ),
+                                  SmallText(text: 'Cancel', color: lighter),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: successFunction,
+                            child: Container(
+                              height: 45,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.red,
+                              ),
+                              child: const Center(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.refresh,
+                                      color: whiteColor,
+                                      size: 18,
+                                    ),
+                                    SmallText(text: 'Reset', color: whiteColor),
                                   ],
                                 ),
                               ),
@@ -385,7 +490,7 @@ class CustomDialog {
 
   static Future showCustomDialog(BuildContext context, Widget widget,
       {bool? dismissable}) {
-   return showDialog(
+    return showDialog(
       barrierDismissible: dismissable ?? true,
       context: context,
       builder: (BuildContext context) {
@@ -399,5 +504,149 @@ class CustomDialog {
         );
       },
     );
+  }
+}
+
+class AccountDeleteConfirmationForm extends StatefulWidget {
+  const AccountDeleteConfirmationForm({
+    super.key,
+    required this.formKey,
+  });
+
+  final GlobalKey<FormState> formKey;
+
+  @override
+  State<AccountDeleteConfirmationForm> createState() =>
+      _AccountDeleteConfirmationFormState();
+}
+
+final TextEditingController passwordController = TextEditingController();
+
+class _AccountDeleteConfirmationFormState
+    extends State<AccountDeleteConfirmationForm> {
+  int _timerDuration = 10;
+  final bool _isCanceled = false;
+  bool _startTimer = false;
+  @override
+  void initState() {
+    startTimer();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: whiteColor,
+      child: Form(
+        key: widget.formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Image(
+              image: AssetImage('assets/error.png'),
+              width: 60,
+            ),
+            defaultSpace,
+            HeaderText(text: 'Delete Confirmation', color: lighter),
+            SmallText(
+                text: 'Are you sure you want to delete this account?',
+                color: lighter),
+            defaultSpace,
+            CustomField(
+              controller: passwordController,
+              isPassword: true,
+              label: 'Password',
+              hintText: 'Please input your password to confirm.',
+              validator: (p0) => p0!.isEmpty || p0.length <= 5
+                  ? 'Kindly enter at least 6 characters.'
+                  : null,
+            ),
+            defaultSpace,
+            Flexible(
+              child: GestureDetector(
+                onTap: () => context.pop(),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 45,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border: Border.all(width: .5, color: lighter),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Icon(
+                                Icons.close,
+                                color: lighter,
+                                size: 18,
+                              ),
+                              SmallText(text: 'Cancel', color: lighter),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (widget.formKey.currentState!.validate()) {
+                            BlocProvider.of<AuthenticationBloc>(context).add(
+                                DeleteAccount(passwordController.text,
+                                    context: context));
+                          }
+                        },
+                        child: Container(
+                          height: 45,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.red,
+                          ),
+                          child: const Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.delete_outline,
+                                  color: whiteColor,
+                                  size: 18,
+                                ),
+                                SmallText(text: 'Delete', color: whiteColor),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void startTimer() {
+    setState(() {
+      _startTimer = true;
+    });
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _timerDuration--;
+      });
+      if (_timerDuration > 0) {
+        startTimer();
+      } else {
+        // Perform account deletion here
+        // This code will be executed after the 10-second timer is completed
+      }
+    });
   }
 }

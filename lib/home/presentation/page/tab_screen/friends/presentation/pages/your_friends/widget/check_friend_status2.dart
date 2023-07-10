@@ -123,7 +123,10 @@ class _CheckFriendsStatusWidget2State extends State<CheckFriendsStatusWidget2> {
                   ),
                   onPressed: () {
                     FriendsRepository().addFriend(
-                        widget.currentUser.userId!, widget.user.userId);
+                        widget.currentUser.userId!,
+                        widget.user.userId,
+                        widget.user.deviceToken!,
+                        widget.user.displayName!);
                     refreshScreen();
                   },
                   icon: const Icon(
