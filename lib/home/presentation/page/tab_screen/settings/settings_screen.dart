@@ -19,7 +19,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         if (state is UserIsIn) {
@@ -41,6 +41,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   children: [
+                    SettingsSection(
+                        title: 'Privacy',
+                        widget: Container(
+                          decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: SettingsItem(
+                              onTap: () => context.pushNamed('privacy'),
+                              label: 'Prayer intention privacy',
+                              icon: CupertinoIcons.lock_circle_fill),
+                        )),
                     SettingsSection(
                       title: 'Account',
                       widget: Container(

@@ -1,14 +1,7 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/friendship_status.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/new_friendship_model.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/follower_page.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/following_page.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/tab_bar/prayer_intention_page.dart';
@@ -16,8 +9,6 @@ import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pa
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
-
-import '../../../data/model/friendship_model.dart';
 
 class FriendsFeed extends StatefulWidget {
   const FriendsFeed({
@@ -39,74 +30,6 @@ class FriendsFeed extends StatefulWidget {
 
 class _FriendsFeedState extends State<FriendsFeed>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  FriendshipStatus? friendshipStatus;
-
-  Future<NewUserFriendshipModel?> checkFriendsStatus(String userID) async {
-    final currentUserID = FirebaseAuth.instance.currentUser!.uid;
-    List<NewUserFriendshipModel> friends =
-        await FriendsRepository().fetchAllFriendRequest(userID);
-
-    for (var friend in friends) {
-      if (friend.userModel.userId == currentUserID) {
-        return friend;
-      }
-    }
-
-    return null;
-  }
-
-  Future<void> unfriend(String friendshipID) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('Friendships')
-          .doc(friendshipID)
-          .update({"status": "rejected"});
-      log("Unfriend Success");
-
-      // Trigger a state change to rebuild the UI
-      setState(() {
-        friendshipStatus = FriendshipStatus('', false);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: SmallText(text: 'Unfollow success', color: whiteColor),
-        ));
-      });
-    } catch (error) {
-      log("Failed to unfriend: $error");
-    }
-  }
-
-  Future<bool> addFriend(String senderID, receiverID) async {
-    try {
-      String friendshipId = FriendsRepository.generateFriendshipId(
-          senderID, receiverID); // Generate a unique friendship ID
-      FriendShipModel input = FriendShipModel(
-        sender: senderID,
-        receiver: receiverID,
-        status: 'pending',
-        timestamp: Timestamp.now(),
-        friendshipID: friendshipId,
-      );
-      FirebaseFirestore.instance
-          .collection('Friendships')
-          .doc(friendshipId)
-          .set(input.toJson())
-          .then((value) => log("Request send"))
-          .catchError((error) => log("Failed to add friend: $error"));
-      setState(() {
-        friendshipStatus = FriendshipStatus(friendshipId, true);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: SmallText(
-            text: 'Request sent, please wait for the approval.',
-            color: whiteColor,
-          ),
-        ));
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   int index = 0;
 
   @override
@@ -146,6 +69,7 @@ class _FriendsFeedState extends State<FriendsFeed>
                     defaultSpace,
                     user.bio != null && user.bio!.isNotEmpty
                         ? SmallText(
+                            textAlign: TextAlign.center,
                             text: user.bio!.isEmpty ? 'User Bio' : user.bio!,
                             color: darkColor,
                           )

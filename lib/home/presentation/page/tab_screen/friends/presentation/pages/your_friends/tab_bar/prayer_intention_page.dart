@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_item.dart';
 import 'package:uplift/utils/widgets/keep_alive.dart';
 import 'package:uplift/utils/widgets/no_data_text.dart';
 import 'package:uplift/utils/widgets/post_item_shimmer.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 class PrayerIntentionPage extends StatefulWidget {
   const PrayerIntentionPage({
@@ -25,7 +27,15 @@ class PrayerIntentionPage extends StatefulWidget {
 
 final ScrollController scrollController = ScrollController();
 
+String privacyText = '';
+
 class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
+  @override
+  void initState() {
+    checkPrivacy(widget.user.userId!);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return KeepAlivePage(
@@ -50,21 +60,47 @@ class _PrayerIntentionPageState extends State<PrayerIntentionPage> {
           }
           return Container(
             color: Colors.grey.shade100,
-            child: ListView(
-              children: [
-                ...data!.map(
-                  (e) => PostItem(
-                      allPost: data,
-                      postModel: e,
-                      user: widget.currentUser,
-                      fullView: false,
-                      isFriendsFeed: true),
-                )
-              ],
-            ),
+            child: privacyText == 'Public'
+                ? ListView(
+                    children: [
+                      ...data!.map(
+                        (e) => PostItem(
+                            allPost: data,
+                            postModel: e,
+                            user: widget.currentUser,
+                            fullView: false,
+                            isFriendsFeed: true),
+                      )
+                    ],
+                  )
+                : const Center(
+                    child: SmallText(
+                        text: 'User set his/her prayer intentiion to private',
+                        color: darkColor),
+                  ),
           );
         },
       ),
     );
+  }
+
+  Future<void> checkPrivacy(String friendsID) async {
+    final UserModel? userModel =
+        await PrayerRequestRepository().getUserRecord(friendsID);
+
+    if (userModel!.privacy != null) {
+      bool status = userModel.privacy == null || userModel.privacy == 'true';
+      setState(() {
+        if (status == true) {
+          privacyText = "Private";
+        } else {
+          privacyText = "Public";
+        }
+      });
+    } else {
+      setState(() {
+        privacyText = "Public";
+      });
+    }
   }
 }

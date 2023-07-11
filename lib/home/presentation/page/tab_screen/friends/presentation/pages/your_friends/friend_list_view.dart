@@ -78,65 +78,64 @@ class _FriendListViewState extends State<FriendListView> {
           updateUsers(state.approvedFriendList);
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomContainer(
-              color: Colors.grey.shade100,
-              widget: TextField(
-                controller: _searchController,
-                onChanged: _search,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Search',
-                  suffixIcon: IconButton(
-                    onPressed: _importContacts,
-                    icon: const Icon(Icons.contact_mail,
-                        size: 18, color: primaryColor),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomContainer(
+                color: Colors.grey.shade100,
+                widget: TextField(
+                  controller: _searchController,
+                  onChanged: _search,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Search',
+                    suffixIcon: IconButton(
+                      onPressed: _importContacts,
+                      icon: const Icon(Icons.contact_mail,
+                          size: 18, color: primaryColor),
+                    ),
                   ),
                 ),
               ),
-            ),
-            filteredFriends.isNotEmpty
-                ? RefreshIndicator(
-                    onRefresh: () async {
-                      BlocProvider.of<ApprovedFriendsBloc>(context).add(
-                          RefreshApprovedFriend(widget.currentUser.userId!));
-                    },
-                    child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final userFriendship =
-                                filteredFriends[index].userFriendshipModel;
-                            return FriendsItem(
-                              mutualFriends:
-                                  filteredFriends[index].mutualFriends,
-                              userFriendship: userFriendship,
-                              currentUser: widget.currentUser,
-                              users: filteredFriends,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return Divider(
-                              thickness: .5,
-                              color: secondaryColor.withOpacity(0.2),
-                            );
-                          },
-                          itemCount: filteredFriends.length,
-                        )),
-                  )
-                : const Expanded(
-                    child: Center(
-                      child: Text('No user found'),
+              filteredFriends.isNotEmpty
+                  ? RefreshIndicator(
+                      onRefresh: () async {
+                        BlocProvider.of<ApprovedFriendsBloc>(context).add(
+                            RefreshApprovedFriend(widget.currentUser.userId!));
+                      },
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final userFriendship =
+                              filteredFriends[index].userFriendshipModel;
+                          return FriendsItem(
+                            mutualFriends: filteredFriends[index].mutualFriends,
+                            userFriendship: userFriendship,
+                            currentUser: widget.currentUser,
+                            users: filteredFriends,
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            thickness: .5,
+                            color: secondaryColor.withOpacity(0.2),
+                          );
+                        },
+                        itemCount: filteredFriends.length,
+                      ),
+                    )
+                  : const Expanded(
+                      child: Center(
+                        child: Text('No user found'),
+                      ),
                     ),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/presentation/domain/introduction_repository.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
+import 'package:uplift/utils/widgets/create_account_button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/google_button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -48,6 +49,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   @override
   Widget build(BuildContext context) {
     return LoaderOverlay(
+      closeOnBackButton: true,
       child: Scaffold(
         key: IntroductionScreen.screenKey,
         backgroundColor: Colors.white,
@@ -158,26 +160,8 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                   ],
                 ),
                 defaultSpace,
-                Center(
-                  child: CustomContainer(
-                      widget: TextButton.icon(
-                          onPressed: () async {
-                            IntroductionRepository().googleLogin(context);
-                          },
-                          icon: const Icon(Ionicons.logo_google,
-                              color: whiteColor),
-                          label: const SmallText(
-                              text: "Sign-in with google", color: whiteColor)),
-                      color: primaryColor),
-                ),
-                Center(
-                    child: TextButton(
-                        onPressed: () {
-                          IntroductionRepository().goToLogin(context);
-                        },
-                        child: const SmallText(
-                            text: "Continue with Email and Password",
-                            color: primaryColor))),
+                const GoogleButton(),
+                const CreateAccountButton(goTo: 'login',),
               ],
             ),
           ),
@@ -186,3 +170,4 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
     );
   }
 }
+

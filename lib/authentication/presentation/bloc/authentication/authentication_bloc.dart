@@ -12,8 +12,12 @@ import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
+import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
+import 'package:uplift/utils/widgets/create_account_button.dart';
+import 'package:uplift/utils/widgets/google_button.dart';
+import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 
 part 'authentication_event.dart';
@@ -99,20 +103,43 @@ class AuthenticationBloc
         event.context.loaderOverlay.hide();
       }
     });
-
     on<SignInWithEmailAndPassword>((event, emit) async {
       event.context.loaderOverlay.show();
       final findUser =
           await PrayerRequestRepository().findUserByEmail(event.email.text);
-      if (findUser!.provider == 'google_sign_in') {
+      if (findUser == null) {
+        event.context.loaderOverlay.hide();
+        if (event.context.mounted) {
+          // ignore: use_build_context_synchronously
+          CustomDialog.showCustomDialog(
+              event.context,
+              const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HeaderText(
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.clip,
+                      text:
+                          "Oops, it appears that you don't have an account yet.",
+                      color: darkColor),
+                  SizedBox(height: 15),
+                  GoogleButton(),
+                  CreateAccountButton(goTo: 'register')
+                ],
+              ),
+              dismissable: true);
+        }
+        emit(const UserIsOut("User not found.", 'Authentication Error'));
+      } else if (findUser.provider == 'google_sign_in') {
         event.context.loaderOverlay.hide();
         if (event.context.mounted) {
           // ignore: use_build_context_synchronously
           CustomDialog.showErrorDialog(
-              event.context,
-              "Your current sign-in method is Google. Please continue signing in using the Google Sign-In option",
-              'Authentication Error',
-              'Understood');
+            event.context,
+            "Your current sign-in method is Google. Please continue signing in using the Google Sign-In option",
+            'Authentication Error',
+            'Understood',
+          );
         }
         emit(const UserIsOut(
             "Your current sign-in method is Google. Please continue signing in using the Google Sign-In option",
@@ -149,15 +176,16 @@ class AuthenticationBloc
           }
         } on FirebaseAuthException catch (e) {
           log(e.code);
-          if (e.code == 'NOT_FOUND') {
-            emit(const UserIsOut(
-                "No user found for that credentials.", 'Authentication Error'));
+          if (e.code == 'user-not-found') {
+            emit(const UserIsOut("No user found for those credentials.",
+                'Authentication Error'));
             // ignore: use_build_context_synchronously
             CustomDialog.showErrorDialog(
-                event.context,
-                'No user found for that email.',
-                'Authentication Error',
-                'Confirm');
+              event.context,
+              'No user found for that email.',
+              'Authentication Error',
+              'Confirm',
+            );
           } else if (e.code == 'wrong-password') {
             // ignore: use_build_context_synchronously
             CustomDialog.showErrorDialog(
@@ -286,18 +314,21 @@ class AuthenticationBloc
       }
     });
 
-    on<UpdateProfile>((event, emit) async {
-      event.context.loaderOverlay
-          .show(); // Show the loader overlay before the asynchronous update
-      await AuthRepository.updateProfile(
-        event.displayName,
-        event.emailAddress,
-        event.contactNo,
-        event.bio,
-        event.userID,
-      ).then((value) {
-        event.context.loaderOverlay.show();
-      });
-    });
+    // on<UpdateProfile>((event, emit) async {
+    //   event.context.loaderOverlay
+    //       .show(); // Show the loader overlay before the asynchronous update
+    //   await AuthRepository()
+    //       .updateProfile(
+    //     event.displayName,
+    //     event.emailAddress,
+    //     event.contactNo,
+    //     event.bio,
+    //     event.userID,
+
+    //   )
+    //       .then((value) {
+    //     event.context.loaderOverlay.hide();
+    //   });
+    // });
   }
 }

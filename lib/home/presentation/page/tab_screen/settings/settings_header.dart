@@ -161,8 +161,12 @@ class _SettingsProfileHeaderState extends State<SettingsProfileHeader> {
                         bioController.text.isEmpty
                             ? const SmallText(
                                 text: 'Write your bio here', color: darkColor)
-                            : SmallText(
-                                text: bioController.text, color: darkColor),
+                            : Flexible(
+                                child: SmallText(
+                                    textAlign: TextAlign.center,
+                                    text: bioController.text,
+                                    color: darkColor),
+                              ),
                         IconButton(
                             onPressed: () {
                               setState(() {

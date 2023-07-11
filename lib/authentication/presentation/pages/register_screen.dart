@@ -33,6 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return LoaderOverlay(
+      closeOnBackButton: true,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: primaryColor,

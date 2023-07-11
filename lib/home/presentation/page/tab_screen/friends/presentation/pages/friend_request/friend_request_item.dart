@@ -32,6 +32,7 @@ class FriendRequestItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserModel userModel = user.userModel;
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () => CustomDialog().showProfile(context, currentUser, userModel),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),

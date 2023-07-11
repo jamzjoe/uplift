@@ -77,6 +77,7 @@ class FriendRequestListView extends StatelessWidget {
                     mainFriendsScreenContext: mainFriendsScreenContext,
                     user: state.users[index].userFriendshipModel,
                     currentUser: currentUser,
+                    
                     mutualFriends: state.users[index].mutualFriends,
                   );
                 },

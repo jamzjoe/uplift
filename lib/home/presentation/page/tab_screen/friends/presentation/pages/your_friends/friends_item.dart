@@ -28,6 +28,7 @@ class FriendsItem extends StatelessWidget {
     String friendShipID = userFriendship.friendshipID.friendshipId!;
     UserModel user = userFriendship.userModel;
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         CustomDialog().showProfile(context, currentUser, user);
       },
@@ -69,8 +70,8 @@ class FriendsItem extends StatelessWidget {
                                 onTap: () => BlocProvider.of<
                                         ApprovedFriendsBloc>(context)
                                     .add(UnfriendEvent(friendShipID, users)),
-                                child: Row(
-                                  children: const [
+                                child: const Row(
+                                  children: [
                                     Icon(
                                       Icons.remove_circle,
                                       color: secondaryColor,

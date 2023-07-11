@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
@@ -38,7 +37,7 @@ class _AddFriendItemState extends State<AddFriendItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () =>
           CustomDialog().showProfile(context, widget.currentUser, widget.user),
       child: Padding(

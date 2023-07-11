@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:uplift/authentication/data/model/user_joined_model.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -37,25 +40,19 @@ class AuthRepository {
         .catchError((error) => log('Phone number updating error: $error'));
   }
 
-  static Future updateProfile(
-      String displayName, emailAddress, contactNo, bio, userID) async {
-    try {
-      final user = FirebaseAuth.instance.currentUser!;
-      displayName.isNotEmpty ? await user.updateDisplayName(displayName) : null;
-      displayName.isNotEmpty
-          ? await AuthRepository.updateName(displayName, userID)
-          : null;
-      // emailAddress.isNotEmpty ? user.updateEmail(emailAddress) : null;
-      contactNo.isNotEmpty
-          ? await AuthRepository.updateContactNo(contactNo, user.uid)
-          : null;
-      bio.isNotEmpty ? await AuthRepository.updateBio(bio, user.uid) : null;
-    } catch (e) {
-      log(e.toString());
-    }
+  Future<bool> updateProfile(
+      String displayName,
+      String emailAddress,
+      String contactNo,
+      String bio,
+      String userID,
+      UserJoinedModel userJoinedModel,
+      BuildContext context) async {
+    context.loaderOverlay.show();
+    return true;
   }
 
-  Future<String> uploadProfilePicture(File imageFile, String userID) async {
+  Future<String?> uploadProfilePicture(File imageFile, String userID) async {
     try {
       // Generate a unique filename for the image
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
@@ -80,8 +77,7 @@ class AuthRepository {
       log(imageUrl);
       return imageUrl;
     } catch (e) {
-      log(e.toString());
-      return e.toString();
+      return null;
     }
   }
 }

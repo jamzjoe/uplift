@@ -20,8 +20,8 @@ class ExploreRepository {
 
     for (var each in data) {
       final user = await PrayerRequestRepository().getUserRecord(each.userId!);
-
-      if (user != null) {
+      if (user != null && user.privacy != "true") {
+        // Exclude users with privacy "true"
         listOfPost.add(PostModel(user, each));
       }
     }

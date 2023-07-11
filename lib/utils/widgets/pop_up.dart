@@ -8,6 +8,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/donation/presentation/donation_form.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/prayer_request_model.dart';
+import 'package:uplift/utils/services/ui_services.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
@@ -521,15 +522,13 @@ class AccountDeleteConfirmationForm extends StatefulWidget {
 }
 
 final TextEditingController passwordController = TextEditingController();
+String randomKey = '';
 
 class _AccountDeleteConfirmationFormState
     extends State<AccountDeleteConfirmationForm> {
-  int _timerDuration = 10;
-  final bool _isCanceled = false;
-  bool _startTimer = false;
   @override
   void initState() {
-    startTimer();
+    generateKey();
     super.initState();
   }
 
@@ -560,6 +559,14 @@ class _AccountDeleteConfirmationFormState
               hintText: 'Please input your password to confirm.',
               validator: (p0) => p0!.isEmpty || p0.length <= 5
                   ? 'Kindly enter at least 6 characters.'
+                  : null,
+            ),
+            CustomField(
+              controller: passwordController,
+              label: "Delete Confimation",
+              hintText: randomKey,
+              validator: (p0) => randomKey != p0
+                  ? 'Please make sure random key is match.'
                   : null,
             ),
             defaultSpace,
@@ -633,20 +640,10 @@ class _AccountDeleteConfirmationFormState
     );
   }
 
-  void startTimer() {
+  void generateKey() {
+    final generatedKey = Tools().generateRandomString();
     setState(() {
-      _startTimer = true;
-    });
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        _timerDuration--;
-      });
-      if (_timerDuration > 0) {
-        startTimer();
-      } else {
-        // Perform account deletion here
-        // This code will be executed after the 10-second timer is completed
-      }
+      randomKey = generatedKey;
     });
   }
 }

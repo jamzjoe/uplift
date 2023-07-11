@@ -12,4 +12,8 @@ class IntroductionRepository {
   void goToLogin(BuildContext context) {
     router.pushNamed('login');
   }
+
+  void goToRegister(BuildContext context) {
+    router.pushNamed('register');
+  }
 }

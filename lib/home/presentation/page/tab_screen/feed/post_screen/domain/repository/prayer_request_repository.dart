@@ -86,7 +86,7 @@ class PrayerRequestRepository {
         final user =
             await PrayerRequestRepository().getUserRecord(each.userId!);
 
-        if (user != null) {
+        if (user != null && user.privacy != "true") {
           listOfPost.add(PostModel(user, each));
         }
       }
@@ -293,7 +293,8 @@ class PrayerRequestRepository {
       await reference.doc(postID).set(prayerRequest);
       for (var each in friends) {
         log('Running notif');
-        final message = '${user.displayName} sent a prayer intention.';
+        final message =
+            '${name == 'Uplift User' ? 'Anonymous' : user.displayName} sent a prayer intention.';
         NotificationRepository.sendPushMessage(each.deviceToken!, message,
             'Uplift Notification', 'post', jsonEncode(payload).toString());
         NotificationRepository.addNotification(
