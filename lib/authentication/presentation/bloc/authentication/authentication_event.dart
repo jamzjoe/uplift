@@ -42,12 +42,12 @@ class SignInWithEmailAndPassword extends AuthenticationEvent {
 }
 
 class RegisterWithEmailAndPassword extends AuthenticationEvent {
-  final TextEditingController email, password;
+  final TextEditingController email, password, confirm;
   final String bio;
   final TextEditingController userName;
   final BuildContext context;
-  const RegisterWithEmailAndPassword(
-      this.email, this.password, this.bio, this.userName, this.context);
+  const RegisterWithEmailAndPassword(this.email, this.password, this.bio,
+      this.userName, this.context, this.confirm);
 
   @override
   List<Object?> get props => [email, password, bio, userName, context];

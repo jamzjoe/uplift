@@ -16,8 +16,8 @@ import '../../home/presentation/page/tab_screen/feed/post_screen/presentation/pa
 import '../../home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 
 class CustomDialog {
-  static void showDeleteAccountConfirmation(BuildContext context,
-      String message, String title, String successButtonText) {
+  Future<void> showDeleteAccountConfirmation(BuildContext context,
+      String message, String title, String successButtonText) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -26,7 +26,9 @@ class CustomDialog {
           content: AccountDeleteConfirmationForm(formKey: formKey),
         );
       },
-    );
+    ).then((value) {
+      context.pop();
+    });
   }
 
   static void showDeleteConfirmation(BuildContext context, String message,
@@ -205,7 +207,7 @@ class CustomDialog {
           ),
         );
       },
-    );
+    ).then((value) => context.pop());
   }
 
   static void showCustomSnackBar(BuildContext context, String message) {

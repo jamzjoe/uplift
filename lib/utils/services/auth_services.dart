@@ -5,7 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/main.dart';
+import 'package:uplift/utils/services/initialize.dart';
+
+final Initialize _initialize = Initialize();
 
 class AuthServices {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -28,7 +30,7 @@ class AuthServices {
       String email, password) async {
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-    
+
     return userCredential.user;
   }
 
@@ -38,7 +40,7 @@ class AuthServices {
 
   static Future<void> addUser(
       User user, String? userName, String? provider) async {
-    final token = await getFCMToken();
+    final token = await _initialize.getFCMToken();
     final userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
     await userDoc.update({'device_token': token});

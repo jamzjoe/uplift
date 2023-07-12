@@ -99,7 +99,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
   void refreshFeed() {
     BlocProvider.of<GetPrayerRequestBloc>(context)
-        .add(GetPostRequestList(userID, limit: 10));
+        .add(GetPostRequestList(userID, limit: 20));
   }
 
   Future<void> checkPrivacy() async {

@@ -45,7 +45,6 @@ class PrayerRequestRepository {
       {int? limit, required String userID}) async {
     final friendsRepository = FriendsRepository();
     List<PostModel> listOfPost = <PostModel>[];
-    log('${limit}Joe');
     try {
       final fetchingUserID =
           await friendsRepository.fetchApprovedFriendRequest(userID);
@@ -101,7 +100,7 @@ class PrayerRequestRepository {
         .where((element) =>
             element.prayerRequestPostModel.privacy == null ||
             element.prayerRequestPostModel.userId == userID ||
-            element.prayerRequestPostModel.privacy == PostPrivacy.public.name)
+            element.prayerRequestPostModel.privacy == "false")
         .toList();
   }
 

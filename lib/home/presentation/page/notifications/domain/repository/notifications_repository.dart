@@ -125,12 +125,14 @@ class NotificationRepository {
     }
   }
 
-  Future<List<UserNotifModel>?> getUserNotifications(String userId) async {
+  Future<List<UserNotifModel>?> getUserNotifications(String userId,
+      {int? limit}) async {
     try {
       final querySnapshot = await FirebaseFirestore.instance
           .collection('Notifications')
           .orderBy('timestamp', descending: true)
           .where('receiver_id', isEqualTo: userId)
+          .limit(limit ?? 15)
           .get();
 
       final notifications = querySnapshot.docs.map((doc) async {

@@ -16,6 +16,7 @@ class CustomField extends StatefulWidget {
     this.limit,
     this.initialValue,
     this.onChanged,
+    this.maxLine,
   });
   final String? label;
   final TextEditingController? controller;
@@ -26,6 +27,7 @@ class CustomField extends StatefulWidget {
   final VoidCallback? tapSuffix;
   final bool? readOnly;
   final int? limit;
+  final int? maxLine;
   final String? initialValue;
   final Function(String)? onChanged;
   @override
@@ -44,6 +46,7 @@ class _CustomFieldState extends State<CustomField> {
             onChanged: widget.onChanged,
             initialValue: widget.initialValue,
             maxLength: widget.limit,
+            maxLines: widget.maxLine,
             keyboardType: widget.label == 'Contact no.'
                 ? TextInputType.phone
                 : TextInputType.text,

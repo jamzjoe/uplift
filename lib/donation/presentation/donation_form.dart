@@ -58,7 +58,7 @@ class _DonationFormState extends State<DonationForm> {
                 color: darkColor,
                 textAlign: TextAlign.center,
               ),
-              color: primaryColor.withOpacity(0.1))),
+              color: whiteColor)),
           TextFormField(
             controller: amountController,
             onChanged: (value) {

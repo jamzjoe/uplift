@@ -21,20 +21,22 @@ class AccountScreen extends StatelessWidget {
       body: ListView(
         children: [
           SettingsItem(
-              onTap: () => CustomDialog.showDeleteAccountConfirmation(
-                  context,
-                  'Are you sure you want to delete your account?',
-                  'Delete Confirmation',
-                  'Delete Account'),
+              onTap: () async {
+                await CustomDialog().showDeleteAccountConfirmation(
+                    context,
+                    'Are you sure you want to delete your account?',
+                    'Delete Confirmation',
+                    'Delete Account');
+              },
               label: 'Delete Account',
               icon: Ionicons.trash_bin),
           SettingsItem(
               onTap: () => CustomDialog.showResetConfirmation(
-                  context,
-                  'Are you sure you want to reset your password?',
-                  'Reset password',
-                  () => context.pushNamed('forgotPassword', extra: currentUser),
-                  'Confirm'),
+                      context,
+                      'Are you sure you want to reset your password?',
+                      'Reset password', () {
+                    context.pushNamed('resetPassword', extra: currentUser);
+                  }, 'Confirm'),
               label: 'Reset Password',
               icon: Ionicons.lock_closed),
         ],

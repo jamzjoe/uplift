@@ -3,24 +3,28 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
+import 'package:uplift/utils/widgets/pop_up.dart';
 
 import '../../../utils/widgets/small_text.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key, required this.currentUser});
+  final UserModel currentUser;
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   @override
   void initState() {
+    emailController.text = widget.currentUser.emailAddress ?? '';
     super.initState();
   }
 
@@ -28,7 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const DefaultText(text: 'Forgot password', color: darkColor),
+        title: const DefaultText(text: 'Reset  password', color: darkColor),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -46,7 +50,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             CustomContainer(
                 onTap: () {
-                  _sendPasswordResetRequest();
+                  final currentUser = widget.currentUser;
+                  if (currentUser.provider == 'google_sign_in') {
+                    CustomDialog.showErrorDialog(
+                        context,
+                        "We apologize for the inconvenience, but we are unable to reset the password for your Google account. Please proceed to the Google password reset page to change it.",
+                        'Request error',
+                        'Understood');
+                  } else {
+                    _sendPasswordResetRequest();
+                  }
                 },
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,

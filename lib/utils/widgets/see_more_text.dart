@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -52,9 +54,18 @@ class _SeeMoreTextState extends State<SeeMoreText> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RichText(
-            textAlign: TextAlign.start,
-            text: textSpan,
+          Linkify(
+            onOpen: (link) => launch(link.url),
+            text: widget.text,
+            style: TextStyle(
+              color: widget.color!.withOpacity(0.85),
+              height: 1.4,
+              fontSize: 14,
+              fontFamily: 'Varela',
+            ),
+            linkStyle: const TextStyle(
+              color: linkColor,
+            ),
             maxLines: isExpanded ? null : widget.maxLines,
             overflow:
                 isTextOverflowed ? TextOverflow.ellipsis : TextOverflow.clip,

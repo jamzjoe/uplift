@@ -1,24 +1,25 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
+import 'package:uplift/authentication/presentation/pages/bloc/switch_screen_cubit.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/domain/repository/prayer_request_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
-import 'package:uplift/utils/widgets/create_account_button.dart';
-import 'package:uplift/utils/widgets/google_button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -67,42 +68,72 @@ class AuthenticationBloc
 
     on<GoogleSignInRequested>((event, emit) async {
       event.context.loaderOverlay.show();
+
       try {
-        final User? user = await AuthServices.signInWithGoogle();
+        // Sign in with Google
+        final User? user =
+            await AuthServices.signInWithGoogle().catchError((error) {
+          throw Exception('Google sign-in was canceled');
+        });
 
         if (user == null) {
-          // Google sign-in was canceled
-          event.context.loaderOverlay.hide();
-          return; // Exit the function without further processing
+          // Throw an exception when user is null (sign-in canceled)
+          throw Exception('Google sign-in was canceled');
         }
 
+        // Add user to Firebase database
         await AuthServices.addUser(user, user.displayName, 'google_sign_in');
-        final userModel = await PrayerRequestRepository()
-            .getUserRecord(await AuthServices.userID());
 
-        emit(UserIsIn(UserJoinedModel(userModel!, user)));
+        // Get user record
+        final userModel =
+            await PrayerRequestRepository().getUserRecord(user.uid);
+
+        if (userModel == null) {
+          throw Exception('User record not found');
+        }
+
+        // Emit user event
+        emit(UserIsIn(UserJoinedModel(userModel, user)));
+
         if (event.fromLogin) {
-          // ignore: use_build_context_synchronously
           event.context.pop();
         }
 
         event.context.loaderOverlay.hide();
-      } on PlatformException catch (e) {
-        event.context.loaderOverlay.hide();
-        if (e.code == 'network_error') {
-          emit(const UserIsOut(
-              'No internet connection', 'Authentication Error'));
-          CustomDialog.showErrorDialog(event.context, 'No internet connection',
-              'Authentication Error', 'Confirm');
-        } else {
-          emit(UserIsOut(e.message!, 'Authentication Error'));
-          CustomDialog.showErrorDialog(
-              event.context, e.message!, 'Authentication Error', 'Confirm');
-        }
       } catch (e) {
         event.context.loaderOverlay.hide();
+
+        if (e is PlatformException) {
+          if (e.code == 'network_error') {
+            // Handle network error
+            emit(const UserIsOut(
+                'No internet connection', 'Authentication Error'));
+            CustomDialog.showErrorDialog(event.context,
+                'No internet connection', 'Authentication Error', 'Confirm');
+          } else {
+            // Handle other platform exceptions
+            emit(UserIsOut(
+                e.message ?? 'Unknown error', 'Authentication Error'));
+            CustomDialog.showErrorDialog(
+                event.context,
+                e.message ?? 'Unknown error',
+                'Authentication Error',
+                'Confirm');
+          }
+        } else if (e is Exception) {
+          // Handle generic exceptions
+          emit(UserIsOut(e.toString(), 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context, e.toString(), 'Authentication Error', 'Confirm');
+        } else {
+          // Handle generic exceptions
+          emit(UserIsOut(e.toString(), 'Authentication Error'));
+          CustomDialog.showErrorDialog(
+              event.context, e.toString(), 'Authentication Error', 'Confirm');
+        }
       }
     });
+
     on<SignInWithEmailAndPassword>((event, emit) async {
       event.context.loaderOverlay.show();
       final findUser =
@@ -113,18 +144,43 @@ class AuthenticationBloc
           // ignore: use_build_context_synchronously
           CustomDialog.showCustomDialog(
               event.context,
-              const Column(
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  HeaderText(
+                  const HeaderText(
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.clip,
                       text:
                           "Oops, it appears that you don't have an account yet.",
-                      color: darkColor),
-                  SizedBox(height: 15),
-                  GoogleButton(),
-                  CreateAccountButton(goTo: 'register')
+                      color: primaryColor),
+                  const SizedBox(height: 15),
+                  ListTile(
+                    onTap: () {
+                      if (event.context.canPop()) {
+                        event.context.pop();
+                      }
+                      add(GoogleSignInRequested('', event.context, true));
+                    },
+                    leading: const Icon(Ionicons.logo_google),
+                    title: const SmallText(
+                        text: 'Continue with Google', color: primaryColor),
+                    trailing: const Icon(Ionicons.arrow_forward_circle),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    onTap: () {
+                      if (event.context.canPop()) {
+                        event.context.pop();
+                      }
+                      final authCubit =
+                          BlocProvider.of<AuthCubit>(event.context);
+                      authCubit.switchToRegister();
+                    },
+                    leading: const Icon(Ionicons.person_add_sharp),
+                    title: const SmallText(
+                        text: 'Create uplift account', color: primaryColor),
+                    trailing: const Icon(Ionicons.arrow_forward_circle),
+                  )
                 ],
               ),
               dismissable: true);
@@ -222,6 +278,9 @@ class AuthenticationBloc
             .then((value) {
           event.context.pop();
           event.context.pop();
+          event.email.clear();
+          event.password.clear();
+          event.confirm.clear();
           event.context.loaderOverlay.hide();
         });
 

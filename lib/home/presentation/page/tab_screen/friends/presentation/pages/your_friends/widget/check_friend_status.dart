@@ -63,7 +63,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
               if (friendshipStatus.status.status == 'pending') {
                 return CustomContainer(
                     borderColor: Colors.red,
-                    width: 130,
+                    width: 140,
                     borderWidth: .5,
                     onTap: () {
                       FriendsRepository().unfriend(
@@ -83,7 +83,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                     refreshScreen();
                   },
                   borderWidth: .5,
-                  width: 130,
+                  width: 140,
                   borderColor: linkColor,
                   widget: const SmallText(
                     text: 'Unfollow',
@@ -103,7 +103,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                     refreshScreen();
                   },
                   borderColor: linkColor,
-                  width: 130,
+                  width: 140,
                   widget: const SmallText(
                     text: 'Follow',
                     color: whiteColor,

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
-import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
+import 'package:uplift/authentication/presentation/pages/auth_wrapper.dart';
+import 'package:uplift/authentication/presentation/pages/reset_password.dart';
 import 'package:uplift/authentication/presentation/pages/login_screen.dart';
 import 'package:uplift/authentication/presentation/pages/register_screen.dart';
+import 'package:uplift/authentication/presentation/pages/forgot_password.dart';
 import 'package:uplift/home/presentation/page/edit_profile/edit_profile_screen.dart';
 import 'package:uplift/home/presentation/page/home.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/page/notification_screen.dart';
@@ -36,8 +39,10 @@ final GoRouter router = GoRouter(
       GoRoute(
           path: '/introduction_screen',
           name: "introduction_screen",
-          pageBuilder: (context, state) =>
-              const MaterialPage(child: KeepAlivePage(child: HomeScreen())),
+          pageBuilder: (context, state) => const MaterialPage(
+              child: KeepAlivePage(
+                  child: LoaderOverlay(
+                      closeOnBackButton: true, child: HomeScreen()))),
           routes: [
             GoRoute(
               name: "login",
@@ -53,14 +58,26 @@ final GoRouter router = GoRouter(
             GoRoute(
                 path: 'forgot-password',
                 name: 'forgotPassword',
+                pageBuilder: (context, state) =>
+                    const MaterialPage(child: ForgotPasswordScreen())),
+            GoRoute(
+                path: 'reset-password',
+                name: 'resetPassword',
                 pageBuilder: (context, state) => MaterialPage(
-                    child: ForgrotPasswordScreen(
-                        currentUser: state.extra as UserModel))),
+                        child: ResetPasswordScreen(
+                      currentUser: state.extra as UserModel,
+                    ))),
             GoRoute(
               name: "register",
               path: 'register',
               pageBuilder: (context, state) =>
                   const MaterialPage(child: RegisterScreen()),
+            ),
+            GoRoute(
+              name: "auth-wrapper",
+              path: 'auth-wrapper',
+              pageBuilder: (context, state) =>
+                  const MaterialPage(child: AuthWrapper()),
             )
           ]),
       GoRoute(
@@ -68,7 +85,8 @@ final GoRouter router = GoRouter(
           path: '/home',
           pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: const HomeScreen(),
+                child: const LoaderOverlay(
+                    closeOnBackButton: true, child: HomeScreen()),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) =>
                         FadeTransition(opacity: animation, child: child),

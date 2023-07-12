@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
@@ -47,12 +48,12 @@ class _PostActionsState extends State<PostActions> {
   }
 
   int encourageCount = 0;
+  bool isSharing = false;
 
   @override
   Widget build(BuildContext context) {
     final currentUser = widget.currentUser;
     final postID = widget.prayerRequest.postId;
-    int clickCount = 0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,6 +167,7 @@ class _PostActionsState extends State<PostActions> {
 
   Future saveAndShare(
       String postID, String postUser, String title, String description) async {
+    context.loaderOverlay.show();
     MyDynamicLink()
         .generateDynamicLink(
             postID: postID,
@@ -173,7 +175,7 @@ class _PostActionsState extends State<PostActions> {
             title: title,
             description: description)
         .then((value) async {
-      await Share.share(value);
+      await Share.share(value).then((value) => context.loaderOverlay.hide());
     });
   }
 
