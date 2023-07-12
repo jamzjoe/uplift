@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
+import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/edit_profile/update_profile/update_profile_bloc.dart';
@@ -167,6 +168,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: CustomContainer(
                           onTap: () async {
                             if (_formKey.currentState!.validate()) {
+                              if (file != null) {
+                                imageURL = await AuthRepository()
+                                    .uploadProfilePicture(file!, user.userId!)
+                                    .then((value) {})
+                                    .whenComplete(() {
+                                  setState(() {
+                                    file = null;
+                                  });
+                                });
+                              }
+                              // ignore: use_build_context_synchronously
                               BlocProvider.of<UpdateProfileBloc>(context).add(
                                   UpdateProfileInformationEvent(
                                       displayName: nameController.text,
