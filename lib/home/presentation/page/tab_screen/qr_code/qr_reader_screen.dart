@@ -48,6 +48,7 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
     }
 
     return LoaderOverlay(
+      closeOnBackButton: true,
       overlayColor: secondaryColor,
       overlayOpacity: 0.8,
       child: Scaffold(
@@ -156,9 +157,19 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
         userModel = await AuthServices().getUserRecord(scannedUser);
         if (context.mounted) {
           context.loaderOverlay.hide();
-          CustomDialog.showCustomDialog(context,
-              UserProfile(user: userModel, currentUser: widget.userJoinedModel),
-              dismissable: true);
+          controller!.pauseCamera();
+          CustomDialog.showCustomDialog(
+                  context,
+                  UserProfile(
+                      user: userModel, currentUser: widget.userJoinedModel),
+                  dismissable: true)
+              .then((value) {
+            setState(() {
+              result = null;
+              popUpIsShown = false;
+              controller!.resumeCamera();
+            });
+          });
         }
       } catch (e) {
         if (context.mounted) {
@@ -197,11 +208,5 @@ class _QRReaderScreenState extends State<QRReaderScreen> {
         });
       }
     });
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
   }
 }

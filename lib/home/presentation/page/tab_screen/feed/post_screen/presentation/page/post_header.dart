@@ -45,7 +45,7 @@ class PostHeader extends StatelessWidget {
         ? PostPrivacy.private.name
         : PostPrivacy.public.name;
     var userPopUp = [
-      PopupMenuButton( 
+      PopupMenuButton(
         padding: EdgeInsets.zero,
         icon: const Icon(
           CupertinoIcons.ellipsis,
@@ -179,7 +179,7 @@ class PostHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        (user.photoUrl == null || prayerRequest.name == 'Uplift User')
+        (user.photoUrl == null || prayerRequest.name == 'Anonymous')
             ? const CircleAvatar(
                 radius: 24,
                 backgroundColor: primaryColor,

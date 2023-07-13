@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
@@ -15,25 +14,34 @@ import 'package:uplift/utils/widgets/profile_photo.dart';
 
 import '../../bloc/approved_friends_bloc/approved_friends_bloc.dart';
 
-class FriendRequestItem extends StatelessWidget {
+class FriendRequestItem extends StatefulWidget {
   const FriendRequestItem({
-    super.key,
+    Key? key,
     required this.user,
     required this.currentUser,
     required this.mutualFriends,
-    required this.mainFriendsScreenContext,
-  });
+  }) : super(key: key);
+
   final UserFriendshipModel user;
   final UserModel currentUser;
   final List<UserFriendshipModel> mutualFriends;
-  final BuildContext mainFriendsScreenContext;
+
+  @override
+  State<FriendRequestItem> createState() => _FriendRequestItemState();
+}
+
+class _FriendRequestItemState extends State<FriendRequestItem> {
+  bool isAccepting = false;
+  bool isIgnoring = false;
 
   @override
   Widget build(BuildContext context) {
-    final UserModel userModel = user.userModel;
+    final UserModel userModel = widget.user.userModel;
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () => CustomDialog().showProfile(context, currentUser, userModel),
+      onTap: () =>
+          CustomDialog().showProfile(context, widget.currentUser, userModel),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -57,22 +65,23 @@ class FriendRequestItem extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  MutualFriendWidget(mutualFriends: mutualFriends),
+                  MutualFriendWidget(mutualFriends: widget.mutualFriends),
                   const SizedBox(height: 5),
                   Row(
                     children: [
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            mainFriendsScreenContext.loaderOverlay.show();
+                            setState(() {
+                              isIgnoring = true;
+                            });
                             await FriendsRepository()
-                                .ignore(user.friendshipID.friendshipId!)
-                                .whenComplete(() => mainFriendsScreenContext
-                                    .loaderOverlay
-                                    .hide())
-                                .then((value) => mainFriendsScreenContext
-                                    .loaderOverlay
-                                    .hide());
+                                .ignore(widget.user.friendshipID.friendshipId!)
+                                .then((value) {
+                              setState(() {
+                                isIgnoring = false;
+                              });
+                            });
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
@@ -82,8 +91,9 @@ class FriendRequestItem extends StatelessWidget {
                               color: lightColor.withOpacity(0.2),
                             ),
                             child: Center(
-                              child:
-                                  DefaultText(text: 'Ignore', color: lighter),
+                              child: isIgnoring
+                                  ? const TapLoading(color: darkColor)
+                                  : DefaultText(text: 'Ignore', color: lighter),
                             ),
                           ),
                         ),
@@ -91,51 +101,78 @@ class FriendRequestItem extends StatelessWidget {
                       const SizedBox(width: 15),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () async {
-                            mainFriendsScreenContext.loaderOverlay.show();
-
-                            if (context.mounted) {
-                              BlocProvider.of<FriendRequestBloc>(context).add(
-                                  FetchFriendRequestEvent(currentUser.userId!));
-                              FriendsRepository()
-                                  .acceptFriendshipRequest(
-                                      userModel.userId!,
-                                      currentUser.userId!,
-                                      currentUser,
-                                      userModel)
-                                  .then((value) {
-                                BlocProvider.of<FriendsSuggestionsBlocBloc>(
-                                        context)
-                                    .add(FetchUsersEvent(currentUser.userId!));
-                                BlocProvider.of<ApprovedFriendsBloc>(context)
-                                    .add(FetchApprovedFriendRequest(
-                                        currentUser.userId!));
-
-                                mainFriendsScreenContext.loaderOverlay.hide();
-                              });
-                            }
-                          },
+                          onTap: isAccepting
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    isAccepting = true;
+                                  });
+                                  BlocProvider.of<FriendRequestBloc>(context)
+                                      .add(FetchFriendRequestEvent(
+                                          widget.currentUser.userId!));
+                                  FriendsRepository()
+                                      .acceptFriendshipRequest(
+                                          userModel.userId!,
+                                          widget.currentUser.userId!,
+                                          widget.currentUser,
+                                          userModel,
+                                          context)
+                                      .then((value) {
+                                    setState(() {
+                                      isAccepting = false;
+                                    });
+                                    BlocProvider.of<FriendsSuggestionsBlocBloc>(
+                                            context)
+                                        .add(FetchUsersEvent(
+                                            widget.currentUser.userId!));
+                                    BlocProvider.of<ApprovedFriendsBloc>(
+                                            context)
+                                        .add(FetchApprovedFriendRequest(
+                                            widget.currentUser.userId!));
+                                  });
+                                },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 7, horizontal: 15),
                             decoration: BoxDecoration(
-                                color: linkColor,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: const Center(
-                              child: DefaultText(
-                                  text: 'Confirm', color: whiteColor),
+                              color: linkColor,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: isAccepting
+                                  ? const TapLoading(color: whiteColor)
+                                  : const DefaultText(
+                                      text: 'Confirm', color: whiteColor),
                             ),
                           ),
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class TapLoading extends StatelessWidget {
+  const TapLoading({
+    Key? key,
+    required this.color,
+  }) : super(key: key);
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 20,
+      width: 20,
+      child: CircularProgressIndicator(strokeWidth: 1.5, color: color),
     );
   }
 }

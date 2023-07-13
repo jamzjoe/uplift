@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +17,8 @@ import '../bloc/post_prayer_request/post_prayer_request_bloc.dart';
 class PostListItem extends StatefulWidget {
   const PostListItem({
     Key? key,
-    required this.userJoinedModel, required this.controller,
+    required this.userJoinedModel,
+    required this.controller,
   }) : super(key: key);
 
   final UserJoinedModel userJoinedModel;
@@ -30,6 +33,7 @@ class _PostListItemState extends State<PostListItem> {
     final UserModel userModel = widget.userJoinedModel.userModel;
     return BlocBuilder<GetPrayerRequestBloc, GetPrayerRequestState>(
       builder: (context, state) {
+        log(state.toString());
         if (state is LoadingPrayerRequesListSuccess) {
           final posts = state.prayerRequestPostModel;
           if (posts.isEmpty) {
@@ -42,7 +46,9 @@ class _PostListItemState extends State<PostListItem> {
           }
           return PostTabView(
               scrollController: widget.controller,
-              posts: posts, userModel: userModel, widget: widget);
+              posts: posts,
+              userModel: userModel,
+              widget: widget);
         } else if (state is LoadingPrayerRequesList ||
             state is NoInternetConnnection) {
           return const PostShimmerLoading();

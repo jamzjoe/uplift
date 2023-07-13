@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/friend_suggestion/friend_suggestion_list.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friend_list_view.dart';
 import 'package:uplift/utils/widgets/default_loading.dart';
 
@@ -30,7 +31,7 @@ class _FriendsListState extends State<FriendsList> {
         } else if (state is ApprovedFriendsLoading) {
           return const Center(child: DefaultLoading());
         }
-        return const SizedBox();
+        return NoUserFoundWidget(currentUser: widget.currentUser);
       },
     );
   }

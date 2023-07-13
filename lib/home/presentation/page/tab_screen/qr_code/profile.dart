@@ -1,11 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
-import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -33,53 +31,30 @@ class UserProfile extends StatelessWidget {
         defaultSpace,
         SmallText(text: user.emailAddress ?? 'Email address', color: lighter),
         SmallText(text: user.phoneNumber ?? 'Phone number', color: lighter),
-        SmallText(text: user.bio ?? '', color: secondaryColor),
+        SmallText(
+            textAlign: TextAlign.center,
+            text: user.bio ?? '',
+            color: secondaryColor),
         defaultSpace,
-        GestureDetector(
-          onTap: () async {
-            final currentUserID = await AuthServices.userID();
-
-            if (currentUserID == user.userId) {
-              if (context.mounted) {
-                context.pop();
-                CustomDialog.showErrorDialog(
-                    context,
-                    'Cannot send friend request to yourself.',
-                    'Sent failed',
-                    'Confirm');
-              }
-            } else {
-              final addFriend = await FriendsRepository().addFriend(
-                  currentUserID,
-                  user.userId,
-                  user.deviceToken!,
-                  user.displayName!);
-              if (addFriend) {
-                if (context.mounted) {
-                  // FriendsRepository().addFriendshipRequest(user);
-                  context.pop();
-                  CustomDialog.showSuccessDialog(
-                      context,
-                      'Friend request is successfully sent.',
-                      'Request Sent',
-                      'Confirm');
-                }
-              }
-            }
-          },
-          child: Visibility(
-            visible: user.userId != currentUser.userId,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: whiteColor,
-              ),
-              child: CheckFriendsStatusWidget(
-                  user: user, currentUser: currentUser),
+        Visibility(
+          visible: user.userId != currentUser.userId,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: whiteColor,
             ),
+            child:
+                CheckFriendsStatusWidget(user: user, currentUser: currentUser),
           ),
-        )
+        ),
+        TextButton.icon(
+            onPressed: () {
+              context.pushNamed('friends-list', extra: currentUser);
+            },
+            icon: const Icon(CupertinoIcons.person_2_fill, color: primaryColor),
+            label: const SmallText(
+                text: 'View all of your friends', color: darkColor))
       ],
     );
   }

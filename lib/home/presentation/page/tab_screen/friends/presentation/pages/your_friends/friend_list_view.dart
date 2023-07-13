@@ -83,6 +83,7 @@ class _FriendListViewState extends State<FriendListView> {
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomContainer(
                 color: Colors.grey.shade100,
@@ -129,8 +130,9 @@ class _FriendListViewState extends State<FriendListView> {
                         itemCount: filteredFriends.length,
                       ),
                     )
-                  : const Expanded(
-                      child: Center(
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height - 100,
+                      child: const Center(
                         child: Text('No user found'),
                       ),
                     ),

@@ -14,6 +14,36 @@ class SearchFriendRepository {
         .limit(5)
         .get();
 
-    return users.docs.map((e) => UserModel.fromJson(e.data())).toList();
+    // Additional search options
+    QuerySnapshot<Map<String, dynamic>> emailUsers = await FirebaseFirestore
+        .instance
+        .collection('Users')
+        .where('email_address', isGreaterThanOrEqualTo: query)
+        .where('email_address', isLessThan: '${query}z')
+        .limit(5)
+        .get();
+
+    QuerySnapshot<Map<String, dynamic>> phoneUsers = await FirebaseFirestore
+        .instance
+        .collection('Users')
+        .where('phone_number', isGreaterThanOrEqualTo: query)
+        .where('phone_number', isLessThan: '${query}z')
+        .limit(5)
+        .get();
+
+    List<UserModel> userResults = [];
+
+    // Add user models from display_name query
+    userResults.addAll(users.docs.map((e) => UserModel.fromJson(e.data())));
+
+    // Add user models from email query
+    userResults
+        .addAll(emailUsers.docs.map((e) => UserModel.fromJson(e.data())));
+
+    // Add user models from phone query
+    userResults
+        .addAll(phoneUsers.docs.map((e) => UserModel.fromJson(e.data())));
+
+    return userResults.toSet().toList();
   }
 }

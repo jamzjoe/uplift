@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/notifications/data/model/payload_model.dart';
@@ -114,9 +115,9 @@ class FriendsRepository {
   }
 
   // Accept a friendship request by updating the friendship document status to accepted
-  Future acceptFriendshipRequest(String senderID, String receiverID,
-      UserModel currentUser, UserModel userModel) async {
-    FirebaseFirestore.instance
+  Future<void> acceptFriendshipRequest(String senderID, String receiverID,
+      UserModel currentUser, UserModel userModel, BuildContext context) async {
+    await FirebaseFirestore.instance
         .collection('Friendships')
         .doc('$senderID$receiverID')
         .update({
@@ -129,14 +130,19 @@ class FriendsRepository {
     };
 
     await NotificationRepository.sendPushMessage(
-        userModel.deviceToken!,
-        '${currentUser.displayName} accepted your friend request.',
-        'Uplift Notification',
-        'friend-request',
-        jsonEncode(data).toString());
-    await NotificationRepository.addNotification(userModel.userId!,
-        'Uplift Notification', ' accepted your friend request.',
-        type: 'accept');
+      userModel.deviceToken!,
+      '${currentUser.displayName} accepted your friend request.',
+      'Uplift Notification',
+      'friend-request',
+      jsonEncode(data).toString(),
+    );
+
+    await NotificationRepository.addNotification(
+      userModel.userId!,
+      'Uplift Notification',
+      ' accepted your friend request.',
+      type: 'accept',
+    );
   }
 
   Future<NewUserFriendshipModel?> checkFriendsStatus(String userID) async {
@@ -558,8 +564,8 @@ class FriendsRepository {
         .catchError((error) => log("Failed to unfriend: $error"));
   }
 
-  Future ignore(String friendShipID) async {
-    FirebaseFirestore.instance
+  Future<void> ignore(String friendShipID) async {
+    await FirebaseFirestore.instance
         .collection('Friendships')
         .doc(friendShipID)
         .update({"status": "rejected"})

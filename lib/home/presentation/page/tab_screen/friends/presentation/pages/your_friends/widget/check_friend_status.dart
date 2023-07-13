@@ -54,7 +54,8 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                     color: Colors.red));
           } else if (snapshot.hasError) {
             // Show an error message if an error occurred
-            return Text('Error: ${snapshot.error}');
+            return const SizedBox(
+                width: 140, child: Center(child: Text('User Deleted')));
           } else {
             final friendshipStatus = snapshot.data;
 
@@ -99,7 +100,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                         widget.currentUser.userId!,
                         widget.user.userId,
                         widget.user.deviceToken!,
-                        widget.user.displayName!);
+                        widget.currentUser.displayName!);
                     refreshScreen();
                   },
                   borderColor: linkColor,

@@ -60,6 +60,10 @@ class Initialize {
 
   void registerBackgroundMessageHandler() {
     FirebaseMessaging.onBackgroundMessage(backgroundMessageHandler);
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    firebaseMessaging.onTokenRefresh.listen((event) {
+      updateFCMTokenInBackground();
+    });
   }
 
   void updateFCMTokenInBackground() async {

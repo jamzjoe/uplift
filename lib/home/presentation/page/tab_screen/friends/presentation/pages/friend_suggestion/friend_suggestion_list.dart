@@ -14,6 +14,7 @@ import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/profile_photo.dart';
+import 'package:uplift/utils/widgets/small_text.dart';
 
 import 'add_friend_item.dart';
 
@@ -112,8 +113,18 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
               builder: (context, state) {
                 log(state.toString());
                 if (state is SearchFriendSuccess) {
+                  if (state.users.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                        child:
+                            SmallText(text: 'No user found', color: darkColor),
+                      ),
+                    );
+                  }
                   return Column(
                     children: [
+                      const SizedBox(height: 10),
                       ...state.users.map((UserModel user) => GestureDetector(
                             onTap: () {
                               CustomDialog().showProfile(
@@ -123,20 +134,24 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
                                 key: Key(user.userId!),
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        children: [
-                                          ProfilePhoto(user: user),
-                                          const SizedBox(width: 15),
-                                          HeaderText(
-                                              size: 16,
-                                              text: user.displayName ?? '',
-                                              color: darkColor),
-                                        ],
+                                      Flexible(
+                                        child: Row(
+                                          children: [
+                                            ProfilePhoto(user: user),
+                                            const SizedBox(width: 15),
+                                            Flexible(
+                                              child: HeaderText(
+                                                  size: 16,
+                                                  text: user.displayName ?? '',
+                                                  color: darkColor),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       CheckFriendsStatusWidget(
                                           user: user,
@@ -176,24 +191,36 @@ class _FriendSuggestionListState extends State<FriendSuggestionList> {
                       },
                       itemCount: filteredUsers.length,
                     )
-                  : Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                              'No user found, try to add some friends via QR code.'),
-                          TextButton(
-                              onPressed: () {
-                                context.pushNamed('qr_reader',
-                                    extra: widget.currentUser);
-                              },
-                              child: const Text('Scan QR of friends'))
-                        ],
-                      ),
-                    ),
+                  : NoUserFoundWidget(currentUser: widget.currentUser),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NoUserFoundWidget extends StatelessWidget {
+  const NoUserFoundWidget({
+    super.key,
+    required this.currentUser,
+  });
+
+  final UserModel currentUser;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('No user found, try to add some friends via QR code.'),
+          TextButton(
+              onPressed: () {
+                context.pushNamed('qr_reader', extra: currentUser);
+              },
+              child: const Text('Scan QR of friends'))
+        ],
       ),
     );
   }

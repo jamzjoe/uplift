@@ -42,6 +42,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     nameController.text = user.displayName ?? '';
     bioController.text = (user.bio ?? '');
     emailAddressController.text = user.emailAddress ?? '';
+    imageURL = user.photoUrl;
     super.initState();
   }
 
@@ -169,18 +170,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           onTap: () async {
                             if (_formKey.currentState!.validate()) {
                               if (file != null) {
+                                BlocProvider.of<UpdateProfileBloc>(context)
+                                    .add(SetLoadingEvent());
                                 imageURL = await AuthRepository()
-                                    .uploadProfilePicture(file!, user.userId!)
-                                    .then((value) {})
-                                    .whenComplete(() {
-                                  setState(() {
-                                    file = null;
-                                  });
-                                });
+                                    .uploadProfilePicture(file!, user.userId!);
                               }
                               // ignore: use_build_context_synchronously
                               BlocProvider.of<UpdateProfileBloc>(context).add(
                                   UpdateProfileInformationEvent(
+                                      photoURL: imageURL!,
                                       displayName: nameController.text,
                                       emailAddress: emailAddressController.text,
                                       contactNo: contactController.text,

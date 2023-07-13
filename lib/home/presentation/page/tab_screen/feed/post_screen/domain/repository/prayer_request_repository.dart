@@ -85,7 +85,7 @@ class PrayerRequestRepository {
         final user =
             await PrayerRequestRepository().getUserRecord(each.userId!);
 
-        if (user != null && user.privacy != "true") {
+        if (user != null && user.privacy != "private") {
           listOfPost.add(PostModel(user, each));
         }
       }
@@ -100,7 +100,7 @@ class PrayerRequestRepository {
         .where((element) =>
             element.prayerRequestPostModel.privacy == null ||
             element.prayerRequestPostModel.userId == userID ||
-            element.prayerRequestPostModel.privacy == "false")
+            element.prayerRequestPostModel.privacy == "public")
         .toList();
   }
 
@@ -258,7 +258,7 @@ class PrayerRequestRepository {
     }
   }
 
-  Future<bool> postPrayerRequest(User user, String text, String name,
+  Future<bool> postPrayerRequest(User user, String text, String? name,
       List<UserModel> friends, String title) async {
     CollectionReference<Map<String, dynamic>> reference =
         FirebaseFirestore.instance.collection('Prayers');
@@ -292,8 +292,8 @@ class PrayerRequestRepository {
       await reference.doc(postID).set(prayerRequest);
       for (var each in friends) {
         log('Running notif');
-        final message =
-            '${name == 'Uplift User' ? 'Anonymous' : user.displayName} sent a prayer intention.';
+
+        final message = '${name ?? user.displayName} sent a prayer intention.';
         NotificationRepository.sendPushMessage(each.deviceToken!, message,
             'Uplift Notification', 'post', jsonEncode(payload).toString());
         NotificationRepository.addNotification(

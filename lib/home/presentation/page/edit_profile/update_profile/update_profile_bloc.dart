@@ -29,7 +29,8 @@ class UpdateProfileBloc extends Bloc<UpdateProfileEvent, UpdateProfileState> {
               'phone_number': event.contactNo,
               "bio": event.bio,
               "display_name": event.displayName,
-              "email_address": event.emailAddress
+              "email_address": event.emailAddress,
+              "photo_url": event.photoURL
             })
             .then((value) => log('Profile updated successfully!'))
             .catchError(
@@ -43,6 +44,10 @@ class UpdateProfileBloc extends Bloc<UpdateProfileEvent, UpdateProfileState> {
         log(e.toString());
         emit(UpdateProfileError());
       }
+    });
+
+    on<SetLoadingEvent>((event, emit) {
+      emit(UpdateProfileLoading());
     });
   }
 }

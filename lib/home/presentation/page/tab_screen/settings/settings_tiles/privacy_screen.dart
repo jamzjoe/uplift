@@ -61,7 +61,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
               value: light,
               activeColor: primaryColor,
               onChanged: (bool value) {
-                updatePrivacy(value.toString());
+                updatePrivacy(value ? 'private' : 'public');
                 setState(() {
                   light = value;
                 });
@@ -99,14 +99,14 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
   void refreshFeed() {
     BlocProvider.of<GetPrayerRequestBloc>(context)
-        .add(GetPostRequestList(userID, limit: 20));
+        .add(GetPostRequestList(userID, limit: 30));
   }
 
   Future<void> checkPrivacy() async {
     final UserModel? userModel =
         await PrayerRequestRepository().getUserRecord(userID);
     if (userModel!.privacy != null) {
-      bool status = userModel.privacy!.toLowerCase() == 'true';
+      bool status = userModel.privacy! == 'private';
       setState(() {
         light = status;
         if (status == true) {

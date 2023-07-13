@@ -26,6 +26,7 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
   @override
   Widget build(BuildContext context) {
     return LoaderOverlay(
+      closeOnBackButton: true,
       child: WillPopScope(
         onWillPop: () async {
           searchController.clear();
@@ -36,7 +37,6 @@ class _FriendSuggestionsState extends State<FriendSuggestions> {
             title: const HeaderText(
               text: 'Friend suggestions',
               color: darkColor,
-              size: 18,
             ),
             actions: [
               Padding(

@@ -18,6 +18,7 @@ class AuthWrapper extends StatelessWidget {
         builder: (context, screen) {
           return Scaffold(
             body: LoaderOverlay(
+              closeOnBackButton: true,
               child: screen == AuthScreen.login
                   ? const LoginScreen()
                   : const RegisterScreen(),

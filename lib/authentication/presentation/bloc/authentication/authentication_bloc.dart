@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:lottie/lottie.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
 import 'package:uplift/authentication/domain/repository/auth_repository.dart';
 import 'package:uplift/authentication/presentation/pages/bloc/switch_screen_cubit.dart';
@@ -42,10 +43,14 @@ class AuthenticationBloc
               .get();
 
           if (userDoc.exists) {
-            await FirebaseFirestore.instance
-                .collection('Users')
-                .doc(user.uid)
-                .update({"device_token": token});
+            final docData = userDoc.data();
+            if (!docData!.containsKey("device_token")) {
+              docData["device_token"] = token;
+              await FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(user.uid)
+                  .set(docData, SetOptions(merge: true));
+            }
 
             final userModel =
                 await PrayerRequestRepository().getUserRecord(user.uid);
@@ -147,6 +152,10 @@ class AuthenticationBloc
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  LottieBuilder.asset(
+                    'assets/no_account.json',
+                    width: double.maxFinite,
+                  ),
                   const HeaderText(
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.clip,

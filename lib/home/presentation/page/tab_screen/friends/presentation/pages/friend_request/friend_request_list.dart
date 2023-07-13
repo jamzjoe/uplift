@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friend_request_bloc/friend_request_bloc.dart';
 import 'package:uplift/utils/widgets/default_loading.dart';
@@ -55,9 +56,13 @@ class FriendRequestListView extends StatelessWidget {
                   friendRequestCount: state.users.length,
                 ),
                 Expanded(
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const NoDataMessage(text: 'No friend request yet'),
+                  child: GestureDetector(
+                    onTap: () =>
+                        context.pushNamed('friend_suggest', extra: currentUser),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const NoDataMessage(text: 'No friend request yet'),
+                    ),
                   ),
                 ),
               ],
@@ -74,10 +79,8 @@ class FriendRequestListView extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return FriendRequestItem(
-                    mainFriendsScreenContext: mainFriendsScreenContext,
                     user: state.users[index].userFriendshipModel,
                     currentUser: currentUser,
-                    
                     mutualFriends: state.users[index].mutualFriends,
                   );
                 },

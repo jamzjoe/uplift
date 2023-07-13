@@ -39,42 +39,44 @@ class AuthServices {
   }
 
   static Future<void> addUser(
-      User user, String? userName, String? provider) async {
+    User user,
+    String? userName,
+    String? provider,
+  ) async {
     final token = await _initialize.getFCMToken();
     final userDoc =
         FirebaseFirestore.instance.collection('Users').doc(user.uid);
-    await userDoc.update({'device_token': token});
-    final UserModel userModel = UserModel(
-      displayName: user.displayName,
-      emailAddress: user.email,
-      emailVerified: user.emailVerified,
-      userId: user.uid,
-      photoUrl: user.photoURL,
-      phoneNumber: user.phoneNumber,
-      createdAt: Timestamp.now(),
-      provider: provider!,
-      searchKey: userName!.isEmpty
-          ? user.displayName!.toLowerCase()
-          : userName.toLowerCase(),
-      deviceToken: token,
-    );
 
     try {
       final userSnapshot = await userDoc.get();
 
       if (userSnapshot.exists) {
-        final existingBio = userSnapshot.data()?['bio'];
+        // User exists in the database, update the device token
         await userDoc.update({'device_token': token});
-        if (existingBio != null) {
-          log('User bio already exists. Skipping update.');
-          return; // Exit the function if bio exists
-        }
+        log('Device token updated for existing user');
+        return;
       }
 
-      await userDoc.set(userModel.toJson(), SetOptions(merge: true));
-      log('User added or updated');
+      // User doesn't exist, so add them to the database
+      final UserModel userModel = UserModel(
+        displayName: user.displayName,
+        emailAddress: user.email,
+        emailVerified: user.emailVerified,
+        userId: user.uid,
+        photoUrl: user.photoURL,
+        phoneNumber: user.phoneNumber,
+        createdAt: Timestamp.now(),
+        provider: provider!,
+        searchKey: userName!.isEmpty
+            ? user.displayName!.toLowerCase()
+            : userName.toLowerCase(),
+        deviceToken: token,
+      );
+
+      await userDoc.set(userModel.toJson());
+      log('User added to the database');
     } catch (error) {
-      log('Failed to add or update user: $error');
+      log('Failed to check or add user: $error');
     }
   }
 
