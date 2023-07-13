@@ -10,9 +10,10 @@ import 'myapp.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-final Initialize _initialize = Initialize();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final Initialize initialize = Initialize();
 
   await Firebase.initializeApp();
   await Permission.notification.isDenied.then((value) {
@@ -20,6 +21,7 @@ void main() async {
       Permission.notification.request();
     }
   });
+  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -28,10 +30,8 @@ void main() async {
       systemNavigationBarColor: whiteColor, // navigation bar color
       systemNavigationBarContrastEnforced: true));
 
-  NotificationRepository.initialize(flutterLocalNotificationsPlugin);
-
-  _initialize.requestPermission();
-  _initialize.listenIncomingNotification();
-  _initialize.registerBackgroundMessageHandler();
+  initialize.requestPermission();
+  initialize.listenIncomingNotification();
+  initialize.registerBackgroundMessageHandler();
   runApp(const MyApp());
 }

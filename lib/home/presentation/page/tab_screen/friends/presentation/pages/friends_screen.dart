@@ -75,7 +75,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 Expanded(
                   child: KeepAlivePage(
                     child: FriendRequestList(
-                      mainFriendScreenContext: context,
                       currentUser: widget.currentUser,
                     ),
                   ),

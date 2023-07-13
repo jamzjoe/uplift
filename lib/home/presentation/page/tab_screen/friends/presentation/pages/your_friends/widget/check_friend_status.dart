@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
@@ -10,10 +12,10 @@ import '../../../../domain/repository/friends_repository.dart';
 
 class CheckFriendsStatusWidget extends StatefulWidget {
   const CheckFriendsStatusWidget({
-    super.key,
+    Key? key,
     required this.user,
     required this.currentUser,
-  });
+  }) : super(key: key);
 
   final UserModel user;
   final UserModel currentUser;
@@ -42,75 +44,86 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while fetching the data
             return Shimmer.fromColors(
-                baseColor: primaryColor.withOpacity(0.1),
-                highlightColor: Colors.grey.shade100.withOpacity(0.2),
-                child: CustomContainer(
-                    width: 130,
-                    onTap: () {},
-                    widget: const SmallText(
-                        textAlign: TextAlign.center,
-                        text: 'Processing',
-                        color: whiteColor),
-                    color: Colors.red));
+              baseColor: primaryColor.withOpacity(0.1),
+              highlightColor: Colors.grey.shade100.withOpacity(0.2),
+              child: CustomContainer(
+                width: 130,
+                onTap: () {},
+                widget: const SmallText(
+                  textAlign: TextAlign.center,
+                  text: 'Processing',
+                  color: whiteColor,
+                ),
+                color: Colors.red,
+              ),
+            );
           } else if (snapshot.hasError) {
             // Show an error message if an error occurred
-            return const SizedBox(
-                width: 140, child: Center(child: Text('User Deleted')));
+            return SizedBox(
+              width: 140,
+              child: Center(child: Text(snapshot.error.toString())),
+            );
           } else {
             final friendshipStatus = snapshot.data;
+            log(snapshot.data.toString());
 
             if (friendshipStatus != null) {
               // User is a friend
               if (friendshipStatus.status.status == 'pending') {
                 return CustomContainer(
-                    borderColor: Colors.red,
-                    width: 140,
-                    borderWidth: .5,
-                    onTap: () {
-                      FriendsRepository().unfriend(
-                          friendshipStatus.friendshipID.friendshipId!);
-                      refreshScreen();
-                    },
-                    widget: const SmallText(
-                        textAlign: TextAlign.center,
-                        text: 'Cancel request',
-                        color: Colors.red),
-                    color: whiteColor);
-              }
-              return CustomContainer(
+                  borderColor: Colors.red,
+                  width: 140,
+                  borderWidth: .5,
                   onTap: () {
                     FriendsRepository()
                         .unfriend(friendshipStatus.friendshipID.friendshipId!);
                     refreshScreen();
                   },
-                  borderWidth: .5,
-                  width: 140,
-                  borderColor: linkColor,
                   widget: const SmallText(
-                    text: 'Unfollow',
-                    color: linkColor,
                     textAlign: TextAlign.center,
+                    text: 'Cancel request',
+                    color: Colors.red,
                   ),
-                  color: whiteColor);
+                  color: whiteColor,
+                );
+              }
+              return CustomContainer(
+                onTap: () {
+                  FriendsRepository()
+                      .unfriend(friendshipStatus.friendshipID.friendshipId!);
+                  refreshScreen();
+                },
+                borderWidth: .5,
+                width: 140,
+                borderColor: linkColor,
+                widget: const SmallText(
+                  text: 'Unfollow',
+                  color: linkColor,
+                  textAlign: TextAlign.center,
+                ),
+                color: whiteColor,
+              );
             } else {
               // User is not a friend
               return CustomContainer(
-                  onTap: () {
-                    FriendsRepository().addFriend(
-                        widget.currentUser.userId!,
-                        widget.user.userId,
-                        widget.user.deviceToken!,
-                        widget.currentUser.displayName!);
-                    refreshScreen();
-                  },
-                  borderColor: linkColor,
-                  width: 140,
-                  widget: const SmallText(
-                    text: 'Follow',
-                    color: whiteColor,
-                    textAlign: TextAlign.center,
-                  ),
-                  color: linkColor);
+                onTap: () {
+                  FriendsRepository().addFriend(
+                    widget.currentUser.userId!,
+                    widget.user.userId,
+                    widget.user.deviceToken!,
+                    widget.currentUser.displayName!,
+                  );
+                  refreshScreen();
+                },
+                borderColor: linkColor,
+                width: 140,
+                widget: const SmallText(
+                  text: 'Follow',
+                  color: whiteColor,
+                  textAlign: TextAlign.center,
+                ),
+                color: linkColor,
+              );
             }
           }
         },

@@ -57,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen>
     initialize(flutterLocalNotificationsPlugin);
     firebaseBackgroundNotif();
     initializeDynamicLinks();
-    
     super.initState();
   }
 
@@ -196,51 +195,7 @@ class _HomeScreenState extends State<HomeScreen>
       final data = jsonDecode(payload!);
       final notifType = data['type'];
 
-      if (notifType == notificationType.comment.name) {
-        final postId = data['post_id'];
-        final postUserID = data['post_user_id'];
-        final postModel =
-            await PostRepository().getEachPrayerIntention(postId, postUserID);
-        final userID = FirebaseAuth.instance.currentUser!.uid;
-        final currentUser =
-            await PrayerRequestRepository().getUserRecord(userID);
-        openPrayerIntention(context, postModel!.userModel,
-            postModel.prayerRequestPostModel, currentUser!);
-      } else if (notifType == notificationType.friend_request.name) {
-        final currentUser =
-            await PrayerRequestRepository().getUserRecord(data['current_user']);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => YourFriendsScreen(user: currentUser!),
-          ),
-        );
-      } else if (notifType == notificationType.post.name ||
-          notifType == notificationType.react.name) {
-        final decodedPayload = jsonDecode(payload);
-        final timestampString = decodedPayload['date'];
-        final timestamp = Timestamp.fromDate(DateTime.parse(timestampString));
-        final text = decodedPayload['text'];
-        final userId = decodedPayload['user_id'];
-        final postId = decodedPayload['post_id'];
-        final customName = decodedPayload['custom_name'];
-        final title = decodedPayload['title'];
-
-        final data = PrayerRequestPostModel(
-          date: timestamp,
-          text: text,
-          userId: userId,
-          postId: postId,
-          name: customName,
-          title: title,
-        );
-
-        final userID = FirebaseAuth.instance.currentUser!.uid;
-        final currentUser =
-            await PrayerRequestRepository().getUserRecord(userID);
-        final postUser = await PrayerRequestRepository().getUserRecord(userId);
-        openPrayerIntention(context, postUser!, data, currentUser!);
-      }
+      await routing(notifType, data, payload);
     });
   }
 
@@ -256,24 +211,39 @@ class _HomeScreenState extends State<HomeScreen>
     final data = jsonDecode(payload!);
     final notifType = data['type'];
 
+    await routing(notifType, data, payload);
+  }
+
+  Future<void> routing(notifType, data, String payload) async {
     if (notifType == notificationType.comment.name) {
       final postId = data['post_id'];
       final postUserID = data['post_user_id'];
       final postModel =
           await PostRepository().getEachPrayerIntention(postId, postUserID);
       final userID = FirebaseAuth.instance.currentUser!.uid;
-      final currentUser = await PrayerRequestRepository().getUserRecord(userID);
-      openPrayerIntention(context, postModel!.userModel,
-          postModel.prayerRequestPostModel, currentUser!);
+      await PrayerRequestRepository().getUserRecord(userID).then((value) =>
+          openPrayerIntention(context, postModel!.userModel,
+              postModel.prayerRequestPostModel, value!));
     } else if (notifType == notificationType.friend_request.name) {
-      final currentUser =
-          await PrayerRequestRepository().getUserRecord(data['current_user']);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => YourFriendsScreen(user: currentUser!),
-        ),
-      );
+      await PrayerRequestRepository()
+          .getUserRecord(data['current_user'])
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => YourFriendsScreen(user: value!),
+                ),
+              ));
+    } else if (notifType == "add_friend") {
+      log('tap');
+      final userID = FirebaseAuth.instance.currentUser!.uid;
+      await PrayerRequestRepository()
+          .getUserRecord(userID)
+          .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FriendsScreen(currentUser: value!),
+                ),
+              ));
     } else if (notifType == notificationType.post.name ||
         notifType == notificationType.react.name) {
       final decodedPayload = jsonDecode(payload);
@@ -296,8 +266,8 @@ class _HomeScreenState extends State<HomeScreen>
 
       final userID = FirebaseAuth.instance.currentUser!.uid;
       final currentUser = await PrayerRequestRepository().getUserRecord(userID);
-      final postUser = await PrayerRequestRepository().getUserRecord(userId);
-      openPrayerIntention(context, postUser!, data, currentUser!);
+      await PrayerRequestRepository().getUserRecord(userId).then(
+          (value) => openPrayerIntention(context, value!, data, currentUser!));
     }
   }
 

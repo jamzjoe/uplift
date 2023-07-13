@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
 
 class SearchFriendRepository {
   Future<List<UserModel>> searchUser(String query) async {
@@ -43,6 +44,9 @@ class SearchFriendRepository {
     // Add user models from phone query
     userResults
         .addAll(phoneUsers.docs.map((e) => UserModel.fromJson(e.data())));
+
+    // Remove yourself from the search results
+    userResults.removeWhere((user) => user.userId == userID);
 
     return userResults.toSet().toList();
   }
