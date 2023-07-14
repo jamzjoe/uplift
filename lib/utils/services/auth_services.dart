@@ -133,4 +133,14 @@ class AuthServices {
       log('Error deleting user: $e');
     }
   }
+
+  static bool isValidEmail(String email) {
+    // Regular expression pattern for email validation
+    const pattern =
+        r'^[\w-]+(\.[\w-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$';
+
+    final regExp = RegExp(pattern);
+
+    return regExp.hasMatch(email);
+  }
 }

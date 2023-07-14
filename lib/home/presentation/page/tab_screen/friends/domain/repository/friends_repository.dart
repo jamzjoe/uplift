@@ -690,7 +690,7 @@ class FriendsRepository {
     return [mutualFriends]; // Return both followers and mutual friends
   }
 
-  Future<List<UserApprovedMutualFriends>> fetchFriendRequest(
+  Future<List<UserApprovedMutualFriends>?> fetchFriendRequest(
       String userID) async {
     String status = 'pending';
     List<String> userIDS = [];
@@ -712,7 +712,7 @@ class FriendsRepository {
     }
 
     if (userIDS.isEmpty) {
-      return [];
+      return null;
     }
 
     // Fetch all users in a single query
@@ -730,7 +730,8 @@ class FriendsRepository {
     for (int i = 0; i < friendshipID.length; i++) {
       String friendID = friendshipID[i];
 
-      UserModel? user = users.firstWhere((u) => u.userId == userIDS[i]);
+      UserModel user = users.firstWhere((u) => u.userId == userIDS[i],
+          orElse: () => UserModel());
       data.add(UserFriendshipModel(FriendshipID(friendshipId: friendID), user));
     }
 

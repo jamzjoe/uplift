@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,14 +18,19 @@ import '../../home/presentation/page/tab_screen/feed/post_screen/presentation/pa
 import '../../home/presentation/page/tab_screen/friends/presentation/pages/your_friends/friends_feed.dart';
 
 class CustomDialog {
-  Future<void> showDeleteAccountConfirmation(BuildContext context,
-      String message, String title, String successButtonText) async {
+  Future<void> showDeleteAccountConfirmation(
+      BuildContext context,
+      String message,
+      String title,
+      String successButtonText,
+      UserModel currentUser) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         final formKey = GlobalKey<FormState>();
         return AlertDialog(
-          content: AccountDeleteConfirmationForm(formKey: formKey),
+          content: AccountDeleteConfirmationForm(
+              formKey: formKey, currentUser: currentUser),
         );
       },
     ).then((value) {
@@ -302,7 +309,11 @@ class CustomDialog {
           ),
         );
       },
-    );
+    ).then((value) async {
+      if (context.canPop()) {
+        context.pop();
+      }
+    });
   }
 
   static void showSuccessDialog(BuildContext context, String message,
@@ -514,7 +525,9 @@ class AccountDeleteConfirmationForm extends StatefulWidget {
   const AccountDeleteConfirmationForm({
     super.key,
     required this.formKey,
+    required this.currentUser,
   });
+  final UserModel currentUser;
 
   final GlobalKey<FormState> formKey;
 
@@ -524,6 +537,7 @@ class AccountDeleteConfirmationForm extends StatefulWidget {
 }
 
 final TextEditingController passwordController = TextEditingController();
+final TextEditingController keyController = TextEditingController();
 String randomKey = '';
 
 class _AccountDeleteConfirmationFormState
@@ -536,6 +550,7 @@ class _AccountDeleteConfirmationFormState
 
   @override
   Widget build(BuildContext context) {
+    log(widget.currentUser.provider!);
     return Container(
       color: whiteColor,
       child: Form(
@@ -554,17 +569,24 @@ class _AccountDeleteConfirmationFormState
                 text: 'Are you sure you want to delete this account?',
                 color: lighter),
             defaultSpace,
+            SmallText(
+                text: 'Type this code to delete your account "$randomKey".',
+                color: darkColor),
+            defaultSpace,
+            widget.currentUser.provider == 'google_sign_in'
+                ? const SizedBox()
+                : CustomField(
+                    controller: passwordController,
+                    isPassword: true,
+                    maxLine: 1,
+                    label: 'Password',
+                    hintText: 'Please input your password to confirm.',
+                    validator: (p0) => p0!.isEmpty || p0.length <= 5
+                        ? 'Kindly enter at least 6 characters.'
+                        : null,
+                  ),
             CustomField(
-              controller: passwordController,
-              isPassword: true,
-              label: 'Password',
-              hintText: 'Please input your password to confirm.',
-              validator: (p0) => p0!.isEmpty || p0.length <= 5
-                  ? 'Kindly enter at least 6 characters.'
-                  : null,
-            ),
-            CustomField(
-              controller: passwordController,
+              controller: keyController,
               label: "Delete Confimation",
               hintText: randomKey,
               validator: (p0) => randomKey != p0

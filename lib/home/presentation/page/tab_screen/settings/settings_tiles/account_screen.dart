@@ -26,7 +26,8 @@ class AccountScreen extends StatelessWidget {
                     context,
                     'Are you sure you want to delete your account?',
                     'Delete Confirmation',
-                    'Delete Account');
+                    'Delete Account',
+                    currentUser);
               },
               label: 'Delete Account',
               icon: Ionicons.trash_bin),

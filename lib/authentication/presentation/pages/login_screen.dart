@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:uplift/utils/services/auth_services.dart';
 import 'package:uplift/utils/widgets/custom_field.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -31,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext _) {
-    
     return LoaderOverlay(
       closeOnBackButton: true,
       child: Scaffold(
@@ -105,9 +104,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           CustomField(
                             hintText: "Enter your valid email address",
-                            validator: (p0) => p0!.isEmpty
-                                ? 'Email address is required'
-                                : null,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Email address is required';
+                              } else if (!AuthServices.isValidEmail(value)) {
+                                return 'Please enter a valid email address';
+                              }
+                              return null;
+                            },
                             controller: _emailController,
                             label: 'Email Address',
                           ),

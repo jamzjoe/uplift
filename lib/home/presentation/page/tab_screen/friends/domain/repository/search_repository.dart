@@ -32,22 +32,39 @@ class SearchFriendRepository {
         .limit(5)
         .get();
 
+    Set<String> addedUserIDs = {}; // Track added user IDs
     List<UserModel> userResults = [];
 
     // Add user models from display_name query
-    userResults.addAll(users.docs.map((e) => UserModel.fromJson(e.data())));
+    for (var doc in users.docs) {
+      var userModel = UserModel.fromJson(doc.data());
+      if (!addedUserIDs.contains(userModel.userId)) {
+        userResults.add(userModel);
+        addedUserIDs.add(userModel.userId!);
+      }
+    }
 
     // Add user models from email query
-    userResults
-        .addAll(emailUsers.docs.map((e) => UserModel.fromJson(e.data())));
+    for (var doc in emailUsers.docs) {
+      var userModel = UserModel.fromJson(doc.data());
+      if (!addedUserIDs.contains(userModel.userId)) {
+        userResults.add(userModel);
+        addedUserIDs.add(userModel.userId!);
+      }
+    }
 
     // Add user models from phone query
-    userResults
-        .addAll(phoneUsers.docs.map((e) => UserModel.fromJson(e.data())));
+    for (var doc in phoneUsers.docs) {
+      var userModel = UserModel.fromJson(doc.data());
+      if (!addedUserIDs.contains(userModel.userId)) {
+        userResults.add(userModel);
+        addedUserIDs.add(userModel.userId!);
+      }
+    }
 
     // Remove yourself from the search results
     userResults.removeWhere((user) => user.userId == userID);
 
-    return userResults.toSet().toList();
+    return userResults;
   }
 }

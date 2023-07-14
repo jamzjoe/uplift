@@ -25,17 +25,20 @@ class FriendshipsID {
 }
 
 class Status {
+  String? friendshipID;
   String? status;
 
-  Status({this.status});
+  Status({this.status, this.friendshipID});
 
   Status.fromJson(Map<String, dynamic> json) {
     status = json['status'];
+    friendshipID = json['friendship_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
+    data['friendship_id'] = friendshipID;
     return data;
   }
 }

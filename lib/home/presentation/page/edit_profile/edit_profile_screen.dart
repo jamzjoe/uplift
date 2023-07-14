@@ -178,7 +178,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               // ignore: use_build_context_synchronously
                               BlocProvider.of<UpdateProfileBloc>(context).add(
                                   UpdateProfileInformationEvent(
-                                      photoURL: imageURL!,
+                                      photoURL: imageURL ?? '',
                                       displayName: nameController.text,
                                       emailAddress: emailAddressController.text,
                                       contactNo: contactController.text,

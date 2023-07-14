@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_approved_mutual.dart';
-import 'package:uplift/home/presentation/page/tab_screen/friends/data/model/user_friendship_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friends_repository.dart';
 import 'package:uplift/utils/services/auth_services.dart';
 part 'friend_request_event.dart';
@@ -29,7 +28,7 @@ class FriendRequestBloc extends Bloc<FriendRequestEvent, FriendRequestState> {
     on<FetchFriendRequestEvent>((event, emit) async {
       try {
         final data = await friendsRepository.fetchFriendRequest(event.userID);
-        emit(FriendRequestLoadingSuccess(data));
+        emit(FriendRequestLoadingSuccess(data!));
       } catch (e) {
         emit(FriendRequestLoadingError());
       }
@@ -39,7 +38,7 @@ class FriendRequestBloc extends Bloc<FriendRequestEvent, FriendRequestState> {
       emit(FriendRequestLoading());
       try {
         final data = await friendsRepository.fetchFriendRequest(event.userID);
-        emit(FriendRequestLoadingSuccess(data));
+        emit(FriendRequestLoadingSuccess(data!));
       } catch (e) {
         emit(FriendRequestLoadingError());
       }

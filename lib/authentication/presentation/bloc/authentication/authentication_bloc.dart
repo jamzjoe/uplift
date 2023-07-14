@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:lottie/lottie.dart';
@@ -26,6 +27,8 @@ part 'authentication_event.dart';
 part 'authentication_state.dart';
 
 final AuthServices authServices = AuthServices();
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
@@ -361,12 +364,35 @@ class AuthenticationBloc
               password: event.password,
             ),
           );
-          await user.delete();
+          // Delete the user account
+          await user.delete().then((value) => event.context!.pop());
           emit(const UserIsOut('Deleted', ''));
-        } else if (provider.contains('google.com')) {
-          event.context!.pop();
           CustomDialog.showCustomSnackBar(
-              event.context!, 'Google account cannot be deleted.');
+              event.context!, 'Uplift account deleted.');
+        } else if (provider.contains('google.com')) {
+          try {
+            // Get the currently logged-in user
+            User? user = _auth.currentUser;
+
+            // Reauthenticate the user
+            GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+            GoogleSignInAuthentication googleAuth =
+                await googleUser!.authentication;
+            AuthCredential credential = GoogleAuthProvider.credential(
+              idToken: googleAuth.idToken,
+              accessToken: googleAuth.accessToken,
+            );
+            await user!.reauthenticateWithCredential(credential);
+
+            // Delete the user account
+            await user.delete().then((value) => event.context!.pop());
+
+            CustomDialog.showCustomSnackBar(
+                event.context!, 'Uplift account deleted.');
+          } catch (e) {
+            // Error occurred while deleting account
+            log("Failed to delete user account: $e");
+          }
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'wrong-password') {

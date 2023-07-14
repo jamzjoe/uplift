@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/domain/repository/friendship_functions.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -37,10 +38,9 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      child: FutureBuilder<NewUserFriendshipModel?>(
-        future: FriendsRepository().checkFriendsStatus(widget.user.userId!),
-        builder: (BuildContext context,
-            AsyncSnapshot<NewUserFriendshipModel?> snapshot) {
+      child: FutureBuilder<Status?>(
+        future: FriendshipRequest().checkStatus(widget.user.userId!),
+        builder: (BuildContext context, AsyncSnapshot<Status?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while fetching the data
             return Shimmer.fromColors(
@@ -69,14 +69,14 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
 
             if (friendshipStatus != null) {
               // User is a friend
-              if (friendshipStatus.status.status == 'pending') {
+              if (friendshipStatus.status == 'pending') {
                 return CustomContainer(
                   borderColor: Colors.red,
                   width: 140,
                   borderWidth: .5,
                   onTap: () {
                     FriendsRepository()
-                        .unfriend(friendshipStatus.friendshipID.friendshipId!);
+                        .unfriend(friendshipStatus.friendshipID!);
                     refreshScreen();
                   },
                   widget: const SmallText(
@@ -89,8 +89,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
               }
               return CustomContainer(
                 onTap: () {
-                  FriendsRepository()
-                      .unfriend(friendshipStatus.friendshipID.friendshipId!);
+                  FriendsRepository().unfriend(friendshipStatus.friendshipID!);
                   refreshScreen();
                 },
                 borderWidth: .5,
