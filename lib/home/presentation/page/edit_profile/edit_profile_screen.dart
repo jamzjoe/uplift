@@ -155,8 +155,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     CustomField(
                       limit: 250,
-                      validator: (p0) =>
-                          p0!.isEmpty ? "Please do not leave it blank." : null,
                       hintText: 'Write your bio here...',
                       label: 'Bio',
                       controller: bioController,

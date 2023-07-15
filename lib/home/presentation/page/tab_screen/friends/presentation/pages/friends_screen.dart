@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/approved_friends_bloc/approved_friends_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/friends/presentation/bloc/friends_suggestion_bloc/friends_suggestions_bloc_bloc.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
@@ -46,6 +49,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           CustomContainer(
                             // Navigate to 'friend_suggest' route
                             onTap: () {
+                              BlocProvider.of<FriendsSuggestionsBlocBloc>(
+                                      context)
+                                  .add(RefreshFriendSuggestion(
+                                      widget.currentUser.userId!));
                               context.pushNamed('friend_suggest',
                                   extra: widget.currentUser);
                             },
@@ -57,6 +64,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           CustomContainer(
                             // Navigate to 'friends-list' route
                             onTap: () {
+                              BlocProvider.of<ApprovedFriendsBloc>(context).add(
+                                  RefreshApprovedFriend(
+                                      widget.currentUser.userId!));
                               context.pushNamed("friends-list",
                                   extra: widget.currentUser);
                             },

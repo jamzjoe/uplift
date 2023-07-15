@@ -13,19 +13,11 @@ part 'friends_suggestions_bloc_state.dart';
 
 final FriendsRepository friendSuggestionRepository = FriendsRepository();
 
-late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
-    streamSubscription;
+late StreamSubscription<QuerySnapshot<Map<String, dynamic>>> streamSubscription;
 
 class FriendsSuggestionsBlocBloc
     extends Bloc<FriendsSuggestionsBlocEvent, FriendsSuggestionsBlocState> {
   FriendsSuggestionsBlocBloc() : super(FriendsSuggestionsBlocInitial()) {
-    // streamSubscription = FirebaseFirestore.instance
-    //     .collection('Friendships')
-    //     .snapshots()
-    //     .listen((event) async {
-    //   add(FetchUsersEvent(userID));
-    // });
-
     on<FriendsSuggestionsBlocEvent>((event, emit) {});
 
     on<FetchUsersEvent>((event, emit) async {
@@ -55,15 +47,5 @@ class FriendsSuggestionsBlocBloc
             .addFriendshipRequest(event.friendShipModel);
       } catch (e) {}
     });
-
-    // on<SearchFriendSuggestions>((event, emit) async {
-    //   try {
-    //     final data =
-    //         await friendSuggestionRepository.searchSuggestions(event.query);
-    //     emit(FriendsSuggestionLoadingSuccess(data));
-    //   } catch (e) {
-    //     emit(FriendsSuggestionLoadingError());
-    //   }
-    // });
   }
 }

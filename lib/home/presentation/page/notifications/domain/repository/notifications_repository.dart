@@ -180,113 +180,128 @@ class NotificationRepository {
       String receiverID, String title, String message,
       {String? payload, String? type, String? postID}) async {
     CollectionReference notificationsCollection =
-        FirebaseFirestore.instance.collection('Notifications');
-    final currentUserID = await AuthServices.userID();
-    try {
-      // Generate a unique notification ID
-      String notificationId = notificationsCollection.doc().id;
+        FirebaseFirestore.instance.collection('Users');
 
-      if (type == 'comment') {
-        notificationId = postID!;
-      }
+    final currentUserID = await AuthServices.userID();
+
+    try {
+      // Create a notification document with a specific ID
+      final notificationDoc = notificationsCollection
+          .doc(receiverID)
+          .collection('notifications')
+          .doc(); // Generate a unique notification ID
 
       final NotificationModel notificationModel = NotificationModel(
-          notificationId: notificationId,
-          senderID: currentUserID,
-          receiverID: receiverID,
-          title: title,
-          read: false,
-          type: type,
-          postID: postID,
-          message: message,
-          payload: payload,
-          timestamp: Timestamp.now());
-      // Create the notification document
-      await notificationsCollection
-          .doc(notificationId)
-          .set(notificationModel.toJson());
+        notificationId: notificationDoc.id,
+        senderID: currentUserID,
+        receiverID: receiverID,
+        title: title,
+        read: false,
+        type: type,
+        postID: postID,
+        message: message,
+        payload: payload,
+        timestamp: Timestamp.now(),
+      );
+
+      // Set the notification document with the created model
+      await notificationDoc.set(notificationModel.toJson());
+
       log('Notification added successfully');
     } catch (e) {
       log('Error adding notification: $e');
     }
   }
 
-  Future<List<UserNotifModel>?> getUserNotifications(String userId,
-      {int? limit}) async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('Notifications')
-          .orderBy('timestamp', descending: true)
-          .where('receiver_id', isEqualTo: userId)
-          .limit(limit ?? 15)
-          .get();
+  Future<List<UserNotifModel>> retrieveNotifications(String receiverID) async {
+    CollectionReference notificationsCollection =
+        FirebaseFirestore.instance.collection('Users');
+    final ref = notificationsCollection
+        .doc(receiverID)
+        .collection('notifications')
+        .limit(20);
 
-      final notifications = querySnapshot.docs.map((doc) async {
+    try {
+      final querySnapshot = await ref.get();
+      final List<UserNotifModel> notifications = [];
+
+      for (final doc in querySnapshot.docs) {
         final notification = NotificationModel.fromJson(doc.data());
         final user = await PrayerRequestRepository()
             .getUserRecord(notification.senderID!);
-        return UserNotifModel(user!, notification);
+        notifications.add(UserNotifModel(user!, notification));
+      }
+      return notifications;
+    } catch (e) {
+      log('Error retrieving notifications: $e');
+      return [];
+    }
+  }
+
+  // Create a method to update the read status of this notification
+  Future<void> markAllAsRead(String receiverID) async {
+    CollectionReference notificationsCollection =
+        FirebaseFirestore.instance.collection('Users');
+    final ref =
+        notificationsCollection.doc(receiverID).collection('notifications');
+
+    try {
+      final querySnapshot = await ref.get();
+
+      for (final doc in querySnapshot.docs) {
+        final notification = NotificationModel.fromJson(doc.data());
+        if (!notification.read!) {
+          await ref.doc(doc.id).update({'read': true});
+        }
+      }
+    } catch (e) {
+      log('Error marking notifications as read: $e');
+    }
+  }
+
+  Future<void> markAsRead(String receiverID, String notificationId) async {
+    CollectionReference notificationsCollection =
+        FirebaseFirestore.instance.collection('Users');
+    final ref =
+        notificationsCollection.doc(receiverID).collection('notifications');
+
+    try {
+      await ref.doc(notificationId).update({'read': true});
+    } catch (e) {
+      log('Error marking notification as read: $e');
+    }
+  }
+
+  // Method to delete a single notification
+  Future<void> deleteNotification(
+      String receiverID, String notificationId) async {
+    CollectionReference notificationsCollection =
+        FirebaseFirestore.instance.collection('Users');
+    final ref =
+        notificationsCollection.doc(receiverID).collection('notifications');
+
+    try {
+      await ref.doc(notificationId).delete();
+    } catch (e) {
+      log('Error deleting notification: $e');
+    }
+  }
+
+// Method to delete all notifications
+  Future<void> deleteAllNotifications(String receiverID) async {
+    CollectionReference notificationsCollection =
+        FirebaseFirestore.instance.collection('Users');
+    final ref =
+        notificationsCollection.doc(receiverID).collection('notifications');
+
+    try {
+      await ref.get().then((snapshot) {
+        for (DocumentSnapshot doc in snapshot.docs) {
+          doc.reference.delete();
+        }
       });
-      return await Future.wait(notifications.toList());
-    } on FirebaseException catch (e) {
-      log(e.toString());
-      return null;
-    }
-  }
-
-  // Create a method to update the read status of this notification
-  static Future<void> markAsRead(String notifID) async {
-    await FirebaseFirestore.instance
-        .collection("Notifications")
-        .doc(notifID)
-        .update({"read": true});
-  }
-
-  // Create a method to update the read status of this notification
-  Future<bool> markAllAsRead(String userID) async {
-    final List<UserNotifModel>? notifications =
-        await NotificationRepository().getUserNotifications(userID);
-
-    try {
-      if (notifications != null) {
-        for (var each in notifications) {
-          await FirebaseFirestore.instance
-              .collection("Notifications")
-              .doc(each.notificationModel.notificationId)
-              .update({"read": true});
-        }
-      }
-      return true;
     } catch (e) {
-      return false;
+      log('Error deleting notifications: $e');
     }
-  }
-
-  // Create a method to update the read status of this notification
-  Future<bool> deleteAll(String userID) async {
-    final List<UserNotifModel>? notifications =
-        await NotificationRepository().getUserNotifications(userID);
-
-    try {
-      if (notifications != null) {
-        for (var each in notifications) {
-          await FirebaseFirestore.instance
-              .collection("Notifications")
-              .doc(each.notificationModel.notificationId)
-              .delete();
-        }
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // Create a method to update the read status of this notification
-  static Future<void> delete(String notifID) async {
-    await FirebaseFirestore.instance
-        .collection("Notifications")
-        .doc(notifID)
-        .delete();
   }
 }

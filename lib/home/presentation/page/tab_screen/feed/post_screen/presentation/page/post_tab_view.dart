@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
-import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:uplift/home/presentation/page/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/bloc/get_prayer_request/get_prayer_request_bloc.dart';
@@ -236,16 +235,31 @@ class _PostTabViewState extends State<PostTabView>
                           ),
                         ],
                       ),
-                      StreamBuilder<Map<String, dynamic>>(
-                        stream: NotificationRepository()
-                            .notificationListener(widget.userModel.userId!),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final count = snapshot.data!['length'];
+                      BlocBuilder<NotificationBloc, NotificationState>(
+                        builder: (context, state) {
+                          if (state is NotificationLoadingSuccess) {
+                            int count = state.notifications
+                                .where((element) =>
+                                    element.notificationModel.read == false)
+                                .length;
+                            if (count == 0) {
+                              return IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  goToNotificationScreen(
+                                    widget.userModel.userId!,
+                                    context,
+                                  );
+                                },
+                                icon: Icon(
+                                  Ionicons.notifications,
+                                  size: 28,
+                                  color: darkColor.withOpacity(0.7),
+                                ),
+                              );
+                            }
                             return Badge.count(
-                              isLabelVisible: count != 0,
                               count: count,
-                              alignment: AlignmentDirectional.topEnd,
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
@@ -262,7 +276,20 @@ class _PostTabViewState extends State<PostTabView>
                               ),
                             );
                           }
-                          return const SizedBox();
+                          return IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              goToNotificationScreen(
+                                widget.userModel.userId!,
+                                context,
+                              );
+                            },
+                            icon: Icon(
+                              Ionicons.notifications,
+                              size: 28,
+                              color: darkColor.withOpacity(0.7),
+                            ),
+                          );
                         },
                       ),
                     ],

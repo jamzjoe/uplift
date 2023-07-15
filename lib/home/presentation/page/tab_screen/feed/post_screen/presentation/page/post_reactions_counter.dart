@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/data/model/post_model.dart';
 import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/post_comment/presentation/encourage_bloc/encourage_bloc.dart';
+import 'package:uplift/home/presentation/page/tab_screen/feed/post_screen/presentation/page/reactors_list.dart';
 import 'package:uplift/utils/widgets/pop_up.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -41,21 +43,38 @@ class PostReactionsCounter extends StatelessWidget {
               final int reactionCount = snapshot.data!['reactionCount'];
               return Visibility(
                 visible: reactionCount != 0,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage('assets/prayed.png'),
-                      width: 20,
-                    ),
-                    SmallText(
-                      text: getReactionText(
-                        isReacted,
-                        reactionCount,
+                child: GestureDetector(
+                  onTap: () {
+                    final array = snapshot.data!['users'];
+                    List<dynamic> userID = array
+                        .map((obj) => obj.keys.first)
+                        .toList()
+                        .cast<
+                            dynamic>(); // Add the cast method to explicitly convert to List<dynamic>
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReactorsList(
+                                userID: userID, currentUser: currentUser)));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Image(
+                        image: AssetImage('assets/prayed.png'),
+                        width: 20,
                       ),
-                      color: lighter,
-                    ),
-                  ],
+                      SmallText(
+                        fontSize: 12,
+                        text: getReactionText(
+                          isReacted,
+                          reactionCount,
+                        ),
+                        color: lighter,
+                      ),
+                    ],
+                  ),
                 ),
               );
             }

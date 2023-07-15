@@ -32,7 +32,9 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  int clickCount = 0;
+  DateTime? lastTapTime; // Track the last tap time
+  static const Duration intervalDuration =
+      Duration(seconds: 2); // Interval duration for spam prevention
 
   @override
   void initState() {
@@ -58,22 +60,25 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
   }
 
   void _handleTap() {
-    setState(() {
-      clickCount++;
-    });
-
-    if (clickCount >= 3) {
+    final currentTime = DateTime.now();
+    if (lastTapTime != null &&
+        currentTime.difference(lastTapTime!) < intervalDuration) {
+      // Interval is too fast, ban user or take appropriate action
       CustomDialog.showErrorDialog(
-          context,
-          'Due to concerns about potential data leaks, we have implemented restrictions on your ability to react to this prayer intention.',
-          'Warning',
-          'Understood');
+        context,
+        'Please do not spam react button. Thank you!.',
+        'Warning',
+        'Understood',
+      );
+      return;
+    }
+
+    lastTapTime = currentTime;
+
+    if (widget.isReacted) {
+      addReact(widget.postID, widget.currentUser);
     } else {
-      if (widget.isReacted) {
-        addReact(widget.postID, widget.currentUser);
-      } else {
-        unreact(widget.postID, widget.currentUser);
-      }
+      unreact(widget.postID, widget.currentUser);
     }
 
     _animationController.forward(from: 0).whenComplete(() {
@@ -123,8 +128,13 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
   }
 
   Future<bool> addReact(String postID, UserModel currentUser) {
-    return PrayerRequestRepository().addReaction(postID, currentUser.userId!,
-        widget.userModel, currentUser, widget.postModel);
+    return PrayerRequestRepository().addReaction(
+      postID,
+      currentUser.userId!,
+      widget.userModel,
+      currentUser,
+      widget.postModel,
+    );
   }
 
   Future<bool> unreact(String postID, UserModel currentUser) {

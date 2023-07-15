@@ -78,7 +78,8 @@ class FriendshipRequest {
 
         NotificationRepository.addNotification(
             receiverID, 'Friend Request', 'sent you a friend request.',
-            type: 'request');
+            type: notificationType.add_friend.name,
+            payload: jsonEncode(data).toString());
       }).catchError((error) => log("Failed to add friend: $error"));
       NotificationRepository.sendPushMessage(
           token,
@@ -162,6 +163,4 @@ class FriendshipRequest {
     // Return null or handle the case when no document is found
     return null;
   }
-
-  
 }

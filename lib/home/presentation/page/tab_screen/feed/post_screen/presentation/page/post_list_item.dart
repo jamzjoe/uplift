@@ -37,10 +37,18 @@ class _PostListItemState extends State<PostListItem> {
         if (state is LoadingPrayerRequesListSuccess) {
           final posts = state.prayerRequestPostModel;
           if (posts.isEmpty) {
-            return Center(
-              child: EndOfPostWidget(
-                isEmpty: true,
-                user: widget.userJoinedModel,
+            return RefreshIndicator(
+              onRefresh: () async => loadMoreData(userModel.userId!),
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 100,
+                  child: Center(
+                    child: EndOfPostWidget(
+                      isEmpty: true,
+                      user: widget.userJoinedModel,
+                    ),
+                  ),
+                ),
               ),
             );
           }
@@ -56,6 +64,13 @@ class _PostListItemState extends State<PostListItem> {
         return const PostShimmerLoading();
       },
     );
+  }
+
+  void loadMoreData(String userID) {
+    log('Fetching');
+
+    BlocProvider.of<GetPrayerRequestBloc>(context)
+        .add(GetPostRequestList(limit: 20, userID));
   }
 }
 

@@ -117,7 +117,7 @@ class PostHeader extends StatelessWidget {
           PopupMenuItem(
               onTap: () async {
                 Future.delayed(const Duration(milliseconds: 1), () async {
-                  if (prayerRequest.userId != userID) {
+                  if (prayerRequest.userId != currentUser.userId) {
                     CustomDialog.showErrorDialog(
                         context,
                         "You can't set privacy to someone's post.",

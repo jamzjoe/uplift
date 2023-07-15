@@ -12,7 +12,6 @@ class SameIntentionsSuggestionBloc
     on<SameIntentionsSuggestionEvent>((event, emit) {});
 
     on<FetchSameIntentionEvent>((event, emit) async {
-      
       try {
         final data = await PrayerRequestRepository()
             .getSuggestedThatHaveSameIntentions(event.userID);

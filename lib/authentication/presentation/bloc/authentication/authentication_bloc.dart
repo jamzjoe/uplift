@@ -131,8 +131,6 @@ class AuthenticationBloc
         } else if (e is Exception) {
           // Handle generic exceptions
           emit(UserIsOut(e.toString(), 'Authentication Error'));
-          CustomDialog.showErrorDialog(
-              event.context, e.toString(), 'Authentication Error', 'Confirm');
         } else {
           // Handle generic exceptions
           emit(UserIsOut(e.toString(), 'Authentication Error'));

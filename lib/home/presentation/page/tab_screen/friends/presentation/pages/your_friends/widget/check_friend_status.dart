@@ -41,6 +41,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
       child: FutureBuilder<Status?>(
         future: FriendshipRequest().checkStatus(widget.user.userId!),
         builder: (BuildContext context, AsyncSnapshot<Status?> snapshot) {
+          log(snapshot.data.toString());
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while fetching the data
             return Shimmer.fromColors(
@@ -63,9 +64,8 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
               width: 140,
               child: Center(child: Text(snapshot.error.toString())),
             );
-          } else {
+          } else if (snapshot.hasData) {
             final friendshipStatus = snapshot.data;
-            log(snapshot.data.toString());
 
             if (friendshipStatus != null) {
               // User is a friend
@@ -75,6 +75,7 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                   width: 140,
                   borderWidth: .5,
                   onTap: () {
+                    log(friendshipStatus.friendshipID!);
                     FriendsRepository()
                         .unfriend(friendshipStatus.friendshipID!);
                     refreshScreen();
@@ -86,22 +87,40 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                   ),
                   color: whiteColor,
                 );
-              }
-              return CustomContainer(
-                onTap: () {
-                  FriendsRepository().unfriend(friendshipStatus.friendshipID!);
-                  refreshScreen();
-                },
-                borderWidth: .5,
-                width: 140,
-                borderColor: linkColor,
-                widget: const SmallText(
-                  text: 'Unfollow',
+              } else if (friendshipStatus.status == 'rejected') {
+                return CustomContainer(
+                  onTap: () {
+                    FriendsRepository().reAdd(friendshipStatus.friendshipID!);
+                    refreshScreen();
+                  },
+                  borderColor: linkColor,
+                  width: 140,
+                  widget: const SmallText(
+                    text: 'Follow',
+                    color: whiteColor,
+                    textAlign: TextAlign.center,
+                  ),
                   color: linkColor,
-                  textAlign: TextAlign.center,
-                ),
-                color: whiteColor,
-              );
+                );
+              } else {
+                return CustomContainer(
+                  onTap: () {
+                    log(friendshipStatus.friendshipID!);
+                    FriendsRepository()
+                        .unfriend(friendshipStatus.friendshipID!);
+                    refreshScreen();
+                  },
+                  borderWidth: .5,
+                  width: 140,
+                  borderColor: linkColor,
+                  widget: const SmallText(
+                    text: 'Unfollow',
+                    color: linkColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  color: whiteColor,
+                );
+              }
             } else {
               // User is not a friend
               return CustomContainer(
@@ -124,6 +143,26 @@ class _CheckFriendsStatusWidgetState extends State<CheckFriendsStatusWidget> {
                 color: linkColor,
               );
             }
+          } else {
+            return CustomContainer(
+              onTap: () {
+                FriendsRepository().addFriend(
+                  widget.currentUser.userId!,
+                  widget.user.userId,
+                  widget.user.deviceToken!,
+                  widget.currentUser.displayName!,
+                );
+                refreshScreen();
+              },
+              borderColor: linkColor,
+              width: 140,
+              widget: const SmallText(
+                text: 'Follow',
+                color: whiteColor,
+                textAlign: TextAlign.center,
+              ),
+              color: linkColor,
+            );
           }
         },
       ),

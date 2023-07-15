@@ -59,61 +59,6 @@ class FriendsRepository {
     return data;
   }
 
-  Future<List<UserModel>> searchSuggestions(String query) async {
-    List<UserModel> data = [];
-    final userID = await AuthServices.userID();
-    List<String> status = ['approved', 'pending'];
-
-    //get all userID that you had send friend request - you are the sender and also the one that you received
-    QuerySnapshot<Map<String, dynamic>> fetchingReceiverID =
-        await FirebaseFirestore.instance
-            .collection('Friendships')
-            .where('status', whereIn: status)
-            .where('receiver', isEqualTo: userID)
-            .get();
-    QuerySnapshot<Map<String, dynamic>> fetchingSenderID =
-        await FirebaseFirestore.instance
-            .collection('Friendships')
-            .where('status', whereIn: status)
-            .where('sender', isEqualTo: userID)
-            .get();
-
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> allID =
-        fetchingSenderID.docs + fetchingReceiverID.docs;
-
-    List<String> userIDS =
-        allID.map((e) => e.data()['receiver'].toString()).toList();
-    userIDS.addAll(allID.map((e) => e.data()['sender'].toString()).toList());
-    userIDS = userIDS.toSet().toList();
-
-    QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
-        .instance
-        .collection('Users')
-        .where('user_id', isNotEqualTo: userID)
-        .get();
-
-    data = response.docs
-        .map((e) => UserModel.fromJson(e.data()))
-        .where((user) => !userIDS.contains(user.userId))
-        .toList()
-        .reversed
-        .toList();
-
-    return data
-        .where((element) =>
-            (element.searchKey != null &&
-                element.searchKey!.contains(query.toLowerCase().trim())) ||
-            (element.emailAddress != null &&
-                element.emailAddress!
-                    .toLowerCase()
-                    .contains(query.toLowerCase().trim())) ||
-            (element.phoneNumber != null &&
-                element.phoneNumber!
-                    .toLowerCase()
-                    .contains(query.toLowerCase().trim())))
-        .toList();
-  }
-
   // Accept a friendship request by updating the friendship document status to accepted
   Future<void> acceptFriendshipRequest(String senderID, String receiverID,
       UserModel currentUser, UserModel userModel, BuildContext context) async {
@@ -564,6 +509,15 @@ class FriendsRepository {
         .catchError((error) => log("Failed to unfriend: $error"));
   }
 
+  Future reAdd(String friendShipID) async {
+    FirebaseFirestore.instance
+        .collection('Friendships')
+        .doc(friendShipID)
+        .update({"status": "pending"})
+        .then((value) => log("add Success"))
+        .catchError((error) => log("add to friend: $error"));
+  }
+
   Future<void> ignore(String friendShipID) async {
     await FirebaseFirestore.instance
         .collection('Friendships')
@@ -580,37 +534,41 @@ class FriendsRepository {
   Future<bool> addFriend(
       String senderID, receiverID, String token, String name) async {
     try {
-      String friendshipId = generateFriendshipId(
-          senderID, receiverID); // Generate a unique friendship ID
+      String friendshipId = generateFriendshipId(senderID, receiverID);
       FriendShipModel input = FriendShipModel(
-          sender: senderID,
-          receiver: receiverID,
-          status: 'pending',
-          timestamp: Timestamp.now(),
-          friendshipID: friendshipId);
+        sender: senderID,
+        receiver: receiverID,
+        status: 'pending',
+        timestamp: Timestamp.now(),
+        friendshipID: friendshipId,
+      );
       final data = {
         "type": notificationType.add_friend.name,
-        "current_user": senderID
+        "current_user": senderID,
       };
       FirebaseFirestore.instance
           .collection('Friendships')
           .doc(friendshipId)
           .set(input.toJson())
           .then((value) async {
-        log("Request send");
-
+        log("Request sent");
         NotificationRepository.addNotification(
             receiverID, 'Friend Request', 'sent you a friend request.',
-            type: 'request');
+            type: notificationType.add_friend.name,
+            payload: jsonEncode(data).toString());
       }).catchError((error) => log("Failed to add friend: $error"));
+
       NotificationRepository.sendPushMessage(
-          token,
-          '$name sent you a friend request.',
-          'Friend Request',
-          notificationType.add_friend.name,
-          jsonEncode(data).toString());
+        token,
+        '$name sent you a friend request.',
+        'Friend Request',
+        notificationType.add_friend.name,
+        jsonEncode(data).toString(),
+      );
+
       return true;
     } catch (e) {
+      log(e.toString());
       return false;
     }
   }
@@ -701,6 +659,7 @@ class FriendsRepository {
             .collection('Friendships')
             .where('status', isEqualTo: status)
             .where('receiver', isEqualTo: userID)
+            .limit(10)
             .get();
 
     for (var doc in fetchingReceiverID.docs) {
