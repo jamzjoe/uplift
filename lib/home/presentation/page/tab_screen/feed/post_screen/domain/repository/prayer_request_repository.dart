@@ -292,8 +292,9 @@ class PrayerRequestRepository {
       await reference.doc(postID).set(prayerRequest);
       for (var each in friends) {
         log('Running notif');
-
-        final message = '${name ?? user.displayName} sent a prayer intention.';
+        String? displayName = (name ?? user.displayName);
+        final message =
+            '${displayName!.isEmpty ? user.displayName : ''} sent a prayer intention.';
         NotificationRepository.sendPushMessage(each.deviceToken!, message,
             'Uplift Notification', 'post', jsonEncode(payload).toString());
         NotificationRepository.addNotification(
@@ -464,6 +465,7 @@ class PrayerRequestRepository {
           .collection('Prayers')
           .where('user_id', isEqualTo: userID)
           .orderBy('date', descending: true)
+          .limit(20)
           .get();
       List<PrayerRequestPostModel> data = response.docs
           .map((e) => PrayerRequestPostModel.fromJson(e.data()))

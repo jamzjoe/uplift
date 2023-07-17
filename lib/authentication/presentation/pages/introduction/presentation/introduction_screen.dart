@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:uplift/authentication/presentation/domain/introduction_repository.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/button.dart';
 import 'package:uplift/utils/widgets/create_account_button.dart';
 import 'package:uplift/utils/widgets/default_text.dart';
 import 'package:uplift/utils/widgets/google_button.dart';
 import 'package:uplift/utils/widgets/header_text.dart';
-import 'package:uplift/utils/widgets/small_text.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({Key? key}) : super(key: key);
@@ -140,29 +138,36 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                 width: 70),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: 350,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HeaderText(
-                        size: 30,
-                        text: 'Spreading Light,\nOne Prayer at a Time',
-                        color: lighter),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeaderText(
+                            size: 30,
+                            text: 'Spreading Light,\nOne Prayer at a Time',
+                            color: lighter),
+                        defaultSpace,
+                        DefaultText(
+                            overflow: TextOverflow.fade,
+                            text:
+                                'The "Uplift" app is a transformative mobile platform designed to create a sacred space for the members of the Missionary Families of Christ community.',
+                            color: lighter),
+                      ],
+                    ),
                     defaultSpace,
-                    DefaultText(
-                        overflow: TextOverflow.fade,
-                        text:
-                            'The "Uplift" app is a transformative mobile platform designed to create a sacred space for the members of the Missionary Families of Christ community.',
-                        color: lighter),
+                    const GoogleButton(),
+                    const CreateAccountButton(
+                      goTo: 'login',
+                    ),
                   ],
                 ),
-                defaultSpace,
-                const GoogleButton(),
-                const CreateAccountButton(goTo: 'login',),
-              ],
+              ),
             ),
           ),
         ],
@@ -170,4 +175,3 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
     );
   }
 }
-

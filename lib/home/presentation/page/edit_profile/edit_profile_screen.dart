@@ -43,6 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     bioController.text = (user.bio ?? '');
     emailAddressController.text = user.emailAddress ?? '';
     imageURL = user.photoUrl;
+    file = null;
     super.initState();
   }
 
