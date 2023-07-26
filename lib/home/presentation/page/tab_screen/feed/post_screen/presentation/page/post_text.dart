@@ -19,12 +19,7 @@ class PostText extends StatefulWidget {
 class _PostTextState extends State<PostText> {
   @override
   Widget build(BuildContext context) {
-    String title = '';
-    if (widget.prayerRequest.title == null) {
-      title = '';
-    } else {
-      title = widget.prayerRequest.title!;
-    }
+    
     return Container(
       padding: const EdgeInsets.all(10),
       child: SeeMoreText(

@@ -6,6 +6,7 @@ import 'package:uplift/constant/constant.dart';
 import 'package:uplift/home/presentation/page/notifications/domain/repository/notifications_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:uplift/utils/services/initialize.dart';
+import 'firebase_options.dart';
 import 'myapp.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -15,7 +16,9 @@ void main() async {
 
   final Initialize initialize = Initialize();
 
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();

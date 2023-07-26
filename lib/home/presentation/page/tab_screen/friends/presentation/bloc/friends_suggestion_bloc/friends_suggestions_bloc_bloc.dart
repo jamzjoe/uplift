@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,9 +44,11 @@ class FriendsSuggestionsBlocBloc
 
     on<AddFriendEvent>((event, emit) async {
       try {
-        final response = await friendSuggestionRepository
+        await friendSuggestionRepository
             .addFriendshipRequest(event.friendShipModel);
-      } catch (e) {}
+      } catch (e) {
+        log(e.toString());
+      }
     });
   }
 }

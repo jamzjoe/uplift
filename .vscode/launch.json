@@ -1,20 +1,12 @@
 {
     "configurations": [
 
-        
-
-
-
-
-
-
-
         {
-            "name": "Infinix Note 10 Pro",
+            "name": "IOS Device",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
-            "deviceId": "emulator-5554"
+            "deviceId": "499A009A-AC63-42CC-9206-23D54447F74C"
         },
         {
             "name": "Responsive Test",
@@ -56,7 +48,7 @@
     "compounds": [
         {
             "name": "All Device",
-            "configurations": ["Infinix Note 10 Pro", "Emulator", "Tablet"]
+            "configurations": ["IOS Device", "Infinix Note 10 Pro", "Emulator", "Tablet"]
         }
     ]
 }

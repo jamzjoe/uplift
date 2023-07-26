@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "152134110112-6aeu9js7i7u6gddh05mg9ftkrhqiirup.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.godesq.uplift",
+            "certificate_hash": "a3ab145be2b1d26fbe5119c8a58d923a68c5fb30"
+          }
+        },
+        {
           "client_id": "152134110112-aiqej2vf095bh62m267f24gf5lkm640n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -54,6 +62,13 @@
             {
               "client_id": "152134110112-b9jb2nuuerhf0u8keagajd6hlkvqd4in.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "152134110112-10bd6drt8af151irmhmv8cl3r664dp44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.godesq.uplift"
+              }
             }
           ]
         }
@@ -91,6 +106,13 @@
             {
               "client_id": "152134110112-b9jb2nuuerhf0u8keagajd6hlkvqd4in.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "152134110112-10bd6drt8af151irmhmv8cl3r664dp44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.godesq.uplift"
+              }
             }
           ]
         }

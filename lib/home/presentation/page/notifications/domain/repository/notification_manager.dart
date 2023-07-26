@@ -84,7 +84,6 @@ class ScheduledNotificationManager {
         importance: Importance.max,
         priority: Priority.high,
       );
-      const iOSPlatformChannelSpecifics = DarwinInitializationSettings();
       const platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: DarwinNotificationDetails(),

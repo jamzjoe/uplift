@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uplift/authentication/data/model/user_joined_model.dart';
-import 'package:uplift/authentication/data/model/user_model.dart';
 import 'package:uplift/constant/constant.dart';
 import 'package:uplift/utils/widgets/small_text.dart';
 
@@ -21,8 +19,6 @@ class PostField extends StatefulWidget {
 class _PostFieldState extends State<PostField> {
   @override
   Widget build(BuildContext context) {
-    final UserModel userModel = widget.userJoinModel.userModel;
-    final User user = widget.userJoinModel.user;
     return GestureDetector(
       onTap: () => enterPrayerField(context, widget.userJoinModel),
       child: Container(

@@ -10,7 +10,6 @@ import 'package:uplift/utils/services/initialize.dart';
 final Initialize _initialize = Initialize();
 
 class AuthServices {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static Future<User?> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser =
         await GoogleSignIn(scopes: <String>["email"]).signIn();

@@ -21,7 +21,6 @@ class NotificationForm extends StatefulWidget {
 }
 
 class _NotificationFormState extends State<NotificationForm> {
-  final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   final TextEditingController _dateController = TextEditingController();
